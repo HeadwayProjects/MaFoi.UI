@@ -5,6 +5,8 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Select from "react-select";
 import * as api from "../../../backend/request";
+import PageLoader from "../../shared/PageLoader";
+import { toast } from 'react-toastify';
 
 const Months = [
     { value: 'January', label: 'January' },
@@ -24,7 +26,7 @@ const Months = [
 export class BulkUploadModal extends Component {
     constructor(props) {
         super(props);
-        this.state = { uploadFiles: [] };
+        this.state = { uploadFiles: [], submitting: false };
     }
 
     componentDidMount() {
@@ -142,9 +144,10 @@ export class BulkUploadModal extends Component {
         if (hasError) {
             return;
         }
+        this.setState({ submitting: true });
         const formData = new FormData();
         _uploadedFiles.forEach(file => {
-            formData.append('files', file.file, file.type.value);
+            formData.append('files', file.file, `${file.file.name}|${file.type.value}`);
         });
         formData.append('company', this.state.selectedCompany.value);
         formData.append('associateCompany', this.state.selectedAssociateCompany.value);
@@ -153,9 +156,10 @@ export class BulkUploadModal extends Component {
         formData.append('year', this.state.selectedYear.value);
         api.post('/api/FileUpload/UploadBulkFiles', formData).then(response => {
             this.props.onClose();
+            toast.success('Files saved successfully.');
         }, error => {
             console.log(error);
-        })
+        }).finally(() => this.setState({ submitting: false }))
     }
 
     handleClose() {
@@ -270,6 +274,7 @@ export class BulkUploadModal extends Component {
                         </Button>
                     </Modal.Footer>
                 </Modal>
+                {this.state.submitting && <PageLoader />}
             </>
         )
     }

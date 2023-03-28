@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import Navbar from "./Navbar";
 import Sidenav from "./Sidenav";
 import * as auth from "../../backend/auth";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import '../shared/Toaster.css';
 
 class AuthProtector extends Component {
   constructor(props) {
@@ -43,6 +46,18 @@ class LayoutWithSideNav extends Component {
             {this.props.children}
           </div>
         </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={true}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </AuthProtector>
     )
   }

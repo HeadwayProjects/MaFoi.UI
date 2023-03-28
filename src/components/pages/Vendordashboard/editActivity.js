@@ -5,6 +5,7 @@ import * as api from "../../../backend/request";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import PageLoader from "../../shared/PageLoader";
+import { toast } from 'react-toastify';
 
 const SUBMITED_STATUSES = ['Submitted', 'Audited'];
 
@@ -68,6 +69,7 @@ class EditActivity extends Component {
             this.fetchDocuments();
             this.state.event.target.value = null;
             this.setState({ file: null, invalidFile: false, event: null });
+            toast.success('File uploaded successfully.');
         }, () => this.setState({ submitting: false }));
     }
 
@@ -88,6 +90,7 @@ class EditActivity extends Component {
         this.setState({ submitting: true });
         api.del(`/api/ToDoDetails/Delete?Id=${file.id}`).then(() => {
             this.fetchDocuments();
+            toast.success('File deleted successfully.');
         }, () => this.setState({ submitting: false }));
     }
 
