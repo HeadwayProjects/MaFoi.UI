@@ -51,7 +51,7 @@ export class BulkUploadModal extends Component {
             years.push(year - i);
         }
         years = years.map(year => {
-            return { value: year, label: year }
+            return { value: `${year}`, label: year }
         })
         this.setState({ years });
         this.setState({ selectedMonth: Months[new Date().getMonth()], selectedYear: years[0] })
@@ -87,7 +87,7 @@ export class BulkUploadModal extends Component {
         if (event) {
             const length = event.target.files.length;
             const time = new Date().getTime();
-            const allowedExtensions = /(\.xlsx|\.xls)$/i;
+            const allowedExtensions = /(\.xlsx|\.xls|\.pdf)$/i;
             for (let i = 0; i < length; i++) {
                 const file = event.target.files[i];
                 const invalidFile = !allowedExtensions.exec(file.name);
@@ -147,12 +147,11 @@ export class BulkUploadModal extends Component {
             formData.append('files', file.file, file.type.value);
         });
         formData.append('company', this.state.selectedCompany.value);
-        formData.append('associatedCompany', this.state.selectedAssociateCompany.value);
+        formData.append('associateCompany', this.state.selectedAssociateCompany.value);
         formData.append('location', this.state.selectedLocation.value);
         formData.append('month', this.state.selectedMonth.value);
         formData.append('year', this.state.selectedYear.value);
         api.post('/api/FileUpload/UploadBulkFiles', formData).then(response => {
-            console.log(response);
             this.props.onClose();
         }, error => {
             console.log(error);

@@ -1,0 +1,26 @@
+.pageload-overlay {
+    position: absolute;
+    z-index: 111111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.pageload-overlay .pageload-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 25px;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.pageload-overlay .pageload-container div {
+    height: 48px;
+    width: 48px;
+}

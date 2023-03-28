@@ -29,3 +29,7 @@ export function get(url) {
 export function post(url, payload, sendHeaders = true) {
     return apiInstance.post(url, payload, sendHeaders ? { headers: getHeaders() } : null);
 }
+
+export function del(url, payload, sendHeaders = true) {
+    return apiInstance.delete(url, { headers: getHeaders() });
+}
