@@ -131,7 +131,7 @@ class VendorPerformance extends Component {
                                         </div>
 
                                         <div className="col-md-4">
-                                            <Link className="text-link text-appprimary underline"> Audit Status </Link>
+                                            <Link className="text-link text-appprimary underline text-center d-block"> Audit Status </Link>
                                             {
                                                 AuditStatus.map(status => {
                                                     return (

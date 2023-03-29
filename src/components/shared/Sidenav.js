@@ -18,13 +18,8 @@ class Sidenav extends Component {
 
     componentDidMount() {
         const user = auth.getUserDetails();
+        console.log(user);
         this.setState({ user, vendor: ['VendorAdmin', 'VendorUser'].includes(user.role) });
-        console.log(window.location.pathname)
-    }
-
-    componentDidUpdate(prevProps) {
-        console.log(prevProps, this.props);
-        console.log(window.location)
     }
 
     render() {
