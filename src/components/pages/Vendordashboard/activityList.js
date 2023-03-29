@@ -28,7 +28,7 @@ class ActivityList extends Component {
     render() {
         return (
             <>
-                <ul class="list-group overflow-hidden" style={{ height: '185px' }}>
+                <ul class="list-group overflow-hidden" style={{ height: '160px' }}>
                     {
                         this.props.list.map(activity => {
                             return (

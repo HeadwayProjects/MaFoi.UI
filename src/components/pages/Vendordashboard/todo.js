@@ -82,7 +82,7 @@ export class Todo extends Component {
                         </div>
                     </div>
                     <div className="card-body pt-1">
-                        <h5 className="text-center mb-4 fw-semibold"><Link to="">{this.state.count || 0} Activities</Link></h5>
+                        <h5 className="text-center mb-3 fw-semibold"><Link to="">{this.state.count || 0} Activities</Link></h5>
                         {
                             this.state.tabs &&
                             <NavTabs list={this.state.tabs} onTabChange={this.onTabChange.bind(this)} />
@@ -97,7 +97,7 @@ export class Todo extends Component {
                                     <div className="row m-0 card cardList border-0">
                                         <div className="card-body p-0" >
                                             <ActivityList list={this.state.todos} />
-                                            <div className="text-primary d-flex justify-content-end fw-bold">
+                                            <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{right: '1rem'}}>
                                                 {
                                                     this.state.todos.length > 0 &&
                                                     <Link to="/vendor-activity-todo">View All</Link>

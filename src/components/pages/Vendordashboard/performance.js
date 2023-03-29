@@ -5,6 +5,7 @@ import * as api from '../../../backend/request';
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
+import "./vendordashboard.css";
 
 const CurrentPerformanceTabs = [
     { value: 'Today', label: 'Today' },
@@ -101,16 +102,16 @@ class VendorPerformance extends Component {
                                     <div className="text-center mb-3">
                                         <strong className="text-primary">({this.getLabel()})</strong>
                                     </div>
-                                    <div className="row m-0  vendorPerformance-cards">
+                                    <div className="row m-0 vendorPerformance-cards">
                                         <div className="col-md-4">
-                                            <Link className="text-link text-appprimary underline">Submit Status</Link>
+                                            <Link className="text-link text-appprimary underline text-center d-block">Submit Status</Link>
                                             {
                                                 SubmitStatus.map(status => {
                                                     return (
                                                         <div className="col-md-12 mb-3" key={status.key}>
                                                             <div className={`card cardCount ${status.color}`}>
-                                                                <div className="card-body">
-                                                                    <div className="row d-flex align-items-center">
+                                                                <div className="card-body py-0">
+                                                                    <div className="row d-flex align-items-center performance-status">
                                                                         <div className="col-6 px-0 py-0 overflow-hidden">
                                                                             <label>{status.label}</label>
                                                                         </div>
@@ -136,8 +137,8 @@ class VendorPerformance extends Component {
                                                     return (
                                                         <div className="col-md-12 mb-3" key={status.key}>
                                                             <div className={`card cardCount ${status.color}`}>
-                                                                <div className="card-body">
-                                                                    <div className="row d-flex align-items-center">
+                                                                <div className="card-body py-0">
+                                                                    <div className="row d-flex align-items-center  performance-status">
                                                                         <div className="col-6 px-0 py-0">
                                                                             <label>{status.label}</label>
                                                                         </div>

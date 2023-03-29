@@ -1,0 +1,10 @@
+.performance-status {
+    height: 54px;
+    align-items: center;
+}
+
+.vendorPerformance-cards a.text-link {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}

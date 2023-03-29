@@ -81,7 +81,7 @@ class ActivitiesByStatus extends Component {
                                             <ActivityList list={this.state.activites} />
                                             {
                                                 this.state.activites.length > 0 &&
-                                                <div className="text-primary d-flex justify-content-end fw-bold">
+                                                <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{right: '1rem'}}>
                                                     <Link to="">View All</Link>
                                                 </div>
                                             }
