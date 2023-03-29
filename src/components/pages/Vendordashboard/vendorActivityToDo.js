@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload, faPencilSquare } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faFloppyDisk } from "@fortawesome/free-regular-svg-icons";
 import dayjs from "dayjs";
 import BulkUploadModal from "./bulkuploadModal";
 import * as api from "../../../backend/request";
@@ -28,23 +31,19 @@ export class VendorActivityToDo extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { res: [], show: false };
+    this.state = { companies: [], res: [], show: false, selectedFormStatuses: {} };
   }
 
   componentDidMount() {
-    api.get('/api/Company/GetUserCompanies').then(response => {
+    if (this.fetchPromise) {
+      // already mounted previously
+      return;
+    }
+    this.fetchPromise = api.get('/api/Company/GetUserCompanies').then(response => {
       const companies = (response.data || []).map(company => {
         return { value: company.id, label: company.name, company }
       });
-      this.setState({ companies });
-      this.onCompanyChange();
-    });
-    api.get('/api/ToDo/GetAll').then(response => {
-      this.setState({
-        res: (response.data || []).map(x => {
-          return { ...x, edit: this.editActivity.bind(this), download: this.downloadForm.bind(this) }
-        })
-      });
+      this.setState({ companies }, this.onCompanyChange);
     });
   }
 
@@ -57,7 +56,8 @@ export class VendorActivityToDo extends Component {
     this.setState({ show: false });
   }
 
-  onCompanyChange(event) {
+  onCompanyChange = (event) => {
+    event = event ? event : this.state.companies[0];
     this.setState({ associateCompanies: [], locations: [], selectedAssociateCompany: null, selectedLocation: null });
     this.setState({ selectedCompany: event });
     if (event && event.value) {
@@ -67,7 +67,7 @@ export class VendorActivityToDo extends Component {
       const locations = event.company.locations.map(location => {
         return { label: `${location.name}, ${location.cities.name}`, value: location.id, location };
       });
-      this.setState({ associateCompanies, locations });
+      this.setState({ associateCompanies, locations, selectedAssociateCompany: associateCompanies[0], selectedLocation: locations[0] }, this.getToDoByCriteria);
     }
   }
 
@@ -88,6 +88,61 @@ export class VendorActivityToDo extends Component {
 
   dismissEdit() {
     this.setState({ edit: false, activity: null });
+  }
+
+  onFormStatusChangeHandler = (e) => {
+    const { selectedFormStatuses } = this.state;
+    this.setState({
+      selectedFormStatuses: {
+        ...selectedFormStatuses,
+        [e.target.name]: e.target.checked
+      }
+    }, this.filterRecordsByFormStatuses)
+  }
+
+  filterRecordsByFormStatuses = () => {
+    const { selectedFormStatuses } = this.state;
+    const array = Object.entries(selectedFormStatuses).map((item) => {
+      const [key, value] = item;
+      if (value) {
+        return key
+      }
+    })
+    const statusArray = array.filter((el) => el !== undefined);
+    this.setState({ statuses: statusArray.length > 0 ? statusArray : [""] }, this.getToDoByCriteria);
+  }
+
+  getToDoByCriteria = () => {
+    const { selectedCompany, selectedAssociateCompany, selectedLocation, fromDate, toDate, statuses } = this.state;
+    const payload = {
+      company: selectedCompany.value,
+      associateCompany: selectedAssociateCompany.value,
+      location: selectedLocation.value,
+      fromDate: fromDate || null,
+      toDate: toDate || null,
+      statuses: statuses || [""]
+    }
+    api.post('/api/ToDo/GetToDoByCriteria', payload).then(response => {
+      console.log("response", response)
+      this.setState({
+        res: (response.data || []).map(x => {
+          return { ...x, edit: this.editActivity.bind(this), download: this.downloadForm.bind(this) }
+        })
+      });
+    });
+  }
+
+  // TODO: Need to enhance
+  onSubmitToAuditorHandler = (e) => {
+    e.preventDefault();
+    const { res } = this.state;
+    const filterStatuses = ["ActivitiesSaved", "Pending", "Overdue"]
+    const array = res.filter(resItem => filterStatuses.includes(resItem.status));
+    const filteredIds = array.map(item => item.id);
+    console.log(filteredIds)
+
+    // API CAll
+    api.post('/api/ToDo/SubmitToAudit', filteredIds);
   }
 
   render() {
@@ -191,32 +246,32 @@ export class VendorActivityToDo extends Component {
               <div className="d-flex align-items-center">
                 <div className="text-appprimary">Forms Status</div>
                 <div className="mx-2">
-                  <input type="checkbox" className="btn-check" id="activitiesSaved" autoComplete="off" />
+                  <input name="ActivitiesSaved" type="checkbox" className="btn-check" id="activitiesSaved" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
                   <label className="btn btn-outline-secondary" htmlFor="activitiesSaved">Activities Saved</label>
                 </div>
 
                 <div className="mx-2">
-                  <input type="checkbox" className="btn-check" id="pending" autoComplete="off" />
+                  <input name="Pending" type="checkbox" className="btn-check" id="pending" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
                   <label className="btn btn-outline-warning" htmlFor="pending">Pending</label>
                 </div>
 
                 <div className="mx-2">
-                  <input type="checkbox" className="btn-check" id="Overdue" autoComplete="off" />
+                  <input name="Overdue" type="checkbox" className="btn-check" id="Overdue" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
                   <label className="btn btn-outline-danger" htmlFor="Overdue">Overdue</label>
                 </div>
 
                 <div className="mx-2">
-                  <input type="checkbox" className="btn-check" id="Reject" autoComplete="off" />
+                  <input name="Rejected" type="checkbox" className="btn-check" id="Reject" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
                   <label className="btn btn-outline-danger" htmlFor="Reject">Reject</label>
                 </div>
 
                 <div className="mx-2">
-                  <input type="checkbox" className="btn-check" id="Submitted" autoComplete="off" />
+                  <input name="Submitted" type="checkbox" className="btn-check" id="Submitted" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
                   <label className="btn btn-outline-danger" htmlFor="Submitted">Submitted</label>
                 </div>
 
                 <div className="mx-2">
-                  <input type="checkbox" className="btn-check" id="Audited" autoComplete="off" />
+                  <input name="Audited" type="checkbox" className="btn-check" id="Audited" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
                   <label className="btn btn-outline-danger" htmlFor="Audited">Audited</label>
                 </div>
               </div>
@@ -228,7 +283,7 @@ export class VendorActivityToDo extends Component {
                 </div>
 
                 <div>
-                  <button type="submit" className="btn btn-danger">
+                  <button className="btn btn-danger" onClick={this.onSubmitToAuditorHandler}>
                     Submit To Auditor
                   </button>
                 </div>
@@ -236,7 +291,6 @@ export class VendorActivityToDo extends Component {
             </div>
           </div>
         </form>
-
 
         <table className="table table-bordered bg-white">
           <thead>
