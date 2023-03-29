@@ -8,3 +8,33 @@
     font-weight: 700;
     margin-bottom: 0.5rem;
 }
+
+.status-btn-group .btn {
+    background-color: var(--white);
+    border: 1px solid rgba(50, 44, 45, 0.5) !important;
+}
+
+.status-btn-group input:checked+.btn {
+    color: var(--white) !important;
+}
+
+.status-btn-group input[name="ActivitiesSaved"]+.btn {
+    color: rgba(50, 44, 45, 0.5);
+}
+
+.status-btn-group input[name="Pending"]+.btn {
+    color: #FFC000;
+}
+
+.status-btn-group input[name="Overdue"]+.btn,
+.status-btn-group input[name="Rejected"]+.btn {
+    color: #FF0000;
+}
+
+.status-btn-group input[name="Submitted"]+.btn {
+    color: #A9D18E;
+}
+
+.status-btn-group input[name="Audited"]+.btn {
+    color: #548235;
+}

@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload, faPencilSquare } from "@fortawesome/free-solid-svg-icons";
-import { faEye, faFloppyDisk } from "@fortawesome/free-regular-svg-icons";
 import dayjs from "dayjs";
 import BulkUploadModal from "./bulkuploadModal";
 import * as api from "../../../backend/request";
 import Select from 'react-select';
 import EditActivity from "./editActivity";
+import { toast } from 'react-toastify';
+import PageLoader from "../../shared/PageLoader";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSave, faSearch, faUpload } from "@fortawesome/free-solid-svg-icons";
 
 function StatusTmp({ status }) {
   function computeStatusColor(status) {
@@ -31,7 +32,7 @@ export class VendorActivityToDo extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { companies: [], res: [], show: false, selectedFormStatuses: {} };
+    this.state = { companies: [], res: [], show: false, selectedFormStatuses: {}, submitting: false };
   }
 
   componentDidMount() {
@@ -123,7 +124,6 @@ export class VendorActivityToDo extends Component {
       statuses: statuses || [""]
     }
     api.post('/api/ToDo/GetToDoByCriteria', payload).then(response => {
-      console.log("response", response)
       this.setState({
         res: (response.data || []).map(x => {
           return { ...x, edit: this.editActivity.bind(this), download: this.downloadForm.bind(this) }
@@ -139,10 +139,16 @@ export class VendorActivityToDo extends Component {
     const filterStatuses = ["ActivitiesSaved", "Pending", "Overdue"]
     const array = res.filter(resItem => filterStatuses.includes(resItem.status));
     const filteredIds = array.map(item => item.id);
-    console.log(filteredIds)
-
+    if (filteredIds.length === 0) {
+      toast.warn('There are no "Activity Saved", "Pending" or "Overdue" activities available for submission.')
+      return;
+    }
+    this.setState({ submitting: true });
     // API CAll
-    api.post('/api/ToDo/SubmitToAudit', filteredIds);
+    api.post('/api/ToDo/SubmitToAudit', filteredIds).then(() => {
+      toast.success('Selected activities submitted successfully.');
+      this.getToDoByCriteria();
+    }).finally(() => this.setState({ submitting: false }));
   }
 
   render() {
@@ -235,7 +241,10 @@ export class VendorActivityToDo extends Component {
               </div>
               <div className="col-1">
                 <button type="submit" className="btn btn-primary">
-                  Search
+                  <div className="d-flex align-items-center">
+                    <FontAwesomeIcon icon={faSearch} />
+                    <span className="ms-2">Search</span>
+                  </div>
                 </button>
               </div>
             </div>
@@ -243,7 +252,7 @@ export class VendorActivityToDo extends Component {
 
           <div className="card-footer border-0 px-0">
             <div className="d-flex justify-content-between">
-              <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center status-btn-group">
                 <div className="text-appprimary">Forms Status</div>
                 <div className="mx-2">
                   <input name="ActivitiesSaved" type="checkbox" className="btn-check" id="activitiesSaved" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
@@ -278,13 +287,19 @@ export class VendorActivityToDo extends Component {
               <div className="d-flex">
                 <div className="mx-2">
                   <button className="btn btn-primary" onClick={this.handleShow.bind(this)}>
-                    Bulk Upload
+                    <div className="d-flex align-items-center">
+                      <FontAwesomeIcon icon={faUpload} />
+                      <span className="ms-2">Bulk Upload</span>
+                    </div>
                   </button>
                 </div>
 
                 <div>
-                  <button className="btn btn-danger" onClick={this.onSubmitToAuditorHandler}>
-                    Submit To Auditor
+                  <button className="btn btn-primary" onClick={this.onSubmitToAuditorHandler}>
+                    <div className="d-flex align-items-center">
+                      <FontAwesomeIcon icon={faSave} />
+                      <span className="ms-2">Submit To Auditor</span>
+                    </div>
                   </button>
                 </div>
               </div>
@@ -362,12 +377,13 @@ export class VendorActivityToDo extends Component {
         </table>
         {
           this.state.show &&
-          <BulkUploadModal onClose={this.handleClose.bind(this)} onSubmit={() => { }} />
+          <BulkUploadModal onClose={this.handleClose.bind(this)} onSubmit={this.getToDoByCriteria.bind(this)} />
         }
         {
           this.state.edit && this.state.activity &&
-          <EditActivity activity={this.state.activity} onClose={this.dismissEdit.bind(this)} onSubmit={() => { }} />
+          <EditActivity activity={this.state.activity} onClose={this.dismissEdit.bind(this)} onSubmit={this.getToDoByCriteria.bind(this)} />
         }
+        {this.state.submitting && <PageLoader />}
       </div>
     );
   }
