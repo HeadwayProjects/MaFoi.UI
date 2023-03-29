@@ -31,23 +31,19 @@ export class VendorActivityToDo extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { allResponse: [], res: [], show: false, selectedFormStatuses: {} };
+    this.state = { companies: [], res: [], show: false, selectedFormStatuses: {} };
   }
 
   componentDidMount() {
-    api.get('/api/Company/GetUserCompanies').then(response => {
+    if (this.fetchPromise) {
+      // already mounted previously
+      return;
+    }
+    this.fetchPromise = api.get('/api/Company/GetUserCompanies').then(response => {
       const companies = (response.data || []).map(company => {
         return { value: company.id, label: company.name, company }
       });
-      this.setState({ companies });
-      this.onCompanyChange();
-    });
-    api.get('/api/ToDo/GetAll').then(response => {
-      this.setState({
-        res: (response.data || []).map(x => {
-          return { ...x, edit: this.editActivity.bind(this) }
-        })
-      });
+      this.setState({ companies }, this.onCompanyChange);
     });
   }
 
@@ -60,7 +56,8 @@ export class VendorActivityToDo extends Component {
     this.setState({ show: false });
   }
 
-  onCompanyChange(event) {
+  onCompanyChange = (event) => {
+    event = event ? event : this.state.companies[0];
     this.setState({ associateCompanies: [], locations: [], selectedAssociateCompany: null, selectedLocation: null });
     this.setState({ selectedCompany: event });
     if (event && event.value) {
@@ -70,7 +67,7 @@ export class VendorActivityToDo extends Component {
       const locations = event.company.locations.map(location => {
         return { label: `${location.name}, ${location.cities.name}`, value: location.id, location };
       });
-      this.setState({ associateCompanies, locations });
+      this.setState({ associateCompanies, locations, selectedAssociateCompany: associateCompanies[0], selectedLocation: locations[0] }, this.getToDoByCriteria);
     }
   }
 
@@ -81,7 +78,7 @@ export class VendorActivityToDo extends Component {
   dismissEdit() {
     this.setState({ edit: false, activity: null });
   }
-  
+
   onFormStatusChangeHandler = (e) => {
     const { selectedFormStatuses } = this.state;
     this.setState({
@@ -92,35 +89,44 @@ export class VendorActivityToDo extends Component {
     }, this.filterRecordsByFormStatuses)
   }
 
-  filterRecordsByFormStatuses = () =>{
-    const { selectedFormStatuses, allResponse } = this.state;
-    const array = Object.entries(selectedFormStatuses).map((item)=>{
+  filterRecordsByFormStatuses = () => {
+    const { selectedFormStatuses } = this.state;
+    const array = Object.entries(selectedFormStatuses).map((item) => {
       const [key, value] = item;
-      if(value){
+      if (value) {
         return key
       }
     })
     const statusArray = array.filter((el) => el !== undefined);
-    // API Call
-    // api.get('/api/ToDo/GetAll').then(response => {
-    //   this.setState({
-    //     res: (response.data || []).map(x => {
-    //       return { ...x, edit: this.editActivity.bind(this) }
-    //     })
-    //   });
-    // });
-    // if(statusArray.length > 0) {
-      
-    // }
-    // const newRes = statusArray.length > 0 ? allResponse.filter(resItem => statusArray.includes(resItem.status)) : allResponse;
-    // this.setState({res: newRes})
+    this.setState({ statuses: statusArray.length > 0 ? statusArray : [""] }, this.getToDoByCriteria);
   }
 
+  getToDoByCriteria = () => {
+    const { selectedCompany, selectedAssociateCompany, selectedLocation, fromDate, toDate, statuses } = this.state;
+    const payload = {
+      company: selectedCompany.value,
+      associateCompany: selectedAssociateCompany.value,
+      location: selectedLocation.value,
+      fromDate: fromDate || null,
+      toDate: toDate || null,
+      statuses: statuses || [""]
+    }
+    api.post('/api/ToDo/GetToDoByCriteria', payload).then(response => {
+      console.log("response", response)
+      this.setState({
+        res: (response.data || []).map(x => {
+          return { ...x, edit: this.editActivity.bind(this) }
+        })
+      });
+    });
+  }
+
+  // TODO: Need to enhance
   onSubmitToAuditorHandler = (e) => {
     e.preventDefault();
-    const { allResponse } = this.state;
+    const { res } = this.state;
     const filterStatuses = ["ActivitiesSaved", "Pending", "Overdue"]
-    const array = allResponse.filter(resItem => filterStatuses.includes(resItem.status));
+    const array = res.filter(resItem => filterStatuses.includes(resItem.status));
     const filteredIds = array.map(item => item.id);
     console.log(filteredIds)
 
