@@ -37,12 +37,6 @@ export class BulkUploadModal extends Component {
             this.setState({ companies });
             this.onCompanyChange(companies[0]);
         });
-        api.get('/api/Rule/GetAll').then(response => {
-            const rules = (response.data || []).map(rule => {
-                return { value: rule.id, label: rule.name, rule }
-            });
-            this.setState({ rules });
-        })
         this.setYears();
     }
 
@@ -68,12 +62,11 @@ export class BulkUploadModal extends Component {
                 return { label: associateCompany.name, value: associateCompany.id };
             });
             const locations = event.company.locations.map(location => {
-                return { label: `${location.name}, ${location.cities.name}`, value: location.id, location };
+                return { label: `${location.name}, ${location.cities.name}`, value: location.id, location, stateId: location.stateId };
             });
             this.setState({ associateCompanies, locations });
-            const selectedAssociateCompany = (associateCompanies || [])[0] || null;
-            const selectedLocation = (locations || [])[0] || null;
-            this.setState({ selectedAssociateCompany, selectedLocation });
+            this.onAssociateCompanyChange((associateCompanies || [])[0] || null);
+            this.onLocationChange((locations || [])[0] || null);
         }
     }
     onAssociateCompanyChange(event) {
@@ -81,7 +74,29 @@ export class BulkUploadModal extends Component {
     }
 
     onLocationChange(event) {
-        this.setState({ selectedLocation: event });
+        this.setState({ selectedLocation: event }, this.getForms);
+    }
+
+    getForms() {
+        if (this.state.previousLocation !== this.state.selectedLocation.stateId) {
+            this.setState({ previousLocation: this.state.selectedLocation.stateId });
+            api.get(`/api/ActStateMapping/GetByState?state=${this.state.selectedLocation.stateId}`).then(response => {
+                const rules = (response.data || []).map(rule => {
+                    return { value: rule.id, label: rule.fileName }
+                });
+                this.setState({ rules }, this.validateFormSelection);
+            });
+        }
+    }
+
+    validateFormSelection() {
+        const _uploadedFiles = [...this.state.uploadFiles];
+        _uploadedFiles.forEach(file => {
+            file.type = null;
+            file.duplicate = false;
+            file.required = false;
+        });
+        this.setState({ uploadFiles: _uploadedFiles });
     }
 
     onFileChange(event) {
@@ -125,6 +140,12 @@ export class BulkUploadModal extends Component {
         const _uploadedFiles = [...this.state.uploadFiles];
         _uploadedFiles.splice(index, 1);
         this.setState({ uploadFiles: _uploadedFiles });
+    }
+
+    clearAll() {
+        this.setState({ uploadFiles: [] });
+        this.setYears();
+        this.onCompanyChange(this.state.companies[0]);
     }
 
     submit() {
@@ -269,9 +290,14 @@ export class BulkUploadModal extends Component {
                         <Button variant="outline-secondary" onClick={() => this.handleClose()} className="btn btn-outline-secondary">
                             Back
                         </Button>
-                        <Button variant="primary" onClick={() => this.submit()}>
-                            Submit
-                        </Button>
+                        <div>
+                            <Button variant="secondary" className="me-3" onClick={() => this.clearAll()}>
+                                Reset
+                            </Button>
+                            <Button variant="primary" onClick={() => this.submit()}>
+                                Submit
+                            </Button>
+                        </div>
                     </Modal.Footer>
                 </Modal>
                 {this.state.submitting && <PageLoader />}
