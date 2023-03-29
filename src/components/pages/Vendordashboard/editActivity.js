@@ -74,7 +74,7 @@ class EditActivity extends Component {
     }
 
     downloadFile(file) {
-        var link = document.createElement('a');
+        const link = document.createElement('a');
         link.href = file.filePath;
         link.download = file.fileName;
         document.body.appendChild(link);
