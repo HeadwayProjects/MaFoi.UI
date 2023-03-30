@@ -87,14 +87,19 @@ export class VendorActivityToDo extends Component {
   }
 
   downloadForm(activity) {
-    if (activity.rule.filePath) {
-      const link = document.createElement('a');
-      link.href = activity.rule.filePath;
-      link.download = activity.rule.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    this.setState({ submitting: true });
+    api.get(`/api/ActStateMapping/Get?id=${activity.actStateMappingId}`).then(response => {
+      if (response.data.filePath) {
+        const link = document.createElement('a');
+        link.href = response.data.filePath;
+        link.download = response.data.fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        toast.warn('No files available');
+      }
+    }).finally(() => this.setState({ submitting: false }));
   }
 
   dismissEdit() {

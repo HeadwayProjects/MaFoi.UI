@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import NavTabs from "../../shared/NavTabs";
 import ActivityList from "./activityList";
 import * as api from "../../../backend/request";
+import "./vendordashboard.css";
 
 const StatusTabs = [
     { value: 'Overdue', label: 'Overdue' },
@@ -18,40 +19,47 @@ class ActivitiesByStatus extends Component {
     }
 
     componentDidMount() {
-        const tabs = this.props.tabs.map(tab => {
-            return StatusTabs.find(status => status.value === tab);
-        });
-        this.setState({ tabs });
-        this.setState({ status: tabs[0].value });
-        this.updateTitle(tabs[0].value);
+        if (!this.mountDone) {
+            this.mountDone = true;
+            const tabs = this.props.tabs.map(tab => {
+                return StatusTabs.find(status => status.value === tab);
+            });
+            this.setState({ tabs, status: tabs[0].value });
+        }
     }
 
 
     componentWillReceiveProps({ selectedCompany, selectedAssociateCompany, selectedLocation }) {
-        if (selectedCompany && selectedLocation) {
-            this.updateActivities({ selectedCompany, selectedAssociateCompany, selectedLocation, status: this.state.status });
+        if (selectedCompany && selectedLocation && (selectedCompany !== this.state.selectedCompany ||
+            selectedAssociateCompany !== this.state.selectedAssociateCompany ||
+            selectedLocation !== this.state.selectedLocation)) {
+            this.setState({ selectedCompany, selectedAssociateCompany, selectedLocation }, this.updateActivities);
         }
     }
 
-    updateActivities({ selectedCompany, selectedAssociateCompany, selectedLocation, status }) {
-        this.setState({ selectedCompany, selectedAssociateCompany, selectedLocation, status });
-        api.get(`/api/ToDo/GetToDoByStatus?companyid=${selectedCompany}&associateCompanyId=${selectedAssociateCompany}&locationId=${selectedLocation}&status=${status}`).then(response => {
+    updateActivities() {
+        const request = [
+            `companyid=${this.state.selectedCompany}`,
+            `associateCompanyId=${this.state.selectedAssociateCompany}`,
+            `locationId=${this.state.selectedLocation}`,
+            `status=${this.state.status}`
+        ];
+        api.get(`/api/ToDo/GetToDoByStatus?${request.join('&')}`).then(response => {
             const length = (response.data || []).length;
             this.setState({
                 activites: (response.data || []).slice(0, 4),
                 count: length > 0 ? String(length).padStart(2, '0') : 0
             });
-            this.updateTitle(status);
+            this.updateTitle();
         });
     }
 
     onTabChange(status) {
-        this.setState({ status, count: null, activites: [], title: null });
-        this.updateActivities({ ...this.state, status });
+        this.setState({ status, count: null, activites: [], title: null }, this.updateActivities);
     }
 
-    updateTitle(status) {
-        const tab = StatusTabs.find(_status => _status.value === status) || {};
+    updateTitle() {
+        const tab = StatusTabs.find(_status => _status.value === this.state.status) || {};
         this.setState({ title: tab.label });
     }
 
@@ -70,7 +78,7 @@ class ActivitiesByStatus extends Component {
                         <div className="tab-content" id="VendorOverDuePendingContent">
                             <div className="tab-pane fade show active" role="tabpanel">
                                 <div className="my-3">
-                                    <div className="text-center mb-3">
+                                    <div className="text-center mb-3 dashboard-date-range-label">
                                         {
                                             this.state.title &&
                                             <strong className="text-primary">{this.state.count} {this.state.title}</strong>

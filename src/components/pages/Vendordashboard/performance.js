@@ -8,14 +8,14 @@ import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import "./vendordashboard.css";
 
 const CurrentPerformanceTabs = [
-    { value: 'Today', label: 'Today' },
-    { value: 'ThisWeek', label: 'This Week' }
+    { value: '0', label: 'Today' },
+    { value: '7', label: 'This Week' }
 ];
 const PreviousPerformanceTabs = [
-    { value: 'LastMonth', label: ['Last', 'Month'] },
-    { value: 'Last3Months', label: ['Last', '3 Months'] },
-    { value: 'Last6Months', label: ['Last', '6 Months'] },
-    { value: 'Last12Months', label: ['Last', '12 Months'] }
+    { value: '1', label: ['Last', 'Month'] },
+    { value: '3', label: ['Last', '3 Months'] },
+    { value: '6', label: ['Last', '6 Months'] },
+    { value: '12', label: ['Last', '12 Months'] }
 ];
 
 
@@ -34,36 +34,47 @@ const AuditStatus = [
 class VendorPerformance extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = { status: {} };
     }
 
     componentDidMount() {
-        this.setState({ title: this.props.current ? 'Current Performance' : 'Previous Performance' });
-        this.setState({ tabs: this.props.current ? CurrentPerformanceTabs : PreviousPerformanceTabs });
-        this.setState({ frequency: this.props.current ? CurrentPerformanceTabs[0].value : PreviousPerformanceTabs[0].value });
-    }
-
-    componentWillReceiveProps({ selectedCompany, selectedAssociateCompany, selectedLocation }) {
-        if (selectedCompany && selectedLocation) {
-            this.updatePerformance({ selectedCompany, selectedAssociateCompany, selectedLocation, frequency: this.state.frequency });
+        if (!this.mountDone) {
+            this.mountDone = true;
+            this.setState({
+                title: this.props.current ? 'Current Performance' : 'Previous Performance',
+                tabs: this.props.current ? CurrentPerformanceTabs : PreviousPerformanceTabs,
+                frequency: this.props.current ? CurrentPerformanceTabs[0].value : PreviousPerformanceTabs[0].value
+            });
         }
     }
 
-    updatePerformance({ selectedCompany, selectedAssociateCompany, selectedLocation, frequency }) {
-        this.setState({ selectedCompany, selectedAssociateCompany, selectedLocation, frequency });
-        api.get(`/api/Dashboard/GetVendorDashboard?companyid=${selectedCompany}&associateCompanyId=${selectedAssociateCompany}&locationId=${selectedLocation}&frequency=${frequency}`).then(response => {
+    componentWillReceiveProps({ selectedCompany, selectedAssociateCompany, selectedLocation }) {
+        if (selectedCompany && selectedLocation && (selectedCompany !== this.state.selectedCompany ||
+            selectedAssociateCompany !== this.state.selectedAssociateCompany ||
+            selectedLocation !== this.state.selectedLocation)) {
+            this.setState({ selectedCompany, selectedAssociateCompany, selectedLocation }, this.updatePerformance);
+        }
+    }
+
+    updatePerformance() {
+        const request = [
+            `companyid=${this.state.selectedCompany}`,
+            `associateCompanyId=${this.state.selectedAssociateCompany}`,
+            `locationId=${this.state.selectedLocation}`,
+            `frequency=${this.state.frequency}`
+        ];
+        api.get(`/api/Dashboard/GetPreviousPerformance?${request.join('&')}`).then(response => {
             if (response && response.data) {
-                const label = frequency !== 'Today' ?
+                const label = this.state.frequency !== '0' ?
                     `${dayjs(response.data.startDate).format('DD-MMM-YYYY')} - ${dayjs(response.data.endDate).format('DD-MMM-YYYY')}` :
                     `${dayjs(response.data.startDate).format('DD-MMM-YYYY')}`;
-                this.setState({ ...response.data, label });
+                this.setState({ status: response.data, label });
             }
         });
     }
 
     onTabChange(frequency) {
-        this.setState({ frequency, count: null });
-        this.updatePerformance({ ...this.state, frequency });
+        this.setState({ frequency, count: null, status: {} }, this.updatePerformance);
     }
 
     render() {
@@ -95,7 +106,7 @@ class VendorPerformance extends Component {
                         <div className="tab-content" id="VendorContent">
                             <div className="tab-pane fade show active" role="tabpanel">
                                 <div className="my-3">
-                                    <div className="text-center mb-3">
+                                    <div className="text-center mb-3 dashboard-date-range-label">
                                         {this.state.label && <strong className="text-primary">({this.state.label})</strong>}
                                     </div>
                                     <div className="row m-0 vendorPerformance-cards">
@@ -112,7 +123,10 @@ class VendorPerformance extends Component {
                                                                             <label>{status.label}</label>
                                                                         </div>
                                                                         <div className="col-4 px-1 py-1">
-                                                                            <h3 className="p-0 m-0">({this.state[status.key]})</h3>
+                                                                            {
+                                                                                typeof this.state.status[status.key] !== 'undefined' &&
+                                                                                <h3 className="p-0 m-0">({this.state.status[status.key]})</h3>
+                                                                            }
                                                                         </div>
                                                                         <div className="col-1 px-0 py-0">
                                                                             <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
@@ -139,7 +153,12 @@ class VendorPerformance extends Component {
                                                                             <label>{status.label}</label>
                                                                         </div>
                                                                         <div className="col-4  px-1 py-1">
-                                                                            <h3 className="p-0 m-0">({this.state[status.key]})</h3>
+                                                                            <h3 className="p-0 m-0">
+                                                                                {
+                                                                                    typeof this.state.status[status.key] !== 'undefined' &&
+                                                                                    <h3 className="p-0 m-0">({this.state.status[status.key]})</h3>
+                                                                                }
+                                                                            </h3>
                                                                         </div>
                                                                         <div className="col-1 px-0 py-0">
                                                                             <FontAwesomeIcon icon={faChevronCircleRight} />

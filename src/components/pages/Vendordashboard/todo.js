@@ -4,6 +4,7 @@ import * as api from "../../../backend/request";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import ActivityList from "./activityList";
+import "./vendordashboard.css";
 
 const TodosTabs = [
     { value: 'Today', label: 'Today' },
@@ -25,24 +26,36 @@ export class Todo extends Component {
     }
 
     componentDidMount() {
-        this.setState({ title: this.props.upcoming ? 'Upcoming' : 'To-Do' });
-        this.setState({ tabs: this.props.upcoming ? UpcomingTabs : TodosTabs });
-        this.setState({ frequency: this.props.upcoming ? UpcomingTabs[0].value : TodosTabs[0].value });
-    }
-
-    componentWillReceiveProps({ selectedCompany, selectedAssociateCompany, selectedLocation }) {
-        if (selectedCompany && selectedLocation) {
-            this.updateTodos({ selectedCompany, selectedAssociateCompany, selectedLocation, frequency: this.state.frequency });
+        if (!this.mountDone) {
+            this.mountDone = true;
+            this.setState({
+                title: this.props.upcoming ? 'Upcoming' : 'To-Do',
+                tabs: this.props.upcoming ? UpcomingTabs : TodosTabs,
+                frequency: this.props.upcoming ? UpcomingTabs[0].value : TodosTabs[0].value
+            });
         }
     }
 
-    updateTodos({ selectedCompany, selectedAssociateCompany, selectedLocation, frequency }) {
-        this.setState({ selectedCompany, selectedAssociateCompany, selectedLocation, frequency });
-        api.get(`/api/ToDo/GetToDoByPerformance?companyid=${selectedCompany}&associateCompanyId=${selectedAssociateCompany}&locationId=${selectedLocation}&frequency=${frequency}`).then(response => {
+    componentWillReceiveProps({ selectedCompany, selectedAssociateCompany, selectedLocation }) {
+        if (selectedCompany && selectedLocation && (selectedCompany !== this.state.selectedCompany ||
+            selectedAssociateCompany !== this.state.selectedAssociateCompany ||
+            selectedLocation !== this.state.selectedLocation)) {
+            this.setState({ selectedCompany, selectedAssociateCompany, selectedLocation }, this.updateTodos);
+        }
+    }
+
+    updateTodos() {
+        const request = [
+            `companyid=${this.state.selectedCompany}`,
+            `associateCompanyId=${this.state.selectedAssociateCompany}`,
+            `locationId=${this.state.selectedLocation}`,
+            `frequency=${this.state.frequency}`
+        ];
+        api.get(`/api/ToDo/GetToDoByPerformance?${request.join('&')}`).then(response => {
             if (response && response.data) {
                 const data = (response.data || {});
                 const todos = (data.items || []).slice(0, 4)
-                const label = frequency !== 'Today' ?
+                const label = this.state.frequency !== 'Today' ?
                     `${dayjs(data.startDate).format('DD-MMM-YYYY')} - ${dayjs(data.endDate).format('DD-MMM-YYYY')}` :
                     `${dayjs(data.startDate).format('DD-MMM-YYYY')}`;
                 this.setState({ todos, count: (data.items || []).length, label });
@@ -51,9 +64,7 @@ export class Todo extends Component {
     }
 
     onTabChange(frequency) {
-        this.setState({ frequency, count: null, todos: [] });
-        this.updateTodos({ ...this.state, frequency });
-        // this.updateTitle(frequency);
+        this.setState({ frequency, count: null, todos: [] }, this.updateTodos);
     }
 
     render() {
@@ -88,7 +99,7 @@ export class Todo extends Component {
                         <div className="tab-content">
                             <div className="tab-pane fade show active" role="tabpanel">
                                 <div className="my-3">
-                                    <div className="text-center mb-3">
+                                    <div className="text-center mb-3 dashboard-date-range-label">
                                         {this.state.label && <strong className="text-primary">({this.state.label})</strong>}
                                     </div>
 

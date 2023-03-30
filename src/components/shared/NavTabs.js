@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./NavTabs.css";
 
 export class NavTabs extends Component {
 
@@ -33,7 +34,7 @@ export class NavTabs extends Component {
                                 return (
                                     <li className="nav-item" key={tab.value}>
                                         <button id={tab.value} role="tab" onClick={() => this.onTabSelect(tab.value)}
-                                            className={`nav-link d-flex flex-column align-items-center ${this.state.selectedTab === tab.value ? 'active' : ''}`}
+                                            className={`nav-link d-flex flex-column align-items-center nav-buttons ${this.state.selectedTab === tab.value ? 'active' : ''}`}
                                             data-bs-toggle="tab" aria-selected="true">
                                             {
                                                 typeof tab.label === 'string' ?

@@ -3,6 +3,10 @@
     align-items: center;
 }
 
+.dashboard-date-range-label {
+    height: 24px;
+}
+
 .vendorPerformance-cards a.text-link {
     font-size: 18px;
     font-weight: 700;
