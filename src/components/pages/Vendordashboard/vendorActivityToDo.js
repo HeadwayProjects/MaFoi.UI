@@ -147,7 +147,7 @@ export class VendorActivityToDo extends Component {
   onSubmitToAuditorHandler = (e) => {
     e.preventDefault();
     const { res } = this.state;
-    const filterStatuses = ["ActivitiesSaved", "Pending", "Overdue"]
+    const filterStatuses = ["ActivitySaved", "Pending", "Overdue"]
     const array = res.filter(resItem => filterStatuses.includes(resItem.status));
     const filteredIds = array.map(item => item.id);
     if (filteredIds.length === 0) {
