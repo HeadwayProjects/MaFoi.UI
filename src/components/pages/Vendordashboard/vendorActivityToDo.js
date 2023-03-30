@@ -234,7 +234,14 @@ export class VendorActivityToDo extends Component {
                         <label>From</label>
                       </div>
                       <div className="col-9 p-0">
-                        <input type="date" className="form-control"></input>
+                        <input type="date" className="form-control" onChange={(e) => {
+                          if (e.target.value) {
+                            const fDate = new Date(e.target.value).toISOString();
+                            this.setState({ fromDate: fDate })
+                          } else {
+                            this.setState({ fromDate: null })
+                          }
+                        }}></input>
                       </div>
                     </div>
                   </div>
@@ -244,14 +251,27 @@ export class VendorActivityToDo extends Component {
                         <label>To</label>
                       </div>
                       <div className="col-9 p-0">
-                        <input type="date" className="form-control"></input>
+                        <input type="date" className="form-control" onChange={(e) => {
+                          if (e.target.value) {
+                            const tDate = new Date(e.target.value).toISOString();
+                            this.setState({ toDate: tDate })
+                          } else {
+                            this.setState({ toDate: null })
+                          }
+                        }}></input>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="col-1">
-                <button type="submit" className="btn btn-primary">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    this.getToDoByCriteria();
+                  }}>
                   <div className="d-flex align-items-center">
                     <FontAwesomeIcon icon={faSearch} />
                     <span className="ms-2">Search</span>
