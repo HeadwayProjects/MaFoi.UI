@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Carousel from "react-bootstrap/Carousel";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logo from '../../assets/img/logo.png';
 import bannerimg1 from '../../assets/img/banner1.jpg';
 import bannerimg2 from '../../assets/img/banner2.jpg';

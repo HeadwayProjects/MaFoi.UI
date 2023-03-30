@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import BulkUploadModal from "./bulkuploadModal";
+import SubmitToAuditorModal from "./submitToAuditorModal";
 import * as api from "../../../backend/request";
 import Select from 'react-select';
 import EditActivity from "./editActivity";
@@ -32,7 +33,7 @@ export class VendorActivityToDo extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { companies: [], res: [], show: false, selectedFormStatuses: {}, submitting: false };
+    this.state = { companies: [], res: [], show: false, isAuditorModalShow: false, selectedFormStatuses: {}, submitting: false };
   }
 
   componentDidMount() {
@@ -55,6 +56,15 @@ export class VendorActivityToDo extends Component {
 
   handleClose() {
     this.setState({ show: false });
+  }
+
+  handleSubmitToAuditorModalShow(event) {
+    event.preventDefault();
+    this.setState({ isAuditorModalShow: true });
+  }
+
+  handleSubmitToAuditorModalClose() {
+    this.setState({ isAuditorModalShow: false });
   }
 
   onCompanyChange = (event) => {
@@ -108,6 +118,7 @@ export class VendorActivityToDo extends Component {
       if (value) {
         return key
       }
+      return undefined;
     })
     const statusArray = array.filter((el) => el !== undefined);
     this.setState({ statuses: statusArray.length > 0 ? statusArray : [""] }, this.getToDoByCriteria);
@@ -295,7 +306,7 @@ export class VendorActivityToDo extends Component {
                 </div>
 
                 <div>
-                  <button className="btn btn-primary" onClick={this.onSubmitToAuditorHandler}>
+                  <button className="btn btn-primary" onClick={this.handleSubmitToAuditorModalShow.bind(this)}>
                     <div className="d-flex align-items-center">
                       <FontAwesomeIcon icon={faSave} />
                       <span className="ms-2">Submit To Auditor</span>
@@ -378,6 +389,10 @@ export class VendorActivityToDo extends Component {
         {
           this.state.show &&
           <BulkUploadModal onClose={this.handleClose.bind(this)} onSubmit={this.getToDoByCriteria.bind(this)} />
+        }
+        {
+          this.state.isAuditorModalShow &&
+          <SubmitToAuditorModal todo={this.state.res} onClose={this.handleSubmitToAuditorModalClose.bind(this)} onSubmit={this.onSubmitToAuditorHandler} />
         }
         {
           this.state.edit && this.state.activity &&
