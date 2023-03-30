@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import '../shared/Sidenav.css';
 import * as auth from "../../backend/auth";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileText, faThLarge } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faFileText, faThLarge } from '@fortawesome/free-solid-svg-icons';
 // import { render } from 'react-dom';
 
 // import logo from '../assets/img/logo.png';
