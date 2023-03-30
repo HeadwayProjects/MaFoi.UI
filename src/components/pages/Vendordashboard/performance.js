@@ -53,16 +53,12 @@ class VendorPerformance extends Component {
         this.setState({ selectedCompany, selectedAssociateCompany, selectedLocation, frequency });
         api.get(`/api/Dashboard/GetVendorDashboard?companyid=${selectedCompany}&associateCompanyId=${selectedAssociateCompany}&locationId=${selectedLocation}&frequency=${frequency}`).then(response => {
             if (response && response.data) {
-                this.setState(response.data);
+                const label = frequency !== 'Today' ?
+                    `${dayjs(response.data.startDate).format('DD-MMM-YYYY')} - ${dayjs(response.data.endDate).format('DD-MMM-YYYY')}` :
+                    `${dayjs(response.data.startDate).format('DD-MMM-YYYY')}`;
+                this.setState({ ...response.data, label });
             }
         });
-    }
-
-    getLabel() {
-        if (this.state.frequency === 'Today') {
-            return dayjs(new Date()).format('DD-MMM-YYYY');
-        }
-        return this.state.frequency;
     }
 
     onTabChange(frequency) {
@@ -100,7 +96,7 @@ class VendorPerformance extends Component {
                             <div className="tab-pane fade show active" role="tabpanel">
                                 <div className="my-3">
                                     <div className="text-center mb-3">
-                                        <strong className="text-primary">({this.getLabel()})</strong>
+                                        {this.state.label && <strong className="text-primary">({this.state.label})</strong>}
                                     </div>
                                     <div className="row m-0 vendorPerformance-cards">
                                         <div className="col-md-4">

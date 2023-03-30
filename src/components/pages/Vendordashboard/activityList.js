@@ -28,11 +28,11 @@ class ActivityList extends Component {
     render() {
         return (
             <>
-                <ul class="list-group overflow-hidden" style={{ height: '160px' }}>
+                <ul className="list-group overflow-hidden" style={{ height: '160px' }}>
                     {
                         this.props.list.map(activity => {
                             return (
-                                <li class="list-group-item" key={activity.id} style={{ height: '40px' }}>
+                                <li className="list-group-item" key={activity.id} style={{ height: '40px' }}>
                                     <span>{activity.location.name}</span>
                                     <span>-</span>
                                     <StatusTmp status={activity.status} />
@@ -46,7 +46,7 @@ class ActivityList extends Component {
                     }
                     {
                         this.props.list.length === 0 &&
-                        <li class="list-group-item" style={{ height: '150px' }}>
+                        <li className="list-group-item" style={{ height: '150px' }}>
                             <div className="d-flex flex-row justify-content-center align-items-center h-100"><span>No Data Available</span></div>
                         </li>
                     }

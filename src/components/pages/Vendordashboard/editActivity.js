@@ -99,7 +99,12 @@ class EditActivity extends Component {
     }
 
     submit() {
-
+        this.setState({ submitting: true });
+        api.get(`/api/ToDo/SaveActivity?toDo=${this.state.activity.id}`).then(response => {
+            toast.success('Activity saved successfully.');
+            this.props.onClose();
+            this.props.onSubmit();
+        }).finally(() => this.setState({ submitting: false }));
     }
 
 

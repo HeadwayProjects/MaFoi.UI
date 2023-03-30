@@ -14,7 +14,7 @@ const TodosTabs = [
 const UpcomingTabs = [
     { value: 'NextWeek', label: 'Next Week' },
     { value: 'NextMonth', label: 'Next Month' },
-    { value: 'NextQuarter', label: 'Next Year' }
+    { value: 'NextQuarter', label: 'Next Quarter' }
 ];
 
 
@@ -38,18 +38,16 @@ export class Todo extends Component {
 
     updateTodos({ selectedCompany, selectedAssociateCompany, selectedLocation, frequency }) {
         this.setState({ selectedCompany, selectedAssociateCompany, selectedLocation, frequency });
-        api.get(`/api/ToDo/GetToDoByCompanyLocation?companyid=${selectedCompany}&associateCompanyId=${selectedAssociateCompany}&locationId=${selectedLocation}&frequency=${frequency}`).then(response => {
+        api.get(`/api/ToDo/GetToDoByPerformance?companyid=${selectedCompany}&associateCompanyId=${selectedAssociateCompany}&locationId=${selectedLocation}&frequency=${frequency}`).then(response => {
             if (response && response.data) {
-                this.setState({ todos: (response.data || []).slice(0, 4), count: (response.data || []).length });
+                const data = (response.data || {});
+                const todos = (data.items || []).slice(0, 4)
+                const label = frequency !== 'Today' ?
+                    `${dayjs(data.startDate).format('DD-MMM-YYYY')} - ${dayjs(data.endDate).format('DD-MMM-YYYY')}` :
+                    `${dayjs(data.startDate).format('DD-MMM-YYYY')}`;
+                this.setState({ todos, count: (data.items || []).length, label });
             }
         });
-    }
-
-    getLabel() {
-        if (this.state.frequency === 'Today') {
-            return dayjs(new Date()).format('DD-MMM-YYYY');
-        }
-        return this.state.frequency;
     }
 
     onTabChange(frequency) {
@@ -91,13 +89,13 @@ export class Todo extends Component {
                             <div className="tab-pane fade show active" role="tabpanel">
                                 <div className="my-3">
                                     <div className="text-center mb-3">
-                                        <strong className="text-primary">({this.getLabel()})</strong>
+                                        {this.state.label && <strong className="text-primary">({this.state.label})</strong>}
                                     </div>
 
                                     <div className="row m-0 card cardList border-0">
                                         <div className="card-body p-0" >
                                             <ActivityList list={this.state.todos} />
-                                            <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{right: '1rem'}}>
+                                            <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{ right: '1rem' }}>
                                                 {
                                                     this.state.todos.length > 0 &&
                                                     <Link to="/vendor-activity-todo">View All</Link>

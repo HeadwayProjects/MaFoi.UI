@@ -255,7 +255,7 @@ export class VendorActivityToDo extends Component {
               <div className="d-flex align-items-center status-btn-group">
                 <div className="text-appprimary">Forms Status</div>
                 <div className="mx-2">
-                  <input name="ActivitiesSaved" type="checkbox" className="btn-check" id="activitiesSaved" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
+                  <input name="ActivitySaved" type="checkbox" className="btn-check" id="activitiesSaved" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
                   <label className="btn btn-outline-secondary" htmlFor="activitiesSaved">Activities Saved</label>
                 </div>
 

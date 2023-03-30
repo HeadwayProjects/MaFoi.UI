@@ -23,7 +23,7 @@ class PageLoader extends Component {
         return (
             <div className="pageload-overlay">
                 <div className="pageload-container">
-                    <div class="spinner-border text-primary" role="status">
+                    <div className="spinner-border text-primary" role="status">
                     </div>
                     <p className="mt-2 mb-0">{this.state.message}</p>
                 </div>

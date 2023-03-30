@@ -36,18 +36,18 @@ class ActivitiesByStatus extends Component {
     updateActivities({ selectedCompany, selectedAssociateCompany, selectedLocation, status }) {
         this.setState({ selectedCompany, selectedAssociateCompany, selectedLocation, status });
         api.get(`/api/ToDo/GetToDoByStatus?companyid=${selectedCompany}&associateCompanyId=${selectedAssociateCompany}&locationId=${selectedLocation}&status=${status}`).then(response => {
-            if (response && response.data) {
-                const length = (response.data || []).length;
-                this.setState({ activites: (response.data || []).slice(0, 4) });
-                this.setState({ count: length > 0 ? String(length).padStart(2, '0') : 0 });
-            }
+            const length = (response.data || []).length;
+            this.setState({
+                activites: (response.data || []).slice(0, 4),
+                count: length > 0 ? String(length).padStart(2, '0') : 0
+            });
+            this.updateTitle(status);
         });
     }
 
     onTabChange(status) {
-        this.setState({ status, count: null, activites: [] });
+        this.setState({ status, count: null, activites: [], title: null });
         this.updateActivities({ ...this.state, status });
-        this.updateTitle(status);
     }
 
     updateTitle(status) {
@@ -81,7 +81,7 @@ class ActivitiesByStatus extends Component {
                                             <ActivityList list={this.state.activites} />
                                             {
                                                 this.state.activites.length > 0 &&
-                                                <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{right: '1rem'}}>
+                                                <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{ right: '1rem' }}>
                                                     <Link to="">View All</Link>
                                                 </div>
                                             }
