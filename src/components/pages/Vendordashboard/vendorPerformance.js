@@ -128,7 +128,7 @@ export class Vendor extends Component {
               </span>
             </ActivitiesByStatus>
           </div>
-          <div className="col-md-6">
+          <div className="col-md-6 mb-4">
             {/* Rejected and Audited */}
             <ActivitiesByStatus tabs={['Rejected', 'Approved']} selectedCompany={(this.state.selectedCompany || {}).value} selectedLocation={(this.state.selectedLocation || {}).value}
               selectedAssociateCompany={(this.state.selectedAssociateCompany || {}).value}>

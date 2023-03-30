@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 // import { render } from 'react-dom';
@@ -14,7 +15,7 @@ export class Navbar extends Component {
 
     componentDidMount() {
         const user = auth.getUserDetails() || {};
-        this.setState({ username: user.username })
+        this.setState({ username: user.username, lastLogin: new Date((user.exp || (new Date().getTime() / 1000)) * 1000) });
     }
 
     logout(event) {
@@ -45,9 +46,9 @@ export class Navbar extends Component {
                                     </div>
                                 </div>
                             </ul>
-                            <ul className="d-flex row disabled mb-0 text-muted">
-                                <small className='p-0 m-0'><span>11:55am</span></small>
-                                <small className='p-0 m-0'><span>25 March 2022</span></small>
+                            <ul className="d-flex row disabled mb-0 text-muted ps-2 m-0">
+                                <small className='p-0 m-0 text-center'><span>{dayjs(this.state.lastLogin).format('hh:mm A')}</span></small>
+                                <small className='p-0 m-0 text-center'><span>{dayjs(this.state.lastLogin).format('DD/MM/YYYY')}</span></small>
                             </ul>
                         </div>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navTop" aria-controls="navTop" aria-expanded="false" aria-label="Toggle navigation">
