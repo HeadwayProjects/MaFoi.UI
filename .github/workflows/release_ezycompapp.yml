@@ -24,7 +24,7 @@ jobs:
       - name: npm install, build, and test
         run: |
           npm install
-          react-scripts build --if-present
+          npm run build --if-present
           npm run test --if-present
 
       - name: Upload artifact for deployment job
@@ -50,7 +50,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'ezycompapp'
+          app-name: 'ezycompui'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_BBF246D84E34412AB67D9905F25D3A86 }}
           package: .
