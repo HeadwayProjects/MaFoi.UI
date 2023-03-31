@@ -20,6 +20,7 @@ export const getToDoTable = (tableId, data, columns) => {
     height: "100%",
     data: data,
     layout: "fitColumns",
+    nestedFieldSeparator:"|",
     columns: columns,
     pagination: "local",
     paginationSize: 10,
