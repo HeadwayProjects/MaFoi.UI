@@ -208,7 +208,7 @@ export class VendorActivityToDo extends Component {
 
   columns = [
     {
-      formatter: "rowSelection", titleFormatter: "rowSelection", hozAlign: "center", headerSort: false, cellClick: function (e, cell) {
+      formatter: "rowSelection", titleFormatter: "rowSelection", hozAlign: "center", headerSort: false, width:10, cellClick: function (e, cell) {
         cell.getRow().toggleSelect();
       }
     },
