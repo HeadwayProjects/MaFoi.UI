@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { DateTime } from 'luxon'
 import "./App.css";
 import Dashboard from "./components/pages/Dashboard/Dashboard";
 import Vendordashboard from "./components/pages/Vendordashboard/Vendordashboard";
@@ -11,6 +12,9 @@ import Reports from "./components/pages/Reports";
 import AuditorActivityToDo from "./components/pages/Dashboard/auditorActivityToDo";
 import Login from "./components/pages/login";
 import LayoutWithSideNav from "./components/shared/LayoutWithSideNav";
+
+
+window.DateTime = DateTime;
 
 class App extends Component {
   render() {
