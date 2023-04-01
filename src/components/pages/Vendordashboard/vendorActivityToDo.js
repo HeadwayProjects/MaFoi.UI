@@ -208,7 +208,7 @@ export class VendorActivityToDo extends Component {
 
   columns = [
     {
-      formatter: "rowSelection", titleFormatter: "rowSelection", hozAlign: "center", headerSort: false, width:10, cellClick: function (e, cell) {
+      formatter: "rowSelection", titleFormatter: "rowSelection", hozAlign: "center", headerSort: false, width: 10, cellClick: function (e, cell) {
         cell.getRow().toggleSelect();
       }
     },
@@ -218,7 +218,7 @@ export class VendorActivityToDo extends Component {
     { title: "Forms/Registers & Returns", field: "activity|name", width: "10px" },
     { title: "Associate Company", field: "associateCompany|name", width: "10px" },
     { title: "Location Name", field: "location|name" },
-    { title: "Audit Due Date", field: "auditDate", sorter: "date", sorterParams:{format:"dd-MM-yyyy",alignEmptyValues:"top",} },
+    { title: "Audit Due Date", field: "auditDate", sorter: "date", sorterParams: { format: "dd-MM-yyyy", alignEmptyValues: "top", } },
     { title: "Audit Status", field: "auditStatus" },
     { title: "Forms Status", field: "status" },
     { title: "Audit Remarks", field: "auditRemarks" },
@@ -238,185 +238,153 @@ export class VendorActivityToDo extends Component {
 
   render() {
     return (
-      <div>
-        {/* Page Heading starts */}
-        <div className="row ml-0 mr-0 mb-3 pageHeading p-3 d-flex justify-content-between">
-          <div className="col-3">
-            <h4 className="mb-0">
-              <i className="fa fa-user"></i> Vendor - Activity
-            </h4>
-          </div>
-
-          {/**TODO: Once implemented, will uncomment*/}
-          {/* <div className="col-3">
-            <small>Status: 25% completed</small>
-            <div className="progress">
-              <div
-                className="progress-bar w-25"
-                role="progressbar"
-                aria-label="Basic example"
-                aria-valuenow="25"
-                aria-valuemin="25"
-                aria-valuemax="100"
-              ></div>
+      <>
+        <div className="d-flex flex-column">
+          <div className="d-flex  p-2 align-items-center pageHeading">
+            <div className="ps-4">
+              <h4 className="mb-0 ps-1">Vendor-Activity</h4>
             </div>
-          </div> */}
-
-          <div className="col-3">
-            <input
-              type="text"
-              className="form-control bg-transparent border-1"
-              placeholder="Search for Law/Rule"
-            ></input>
-          </div>
-
-          <div className="col-3">
-            <nav aria-label="breadcrumb">
-              <ol className="breadcrumb mb-0 d-flex justify-content-end">
-                <li className="breadcrumb-item">
-                  <Link to="/">Home</Link>
-                </li>
-                <li className="breadcrumb-item">
-                  <Link to="/dashboard">Dashboard</Link>
-                </li>
-                <li className="breadcrumb-item active">Activity</li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-        {/* Page Heading ends */}
-
-        <form className="card border-0 p-0 mb-3">
-          <div className="card-body">
-            <div className="row">
-              <div className="col-2 col-md-2">
-                <Select options={this.state.companies} onChange={this.onCompanyChange.bind(this)}
-                  placeholder='Company' value={this.state.selectedCompany} />
-              </div>
-              <div className="col-3 col-md-3">
-                <Select options={this.state.associateCompanies} onChange={(event) => this.setState({ selectedAssociateCompany: event })}
-                  placeholder='Associate Company' value={this.state.selectedAssociateCompany} />
-              </div>
-              <div className="col-2 col-md-2">
-                <Select options={this.state.locations} onChange={(event) => this.setState({ selectedLocation: event })}
-                  placeholder='Location' value={this.state.selectedLocation} />
-              </div>
-              <div className="col-md-4">
-                <div className="row">
-                  <div className="col-6 col-md-6">
-                    <div className="row d-flex align-items-center">
-                      <div className="col-3 pr-0">
-                        <label>From</label>
-                      </div>
-                      <div className="col-9 p-0">
-                        <input type="date" className="form-control" onChange={(e) => {
-                          if (e.target.value) {
-                            const fDate = new Date(e.target.value).toISOString();
-                            this.setState({ fromDate: fDate })
-                          } else {
-                            this.setState({ fromDate: null })
-                          }
-                        }}></input>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-6 col-md-6">
-                    <div className="row d-flex align-items-center">
-                      <div className="col-3 pr-0">
-                        <label>To</label>
-                      </div>
-                      <div className="col-9 p-0">
-                        <input type="date" className="form-control" onChange={(e) => {
-                          if (e.target.value) {
-                            const tDate = new Date(e.target.value).toISOString();
-                            this.setState({ toDate: tDate })
-                          } else {
-                            this.setState({ toDate: null })
-                          }
-                        }}></input>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-1">
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    this.getToDoByCriteria();
-                  }}>
-                  <div className="d-flex align-items-center">
-                    <FontAwesomeIcon icon={faSearch} />
-                    <span className="ms-2">Search</span>
-                  </div>
-                </button>
-              </div>
+            <div className="d-flex align-items-end h-100">
+              <nav aria-label="breadcrumb">
+                <ol className="breadcrumb mb-0 d-flex justify-content-end">
+                  <li className="breadcrumb-item"><Link to="/">Home</Link></li>
+                  <li className="breadcrumb-item"><Link to="/vendordashboard">Dashboard</Link></li>
+                  <li className="breadcrumb-item active">Activity</li>
+                </ol>
+              </nav>
             </div>
           </div>
 
-          <div className="card-footer border-0 px-0">
-            <div className="d-flex justify-content-between">
-              <div className="d-flex align-items-center status-btn-group">
-                <div className="text-appprimary">Forms Status</div>
-                <div className="mx-2">
-                  <input name="ActivitySaved" type="checkbox" className="btn-check" id="activitiesSaved" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
-                  <label className="btn btn-outline-secondary" htmlFor="activitiesSaved">Activities Saved</label>
+          <form className="card border-0 p-0 mb-3 mx-3">
+            <div className="card-body">
+              <div className="row pe-3">
+                <div className="col-2 col-md-2">
+                  <Select options={this.state.companies} onChange={this.onCompanyChange.bind(this)}
+                    placeholder='Company' value={this.state.selectedCompany} />
                 </div>
-
-                <div className="mx-2">
-                  <input name="Pending" type="checkbox" className="btn-check" id="pending" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
-                  <label className="btn btn-outline-warning" htmlFor="pending">Pending</label>
+                <div className="col-3 col-md-3">
+                  <Select options={this.state.associateCompanies} onChange={(event) => this.setState({ selectedAssociateCompany: event })}
+                    placeholder='Associate Company' value={this.state.selectedAssociateCompany} />
                 </div>
-
-                <div className="mx-2">
-                  <input name="Overdue" type="checkbox" className="btn-check" id="Overdue" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
-                  <label className="btn btn-outline-danger" htmlFor="Overdue">Overdue</label>
+                <div className="col-2 col-md-2">
+                  <Select options={this.state.locations} onChange={(event) => this.setState({ selectedLocation: event })}
+                    placeholder='Location' value={this.state.selectedLocation} />
                 </div>
-
-                <div className="mx-2">
-                  <input name="Rejected" type="checkbox" className="btn-check" id="Reject" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
-                  <label className="btn btn-outline-danger" htmlFor="Reject">Reject</label>
-                </div>
-
-                <div className="mx-2">
-                  <input name="Submitted" type="checkbox" className="btn-check" id="Submitted" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
-                  <label className="btn btn-outline-danger" htmlFor="Submitted">Submitted</label>
-                </div>
-
-                <div className="mx-2">
-                  <input name="Audited" type="checkbox" className="btn-check" id="Audited" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
-                  <label className="btn btn-outline-danger" htmlFor="Audited">Audited</label>
-                </div>
-              </div>
-              <div className="d-flex">
-                <div className="mx-2">
-                  <button className="btn btn-primary" onClick={this.handleShow.bind(this)}>
-                    <div className="d-flex align-items-center">
-                      <FontAwesomeIcon icon={faUpload} />
-                      <span className="ms-2">Bulk Upload</span>
+                <div className="col-md-4">
+                  <div className="row">
+                    <div className="col-6 col-md-6">
+                      <div className="row d-flex align-items-center">
+                        <div className="col-3 pr-0">
+                          <label>From</label>
+                        </div>
+                        <div className="col-9 p-0">
+                          <input type="date" className="form-control" onChange={(e) => {
+                            if (e.target.value) {
+                              const fDate = new Date(e.target.value).toISOString();
+                              this.setState({ fromDate: fDate })
+                            } else {
+                              this.setState({ fromDate: null })
+                            }
+                          }}></input>
+                        </div>
+                      </div>
                     </div>
-                  </button>
+                    <div className="col-6 col-md-6">
+                      <div className="row d-flex align-items-center">
+                        <div className="col-3 pr-0">
+                          <label>To</label>
+                        </div>
+                        <div className="col-9 p-0">
+                          <input type="date" className="form-control" onChange={(e) => {
+                            if (e.target.value) {
+                              const tDate = new Date(e.target.value).toISOString();
+                              this.setState({ toDate: tDate })
+                            } else {
+                              this.setState({ toDate: null })
+                            }
+                          }}></input>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-                <div>
-                  <button className="btn btn-primary" onClick={this.handleSubmitToAuditorModalShow.bind(this)}>
+                <div className="col-1">
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      this.getToDoByCriteria();
+                    }}>
                     <div className="d-flex align-items-center">
-                      <FontAwesomeIcon icon={faSave} />
-                      <span className="ms-2">Submit To Auditor</span>
+                      <FontAwesomeIcon icon={faSearch} />
+                      <span className="ms-2">Search</span>
                     </div>
                   </button>
                 </div>
               </div>
             </div>
-          </div>
-        </form>
+            <div className="card-footer border-0 px-0">
+              <div className="d-flex justify-content-between">
+                <div className="d-flex align-items-center status-btn-group">
+                  <div className="text-appprimary">Forms Status</div>
+                  <div className="mx-2">
+                    <input name="ActivitySaved" type="checkbox" className="btn-check" id="activitiesSaved" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
+                    <label className="btn btn-outline-secondary" htmlFor="activitiesSaved">Activities Saved</label>
+                  </div>
 
-        {/** ToDO Table using Tabulator */}
-        <div id="todo-table"></div>
+                  <div className="mx-2">
+                    <input name="Pending" type="checkbox" className="btn-check" id="pending" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
+                    <label className="btn btn-outline-warning" htmlFor="pending">Pending</label>
+                  </div>
 
-        {/* <table className="table table-bordered bg-white">
+                  <div className="mx-2">
+                    <input name="Overdue" type="checkbox" className="btn-check" id="Overdue" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
+                    <label className="btn btn-outline-danger" htmlFor="Overdue">Overdue</label>
+                  </div>
+
+                  <div className="mx-2">
+                    <input name="Rejected" type="checkbox" className="btn-check" id="Reject" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
+                    <label className="btn btn-outline-danger" htmlFor="Reject">Reject</label>
+                  </div>
+
+                  <div className="mx-2">
+                    <input name="Submitted" type="checkbox" className="btn-check" id="Submitted" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
+                    <label className="btn btn-outline-danger" htmlFor="Submitted">Submitted</label>
+                  </div>
+
+                  <div className="mx-2">
+                    <input name="Audited" type="checkbox" className="btn-check" id="Audited" autoComplete="off" onChange={this.onFormStatusChangeHandler} />
+                    <label className="btn btn-outline-danger" htmlFor="Audited">Audited</label>
+                  </div>
+                </div>
+                <div className="d-flex">
+                  <div className="mx-2">
+                    <button className="btn btn-primary" onClick={this.handleShow.bind(this)}>
+                      <div className="d-flex align-items-center">
+                        <FontAwesomeIcon icon={faUpload} />
+                        <span className="ms-2">Bulk Upload</span>
+                      </div>
+                    </button>
+                  </div>
+
+                  <div>
+                    <button className="btn btn-primary" onClick={this.handleSubmitToAuditorModalShow.bind(this)}>
+                      <div className="d-flex align-items-center">
+                        <FontAwesomeIcon icon={faSave} />
+                        <span className="ms-2">Submit To Auditor</span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          {/** ToDO Table using Tabulator */}
+          <div id="todo-table"></div>
+
+          {/* <table className="table table-bordered bg-white">
           <thead>
             <tr>
               <th scope="col"><input type="checkbox" /> </th>
@@ -484,23 +452,21 @@ export class VendorActivityToDo extends Component {
             }
           </tbody>
         </table> */}
-
-        <>
-          {
-            this.state.show &&
-            <BulkUploadModal onClose={this.handleClose.bind(this)} onSubmit={this.getToDoByCriteria.bind(this)} />
-          }
-          {
-            this.state.isAuditorModalShow &&
-            <SubmitToAuditorModal todo={this.state.res} onClose={this.handleSubmitToAuditorModalClose.bind(this)} onSubmit={this.onSubmitToAuditorHandler} />
-          }
-          {
-            this.state.edit && this.state.activity &&
-            <EditActivity activity={this.state.activity} onClose={this.dismissEdit.bind(this)} onSubmit={this.getToDoByCriteria.bind(this)} />
-          }
-          {this.state.submitting && <PageLoader />}
-        </>
-      </div>
+        </div>
+        {
+          this.state.show &&
+          <BulkUploadModal onClose={this.handleClose.bind(this)} onSubmit={this.getToDoByCriteria.bind(this)} />
+        }
+        {
+          this.state.isAuditorModalShow &&
+          <SubmitToAuditorModal todo={this.state.res} onClose={this.handleSubmitToAuditorModalClose.bind(this)} onSubmit={this.onSubmitToAuditorHandler} />
+        }
+        {
+          this.state.edit && this.state.activity &&
+          <EditActivity activity={this.state.activity} onClose={this.dismissEdit.bind(this)} onSubmit={this.getToDoByCriteria.bind(this)} />
+        }
+        {this.state.submitting && <PageLoader />}
+      </>
     );
   }
 }

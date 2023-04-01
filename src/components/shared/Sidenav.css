@@ -1,13 +1,3 @@
-.sidenav-container {
-    background: var(--white);
-    padding: 0 !important;
-    padding-top: 50px !important;
-}
-
-.sideNav {
-    margin: 0;
-}
-
 .sideNav li {
     list-style: none;
 }
@@ -15,14 +5,15 @@
 .sideNav li a {
     display: flex;
     flex-direction: row;
-    height: 48px;
-    width: 100;
+    height: 40px;
     align-items: center;
 }
 
-.sideNav li a span {
-    display: inline-block;
-    padding-top: 2px;
+.sideNav li a span.sidenav-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
 }
 
 .sideNav a {

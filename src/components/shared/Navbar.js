@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-// import { render } from 'react-dom';
+import "./Navbar.css";
 
-import logo from '../../assets/img/logo.png';
+import logo from '../../assets/img/header-logo.png';
 import * as auth from '../../backend/auth';
 
 
@@ -27,11 +27,11 @@ export class Navbar extends Component {
 
     render() {
         return (
-            <div className='container-full fixed-top bg-white'>
+            <div className='container-full fixed-top bg-white header-navbar-container'>
                 <nav className="navbar navbar-expand-lg border-bottom py-1">
                     <div className="container-fluid">
 
-                        <div className="navbar-brand p-0"><img src={logo} alt="Logo" width="130" /></div>
+                        <div className="navbar-brand p-0"><img src={logo} alt="Logo" width="140" /></div>
 
                         <div className="nav-item d-flex">
                             <ul className="navbar-nav">
@@ -47,7 +47,7 @@ export class Navbar extends Component {
                                     </div>
                                 </div>
                             </ul>
-                            <ul className="d-flex row disabled mb-0 text-muted ps-2 m-0">
+                            <ul className="d-flex row disabled mb-0 text-muted ps-2 m-0 align-items-center align-content-center">
                                 <small className='p-0 m-0 text-center'><span>{dayjs(this.state.lastLogin).format('hh:mm A')}</span></small>
                                 <small className='p-0 m-0 text-center'><span>{dayjs(this.state.lastLogin).format('DD/MM/YYYY')}</span></small>
                             </ul>

@@ -1,0 +1,20 @@
+.header-navbar-container .navbar {
+    height: 84px;
+    box-sizing: border-box;
+}
+
+.header-navbar-container .nav-item.dropdown .dropdown-toggle {
+    height: 54px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.2rem;
+}
+
+.header-navbar-container .nav-item.dropdown .dropdown-toggle .userNameL {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
