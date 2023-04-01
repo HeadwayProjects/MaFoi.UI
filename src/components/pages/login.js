@@ -54,7 +54,7 @@ export class Login extends Component {
         </div>
 
         <div className="col-md-4 loginSection p-5">
-          <div className="navbar-brand p-0 text-center pt-5 mt-5"><img src={logo} alt="Logo" width="210" /></div>
+          <div className="navbar-brand p-0 text-center pt-5 mt-5"><img src={logo} alt="Logo" width="344" /></div>
 
           <Form noValidate>
             <Form.Group className="mb-3" controlId="username">

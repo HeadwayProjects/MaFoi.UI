@@ -4,7 +4,8 @@ import Sidenav from "./Sidenav";
 import * as auth from "../../backend/auth";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import '../shared/Toaster.css';
+import './Toaster.css';
+import "./Layout.css"
 
 class AuthProtector extends Component {
   constructor(props) {
@@ -37,12 +38,11 @@ class LayoutWithSideNav extends Component {
     return (
       <AuthProtector>
         <Navbar />
-        <div className="row mx-0 mt-5">
-          <div className="col-md-2 sidenav-container">
+        <div className="page-layout-container">
+          <div className="sidenav-container">
             <Sidenav />
           </div>
-
-          <div className="col-md-10 col-xs-12 mt-4 pt-2">
+          <div className="main-container">
             {this.props.children}
           </div>
         </div>

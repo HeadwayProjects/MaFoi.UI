@@ -45,10 +45,17 @@ body {
 
 .pageHeading {
   background-color: var(--blueLight);
+  height: 72px;
+  padding-left: 2.25rem !important;
+  justify-content: space-between;
 }
 
 .pageHeading h4 {
   color: var(--blue);
+}
+
+.breadcrumb li {
+  font-size: 0.875rem;
 }
 
 .breadcrumb a {
