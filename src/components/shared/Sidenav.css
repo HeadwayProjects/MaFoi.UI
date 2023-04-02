@@ -16,6 +16,10 @@
     width: 64px;
 }
 
+.sideNav li a span.sidenav-item-icon svg {
+    fill: inherit;
+}
+
 .sideNav a {
     display: block;
     padding: 5px 15px;
@@ -25,4 +29,8 @@
 .sideNav a.active {
     background-color: var(--blue);
     color: var(--white);
+}
+
+.sideNav li a.active span.sidenav-item-icon svg {
+    fill: var(--white);
 }
