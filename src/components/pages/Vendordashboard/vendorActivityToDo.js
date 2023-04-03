@@ -263,11 +263,11 @@ export class VendorActivityToDo extends Component {
                     placeholder='Company' value={this.state.selectedCompany} />
                 </div>
                 <div className="col-3 col-md-3">
-                  <Select options={this.state.associateCompanies} onChange={(event) => this.setState({ selectedAssociateCompany: event })}
+                  <Select options={this.state.associateCompanies} onChange={(event) => this.setState({ selectedAssociateCompany: event }, this.getToDoByCriteria)}
                     placeholder='Associate Company' value={this.state.selectedAssociateCompany} />
                 </div>
                 <div className="col-2 col-md-2">
-                  <Select options={this.state.locations} onChange={(event) => this.setState({ selectedLocation: event })}
+                  <Select options={this.state.locations} onChange={(event) => this.setState({ selectedLocation: event }, this.getToDoByCriteria)}
                     placeholder='Location' value={this.state.selectedLocation} />
                 </div>
                 <div className="col-md-4">
