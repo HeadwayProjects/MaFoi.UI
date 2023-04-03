@@ -90,7 +90,7 @@ class ActivitiesByStatus extends Component {
                                             {
                                                 this.state.activites.length > 0 &&
                                                 <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{ right: '1rem' }}>
-                                                    <Link to="/dashboard/acitivities">View All</Link>
+                                                    <Link to="/dashboard/activities">View All</Link>
                                                 </div>
                                             }
                                         </div>

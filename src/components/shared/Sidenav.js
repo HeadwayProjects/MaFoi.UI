@@ -35,7 +35,7 @@ class Sidenav extends Component {
                                 this.state.vendor &&
                                 <>
                                     <li>
-                                        <Link className={window.location.pathname.includes('/vendor-dashboard') || window.location.pathname.includes('/dashboard/activities')? 'active' : ''} to="/vendor-dashboard">
+                                        <Link className={(window.location.pathname.includes('/vendor-dashboard') || window.location.pathname.includes('/dashboard/activities')) ? 'active' : ''} to="/vendor-dashboard">
                                             <span className="sidenav-item-icon">
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect x="3" y="3" width="8" height="8" rx="3" />

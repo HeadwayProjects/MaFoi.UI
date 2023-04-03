@@ -188,70 +188,59 @@ export class VendorActivityToDo extends Component {
 
           <form className="card border-0 p-0 mb-3 mx-3">
             <div className="card-body">
-              <div className="row pe-3">
+              <div className="row">
                 <div className="col-2 col-md-2">
+                  <label className="filter-label"><small>Company</small></label>
                   <Select options={this.state.companies} onChange={this.onCompanyChange.bind(this)}
                     placeholder='Company' value={this.state.selectedCompany} />
                 </div>
                 <div className="col-3 col-md-3">
+                  <label className="filter-label"><small>Associate Company</small></label>
                   <Select options={this.state.associateCompanies} onChange={(event) => this.setState({ selectedAssociateCompany: event }, this.getToDoByCriteria)}
                     placeholder='Associate Company' value={this.state.selectedAssociateCompany} />
                 </div>
                 <div className="col-2 col-md-2">
+                  <label className="filter-label"><small>Location</small></label>
                   <Select options={this.state.locations} onChange={(event) => this.setState({ selectedLocation: event }, this.getToDoByCriteria)}
                     placeholder='Location' value={this.state.selectedLocation} />
                 </div>
-                <div className="col-md-4">
-                  <div className="row">
-                    <div className="col-6 col-md-6">
-                      <div className="row d-flex align-items-center">
-                        <div className="col-3 pr-0">
-                          <label>From</label>
-                        </div>
-                        <div className="col-9 p-0">
-                          <input type="date" className="form-control" onChange={(e) => {
-                            if (e.target.value) {
-                              const fDate = new Date(e.target.value).toISOString();
-                              this.setState({ fromDate: fDate })
-                            } else {
-                              this.setState({ fromDate: null })
-                            }
-                          }}></input>
-                        </div>
-                      </div>
+                <div className="col-5">
+                  <div className="d-flex justify-content-end">
+                    <div className="d-flex flex-column me-2">
+                      <label className="filter-label"><small>Due Date: From</small></label>
+                      <input type="date" className="form-control" onChange={(e) => {
+                        if (e.target.value) {
+                          const fDate = new Date(e.target.value).toISOString();
+                          this.setState({ fromDate: fDate })
+                        } else {
+                          this.setState({ fromDate: null })
+                        }
+                      }} />
                     </div>
-                    <div className="col-6 col-md-6">
-                      <div className="row d-flex align-items-center">
-                        <div className="col-3 pr-0">
-                          <label>To</label>
-                        </div>
-                        <div className="col-9 p-0">
-                          <input type="date" className="form-control" onChange={(e) => {
-                            if (e.target.value) {
-                              const tDate = new Date(e.target.value).toISOString();
-                              this.setState({ toDate: tDate })
-                            } else {
-                              this.setState({ toDate: null })
-                            }
-                          }}></input>
-                        </div>
+                    <div className="d-flex flex-column ms-3">
+                      <label className="filter-label"><small>Due Date: To</small></label>
+                      <input type="date" className="form-control" onChange={(e) => {
+                        if (e.target.value) {
+                          const tDate = new Date(e.target.value).toISOString();
+                          this.setState({ toDate: tDate })
+                        } else {
+                          this.setState({ toDate: null })
+                        }
+                      }} />
+                    </div>
+                    <div className="d-flex align-items-end ms-3">
+                      <div className="d-flex flex-column">
+                        <button type="submit" className="btn btn-primary d-flex align-items-center"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            this.getToDoByCriteria();
+                          }}>
+                          <FontAwesomeIcon icon={faSearch} />
+                          <span className="ms-2">Search</span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="col-1">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      this.getToDoByCriteria();
-                    }}>
-                    <div className="d-flex align-items-center">
-                      <FontAwesomeIcon icon={faSearch} />
-                      <span className="ms-2">Search</span>
-                    </div>
-                  </button>
                 </div>
               </div>
             </div>
@@ -349,16 +338,16 @@ export class VendorActivityToDo extends Component {
                       <td>
                         <div className="d-flex flex-row align-items-center">
                           {/* Download */}
-                          <span className="me-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => item.download(item)}>
+                          <span className="me-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => item.download(item)} title="Download">
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M9.75 7.875V9.75H2.25V7.875H1V9.75C1 10.4375 1.5625 11 2.25 11H9.75C10.4375 11 11 10.4375 11 9.75V7.875H9.75Z" fill="#322C2D" />
-                              <path d="M9.125 5.375L8.24375 4.49375L6.625 6.10625L6.625 1L5.375 1L5.375 6.10625L3.75625 4.49375L2.875 5.375L6 8.5L9.125 5.375Z" fill="#322C2D" />
+                              <path d="M9.75 7.875V9.75H2.25V7.875H1V9.75C1 10.4375 1.5625 11 2.25 11H9.75C10.4375 11 11 10.4375 11 9.75V7.875H9.75Z" fill="var(--bs-blue)" />
+                              <path d="M9.125 5.375L8.24375 4.49375L6.625 6.10625L6.625 1L5.375 1L5.375 6.10625L3.75625 4.49375L2.875 5.375L6 8.5L9.125 5.375Z" fill="var(--bs-blue)" />
                             </svg>
                           </span>
                           {/* Edit */}
-                          <span className="ms-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => item.edit(item)}>
+                          <span className="ms-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => item.edit(item)} title="Edit">
                             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M2.5 10.8499C2.225 10.8499 1.9895 10.7521 1.7935 10.5564C1.5975 10.3607 1.49967 10.1252 1.5 9.8499V2.8499C1.5 2.5749 1.598 2.3394 1.794 2.1434C1.99 1.9474 2.22533 1.84957 2.5 1.8499H6.9625L5.9625 2.8499H2.5V9.8499H9.5V6.3749L10.5 5.3749V9.8499C10.5 10.1249 10.402 10.3604 10.206 10.5564C10.01 10.7524 9.77467 10.8502 9.5 10.8499H2.5ZM8.0875 2.1374L8.8 2.8374L5.5 6.1374V6.8499H6.2L9.5125 3.5374L10.225 4.2374L6.9125 7.5499C6.82083 7.64157 6.7145 7.71457 6.5935 7.7689C6.4725 7.82324 6.3455 7.85024 6.2125 7.8499H5C4.85833 7.8499 4.7395 7.8019 4.6435 7.7059C4.5475 7.6099 4.49967 7.49124 4.5 7.3499V6.1374C4.5 6.00407 4.525 5.8769 4.575 5.7559C4.625 5.6349 4.69583 5.52874 4.7875 5.4374L8.0875 2.1374ZM10.225 4.2374L8.0875 2.1374L9.3375 0.887402C9.5375 0.687402 9.77717 0.587402 10.0565 0.587402C10.3358 0.587402 10.5712 0.687402 10.7625 0.887402L11.4625 1.5999C11.6542 1.79157 11.75 2.0249 11.75 2.2999C11.75 2.5749 11.6542 2.80824 11.4625 2.9999L10.225 4.2374Z" fill="#322C2D" />
+                              <path d="M2.5 10.8499C2.225 10.8499 1.9895 10.7521 1.7935 10.5564C1.5975 10.3607 1.49967 10.1252 1.5 9.8499V2.8499C1.5 2.5749 1.598 2.3394 1.794 2.1434C1.99 1.9474 2.22533 1.84957 2.5 1.8499H6.9625L5.9625 2.8499H2.5V9.8499H9.5V6.3749L10.5 5.3749V9.8499C10.5 10.1249 10.402 10.3604 10.206 10.5564C10.01 10.7524 9.77467 10.8502 9.5 10.8499H2.5ZM8.0875 2.1374L8.8 2.8374L5.5 6.1374V6.8499H6.2L9.5125 3.5374L10.225 4.2374L6.9125 7.5499C6.82083 7.64157 6.7145 7.71457 6.5935 7.7689C6.4725 7.82324 6.3455 7.85024 6.2125 7.8499H5C4.85833 7.8499 4.7395 7.8019 4.6435 7.7059C4.5475 7.6099 4.49967 7.49124 4.5 7.3499V6.1374C4.5 6.00407 4.525 5.8769 4.575 5.7559C4.625 5.6349 4.69583 5.52874 4.7875 5.4374L8.0875 2.1374ZM10.225 4.2374L8.0875 2.1374L9.3375 0.887402C9.5375 0.687402 9.77717 0.587402 10.0565 0.587402C10.3358 0.587402 10.5712 0.687402 10.7625 0.887402L11.4625 1.5999C11.6542 1.79157 11.75 2.0249 11.75 2.2999C11.75 2.5749 11.6542 2.80824 11.4625 2.9999L10.225 4.2374Z" fill="var(--bs-green)" />
                             </svg>
                           </span>
                           {/* Save */}
