@@ -16,7 +16,7 @@ export class Dashboard extends Component {
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb mb-0 d-flex justify-content-end">
                 <li className="breadcrumb-item"><Link to="/">Home</Link></li>
-                <li className="breadcrumb-item"><Link to="/vendordashboard">Dashboard</Link></li>
+                <li className="breadcrumb-item"><Link to="/vendor-dashboard">Dashboard</Link></li>
                 <li className="breadcrumb-item active">Activity</li>
               </ol>
             </nav>
