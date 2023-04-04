@@ -47,7 +47,6 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
                         `${dayjs(data.startDate).format('DD-MMM-YYYY')}`;
                     setLabel(label);
                     setDateRange({ fromDate: new Date(data.startDate), toDate: new Date(data.endDate) });
-                    console.log(dateRange);
                     setCount((data.items || []).length)
                 }
             });

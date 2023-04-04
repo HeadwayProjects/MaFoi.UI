@@ -159,7 +159,6 @@ function ActivitiesManagement() {
             const sorted = sortBy(associateCompanies, 'label');
             setAssociateCompanies(sorted);
             const _associateCompany = sorted.find(c => c.value === (state || {}).associateCompany);
-            console.log(_associateCompany);
             setAssociateCompany(_associateCompany || sorted[0]);
         }
     }, [company]);
@@ -174,7 +173,6 @@ function ActivitiesManagement() {
             const sorted = sortBy(locations, 'label');
             setLocations(sorted);
             const _location = sorted.find(c => c.value === (state || {}).location);
-            console.log(_location);
             setLocation(_location || sorted[0]);
         }
     }, [associateCompany]);
@@ -207,7 +205,6 @@ function ActivitiesManagement() {
             const sorted = sortBy(companies, 'label');
             setCompanies(sorted);
             const _company = sorted.find(c => c.value === (state || {}).company);
-            console.log(_company);
             setCompany(_company || sorted[0]);
         }
     }, [isFetching]);
