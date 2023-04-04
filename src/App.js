@@ -25,7 +25,7 @@ class App extends Component {
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<LayoutWithSideNav><Dashboard /></LayoutWithSideNav>} />
           <Route path="/vendor-dashboard" element={<LayoutWithSideNav><Vendordashboard /></LayoutWithSideNav>} />
-          <Route path="/dashboard/acitivities" element={<LayoutWithSideNav><VendorActivityToDo /></LayoutWithSideNav>} />
+          <Route path="/dashboard/activities" element={<LayoutWithSideNav><VendorActivityToDo /></LayoutWithSideNav>} />
           <Route path="/vendor-activity-todo" element={<LayoutWithSideNav><VendorActivityToDo /></LayoutWithSideNav>} />
           <Route path="/auditor-activity-todo" element={<LayoutWithSideNav><AuditorActivityToDo /></LayoutWithSideNav>} />
           <Route path="/manage-users" element={<LayoutWithSideNav><ManageUsers /></LayoutWithSideNav>} />

@@ -16,7 +16,7 @@ export class Navbar extends Component {
     componentDidMount() {
         const user = auth.getUserDetails() || {};
         console.log(user);
-        this.setState({ name: user.name, lastLogin: new Date(user.lastlogindate) });
+        this.setState({ name: user.name, role: user.role, lastLogin: new Date(user.lastlogindate) });
     }
 
     logout(event) {
@@ -40,6 +40,7 @@ export class Navbar extends Component {
                                         <span className='userNameL rounded-circle fw-semibold text-center text-white'>S</span> {this.state.name}
                                     </Link>
                                     <div className="dropdown-menu">
+                                        <div className="dropdown-item"><span className="fw-bold">Role: </span>{this.state.role}</div>
                                         <Link className="dropdown-item" to="">Settings</Link>
                                         <Link className="dropdown-item" to="">Change Password</Link>
                                         <hr className="dropdown-divider" />

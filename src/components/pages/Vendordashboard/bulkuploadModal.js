@@ -270,7 +270,9 @@ export class BulkUploadModal extends Component {
                                                         }
                                                     </td>
                                                     <td width="5%">
-                                                        <FontAwesomeIcon icon={faTrash} className="opacity-50" onClick={() => this.onDeleteFile(index)} />
+                                                        <span style={{ opacity: 0.5, cursor: "pointer", color: "var(--red)" }} title="Delete">
+                                                            <FontAwesomeIcon icon={faTrash} className="opacity-50" onClick={() => this.onDeleteFile(index)} />
+                                                        </span>
                                                     </td>
                                                 </tr>
                                             )

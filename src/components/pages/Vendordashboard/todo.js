@@ -109,7 +109,7 @@ export class Todo extends Component {
                                             <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{ right: '1rem' }}>
                                                 {
                                                     this.state.todos.length > 0 &&
-                                                    <Link to="/dashboard/acitivities">View All</Link>
+                                                    <Link to="/dashboard/activities">View All</Link>
                                                 }
                                             </div>
                                         </div>

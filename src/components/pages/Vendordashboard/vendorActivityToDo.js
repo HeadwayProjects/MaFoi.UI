@@ -257,70 +257,59 @@ export class VendorActivityToDo extends Component {
 
           <form className="card border-0 p-0 mb-3 mx-3">
             <div className="card-body">
-              <div className="row pe-3">
+              <div className="row">
                 <div className="col-2 col-md-2">
+                  <label className="filter-label"><small>Company</small></label>
                   <Select options={this.state.companies} onChange={this.onCompanyChange.bind(this)}
                     placeholder='Company' value={this.state.selectedCompany} />
                 </div>
                 <div className="col-3 col-md-3">
+                  <label className="filter-label"><small>Associate Company</small></label>
                   <Select options={this.state.associateCompanies} onChange={(event) => this.setState({ selectedAssociateCompany: event }, this.getToDoByCriteria)}
                     placeholder='Associate Company' value={this.state.selectedAssociateCompany} />
                 </div>
                 <div className="col-2 col-md-2">
+                  <label className="filter-label"><small>Location</small></label>
                   <Select options={this.state.locations} onChange={(event) => this.setState({ selectedLocation: event }, this.getToDoByCriteria)}
                     placeholder='Location' value={this.state.selectedLocation} />
                 </div>
-                <div className="col-md-4">
-                  <div className="row">
-                    <div className="col-6 col-md-6">
-                      <div className="row d-flex align-items-center">
-                        <div className="col-3 pr-0">
-                          <label>From</label>
-                        </div>
-                        <div className="col-9 p-0">
-                          <input type="date" className="form-control" onChange={(e) => {
-                            if (e.target.value) {
-                              const fDate = new Date(e.target.value).toISOString();
-                              this.setState({ fromDate: fDate })
-                            } else {
-                              this.setState({ fromDate: null })
-                            }
-                          }}></input>
-                        </div>
-                      </div>
+                <div className="col-5">
+                  <div className="d-flex justify-content-end">
+                    <div className="d-flex flex-column me-2">
+                      <label className="filter-label"><small>Due Date: From</small></label>
+                      <input type="date" className="form-control" onChange={(e) => {
+                        if (e.target.value) {
+                          const fDate = new Date(e.target.value).toISOString();
+                          this.setState({ fromDate: fDate })
+                        } else {
+                          this.setState({ fromDate: null })
+                        }
+                      }} />
                     </div>
-                    <div className="col-6 col-md-6">
-                      <div className="row d-flex align-items-center">
-                        <div className="col-3 pr-0">
-                          <label>To</label>
-                        </div>
-                        <div className="col-9 p-0">
-                          <input type="date" className="form-control" onChange={(e) => {
-                            if (e.target.value) {
-                              const tDate = new Date(e.target.value).toISOString();
-                              this.setState({ toDate: tDate })
-                            } else {
-                              this.setState({ toDate: null })
-                            }
-                          }}></input>
-                        </div>
+                    <div className="d-flex flex-column ms-3">
+                      <label className="filter-label"><small>Due Date: To</small></label>
+                      <input type="date" className="form-control" onChange={(e) => {
+                        if (e.target.value) {
+                          const tDate = new Date(e.target.value).toISOString();
+                          this.setState({ toDate: tDate })
+                        } else {
+                          this.setState({ toDate: null })
+                        }
+                      }} />
+                    </div>
+                    <div className="d-flex align-items-end ms-3">
+                      <div className="d-flex flex-column">
+                        <button type="submit" className="btn btn-primary d-flex align-items-center"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            this.getToDoByCriteria();
+                          }}>
+                          <FontAwesomeIcon icon={faSearch} />
+                          <span className="ms-2">Search</span>
+                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="col-1">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      this.getToDoByCriteria();
-                    }}>
-                    <div className="d-flex align-items-center">
-                      <FontAwesomeIcon icon={faSearch} />
-                      <span className="ms-2">Search</span>
-                    </div>
-                  </button>
                 </div>
               </div>
             </div>

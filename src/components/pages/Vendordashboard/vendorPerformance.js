@@ -75,14 +75,17 @@ export class Vendor extends Component {
         <div className="my-3 row m-0">
           <div className="row m-0">
             <div className="col-2 col-md-2">
+              <label className="filter-label"><small>Company</small></label>
               <Select options={this.state.companies} onChange={this.onCompanyChange.bind(this)}
                 placeholder='Company' value={this.state.selectedCompany} />
             </div>
             <div className="col-3 col-md-3">
+              <label className="filter-label"><small>Associate Company</small></label>
               <Select options={this.state.associateCompanies} onChange={this.onAssociateCompanyChange.bind(this)}
                 placeholder='Associate Company' value={this.state.selectedAssociateCompany} />
             </div>
             <div className="col-2 col-md-2">
+              <label className="filter-label"><small>Location</small></label>
               <Select options={this.state.locations} onChange={this.onLocationChange.bind(this)}
                 placeholder='Location' value={this.state.selectedLocation} />
             </div>
