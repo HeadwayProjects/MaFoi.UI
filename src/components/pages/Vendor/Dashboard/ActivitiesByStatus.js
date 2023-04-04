@@ -3,6 +3,8 @@ import NavTabs from "../../../shared/NavTabs";
 import ActivityList from "./ActivityList";
 import * as api from "../../../../backend/request";
 import "./dashboard.css";
+import { preventDefault } from "../../../../utils/common";
+import { navigate } from "raviger";
 
 const StatusTabs = [
     { value: 'Overdue', label: 'Overdue' },
@@ -40,6 +42,17 @@ function ActivitiesByStatus({ tabs, selectedCompany, selectedAssociateCompany, s
         }
     }
 
+    function viewActivities(e) {
+        preventDefault(e);
+        navigate('/dashboard/activities', {
+            state: {
+                company: selectedCompany,
+                associateCompany: selectedAssociateCompany,
+                location: selectedLocation,
+                status
+            }
+        });
+    }
 
     useEffect(() => {
         if (selectedCompany && selectedAssociateCompany && selectedLocation) {
@@ -79,7 +92,7 @@ function ActivitiesByStatus({ tabs, selectedCompany, selectedAssociateCompany, s
                                         {
                                             activities.length > 0 &&
                                             <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{ right: '1rem' }}>
-                                                <a href="/dashboard/activities">View All</a>
+                                                <a href="/dashboard/activities" onClick={viewActivities}>View All</a>
                                             </div>
                                         }
                                     </div>

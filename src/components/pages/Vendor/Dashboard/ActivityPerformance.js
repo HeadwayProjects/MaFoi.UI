@@ -6,6 +6,7 @@ import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import "./dashboard.css";
 import NavTabs from "../../../shared/NavTabs";
 import { preventDefault } from "../../../../utils/common";
+import { navigate } from "raviger";
 
 const CurrentPerformanceTabs = [
     { value: '0', label: 'Today' },
@@ -27,7 +28,7 @@ const SubmitStatus = [
 ]
 
 const AuditStatus = [
-    { label: 'Audited', key: 'approved', color: 'green', value: 'Approved' },
+    { label: 'Audited', key: 'approved', color: 'green', value: 'Audited' },
     { label: 'Rejected', key: 'rejected', color: 'red', value: 'Rejected' }
 ]
 
@@ -57,6 +58,19 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                 }
             });
         }
+    }
+
+    function viewActivities(status) {
+        navigate('/dashboard/activities', {
+            state: {
+                company: selectedCompany,
+                associateCompany: selectedAssociateCompany,
+                location: selectedLocation,
+                fromDate: new Date(performanceStatus.startDate),
+                toDate: new Date(performanceStatus.endDate),
+                status
+            }
+        });
     }
 
     useEffect(() => {
@@ -121,7 +135,8 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                                                     }
                                                                 </div>
                                                                 <div className="col-1 px-0 py-0">
-                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}>
+                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
+                                                                        onClick={() => viewActivities(status.value)}>
                                                                         <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
                                                                     </span>
                                                                 </div>
@@ -153,7 +168,8 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                                                     }
                                                                 </div>
                                                                 <div className="col-1 px-0 py-0">
-                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }} to="/dashboard/activities">
+                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
+                                                                        onClick={() => viewActivities(status.value)}>
                                                                         <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
                                                                     </span>
                                                                 </div>

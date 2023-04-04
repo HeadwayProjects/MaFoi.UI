@@ -46,7 +46,7 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
                         `${dayjs(data.startDate).format('DD-MMM-YYYY')} - ${dayjs(data.endDate).format('DD-MMM-YYYY')}` :
                         `${dayjs(data.startDate).format('DD-MMM-YYYY')}`;
                     setLabel(label);
-                    setDateRange({ startDate: data.startDate, endDate: data.endDate });
+                    setDateRange({ fromDate: new Date(data.startDate), toDate: new Date(data.endDate) });
                     console.log(dateRange);
                     setCount((data.items || []).length)
                 }
@@ -59,10 +59,11 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
         navigate('/dashboard/activities', {
             state: {
                 company: selectedCompany,
-                selectedAssociateCompany,
-                selectedLocation
+                associateCompany: selectedAssociateCompany,
+                location: selectedLocation,
+                ...dateRange
             }
-        })
+        });
     }
 
 
