@@ -1,0 +1,14 @@
+.card.auditor-status-card {
+    height: 85px;
+}
+
+.performance-chart {
+    height: 265px;
+}
+
+.legend-marker {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}

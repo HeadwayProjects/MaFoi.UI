@@ -7,10 +7,18 @@
     height: 24px;
 }
 
+.vendorPerformance-cards .card {
+    height: 54px;
+}
+
 .vendorPerformance-cards a.text-link {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 0.5rem;
+}
+
+.card.todo-card {
+    height: 391px;
 }
 
 .status-btn-group .btn {

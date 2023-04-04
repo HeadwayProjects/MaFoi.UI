@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { sortBy } from "underscore";
 import SubmitToAuditorModal from "./SubmitToAuditorModal";
@@ -14,6 +13,9 @@ import BulkUploadModal from "./BulkuploadModal";
 import { useGetUserCompanies } from "../../../../backend/query";
 import { getTabulatorTable } from "./tabulatorTable";
 import "./ActivitiesManagement.css"
+import { Link, usePath, useHistory } from "raviger";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const STATUS_BTNS = [
     { name: 'ActivitySaved', label: 'Activities Saved', style: 'secondary' },
@@ -44,6 +46,7 @@ function StatusTmp({ status }) {
 }
 
 function ActivitiesManagement() {
+    const { state } = useHistory();
     const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
     const [companies, setCompanies] = useState([]);
@@ -52,15 +55,18 @@ function ActivitiesManagement() {
     const [company, setCompany] = useState(null);
     const [associateCompany, setAssociateCompany] = useState(null);
     const [location, setLocation] = useState(null);
-    const [fromDate, setFromDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
-    const [checkedStatuses, setCheckedStatuses] = useState(null);
+    const [fromDate, setFromDate] = useState((state || {}).fromDate || null);
+    const [toDate, setToDate] = useState((state || {}).toDate || null);
+    const [checkedStatuses, setCheckedStatuses] = useState((state || {}).status ? { [state.status]: true } : {});
     const [statuses, setStatuses] = useState(null);
     const [activities, setActivities] = useState([]);
     const [activity, setActivity] = useState(null);
     const [bulkUpload, setBulkUpload] = useState(false);
     const [submitToAuditor, setSubmitToAuditor] = useState(false);
     const { userCompanies, isFetching } = useGetUserCompanies();
+    const path = usePath();
+    const [fromDashboard] = useState(path.includes('/dashboard/activities'));
+
 
     function getActivities() {
         if (company && associateCompany && location) {
@@ -68,8 +74,8 @@ function ActivitiesManagement() {
                 company: company.value,
                 associateCompany: associateCompany.value,
                 location: location.value,
-                fromDate: fromDate || null,
-                toDate: toDate || null,
+                fromDate: fromDate ? new Date(fromDate).toISOString() : null,
+                toDate: toDate ? new Date(toDate).toISOString() : null,
                 statuses: statuses || ['']
             }
             setSubmitting(true);
@@ -130,6 +136,21 @@ function ActivitiesManagement() {
         });
     }
 
+    function fromDateChange(date) {
+        setFromDate(date);
+        if (toDate && date > toDate) {
+            setToDate(date);
+        }
+    }
+
+    function toDateChange(date) {
+        if (fromDate && date > fromDate) {
+            setToDate(date);
+        } else {
+            setToDate(fromDate);
+        }
+    }
+
     useEffect(() => {
         setAssociateCompanies([]);
         setLocations([]);
@@ -146,7 +167,8 @@ function ActivitiesManagement() {
             });
             const sorted = sortBy(associateCompanies, 'label');
             setAssociateCompanies(sorted);
-            setAssociateCompany((sorted || [])[0] || null);
+            const _associateCompany = sorted.find(c => c.value === (state || {}).associateCompany);
+            setAssociateCompany(_associateCompany || sorted[0]);
         }
     }, [company]);
 
@@ -159,7 +181,8 @@ function ActivitiesManagement() {
             });
             const sorted = sortBy(locations, 'label');
             setLocations(sorted);
-            setLocation((sorted || [])[0] || null);
+            const _location = sorted.find(c => c.value === (state || {}).location);
+            setLocation(_location || sorted[0]);
         }
     }, [associateCompany]);
 
@@ -173,7 +196,7 @@ function ActivitiesManagement() {
         if (checkedStatuses) {
             const keys = Object.keys(checkedStatuses);
             const result = keys.filter(key => !!checkedStatuses[key]);
-            setStatuses(result);
+            setStatuses(result.length ? result : ['']);
         }
     }, [checkedStatuses]);
 
@@ -190,7 +213,8 @@ function ActivitiesManagement() {
             });
             const sorted = sortBy(companies, 'label');
             setCompanies(sorted);
-            setCompany(sorted[0]);
+            const _company = sorted.find(c => c.value === (state || {}).company);
+            setCompany(_company || sorted[0]);
         }
     }, [isFetching]);
 
@@ -266,8 +290,11 @@ function ActivitiesManagement() {
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 d-flex justify-content-end">
-                                <li className="breadcrumb-item"><Link to="/">Home</Link></li>
-                                <li className="breadcrumb-item"><Link to="/vendor-dashboard">Dashboard</Link></li>
+                                <li className="breadcrumb-item">Home</li>
+                                {
+                                    fromDashboard &&
+                                    <li className="breadcrumb-item"><Link href="/dashboard">Dashboard</Link></li>
+                                }
                                 <li className="breadcrumb-item active">Activity</li>
                             </ol>
                         </nav>
@@ -293,25 +320,13 @@ function ActivitiesManagement() {
                                 <div className="d-flex justify-content-end">
                                     <div className="d-flex flex-column me-2">
                                         <label className="filter-label"><small>Due Date: From</small></label>
-                                        <input type="date" className="form-control" onChange={(e) => {
-                                            if (e.target.value) {
-                                                const fDate = new Date(e.target.value).toISOString();
-                                                setFromDate(fDate);
-                                            } else {
-                                                setFromDate(null);
-                                            }
-                                        }} />
+                                        <DatePicker className="form-control" selected={fromDate} dateFormat="dd-MM-yyyy"
+                                            onChange={fromDateChange} placeholderText="dd-mm-yyyy" />
                                     </div>
                                     <div className="d-flex flex-column ms-3">
                                         <label className="filter-label"><small>Due Date: To</small></label>
-                                        <input type="date" className="form-control" onChange={(e) => {
-                                            if (e.target.value) {
-                                                const tDate = new Date(e.target.value).toISOString();
-                                                setToDate(tDate);
-                                            } else {
-                                                setToDate(null);
-                                            }
-                                        }} />
+                                        <DatePicker className="form-control" selected={toDate} dateFormat="dd-MM-yyyy"
+                                            onChange={toDateChange} placeholderText="dd-mm-yyyy" />
                                     </div>
                                     <div className="d-flex align-items-end ms-3">
                                         <div className="d-flex flex-column">
@@ -339,7 +354,8 @@ function ActivitiesManagement() {
                                         return (
                                             <div className="mx-2" key={btn.name}>
                                                 <input name={btn.name} type="checkbox" className="btn-check" id={btn.name} autoComplete="off"
-                                                    onChange={onFormStatusChangeHandler} />
+                                                    onChange={onFormStatusChangeHandler}
+                                                    checked={checkedStatuses[btn.name]}/>
                                                 <label className={`btn btn-outline-${btn.style}`} htmlFor={btn.name}>{btn.label}</label>
                                             </div>
                                         )

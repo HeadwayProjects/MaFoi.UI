@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import * as api from '../../../../backend/request';
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import "./dashboard.css";
 import NavTabs from "../../../shared/NavTabs";
+import { preventDefault } from "../../../../utils/common";
+import { navigate } from "raviger";
 
 const CurrentPerformanceTabs = [
     { value: '0', label: 'Today' },
@@ -27,7 +28,7 @@ const SubmitStatus = [
 ]
 
 const AuditStatus = [
-    { label: 'Audited', key: 'approved', color: 'green', value: 'Approved' },
+    { label: 'Audited', key: 'approved', color: 'green', value: 'Audited' },
     { label: 'Rejected', key: 'rejected', color: 'red', value: 'Rejected' }
 ]
 
@@ -57,6 +58,19 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                 }
             });
         }
+    }
+
+    function viewActivities(status) {
+        navigate('/dashboard/activities', {
+            state: {
+                company: selectedCompany,
+                associateCompany: selectedAssociateCompany,
+                location: selectedLocation,
+                fromDate: new Date(performanceStatus.startDate),
+                toDate: new Date(performanceStatus.endDate),
+                status
+            }
+        });
     }
 
     useEffect(() => {
@@ -103,7 +117,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                             </div>
                             <div className="row m-0 vendorPerformance-cards">
                                 <div className="col-md-4">
-                                    <Link className="text-link text-appprimary underline text-center d-block">Submit Status</Link>
+                                    <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block">Submit Status</a>
                                     {
                                         SubmitStatus.map(status => {
                                             return (
@@ -121,19 +135,10 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                                                     }
                                                                 </div>
                                                                 <div className="col-1 px-0 py-0">
-                                                                    <Link style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
-                                                                        to="/dashboard/activities" state={{
-                                                                            params: {
-                                                                                company: selectedCompany,
-                                                                                associateCompany: selectedAssociateCompany,
-                                                                                location: selectedLocation,
-                                                                                status: status.value,
-                                                                                startDate: performanceStatus.startDate,
-                                                                                endDate: performanceStatus.endDate
-                                                                            }
-                                                                        }}>
+                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
+                                                                        onClick={() => viewActivities(status.value)}>
                                                                         <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
-                                                                    </Link>
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -145,7 +150,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                 </div>
 
                                 <div className="col-md-4">
-                                    <Link className="text-link text-appprimary underline text-center d-block"> Audit Status </Link>
+                                    <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block"> Audit Status </a>
                                     {
                                         AuditStatus.map(status => {
                                             return (
@@ -163,9 +168,10 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                                                     }
                                                                 </div>
                                                                 <div className="col-1 px-0 py-0">
-                                                                    <Link style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }} to="/dashboard/activities">
+                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
+                                                                        onClick={() => viewActivities(status.value)}>
                                                                         <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
-                                                                    </Link>
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </div>

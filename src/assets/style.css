@@ -64,11 +64,11 @@ body {
 
 
 /* Dashboard-Tabs Start */
-.nav-tabs.DashboardTabs {
+.nav-tabs.dashboardTabs {
   border-bottom: 3px solid var(--blue);
 }
 
-.nav-tabs.DashboardTabs .nav-link {
+.nav-tabs.dashboardTabs .nav-link {
   border-radius: 25px 25px 0 0;
   background-color: var(--grey);
   color: var(--black);
@@ -76,9 +76,10 @@ body {
   font-weight: 600;
 }
 
-.nav-tabs.DashboardTabs .nav-link.active {
+.nav-tabs.dashboardTabs .nav-link.active {
   background-color: var(--blue);
   color: var(--white);
+  border-color: transparent;
 }
 
 /* Dashboard-cards count */
@@ -162,6 +163,7 @@ body {
 .nav-tabs-rounded .nav-item .nav-link.active {
   background-color: var(--blueLight1);
   color: var(--white);
+  border-color: transparent;
 }
 
 

@@ -39,10 +39,10 @@ export class AuditorActivityToDo extends Component {
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb mb-0 d-flex justify-content-end">
                 <li className="breadcrumb-item">
-                  <Link to="/">Home</Link>
+                  {/* <Link to="/">Home</Link> */}
                 </li>
                 <li className="breadcrumb-item">
-                  <Link to="/dashboard">Dashboard</Link>
+                  {/* <Link to="/dashboard">Dashboard</Link> */}
                 </li>
                 <li className="breadcrumb-item active">Activity</li>
               </ol>
@@ -193,10 +193,10 @@ export class AuditorActivityToDo extends Component {
                     <td className="text-danger">Reject</td>
                     <td><input type="text" /></td>
                     <td>
-                        <Link to="">D</Link>
+                        {/* <Link to="">D</Link>
                         <Link to="">E</Link>
                         <Link to="">S</Link>
-                        <Link to="">V</Link>
+                        <Link to="">V</Link> */}
                     </td>
                 </tr>
                 <tr>
@@ -213,10 +213,10 @@ export class AuditorActivityToDo extends Component {
                     <td className="text-danger">Reject</td>
                     <td><input type="text" /></td>
                     <td>
-                        <Link to="">D</Link>
+                        {/* <Link to="">D</Link>
                         <Link to="">E</Link>
                         <Link to="">S</Link>
-                        <Link to="">V</Link>
+                        <Link to="">V</Link> */}
                     </td>
                 </tr>
                 <tr>
@@ -233,10 +233,10 @@ export class AuditorActivityToDo extends Component {
                     <td className="text-danger">Reject</td>
                     <td><input type="text" /></td>
                     <td>
-                        <Link to="">D</Link>
+                        {/* <Link to="">D</Link>
                         <Link to="">E</Link>
                         <Link to="">S</Link>
-                        <Link to="">V</Link>
+                        <Link to="">V</Link> */}
                     </td>
                 </tr>
                 <tr>
@@ -253,10 +253,10 @@ export class AuditorActivityToDo extends Component {
                     <td className="text-danger">Reject</td>
                     <td><input type="text" /></td>
                     <td>
-                        <Link to="">D</Link>
+                        {/* <Link to="">D</Link>
                         <Link to="">E</Link>
                         <Link to="">S</Link>
-                        <Link to="">V</Link>
+                        <Link to="">V</Link> */}
                     </td>
                 </tr>
             </tbody>

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 export class Auditor extends Component {
   render() {
@@ -17,7 +16,7 @@ export class Auditor extends Component {
                     <h3 className="p-0 m-0">(13)</h3>
                   </div>
                   <div className="col-2 px-0 py-1">
-                    <Link className="rounded-circle"> - </Link>
+                    {/* <Link className="rounded-circle"> - </Link> */}
                   </div>
                 </div>
               </div>
@@ -35,7 +34,7 @@ export class Auditor extends Component {
                     <h3 className="p-0 m-0">(03)</h3>
                   </div>
                   <div className="col-2 px-0 py-1">
-                    <Link className="rounded-circle"> - </Link>
+                    {/* <Link className="rounded-circle"> - </Link> */}
                   </div>
                 </div>
               </div>
@@ -53,7 +52,7 @@ export class Auditor extends Component {
                     <h3 className="p-0 m-0">(09)</h3>
                   </div>
                   <div className="col-2 px-0 py-1">
-                    <Link className="rounded-circle"> - </Link>
+                    {/* <Link className="rounded-circle"> - </Link> */}
                   </div>
                 </div>
               </div>
@@ -71,7 +70,7 @@ export class Auditor extends Component {
                     <h3 className="p-0 m-0">(21)</h3>
                   </div>
                   <div className="col-2 px-0 py-1">
-                    <Link className="rounded-circle"> - </Link>
+                    {/* <Link className="rounded-circle"> - </Link> */}
                   </div>
                 </div>
               </div>

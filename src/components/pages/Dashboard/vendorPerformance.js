@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-
+import { preventDefault } from "../../../utils/common";
 
 export class Vendor extends Component {
   render() {
@@ -76,7 +75,7 @@ export class Vendor extends Component {
                         This Week
                       </button>
                     </li>
-                    
+
                   </ul>
                 </div>
 
@@ -92,12 +91,12 @@ export class Vendor extends Component {
                       <div className="text-center mb-3">
                         <strong className="text-primary">(09-Mar-2023)</strong>
                       </div>
-                      
+
 
                       <div className="row m-0  vendorPerformance-cards">
 
                         <div className="col-md-4">
-                          <Link className="text-link text-appprimary underline"> Submit Status </Link>
+                          <a href="/" onClick={preventDefault} className="text-link text-appprimary underline"> Submit Status </a>
                           <div className="col-md-12 mb-3">
                             <div className="card cardCount grey">
                               <div className="card-body">
@@ -109,7 +108,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(12)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -127,7 +126,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(36/50)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -145,7 +144,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(14/50)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -163,7 +162,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(36/50)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -172,7 +171,7 @@ export class Vendor extends Component {
                         </div>
 
                         <div className="col-md-4">
-                          <Link className="text-link text-appprimary underline"> Audit Status </Link>
+                          <a href="/" onClick={preventDefault} className="text-link text-appprimary underline">Audit Status</a>
                           <div className="col-md-12 mb-3">
                             <div className="card cardCount green">
                               <div className="card-body">
@@ -184,7 +183,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(12)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -202,7 +201,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(36/50)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -211,14 +210,14 @@ export class Vendor extends Component {
 
                         </div>
 
-                        
+
 
                         <div className="col-md-4">
                           Charts
                         </div>
 
                       </div>
-                      
+
                     </div>
                   </div>
                   <div
@@ -275,7 +274,7 @@ export class Vendor extends Component {
                         aria-controls="VendorThisMonthV-pane"
                         aria-selected="true"
                       >
-                        This <br/>Month
+                        This <br />Month
                       </button>
                     </li>
                     <li className="nav-item">
@@ -289,7 +288,7 @@ export class Vendor extends Component {
                         aria-controls="VendorLast3Months-pane"
                         aria-selected="false"
                       >
-                        Last <br/>3 Months
+                        Last <br />3 Months
                       </button>
                     </li>
                     <li className="nav-item">
@@ -303,7 +302,7 @@ export class Vendor extends Component {
                         aria-controls="VendorLast6Months-pane"
                         aria-selected="false"
                       >
-                        Last <br/>6 Months 
+                        Last <br />6 Months
                       </button>
                     </li>
                     <li className="nav-item">
@@ -317,14 +316,14 @@ export class Vendor extends Component {
                         aria-controls="VendorLast12Months-pane"
                         aria-selected="false"
                       >
-                        Last <br/>12 Months 
+                        Last <br />12 Months
                       </button>
                     </li>
                   </ul>
                 </div>
 
                 <div className="tab-content" id="MonthContent">
-                  
+
                   <div
                     className="tab-pane fade show active"
                     id="VendorThisMonthV-pane"
@@ -340,7 +339,7 @@ export class Vendor extends Component {
                       <div className="row m-0  vendorPerformance-cards">
 
                         <div className="col-md-4">
-                          <Link className="text-link text-appprimary underline"> Submit Status </Link>
+                          {/* <Link className="text-link text-appprimary underline"> Submit Status </Link> */}
                           <div className="col-md-12 mb-3">
                             <div className="card cardCount grey">
                               <div className="card-body">
@@ -352,7 +351,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(12)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -370,7 +369,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(36/50)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -388,7 +387,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(14/50)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -406,7 +405,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(36/50)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -415,7 +414,7 @@ export class Vendor extends Component {
                         </div>
 
                         <div className="col-md-4">
-                          <Link className="text-link text-appprimary underline"> Audit Status </Link>
+                          {/* <Link className="text-link text-appprimary underline"> Audit Status </Link> */}
                           <div className="col-md-12 mb-3">
                             <div className="card cardCount green">
                               <div className="card-body">
@@ -427,7 +426,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(12)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -445,7 +444,7 @@ export class Vendor extends Component {
                                     <h3 className="p-0 m-0">(36/50)</h3>
                                   </div>
                                   <div className="col-1 px-0 py-0">
-                                    <Link className="rounded-circle"> - </Link>
+                                    {/* <Link className="rounded-circle"> - </Link> */}
                                   </div>
                                 </div>
                               </div>
@@ -454,19 +453,19 @@ export class Vendor extends Component {
 
                         </div>
 
-                        
+
 
                         <div className="col-md-4">
                           Charts
                         </div>
 
                       </div>
-                      
-                      
+
+
                     </div>
                   </div>
 
-                  
+
 
                   <div
                     className="tab-pane fade"
@@ -520,9 +519,9 @@ export class Vendor extends Component {
 
         </div>
 
-        
-        
-        <div className="row m-0 mt-4">          
+
+
+        <div className="row m-0 mt-4">
 
           {/* ----------------- To Do starts --------------- */}
           <div className="col-md-6">
@@ -579,7 +578,7 @@ export class Vendor extends Component {
                         This Month
                       </button>
                     </li>
-                    
+
                   </ul>
                 </div>
 
@@ -595,7 +594,7 @@ export class Vendor extends Component {
                       <div className="text-center mb-3">
                         <strong className="text-primary">(09-Mar-2023)</strong>
                       </div>
-                      
+
 
                       <div className="row m-0 card cardList yellow border-0">
                         <div className="card-body p-0">
@@ -606,14 +605,14 @@ export class Vendor extends Component {
                             <li class="list-group-item">Hyderabad-<span>Pending</span>-09-Mar/2023-Rule 24 (9) </li>
                           </ul>
                           <div className="text-primary d-flex justify-content-end fw-bold">
-                            <Link to="/auditorActivityToDo">View All</Link>
+                            {/* <Link to="/auditorActivityToDo">View All</Link> */}
                           </div>
                         </div>
                       </div>
-                      
+
                     </div>
                   </div>
-                 
+
                   <div
                     className="tab-pane fade"
                     id="VendorToDoThisWeek-pane"
@@ -627,7 +626,7 @@ export class Vendor extends Component {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div
                     className="tab-pane fade"
                     id="VendorToDoThisMonth-pane"
@@ -642,7 +641,7 @@ export class Vendor extends Component {
                     </div>
                   </div>
 
-                  
+
                 </div>
               </div>
             </div>
@@ -661,7 +660,7 @@ export class Vendor extends Component {
 
                 <div className="nav-tabs-rounded col-8 mx-auto">
                   <ul className="nav nav-tabs border-0" id="VendorUpcomingWeek" role="tablist">
-                    
+
                     <li className="nav-item">
                       <button
                         className="nav-link active"
@@ -706,7 +705,7 @@ export class Vendor extends Component {
                         Next Quarter
                       </button>
                     </li>
-                    
+
                   </ul>
                 </div>
 
@@ -722,7 +721,7 @@ export class Vendor extends Component {
                       <div className="text-center mb-3">
                         <strong className="text-primary">(09-Mar-2023) - (14-Mar-2023)</strong>
                       </div>
-                      
+
 
                       <div className="row m-0 card cardList yellow border-0">
                         <div className="card-body p-0">
@@ -733,14 +732,14 @@ export class Vendor extends Component {
                             <li class="list-group-item">Hyderabad-<span>Pending</span>-09-Mar/2023-Rule 24 (9) </li>
                           </ul>
                           <div className="text-primary d-flex justify-content-end fw-bold">
-                            <Link to="">View All</Link>
+                            {/* <Link to="">View All</Link> */}
                           </div>
                         </div>
                       </div>
-                      
+
                     </div>
                   </div>
-                 
+
                   <div
                     className="tab-pane fade"
                     id="VendorUpcomingNextWeek-pane"
@@ -754,7 +753,7 @@ export class Vendor extends Component {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div
                     className="tab-pane fade"
                     id="VendorUpcomingNextMonth-pane"
@@ -769,7 +768,7 @@ export class Vendor extends Component {
                     </div>
                   </div>
 
-                  
+
                   <div
                     className="tab-pane fade"
                     id="VendorUpcomingNextQtr-pane"
@@ -783,7 +782,7 @@ export class Vendor extends Component {
                       </div>
                     </div>
                   </div>
-                  
+
                 </div>
               </div>
             </div>
@@ -795,7 +794,7 @@ export class Vendor extends Component {
 
 
 
-        <div className="row m-0 mt-4">          
+        <div className="row m-0 mt-4">
 
           {/* ----------------- OverDue-Pending starts --------------- */}
           <div className="col-md-6">
@@ -837,7 +836,7 @@ export class Vendor extends Component {
                         Pending
                       </button>
                     </li>
-                    
+
                   </ul>
                 </div>
 
@@ -853,7 +852,7 @@ export class Vendor extends Component {
                       <div className="text-center mb-3">
                         <strong className="text-primary">(09-Mar-2023)</strong>
                       </div>
-                      
+
 
                       <div className="row m-0 card cardList red border-0">
                         <div className="card-body p-0">
@@ -864,14 +863,14 @@ export class Vendor extends Component {
                             <li class="list-group-item">Hyderabad-<span>OverDue</span>-09-Mar/2023-Rule 24 (9) </li>
                           </ul>
                           <div className="text-primary d-flex justify-content-end fw-bold">
-                            <Link to="">View All</Link>
+                            {/* <Link to="">View All</Link> */}
                           </div>
                         </div>
                       </div>
-                      
+
                     </div>
                   </div>
-                 
+
                   <div
                     className="tab-pane fade"
                     id="VendorPending-pane"
@@ -885,9 +884,9 @@ export class Vendor extends Component {
                       </div>
                     </div>
                   </div>
-                  
 
-                  
+
+
                 </div>
               </div>
             </div>
@@ -906,7 +905,7 @@ export class Vendor extends Component {
 
                 <div className="nav-tabs-rounded col-4 mx-auto">
                   <ul className="nav nav-tabs border-0" id="VendorRejectedWeek" role="tablist">
-                    
+
                     <li className="nav-item">
                       <button
                         className="nav-link active"
@@ -936,7 +935,7 @@ export class Vendor extends Component {
                         Audited
                       </button>
                     </li>
-                    
+
                   </ul>
                 </div>
 
@@ -952,7 +951,7 @@ export class Vendor extends Component {
                       <div className="text-center mb-3">
                         <strong className="text-primary">08 Rejected</strong>
                       </div>
-                      
+
 
                       <div className="row m-0 card cardList red border-0">
                         <div className="card-body p-0">
@@ -963,15 +962,15 @@ export class Vendor extends Component {
                             <li class="list-group-item">Hyderabad-<span>Rejected</span>-09-Mar/2023-Rule 24 (9) </li>
                           </ul>
                           <div className="text-primary d-flex justify-content-end fw-bold">
-                            <Link to="">View All</Link>
+                            {/* <Link to="">View All</Link> */}
                           </div>
                         </div>
                       </div>
-                      
+
                     </div>
                   </div>
-                 
-                  
+
+
                   <div
                     className="tab-pane fade"
                     id="VendorAudited-pane"
@@ -986,8 +985,8 @@ export class Vendor extends Component {
                     </div>
                   </div>
 
-                  
-                  
+
+
                 </div>
               </div>
             </div>
