@@ -195,7 +195,6 @@ function BulkUploadModal({ onClose }) {
 
     useEffect(() => {
         if (!isFetching && userCompanies) {
-            console.log(userCompanies);
             const companies = userCompanies.map(company => {
                 return { value: company.id, label: company.name, company }
             });

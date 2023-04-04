@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import NavTabs from "../../../shared/NavTabs";
 import ActivityList from "./ActivityList";
 import * as api from "../../../../backend/request";
@@ -80,7 +79,7 @@ function ActivitiesByStatus({ tabs, selectedCompany, selectedAssociateCompany, s
                                         {
                                             activities.length > 0 &&
                                             <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{ right: '1rem' }}>
-                                                <Link to="/dashboard/activities">View All</Link>
+                                                <a href="/dashboard/activities">View All</a>
                                             </div>
                                         }
                                     </div>

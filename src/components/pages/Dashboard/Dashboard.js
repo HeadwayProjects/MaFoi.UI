@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom';
-
 import Auditor from "./auditorPerformance";
 import Vendor from "./vendorPerformance";
 
@@ -16,9 +14,9 @@ export class Dashboard extends Component {
           <div className="col-4">
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb mb-0 d-flex justify-content-end">
-                <li className="breadcrumb-item"><Link to="/">Home</Link></li>
+                {/* <li className="breadcrumb-item"><Link to="/">Home</Link></li>
                 <li className="breadcrumb-item"><Link to="/dashboard">Dashboard</Link></li>
-                <li className="breadcrumb-item active">Activity</li>
+                <li className="breadcrumb-item active">Activity</li> */}
               </ol>
             </nav>
           </div>

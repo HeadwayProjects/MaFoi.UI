@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import * as api from '../../../../backend/request';
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -103,7 +102,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                             </div>
                             <div className="row m-0 vendorPerformance-cards">
                                 <div className="col-md-4">
-                                    <Link className="text-link text-appprimary underline text-center d-block">Submit Status</Link>
+                                    <a href="javascript.void(0)" className="text-link text-appprimary underline text-center d-block">Submit Status</a>
                                     {
                                         SubmitStatus.map(status => {
                                             return (
@@ -121,19 +120,9 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                                                     }
                                                                 </div>
                                                                 <div className="col-1 px-0 py-0">
-                                                                    <Link style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
-                                                                        to="/dashboard/activities" state={{
-                                                                            params: {
-                                                                                company: selectedCompany,
-                                                                                associateCompany: selectedAssociateCompany,
-                                                                                location: selectedLocation,
-                                                                                status: status.value,
-                                                                                startDate: performanceStatus.startDate,
-                                                                                endDate: performanceStatus.endDate
-                                                                            }
-                                                                        }}>
+                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}>
                                                                         <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
-                                                                    </Link>
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -145,7 +134,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                 </div>
 
                                 <div className="col-md-4">
-                                    <Link className="text-link text-appprimary underline text-center d-block"> Audit Status </Link>
+                                    <a href="javascript.void(0)" className="text-link text-appprimary underline text-center d-block"> Audit Status </a>
                                     {
                                         AuditStatus.map(status => {
                                             return (
@@ -163,9 +152,9 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                                                     }
                                                                 </div>
                                                                 <div className="col-1 px-0 py-0">
-                                                                    <Link style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }} to="/dashboard/activities">
+                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }} to="/dashboard/activities">
                                                                         <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
-                                                                    </Link>
+                                                                    </span>
                                                                 </div>
                                                             </div>
                                                         </div>

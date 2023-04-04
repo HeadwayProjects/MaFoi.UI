@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { sortBy } from "underscore";
 import SubmitToAuditorModal from "./SubmitToAuditorModal";
@@ -12,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faSearch, faUpload } from "@fortawesome/free-solid-svg-icons";
 import BulkUploadModal from "./BulkuploadModal";
 import { useGetUserCompanies } from "../../../../backend/query";
+import { Link, usePath } from "raviger";
 
 const STATUS_BTNS = [
     { name: 'ActivitySaved', label: 'Activities Saved', style: 'secondary' },
@@ -59,6 +59,8 @@ function ActivitiesManagement() {
     const [bulkUpload, setBulkUpload] = useState(false);
     const [submitToAuditor, setSubmitToAuditor] = useState(false);
     const { userCompanies, isFetching } = useGetUserCompanies();
+    const path = usePath();
+    const [fromDashboard] = useState(path.includes('/dashboard/activities'));
 
     function getActivities() {
         if (company && associateCompany && location) {
@@ -195,8 +197,11 @@ function ActivitiesManagement() {
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 d-flex justify-content-end">
-                                <li className="breadcrumb-item"><Link to="/">Home</Link></li>
-                                <li className="breadcrumb-item"><Link to="/vendor-dashboard">Dashboard</Link></li>
+                                <li className="breadcrumb-item">Home</li>
+                                {
+                                    fromDashboard &&
+                                    <li className="breadcrumb-item"><Link href="/dashboard">Dashboard</Link></li>
+                                }
                                 <li className="breadcrumb-item active">Activity</li>
                             </ol>
                         </nav>

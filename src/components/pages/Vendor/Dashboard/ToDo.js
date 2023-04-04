@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import NavTabs from "../../../shared/NavTabs";
 import * as api from "../../../../backend/request";
-import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import ActivityList from "./ActivityList";
 import "./dashboard.css";
+import { navigate } from "raviger";
 
 const TodosTabs = [
     { value: 'Today', label: 'Today' },
@@ -46,11 +46,20 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
                         `${dayjs(data.startDate).format('DD-MMM-YYYY')}`;
                     setLabel(label);
                     setDateRange({ startDate: data.startDate, endDate: data.endDate });
-                    console.log(dateRange);
                     setCount((data.items || []).length)
                 }
             });
         }
+    }
+
+    function viewAll(e) {
+        navigate('/dashboard/activities', {
+            state: {
+                company: selectedCompany,
+                selectedAssociateCompany,
+                selectedLocation
+            }
+        })
     }
 
 
@@ -68,7 +77,7 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
 
     return (
         <>
-            <div className="card">
+            <div className="card todo-card">
                 <div className="card-header bg-white border-0 underline text-appprimary fw-semibold fs-5 d-flex align-items-center">
                     <div>
                         {
@@ -89,7 +98,9 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
                     </div>
                 </div>
                 <div className="card-body pt-1">
-                    <h5 className="text-center mb-3 fw-semibold"><Link to="">{count || 0} Activities</Link></h5>
+                    <h5 className="text-center mb-3 fw-semibold">
+                        <a href="javascript:void(0)">{count || 0} Activities</a>
+                    </h5>
                     {
                         tabs &&
                         <NavTabs list={tabs} onTabChange={(tab) => setFrequency(tab)} />
@@ -107,7 +118,7 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
                                         <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{ right: '1rem' }}>
                                             {
                                                 activities.length > 0 &&
-                                                <Link to="/dashboard/activities">View All</Link>
+                                                <a href="javascript:void(0)" onClick={viewAll}>View All</a>
                                             }
                                         </div>
                                     </div>

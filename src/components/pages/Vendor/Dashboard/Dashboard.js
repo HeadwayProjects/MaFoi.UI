@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from 'react-router-dom';
 import DashboardDataGrid from "./DashboardDataGrid";
 
 function VendorDashboard() {
@@ -12,9 +11,8 @@ function VendorDashboard() {
                 <div className="d-flex align-items-end h-100">
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb mb-0 d-flex justify-content-end">
-                            <li className="breadcrumb-item"><Link to="/">Home</Link></li>
-                            <li className="breadcrumb-item"><Link to="/vendor-dashboard">Dashboard</Link></li>
-                            <li className="breadcrumb-item active">Activity</li>
+                            <li className="breadcrumb-item">Home</li>
+                            <li className="breadcrumb-item">Dashboard</li>
                         </ol>
                     </nav>
                 </div>
