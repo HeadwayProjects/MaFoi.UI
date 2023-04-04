@@ -12,6 +12,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faSearch, faUpload } from "@fortawesome/free-solid-svg-icons";
 import BulkUploadModal from "./BulkuploadModal";
 import { useGetUserCompanies } from "../../../../backend/query";
+import { getTabulatorTable } from "./tabulatorTable";
+import "./ActivitiesManagement.css"
 
 const STATUS_BTNS = [
     { name: 'ActivitySaved', label: 'Activities Saved', style: 'secondary' },
@@ -70,9 +72,15 @@ function ActivitiesManagement() {
                 toDate: toDate || null,
                 statuses: statuses || ['']
             }
-            api.post('/api/ToDo/GetToDoByCriteria', payload).then(response => {
-                setActivities(response.data || []);
-            });
+            setSubmitting(true);
+            api.post('/api/ToDo/GetToDoByCriteria', payload)
+                .then(response => {
+                    setActivities(response.data || []).map(x => {
+                        return { ...x, edit: editActivity, download: downloadForm }
+                      });
+                    setSubmitting(false);
+                })
+                .catch(() => { setSubmitting(false); })
         }
     }
 
@@ -107,11 +115,12 @@ function ActivitiesManagement() {
             return;
         }
         this.setState({ submitting: true });
+        setSubmitting(true);
         // API CAll
         api.post('/api/ToDo/SubmitToAudit', filteredIds).then(() => {
             toast.success('Selected activities submitted successfully.');
             this.getToDoByCriteria();
-        }).finally(() => this.setState({ submitting: false }));
+        }).finally(() => setSubmitting(false));
     }
 
     function onFormStatusChangeHandler(e) {
@@ -184,6 +193,68 @@ function ActivitiesManagement() {
             setCompany(sorted[0]);
         }
     }, [isFetching]);
+
+    const getTableData = (activities) => {
+        const data = activities.map(item => {
+            return {
+                ...item,
+                id: item.id,
+                month: `${item.month} ${item.year}`,
+                act: item.act,
+                rule: item.rule,
+                activity: item.activity,
+                associateCompany: item.associateCompany,
+                location: item.location,
+                auditDate: dayjs(item.dueDate).format('DD-MM-YYYY'),
+                auditStatus: item.auditStatus,
+                status: item.status,
+                auditRemarks: item.auditRemarks
+            }
+        })
+        return data;
+    }
+
+    const toDoTableDownloadIcon = function (cell, item) {
+        return `<i class='fa fa-download'></i>`;
+    };
+    const toDoTableEditIcon = function (cell, item) {
+        return `<i class='fa fa-edit'></i>`;
+    };
+
+    const columns = [
+        {
+            formatter: "rowSelection", titleFormatter: "rowSelection", hozAlign: "center", headerSort: false, width: 10, cellClick: function (e, cell) {
+                cell.getRow().toggleSelect();
+            }
+        },
+        { title: "Month(year)", field: "month" },
+        { title: "Act", field: "act|name", width: "15px" },
+        { title: "Rule", field: "rule|name", width: "10px" },
+        { title: "Forms/Registers & Returns", field: "activity|name", width: "10px" },
+        { title: "Associate Company", field: "associateCompany|name", width: "10px" },
+        { title: "Location Name", field: "location|name" },
+        { title: "Audit Due Date", field: "auditDate", sorter: "date", sorterParams: { format: "dd-MM-yyyy", alignEmptyValues: "top", } },
+        { title: "Audit Status", field: "auditStatus" },
+        { title: "Forms Status", field: "status" },
+        { title: "Audit Remarks", field: "auditRemarks" },
+        {
+            title: "Download", formatter: toDoTableDownloadIcon, width: 50, hozAlign: "center", headerTooltip: true, cellClick: function (e, cell) {
+                const item = cell.getRow().getData();
+                item.download(item);
+            }
+        },
+        {
+            title: "Edit", formatter: toDoTableEditIcon, width: 50, hozAlign: "center", headerTooltip: true, cellClick: function (e, cell) {
+                const item = cell.getRow().getData();
+                // item.edit(item);
+                console.log(item)
+            }
+        },
+    ]
+
+    useEffect(() => {
+        getTabulatorTable("#todo-table", getTableData(activities), columns)
+    }, [activities])
 
     return (
         <>
@@ -304,7 +375,10 @@ function ActivitiesManagement() {
                     </div>
                 </form>
 
-                <table className="table table-bordered bg-white">
+                {/** ToDO Table using Tabulator */}
+                <div id="todo-table"></div>
+
+                {/* <table className="table table-bordered bg-white">
                     <thead>
                         <tr>
                             <th scope="col"><input type="checkbox" /> </th>
@@ -357,7 +431,7 @@ function ActivitiesManagement() {
                             })
                         }
                     </tbody>
-                </table>
+                </table> */}
             </div>
 
             {
