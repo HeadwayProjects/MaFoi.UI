@@ -163,6 +163,7 @@ body {
 .nav-tabs-rounded .nav-item .nav-link.active {
   background-color: var(--blueLight1);
   color: var(--white);
+  border-color: transparent;
 }
 
 

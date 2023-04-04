@@ -25,7 +25,7 @@ function AuthenticatedContent() {
             layout(<ActivitiesManagement />)
         ),
         '/activities': () => (
-            layout(isVendor ? <ActivitiesManagement /> : <></>)
+            layout(isVendor ? <ActivitiesManagement /> : <ActivitiesManagement />)
         ),
         '/': () => (
             layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
