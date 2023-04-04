@@ -1,10 +1,10 @@
 import React from "react";
 import { useRoutes } from "raviger";
 import * as auth from "../backend/auth"
-import Dashboard from "../components/pages/Dashboard/Dashboard";
 import VendorDashboard from "../components/pages/Vendor/Dashboard/Dashboard";
 import ActivitiesManagement from "../components/pages/Vendor/TaskManagement/ActivitiesManagement";
 import LayoutWithSideNav from "../components/shared/LayoutWithSideNav";
+import AuditorDashboard from "../components/pages/Auditor/AuditorDashboard";
 
 function AuthenticatedContent() {
     const user = auth.getUserDetails();
@@ -19,7 +19,7 @@ function AuthenticatedContent() {
 
     const routes = {
         '/dashboard': () => (
-            layout(isVendor ? <VendorDashboard /> : <Dashboard />)
+            layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
         ),
         '/dashboard/activities': () => (
             layout(<ActivitiesManagement />)
@@ -28,7 +28,7 @@ function AuthenticatedContent() {
             layout(isVendor ? <ActivitiesManagement /> : <></>)
         ),
         '/': () => (
-            layout(isVendor ? <VendorDashboard /> : <Dashboard />)
+            layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
         ),
     }
 
