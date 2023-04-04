@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { preventDefault } from "../../../utils/common";
 
 export class Vendor extends Component {
   render() {
@@ -95,7 +96,7 @@ export class Vendor extends Component {
                       <div className="row m-0  vendorPerformance-cards">
 
                         <div className="col-md-4">
-                          <a href="javascript.void(0)" className="text-link text-appprimary underline"> Submit Status </a>
+                          <a href="/" onClick={preventDefault} className="text-link text-appprimary underline"> Submit Status </a>
                           <div className="col-md-12 mb-3">
                             <div className="card cardCount grey">
                               <div className="card-body">
@@ -170,7 +171,7 @@ export class Vendor extends Component {
                         </div>
 
                         <div className="col-md-4">
-                          <a href="javascript.void(0)" className="text-link text-appprimary underline"> Audit Status </a>
+                          <a href="/" onClick={preventDefault} className="text-link text-appprimary underline">Audit Status</a>
                           <div className="col-md-12 mb-3">
                             <div className="card cardCount green">
                               <div className="card-body">

@@ -10,6 +10,7 @@ import bannerimg3 from '../../assets/img/banner3.jpg';
 import * as api from '../../backend/request';
 import * as auth from '../../backend/auth';
 import "./login.css";
+import { preventDefault } from "../../utils/common";
 
 export class Login extends Component {
   constructor(props) {
@@ -68,7 +69,7 @@ export class Login extends Component {
                 <Form.Control type="password" required placeholder="Password" onInput={this.onPasswordInput.bind(this)} />
               </Form.Group>
               <div className="mb-3">
-                <a href="javascript.void(0)" className="text-greyDark">Forgot Password</a>
+                <a href="/" onClick={preventDefault} className="text-greyDark">Forgot Password</a>
               </div>
               <div className="text-center">
                 <div>
@@ -78,9 +79,9 @@ export class Login extends Component {
                     Login
                   </Button>
                 </div>
-                <div><span className="text-greyDark">Create an account <a href="javascript.void(0)">Signup</a></span></div>
+                <div><span className="text-greyDark">Create an account <a href="/" onClick={preventDefault}>Signup</a></span></div>
                 <div><span className="text-greyDark">-or-</span></div>
-                <div><a href="javaacript.void(0)" className="text-appprimary">Login with OTP</a></div>
+                <div><a href="/" onClick={preventDefault} className="text-appprimary">Login with OTP</a></div>
               </div>
             </Form>
           </div>

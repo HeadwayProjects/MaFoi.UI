@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import "./dashboard.css";
 import NavTabs from "../../../shared/NavTabs";
+import { preventDefault } from "../../../../utils/common";
 
 const CurrentPerformanceTabs = [
     { value: '0', label: 'Today' },
@@ -102,7 +103,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                             </div>
                             <div className="row m-0 vendorPerformance-cards">
                                 <div className="col-md-4">
-                                    <a href="javascript.void(0)" className="text-link text-appprimary underline text-center d-block">Submit Status</a>
+                                    <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block">Submit Status</a>
                                     {
                                         SubmitStatus.map(status => {
                                             return (
@@ -134,7 +135,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                 </div>
 
                                 <div className="col-md-4">
-                                    <a href="javascript.void(0)" className="text-link text-appprimary underline text-center d-block"> Audit Status </a>
+                                    <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block"> Audit Status </a>
                                     {
                                         AuditStatus.map(status => {
                                             return (

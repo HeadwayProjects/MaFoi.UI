@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import ActivityList from "./ActivityList";
 import "./dashboard.css";
 import { navigate } from "raviger";
+import { preventDefault } from "../../../../utils/common";
 
 const TodosTabs = [
     { value: 'Today', label: 'Today' },
@@ -46,6 +47,7 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
                         `${dayjs(data.startDate).format('DD-MMM-YYYY')}`;
                     setLabel(label);
                     setDateRange({ startDate: data.startDate, endDate: data.endDate });
+                    console.log(dateRange);
                     setCount((data.items || []).length)
                 }
             });
@@ -53,6 +55,7 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
     }
 
     function viewAll(e) {
+        preventDefault(e);
         navigate('/dashboard/activities', {
             state: {
                 company: selectedCompany,
@@ -99,7 +102,7 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
                 </div>
                 <div className="card-body pt-1">
                     <h5 className="text-center mb-3 fw-semibold">
-                        <a href="javascript:void(0)">{count || 0} Activities</a>
+                        <a href="/" onClick={preventDefault}>{count || 0} Activities</a>
                     </h5>
                     {
                         tabs &&
@@ -118,7 +121,7 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
                                         <div className="text-primary d-flex justify-content-end fw-bold position-absolute" style={{ right: '1rem' }}>
                                             {
                                                 activities.length > 0 &&
-                                                <a href="javascript:void(0)" onClick={viewAll}>View All</a>
+                                                <a href="/" onClick={viewAll}>View All</a>
                                             }
                                         </div>
                                     </div>

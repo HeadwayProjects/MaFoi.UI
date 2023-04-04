@@ -3,12 +3,13 @@ import dayjs from 'dayjs';
 import "./Navbar.css";
 import logo from '../../assets/img/header-logo.png';
 import * as auth from '../../backend/auth';
+import { preventDefault } from '../../utils/common';
 
 function Navbar() {
     const [user] = useState(auth.getUserDetails() || {});
 
     function logout(event) {
-        event.preventDefault();
+        preventDefault(event)
         auth.clearAuthToken();
         window.location.replace('/login');
     }
@@ -29,7 +30,7 @@ function Navbar() {
                                     <div className="dropdown-item" to="">Settings</div>
                                     <div className="dropdown-item" to="">Change Password</div>
                                     <hr className="dropdown-divider" />
-                                    <a className="dropdown-item" to="" onClick={logout}>Logout</a>
+                                    <a className="dropdown-item" href="/" onClick={logout}>Logout</a>
                                 </div>
                             </div>
                         </ul>
