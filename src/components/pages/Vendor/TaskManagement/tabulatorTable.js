@@ -1,4 +1,5 @@
 import { TabulatorFull as Tabulator } from 'tabulator-tables';
+import { getAuthToken } from "../../../../backend/auth";
 
 /**
  *
@@ -15,17 +16,35 @@ import { TabulatorFull as Tabulator } from 'tabulator-tables';
  */
 
 export const getTabulatorTable = (tableId, data, columns) => {
-  console.log(data, columns)
+  const token = getAuthToken();
   var table = new Tabulator(tableId, {
     height: "100%",
     data: data,
     layout: "fitColumns",
-    nestedFieldSeparator:"|",
+    nestedFieldSeparator: "|",
     columns: columns,
-    pagination: "local",
+    // paginationCounter: "rows",
+    placeholder: "No Data Available",
+    pagination: true, //enable pagination
+    paginationMode: "remote", //enable remote pagination
     paginationSize: 10,
     paginationSizeSelector: [5, 10, 15, 20],
-    paginationCounter: "rows",
-    placeholder: "No Data Available"
+    ajaxURL: "https://ezycompapi.azurewebsites.net/api/ToDo/GetToDoByCriteria", // TODO: to optimize
+    ajaxConfig: {
+      method: "POST",
+      authorization: `Bearer ${token}`
+    },
+    // ajaxURLGenerator: function (url, config, params) {
+    //   const { page, size } = params;
+    //   return url + `?page=${page}&results=${size}`;
+    // },
+    ajaxResponse: function (url, params, response) {
+      // Must configure with server side
+      let last_page = 5;
+      return {
+        data: response,
+        last_page,
+      };
+    }
   })
 }
