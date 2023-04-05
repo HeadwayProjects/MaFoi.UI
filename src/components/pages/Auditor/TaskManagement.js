@@ -46,9 +46,9 @@ function TaskManagement() {
     const [company, setCompany] = useState(null);
     const [associateCompany, setAssociateCompany] = useState(null);
     const [location, setLocation] = useState(null);
-    const [fromDate, setFromDate] = useState((state || {}).fromDate || null);
-    const [toDate, setToDate] = useState((state || {}).toDate || null);
-    const [checkedStatuses, setCheckedStatuses] = useState((state || {}).status ? { [state.status]: true } : {});
+    const [fromDate, setFromDate] = useState(null);
+    const [toDate, setToDate] = useState(null);
+    const [checkedStatuses, setCheckedStatuses] = useState({});
     const [statuses, setStatuses] = useState(null);
     const [activities, setActivities] = useState([]);
     const [action, setAction] = useState(null);
