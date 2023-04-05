@@ -5,6 +5,7 @@ import VendorDashboard from "../components/pages/Vendor/Dashboard/Dashboard";
 import ActivitiesManagement from "../components/pages/Vendor/TaskManagement/ActivitiesManagement";
 import LayoutWithSideNav from "../components/shared/LayoutWithSideNav";
 import AuditorDashboard from "../components/pages/Auditor/AuditorDashboard";
+import TaskManagement from "../components/pages/Auditor/TaskManagement";
 
 function AuthenticatedContent() {
     const user = auth.getUserDetails();
@@ -25,7 +26,7 @@ function AuthenticatedContent() {
             layout(<ActivitiesManagement />)
         ),
         '/activities': () => (
-            layout(isVendor ? <ActivitiesManagement /> : <ActivitiesManagement />)
+            layout(isVendor ? <ActivitiesManagement /> : <TaskManagement />)
         ),
         '/': () => (
             layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)

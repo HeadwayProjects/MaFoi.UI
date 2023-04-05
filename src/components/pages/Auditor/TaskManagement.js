@@ -1,39 +1,33 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { sortBy } from "underscore";
-import SubmitToAuditorModal from "./SubmitToAuditorModal";
-import * as api from "../../../../backend/request";
+import * as api from "../../../backend/request";
 import Select from 'react-select';
-import EditActivityModal from "./EditActivityModal";
 import { toast } from 'react-toastify';
-import PageLoader from "../../../shared/PageLoader";
+import PageLoader from "../../shared/PageLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave, faSearch, faUpload } from "@fortawesome/free-solid-svg-icons";
-import BulkUploadModal from "./BulkuploadModal";
-import { useGetUserCompanies } from "../../../../backend/query";
-import { Link, usePath, useHistory } from "raviger";
+import { faCheck, faClose, faSave, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useGetUserCompanies } from "../../../backend/query";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ViewActivityModal from "./ViewActivityModal";
 
 const STATUS_BTNS = [
-    { name: 'ActivitySaved', label: 'Activities Saved', style: 'secondary' },
-    { name: 'Pending', label: 'Pending', style: 'warning' },
-    { name: 'Overdue', label: 'Overdue', style: 'danger' },
-    { name: 'Rejected', label: 'Rejected', style: 'danger' },
     { name: 'Submitted', label: 'Submitted', style: 'danger' },
-    { name: 'Audited', label: 'Audited', style: 'danger' },
-
+    { name: 'Approved', label: 'Audited', style: 'success' },
+    { name: 'Rejected', label: 'Rejected', style: 'danger' },
 ];
+
+const ACTIONS = {
+    EDIT: 1,
+    VIEW: 2
+};
 
 function StatusTmp({ status }) {
     function computeStatusColor(status) {
-        if (status === 'Pending') {
-            return 'text-warning';
-        } else if (status === 'Reject' || status === 'Overdue') {
-            return 'text-danger';
-        } else if (status === 'Submitted') {
+        if (status === 'Submitted') {
             return 'text-success';
-        } else if (status === 'Audited') {
+        } else if (status === 'Approved') {
             return 'text-success-emphasis'
         }
         return 'text-secondary'
@@ -43,8 +37,7 @@ function StatusTmp({ status }) {
     )
 }
 
-function ActivitiesManagement() {
-    const { state } = useHistory();
+function TaskManagement() {
     const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
     const [companies, setCompanies] = useState([]);
@@ -53,18 +46,15 @@ function ActivitiesManagement() {
     const [company, setCompany] = useState(null);
     const [associateCompany, setAssociateCompany] = useState(null);
     const [location, setLocation] = useState(null);
-    const [fromDate, setFromDate] = useState((state || {}).fromDate || null);
-    const [toDate, setToDate] = useState((state || {}).toDate || null);
-    const [checkedStatuses, setCheckedStatuses] = useState((state || {}).status ? { [state.status]: true } : {});
+    const [fromDate, setFromDate] = useState(null);
+    const [toDate, setToDate] = useState(null);
+    const [checkedStatuses, setCheckedStatuses] = useState({});
     const [statuses, setStatuses] = useState(null);
     const [activities, setActivities] = useState([]);
+    const [action, setAction] = useState(null);
     const [activity, setActivity] = useState(null);
-    const [bulkUpload, setBulkUpload] = useState(false);
-    const [submitToAuditor, setSubmitToAuditor] = useState(false);
     const { userCompanies, isFetching } = useGetUserCompanies();
-    const path = usePath();
-    const [fromDashboard] = useState(path.includes('/dashboard/activities'));
-
+    const [selectedActivities, setSelectedActivities] = useState([]);
 
     function getActivities() {
         if (company && associateCompany && location) {
@@ -74,50 +64,28 @@ function ActivitiesManagement() {
                 location: location.value,
                 fromDate: fromDate ? new Date(fromDate).toISOString() : null,
                 toDate: toDate ? new Date(toDate).toISOString() : null,
-                statuses: statuses || ['']
+                statuses: statuses || ['Submitted', 'Approved', 'Rejected']
             }
             api.post('/api/ToDo/GetToDoByCriteria', payload).then(response => {
+                setSelectedActivities([]);
                 setActivities(response.data || []);
             });
         }
     }
 
     function editActivity(activity) {
+        setAction(ACTIONS.EDIT);
         setActivity(activity);
     }
 
-    function downloadForm(activity) {
-        setSubmitting(true);
-        api.get(`/api/ActStateMapping/Get?id=${activity.actStateMappingId}`).then(response => {
-            if (response.data.filePath) {
-                const link = document.createElement('a');
-                link.href = response.data.filePath;
-                link.download = response.data.fileName;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } else {
-                toast.warn('No files available');
-            }
-        }).finally(() => setSubmitting(false));
+    function viewActivity(activity) {
+        setAction(ACTIONS.VIEW);
+        setActivity(activity);
     }
 
-    function onSubmitToAuditorHandler(e) {
-        e.preventDefault();
-        const filterStatuses = ["ActivitySaved", "Pending", "Overdue"]
-        const array = activities.filter(resItem => filterStatuses.includes(resItem.status));
-        const filteredIds = array.map(item => item.id);
-        if (filteredIds.length === 0) {
-            toast.warn('There are no "Activity Saved", "Pending" or "Overdue" activities available for submission.')
-            return;
-        }
-        setSubmitting(true);
-        // API CAll
-        api.post('/api/ToDo/SubmitToAudit', filteredIds).then(() => {
-            toast.success('Selected activities submitted successfully.');
-            getActivities();
-            setSubmitToAuditor(false);
-        }).finally(() => setSubmitting(false));
+    function dismissAction() {
+        setAction(null);
+        setActivity(null);
     }
 
     function onFormStatusChangeHandler(e) {
@@ -142,6 +110,54 @@ function ActivitiesManagement() {
         }
     }
 
+    function onSelectionChange(event, activity) {
+        const _selected = [...selectedActivities];
+        const checked = event.target.checked;
+        if (checked) {
+            _selected.push(activity.id);
+        } else {
+            _selected.splice(_selected.indexOf(activity.id), 1);
+        }
+        setSelectedActivities(_selected);
+    }
+
+    function appoveActivity() {
+        setSubmitting(true);
+        const payload = {
+            status: 'Approved',
+            ToDoIds: selectedActivities
+        };
+        api.post('/api/ToDo/Audit', payload).then(response => {
+            if (response.data.result === 'SUCCESS') {
+                toast.success(response.data.message);
+                getActivities();
+            } else {
+                toast.error(response.data.message);
+            }
+        }).finally(() => setSubmitting(false))
+    }
+
+    function rejectActivity() {
+        setSubmitting(true);
+        const payload = {
+            status: 'Rejected',
+            ToDoIds: selectedActivities
+        };
+        api.post('/api/ToDo/Audit', payload).then(response => {
+            if (response.data.result === 'SUCCESS') {
+                toast.success(response.data.message);
+                getActivities();
+            } else {
+                toast.error(response.data.message);
+            }
+        }).finally(() => setSubmitting(false))
+    }
+
+    function publishActivity() {
+
+    }
+
+
     useEffect(() => {
         setAssociateCompanies([]);
         setLocations([]);
@@ -158,8 +174,7 @@ function ActivitiesManagement() {
             });
             const sorted = sortBy(associateCompanies, 'label');
             setAssociateCompanies(sorted);
-            const _associateCompany = sorted.find(c => c.value === (state || {}).associateCompany);
-            setAssociateCompany(_associateCompany || sorted[0]);
+            setAssociateCompany(sorted[0]);
         }
     }, [company]);
 
@@ -172,8 +187,7 @@ function ActivitiesManagement() {
             });
             const sorted = sortBy(locations, 'label');
             setLocations(sorted);
-            const _location = sorted.find(c => c.value === (state || {}).location);
-            setLocation(_location || sorted[0]);
+            setLocation(sorted[0]);
         }
     }, [associateCompany]);
 
@@ -187,7 +201,7 @@ function ActivitiesManagement() {
         if (checkedStatuses) {
             const keys = Object.keys(checkedStatuses);
             const result = keys.filter(key => !!checkedStatuses[key]);
-            setStatuses(result.length ? result : ['']);
+            setStatuses(result.length ? result : ['Submitted', 'Approved', 'Rejected']);
         }
     }, [checkedStatuses]);
 
@@ -204,8 +218,7 @@ function ActivitiesManagement() {
             });
             const sorted = sortBy(companies, 'label');
             setCompanies(sorted);
-            const _company = sorted.find(c => c.value === (state || {}).company);
-            setCompany(_company || sorted[0]);
+            setCompany(sorted[0]);
         }
     }, [isFetching]);
 
@@ -214,17 +227,13 @@ function ActivitiesManagement() {
             <div className="d-flex flex-column">
                 <div className="d-flex  p-2 align-items-center pageHeading">
                     <div className="ps-4">
-                        <h4 className="mb-0 ps-1">Vendor-Activity</h4>
+                        <h4 className="mb-0 ps-1">Task Management</h4>
                     </div>
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 d-flex justify-content-end">
                                 <li className="breadcrumb-item">Home</li>
-                                {
-                                    fromDashboard &&
-                                    <li className="breadcrumb-item"><Link href="/dashboard">Dashboard</Link></li>
-                                }
-                                <li className="breadcrumb-item active">Activity</li>
+                                <li className="breadcrumb-item active">Task Management</li>
                             </ol>
                         </nav>
                     </div>
@@ -248,12 +257,12 @@ function ActivitiesManagement() {
                             <div className="col-5">
                                 <div className="d-flex justify-content-end">
                                     <div className="d-flex flex-column me-2">
-                                        <label className="filter-label"><small>Due Date: From</small></label>
+                                        <label className="filter-label"><small>Submitted: From</small></label>
                                         <DatePicker className="form-control" selected={fromDate} dateFormat="dd-MM-yyyy"
                                             onChange={fromDateChange} placeholderText="dd-mm-yyyy" />
                                     </div>
                                     <div className="d-flex flex-column ms-3">
-                                        <label className="filter-label"><small>Due Date: To</small></label>
+                                        <label className="filter-label"><small>Submitted: To</small></label>
                                         <DatePicker className="form-control" selected={toDate} dateFormat="dd-MM-yyyy"
                                             onChange={toDateChange} placeholderText="dd-mm-yyyy" />
                                     </div>
@@ -295,26 +304,37 @@ function ActivitiesManagement() {
                                 <div className="mx-2">
                                     <button className="btn btn-primary" onClick={(e) => {
                                         e.preventDefault();
-                                        setBulkUpload(true)
-                                    }}>
+                                        appoveActivity();
+                                    }} disabled={selectedActivities.length === 0}>
                                         <div className="d-flex align-items-center">
-                                            <FontAwesomeIcon icon={faUpload} />
-                                            <span className="ms-2">Bulk Upload</span>
+                                            <FontAwesomeIcon icon={faCheck} />
+                                            <span className="ms-2">Approve</span>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div className="mx-2">
+                                    <button className="btn btn-danger" onClick={(e) => {
+                                        e.preventDefault();
+                                        rejectActivity();
+                                    }} disabled={selectedActivities.length === 0}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon={faClose} />
+                                            <span className="ms-2">Reject</span>
                                         </div>
                                     </button>
                                 </div>
 
-                                <div>
-                                    <button className="btn btn-primary" onClick={(e) => {
+                                {/* <div>
+                                    <button className="btn btn-success" onClick={(e) => {
                                         e.preventDefault();
-                                        setSubmitToAuditor(true)
-                                    }}>
+                                        publishActivity();
+                                    }} disabled={selectedActivities.length === 0}>
                                         <div className="d-flex align-items-center">
                                             <FontAwesomeIcon icon={faSave} />
-                                            <span className="ms-2">Submit To Auditor</span>
+                                            <span className="ms-2">Publish</span>
                                         </div>
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -323,7 +343,7 @@ function ActivitiesManagement() {
                 <table className="table table-bordered bg-white">
                     <thead>
                         <tr>
-                            <th scope="col"><input type="checkbox" /> </th>
+                            <th scope="col"></th>
                             <th scope="col">Month(year)</th>
                             <th scope="col">Act</th>
                             <th scope="col">Rule</th>
@@ -331,6 +351,7 @@ function ActivitiesManagement() {
                             <th scope="col">Associate Company</th>
                             <th scope="col">Location Name</th>
                             <th scope="col">Audit Due Date</th>
+                            <th scope="col">Vendor Submitted Date</th>
                             <th scope="col">Audit Status</th>
                             <th scope="col">Forms Status</th>
                             <th scope="col">Audit Remarks</th>
@@ -342,7 +363,7 @@ function ActivitiesManagement() {
                             activities.map(function (item) {
                                 return (
                                     <tr key={item.id}>
-                                        <td><input type="checkbox" /></td>
+                                        <td><input type="checkbox" onChange={(event) => onSelectionChange(event, item)} /></td>
                                         <td>{item.month}({item.year})</td>
                                         <td>{item.act.name}</td>
                                         <td>{item.rule.name}</td>
@@ -350,20 +371,20 @@ function ActivitiesManagement() {
                                         <td>{item.associateCompany.name}</td>
                                         <td>{item.location.name}</td>
                                         <td className="text-warning">{dayjs(item.dueDate).format('DD-MM-YYYY')}</td>
+                                        <td className="text-success">{dayjs(item.submittedDate).format('DD-MM-YYYY')}</td>
                                         <td className="text-danger">{item.auditStatus}</td>
                                         <td><StatusTmp status={item.status} /></td>
                                         <td className="text-danger">{item.auditRemarks}</td>
                                         <td>
                                             <div className="d-flex flex-row align-items-center">
-                                                <span className="me-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => downloadForm(item)} title="Download">
-                                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M9.75 7.875V9.75H2.25V7.875H1V9.75C1 10.4375 1.5625 11 2.25 11H9.75C10.4375 11 11 10.4375 11 9.75V7.875H9.75Z" fill="var(--bs-blue)" />
-                                                        <path d="M9.125 5.375L8.24375 4.49375L6.625 6.10625L6.625 1L5.375 1L5.375 6.10625L3.75625 4.49375L2.875 5.375L6 8.5L9.125 5.375Z" fill="var(--bs-blue)" />
-                                                    </svg>
-                                                </span>
-                                                <span className="ms-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => editActivity(item)} title="Edit">
+                                                {/* <span className="me-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => editActivity(item)} title="Edit">
                                                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M2.5 10.8499C2.225 10.8499 1.9895 10.7521 1.7935 10.5564C1.5975 10.3607 1.49967 10.1252 1.5 9.8499V2.8499C1.5 2.5749 1.598 2.3394 1.794 2.1434C1.99 1.9474 2.22533 1.84957 2.5 1.8499H6.9625L5.9625 2.8499H2.5V9.8499H9.5V6.3749L10.5 5.3749V9.8499C10.5 10.1249 10.402 10.3604 10.206 10.5564C10.01 10.7524 9.77467 10.8502 9.5 10.8499H2.5ZM8.0875 2.1374L8.8 2.8374L5.5 6.1374V6.8499H6.2L9.5125 3.5374L10.225 4.2374L6.9125 7.5499C6.82083 7.64157 6.7145 7.71457 6.5935 7.7689C6.4725 7.82324 6.3455 7.85024 6.2125 7.8499H5C4.85833 7.8499 4.7395 7.8019 4.6435 7.7059C4.5475 7.6099 4.49967 7.49124 4.5 7.3499V6.1374C4.5 6.00407 4.525 5.8769 4.575 5.7559C4.625 5.6349 4.69583 5.52874 4.7875 5.4374L8.0875 2.1374ZM10.225 4.2374L8.0875 2.1374L9.3375 0.887402C9.5375 0.687402 9.77717 0.587402 10.0565 0.587402C10.3358 0.587402 10.5712 0.687402 10.7625 0.887402L11.4625 1.5999C11.6542 1.79157 11.75 2.0249 11.75 2.2999C11.75 2.5749 11.6542 2.80824 11.4625 2.9999L10.225 4.2374Z" fill="var(--bs-green)" />
+                                                    </svg>
+                                                </span> */}
+                                                <span className="mx-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => viewActivity(item)} title="View">
+                                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M6 4.5C6.39782 4.5 6.77936 4.65804 7.06066 4.93934C7.34196 5.22064 7.5 5.60218 7.5 6C7.5 6.39782 7.34196 6.77936 7.06066 7.06066C6.77936 7.34196 6.39782 7.5 6 7.5C5.60218 7.5 5.22064 7.34196 4.93934 7.06066C4.65804 6.77936 4.5 6.39782 4.5 6C4.5 5.60218 4.65804 5.22064 4.93934 4.93934C5.22064 4.65804 5.60218 4.5 6 4.5ZM6 2.25C8.5 2.25 10.635 3.805 11.5 6C10.635 8.195 8.5 9.75 6 9.75C3.5 9.75 1.365 8.195 0.5 6C1.365 3.805 3.5 2.25 6 2.25ZM1.59 6C1.99413 6.82515 2.62165 7.52037 3.40124 8.00663C4.18083 8.49288 5.0812 8.75066 6 8.75066C6.9188 8.75066 7.81917 8.49288 8.59876 8.00663C9.37835 7.52037 10.0059 6.82515 10.41 6C10.0059 5.17485 9.37835 4.47963 8.59876 3.99337C7.81917 3.50712 6.9188 3.24934 6 3.24934C5.0812 3.24934 4.18083 3.50712 3.40124 3.99337C2.62165 4.47963 1.99413 5.17485 1.59 6Z" fill="#322C2D" />
                                                     </svg>
                                                 </span>
                                             </div>
@@ -375,8 +396,11 @@ function ActivitiesManagement() {
                     </tbody>
                 </table>
             </div>
-
             {
+                action === ACTIONS.VIEW && <ViewActivityModal activity={activity} onClose={dismissAction} />
+            }
+
+            {/* {
                 bulkUpload &&
                 <BulkUploadModal onClose={() => setBulkUpload(false)} onSubmit={getActivities} />
             }
@@ -387,10 +411,10 @@ function ActivitiesManagement() {
             {
                 !!activity &&
                 <EditActivityModal activity={activity} onClose={() => setActivity(null)} onSubmit={getActivities} />
-            }
+            } */}
             {submitting && <PageLoader />}
         </>
     );
 }
 
-export default ActivitiesManagement;
+export default TaskManagement;
