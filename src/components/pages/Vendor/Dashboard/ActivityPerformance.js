@@ -6,6 +6,7 @@ import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import "./dashboard.css";
 import NavTabs from "../../../shared/NavTabs";
 import { preventDefault } from "../../../../utils/common";
+import Chart from "./Chart";
 import { navigate } from "raviger";
 
 const CurrentPerformanceTabs = [
@@ -181,9 +182,12 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                         })
                                     }
                                 </div>
-                                <div className="col-md-4">
-                                    Charts
-                                </div>
+                                {
+                                    (performanceStatus.approved > 0 || performanceStatus.rejected > 0) &&
+                                    <div className="col-md-4">
+                                        <Chart data={performanceStatus} keys={['compliant', 'nonCompliant']} />
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
