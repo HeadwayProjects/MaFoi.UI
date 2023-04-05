@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import * as api from "../../../backend/request";
 import * as auth from "../../../backend/auth";
 import dayjs from "dayjs";
 import NavTabs from "../../shared/NavTabs";
 import Chart from "./Chart";
+import { useGetAuditorPerformance } from "../../../backend/auditor";
 
 const CurrentPerformanceTabs = [
-    { value: '0', label: 'Today' },
-    { value: '7', label: 'This Week' },
-    { value: '30', label: 'This Month' }
+    { value: 'Today', label: 'Today' },
+    { value: 'ThisWeek', label: 'This Week' },
+    { value: 'ThisMonth', label: 'This Month' }
 ];
 const PreviousPerformanceTabs = [
-    { value: '1', label: ['Last', 'Month'] },
-    { value: '3', label: ['Last', '3 Months'] },
-    { value: '6', label: ['Last', '6 Months'] },
-    { value: '12', label: ['Last', '12 Months'] }
+    { value: 'LastMonth', label: ['Last', 'Month'] },
+    { value: 'Last3Months', label: ['Last', '3 Months'] },
+    { value: 'Last6Months', label: ['Last', '6 Months'] },
+    { value: 'Last12Months', label: ['Last', '12 Months'] }
 ];
 
 function Performance({ current }) {
@@ -22,27 +22,17 @@ function Performance({ current }) {
     const [title] = useState(current ? 'Auditor Current Performance' : 'Auditor Previous Performance');
     const [tabs] = useState(current ? CurrentPerformanceTabs : PreviousPerformanceTabs);
     const [frequency, setFrequency] = useState(current ? CurrentPerformanceTabs[0].value : PreviousPerformanceTabs[0].value);
-    const [performanceStatus, setPerformanceStatus] = useState(null);
     const [label, setLabel] = useState('');
-
-    function updatePerformance() {
-        setLabel('');
-        api.get(`/api/Auditor/GetPerformance?auditorId=${user.userid}&frequency=${frequency}`).then(response => {
-            if (response && response.data) {
-                const label = frequency !== '0' ?
-                    `${dayjs(response.data.startDate).format('DD-MMM-YYYY')} - ${dayjs(response.data.endDate).format('DD-MMM-YYYY')}` :
-                    `${dayjs(response.data.startDate).format('DD-MMM-YYYY')}`;
-                setLabel(label);
-                setPerformanceStatus(response.data);
-            }
-        });
-    }
+    const { auditorPerformance, isFetching } = useGetAuditorPerformance(user.userid, frequency);
 
     useEffect(() => {
-        if (frequency) {
-            updatePerformance();
+        if (!isFetching && auditorPerformance) {
+            const label = frequency !== 'Today' ?
+                `${dayjs(auditorPerformance.startDate).format('DD-MMM-YYYY')} - ${dayjs(auditorPerformance.endDate).format('DD-MMM-YYYY')}` :
+                `${dayjs(auditorPerformance.startDate).format('DD-MMM-YYYY')}`;
+            setLabel(label);
         }
-    }, [frequency]);
+    }, [isFetching])
 
     return (
         <div className="card">
@@ -75,7 +65,7 @@ function Performance({ current }) {
                                 {label && <strong className="text-primary">({label})</strong>}
                             </div>
                             <div className="row m-0 vendorPerformance-cards">
-                                <Chart data={performanceStatus} keys={['audited', 'notAudited']} />
+                                {!isFetching && auditorPerformance && <Chart data={auditorPerformance} keys={['audited', 'notAudited']} />}
                             </div>
                         </div>
                     </div>

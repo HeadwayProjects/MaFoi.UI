@@ -1,7 +1,17 @@
-import React from "react";
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import React, { useState } from "react";
 import AuditorPerformance from "./AuditorPerformance";
 import VendorPerformance from "./VendorPerformance";
+
+const TABS = {
+    AUDITOR: 'auditor',
+    VENDOR: 'vendor'
+};
+
 function AuditorDashboard() {
+    const [activeTab, setActiveTab] = useState(TABS.AUDITOR);
+
     return (
         <div>
             <div className="d-flex mb-4 p-2 align-items-center pageHeading">
@@ -17,37 +27,16 @@ function AuditorDashboard() {
                     </nav>
                 </div>
             </div>
-
-            {/* Dashboard Auditor starts */}
-            <ul className="nav nav-tabs dashboardTabs mx-2" id="myTab" role="tablist">
-                <li className="nav-item" role="presentation">
-                    <button id="home-tab" type="button" role="tab"
-                        className="nav-link active"
-                        data-bs-toggle="tab" data-bs-target="#home-tab-pane"
-                        aria-controls="home-tab-pane" aria-selected="true">
-                        Auditor Performance
-                    </button>
-                </li>
-                <li className="nav-item" role="presentation">
-                    <button id="profile-tab" type="button" role="tab"
-                        className="nav-link"
-                        data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
-                        aria-controls="profile-tab-pane" aria-selected="false">
-                        Vendor Performance
-                    </button>
-                </li>
-            </ul>
-            <div className="tab-content" id="myTabContent">
-                <div id="home-tab-pane" tabindex="0" role="tabpanel"
-                    className="tab-pane fade show active" aria-labelledby="home-tab">
-                    <AuditorPerformance />
-                </div>
-                <div id="profile-tab-pane" tabindex="1"
-                    role="tabpanel" className="tab-pane fade"
-                    aria-labelledby="profile-tab">
-                    <VendorPerformance />
-                </div>
-            </div>
+            <Tabs className="dashboardTabs mx-2"
+                activeKey={activeTab}
+                onSelect={(k) => setActiveTab(k)}>
+                <Tab eventKey={TABS.AUDITOR} title="Auditor Performance">
+                    {activeTab === TABS.AUDITOR && <AuditorPerformance />}
+                </Tab>
+                <Tab eventKey={TABS.VENDOR} title="Vendor Performance">
+                    {activeTab === TABS.VENDOR && <VendorPerformance />}
+                </Tab>
+            </Tabs>
         </div>
     );
 }
