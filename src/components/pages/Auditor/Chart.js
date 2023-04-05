@@ -27,11 +27,12 @@ function Chart({ data, keys }) {
     const [legends, setLegends] = useState([]);
 
     useEffect(() => {
-        if (data) {
+        if (Object.keys(data || {}).length) {
+            console.log(data);
             const _legends = [];
             const _data = keys.map(key => {
                 const _chart = CHART_MAPPING.find(x => x.key === key) || {};
-                _legends.push({ color: _chart.color, value: data[key], label: _chart.label });
+                _legends.push({ color: _chart.color, value: data[key], label: _chart.label, key });
                 return {
                     value: data[key],
                     label: _chart.label,
@@ -57,9 +58,9 @@ function Chart({ data, keys }) {
             <div className="performance-chart-legends d-flex flex-row w-100 justify-content-center">
                 <div className="col-4">
                     {
-                        legends.map(legend => {
+                        config && legends.map(legend => {
                             return (
-                                <div className="d-flex fs-6 align-items-center mb-1">
+                                <div className="d-flex fs-6 align-items-center mb-1" key={legend.key}>
                                     <span className="legend-marker" style={{ background: `${legend.color}` }}>{ }</span>
                                     <small className="ms-2 me-1 fw-bold">{legend.value}</small>
                                     <small>{legend.label}</small>

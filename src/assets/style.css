@@ -131,6 +131,9 @@ body {
   background-color: var(--green);
 }
 
+.vendorPerformance-cards {
+  min-height: 315px;
+}
 
 .vendorPerformance-cards .cardCount {
   font-size: .85rem;
