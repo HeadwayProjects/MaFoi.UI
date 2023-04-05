@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import * as api from "../../../backend/request";
 import * as auth from "../../../backend/auth";
 import dayjs from "dayjs";
 import NavTabs from "../../shared/NavTabs";
@@ -7,15 +6,15 @@ import Chart from "./Chart";
 import { useGetAuditorPerformance } from "../../../backend/auditor";
 
 const CurrentPerformanceTabs = [
-    { value: '0', label: 'Today' },
-    { value: '7', label: 'This Week' },
-    { value: '30', label: 'This Month' }
+    { value: 'Today', label: 'Today' },
+    { value: 'ThisWeek', label: 'This Week' },
+    { value: 'ThisMonth', label: 'This Month' }
 ];
 const PreviousPerformanceTabs = [
-    { value: '1', label: ['Last', 'Month'] },
-    { value: '3', label: ['Last', '3 Months'] },
-    { value: '6', label: ['Last', '6 Months'] },
-    { value: '12', label: ['Last', '12 Months'] }
+    { value: 'LastMonth', label: ['Last', 'Month'] },
+    { value: 'Last3Months', label: ['Last', '3 Months'] },
+    { value: 'Last6Months', label: ['Last', '6 Months'] },
+    { value: 'Last12Months', label: ['Last', '12 Months'] }
 ];
 
 function Performance({ current }) {
@@ -28,7 +27,7 @@ function Performance({ current }) {
 
     useEffect(() => {
         if (!isFetching && auditorPerformance) {
-            const label = frequency !== '0' ?
+            const label = frequency !== 'Today' ?
                 `${dayjs(auditorPerformance.startDate).format('DD-MMM-YYYY')} - ${dayjs(auditorPerformance.endDate).format('DD-MMM-YYYY')}` :
                 `${dayjs(auditorPerformance.startDate).format('DD-MMM-YYYY')}`;
             setLabel(label);

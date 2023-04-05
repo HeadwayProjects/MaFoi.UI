@@ -64,8 +64,7 @@ function TaskManagement() {
                 location: location.value,
                 fromDate: fromDate ? new Date(fromDate).toISOString() : null,
                 toDate: toDate ? new Date(toDate).toISOString() : null,
-                // statuses: statuses || ['Submitted', 'Approved', 'Rejected']
-                statuses: statuses || ['']
+                statuses: statuses || ['Submitted', 'Approved', 'Rejected']
             }
             api.post('/api/ToDo/GetToDoByCriteria', payload).then(response => {
                 setSelectedActivities([]);
@@ -325,7 +324,7 @@ function TaskManagement() {
                                     </button>
                                 </div>
 
-                                <div>
+                                {/* <div>
                                     <button className="btn btn-success" onClick={(e) => {
                                         e.preventDefault();
                                         publishActivity();
@@ -335,7 +334,7 @@ function TaskManagement() {
                                             <span className="ms-2">Publish</span>
                                         </div>
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
