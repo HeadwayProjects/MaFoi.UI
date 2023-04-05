@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import * as api from "../../../../backend/request";
+import * as auth from "../../../../backend/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
@@ -30,7 +31,7 @@ function StatusTmp({ status }) {
 
 function EditActivityModal({ activity = {}, onClose, onSubmit }) {
     const [submitting, setSubmitting] = useState(false);
-    const [allowEdit] = useState(!SUBMITED_STATUSES.includes(activity.status));
+    const [allowEdit] = useState(auth.isVendor() && !SUBMITED_STATUSES.includes(activity.status));
     const [file, setFile] = useState(null);
     const [invalidFile, setInvalidFile] = useState(false);
     const { documents, invalidate } = useGetActivityDocuments(activity.id);

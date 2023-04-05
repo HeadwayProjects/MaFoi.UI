@@ -19,3 +19,15 @@ export function getUserDetails() {
     }
     return null;
 }
+
+export function isVendor() {
+    const user = getUserDetails();
+    if (user) {
+        try {
+            return user.role.toLowerCase().includes('vendor');
+        } catch (e) {
+            return false;
+        }
+    }
+    return false;
+}
