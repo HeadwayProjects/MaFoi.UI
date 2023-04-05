@@ -6,6 +6,7 @@ import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import "./dashboard.css";
 import NavTabs from "../../../shared/NavTabs";
 import { preventDefault } from "../../../../utils/common";
+import Chart from "./Chart";
 import { navigate } from "raviger";
 
 const CurrentPerformanceTabs = [
@@ -38,6 +39,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
     const [frequency, setFrequency] = useState(current ? CurrentPerformanceTabs[0].value : PreviousPerformanceTabs[0].value);
     const [performanceStatus, setPerformanceStatus] = useState({});
     const [label, setLabel] = useState('');
+    const [isChartVisible, setIsChartVisible] = useState(false);
 
     function updatePerformance() {
         setLabel('');
@@ -85,6 +87,13 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
         }
     }, [frequency]);
 
+    useEffect(() => {
+        if (Object.keys(performanceStatus).length > 0) {
+            setIsChartVisible(performanceStatus.approved > 0 || performanceStatus.rejected > 0);
+        }
+
+    }, [performanceStatus])
+
     return (
         <div className="card">
             <div className="card-header bg-white border-0 underline text-appprimary fw-semibold fs-5 d-flex align-items-center">
@@ -116,7 +125,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                 {label && <strong className="text-primary">({label})</strong>}
                             </div>
                             <div className="row m-0 vendorPerformance-cards">
-                                <div className="col-md-4">
+                                <div className={isChartVisible ? "col-md-4" : "col-md-6"}>
                                     <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block">Submit Status</a>
                                     {
                                         SubmitStatus.map(status => {
@@ -149,7 +158,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                     }
                                 </div>
 
-                                <div className="col-md-4">
+                                <div className={isChartVisible ? "col-md-4" : "col-md-6"}>
                                     <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block"> Audit Status </a>
                                     {
                                         AuditStatus.map(status => {
@@ -181,9 +190,12 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                         })
                                     }
                                 </div>
-                                <div className="col-md-4">
-                                    Charts
-                                </div>
+                                {
+                                    isChartVisible &&
+                                    <div className="col-md-4">
+                                        <Chart data={performanceStatus} keys={['compliant', 'nonCompliant']} />
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
