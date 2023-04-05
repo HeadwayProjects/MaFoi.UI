@@ -39,7 +39,6 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
     const [frequency, setFrequency] = useState(current ? CurrentPerformanceTabs[0].value : PreviousPerformanceTabs[0].value);
     const [performanceStatus, setPerformanceStatus] = useState({});
     const [label, setLabel] = useState('');
-    const [isChartVisible, setIsChartVisible] = useState(false);
 
     function updatePerformance() {
         setLabel('');
@@ -87,13 +86,6 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
         }
     }, [frequency]);
 
-    useEffect(() => {
-        if (Object.keys(performanceStatus).length > 0) {
-            setIsChartVisible(performanceStatus.approved > 0 || performanceStatus.rejected > 0);
-        }
-
-    }, [performanceStatus])
-
     return (
         <div className="card">
             <div className="card-header bg-white border-0 underline text-appprimary fw-semibold fs-5 d-flex align-items-center">
@@ -125,7 +117,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                 {label && <strong className="text-primary">({label})</strong>}
                             </div>
                             <div className="row m-0 vendorPerformance-cards">
-                                <div className={isChartVisible ? "col-md-4" : "col-md-6"}>
+                                <div className="col-md-4">
                                     <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block">Submit Status</a>
                                     {
                                         SubmitStatus.map(status => {
@@ -158,7 +150,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                     }
                                 </div>
 
-                                <div className={isChartVisible ? "col-md-4" : "col-md-6"}>
+                                <div className="col-md-4">
                                     <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block"> Audit Status </a>
                                     {
                                         AuditStatus.map(status => {
@@ -191,7 +183,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                     }
                                 </div>
                                 {
-                                    isChartVisible &&
+                                    (performanceStatus.approved > 0 || performanceStatus.rejected > 0) &&
                                     <div className="col-md-4">
                                         <Chart data={performanceStatus} keys={['compliant', 'nonCompliant']} />
                                     </div>
