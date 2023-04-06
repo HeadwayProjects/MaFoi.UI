@@ -18,32 +18,32 @@ import "./tabulatorTable.css"
 import { Link, usePath, useHistory } from "raviger";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { ACTIVITY_STATUS, STATUS_MAPPING } from "../../../common/Constants";
 
 const STATUS_BTNS = [
-    { name: 'ActivitySaved', label: 'Activities Saved', style: 'secondary' },
-    { name: 'Pending', label: 'Pending', style: 'warning' },
-    { name: 'Overdue', label: 'Overdue', style: 'danger' },
-    { name: 'Rejected', label: 'Rejected', style: 'danger' },
-    { name: 'Submitted', label: 'Submitted', style: 'danger' },
-    { name: 'Audited', label: 'Audited', style: 'danger' },
-
+    { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
+    { name: ACTIVITY_STATUS.PENDING, label: STATUS_MAPPING[ACTIVITY_STATUS.PENDING], style: 'warning' },
+    { name: ACTIVITY_STATUS.OVERDUE, label: STATUS_MAPPING[ACTIVITY_STATUS.OVERDUE], style: 'danger' },
+    { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
+    { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' },
+    { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'danger' }
 ];
 
 function StatusTmp({ status }) {
     function computeStatusColor(status) {
-        if (status === 'Pending') {
+        if (status === ACTIVITY_STATUS.PENDING) {
             return 'text-warning';
-        } else if (status === 'Reject' || status === 'Overdue') {
+        } else if (status === ACTIVITY_STATUS.REJECTED || status === ACTIVITY_STATUS.OVERDUE) {
             return 'text-danger';
-        } else if (status === 'Submitted') {
+        } else if (status === ACTIVITY_STATUS.SUBMITTED) {
             return 'text-success';
-        } else if (status === 'Audited') {
+        } else if (status === ACTIVITY_STATUS.AUDITED) {
             return 'text-success-emphasis'
         }
         return 'text-secondary'
     }
     return (
-        <span className={computeStatusColor(status)}>{status}</span>
+        <span className={computeStatusColor(status)}>{STATUS_MAPPING[status]}</span>
     )
 }
 
@@ -192,7 +192,7 @@ function ActivitiesManagement() {
         if (company && associateCompany && location) {
             getActivities();
         }
-    }, [location]);
+    }, [company, associateCompany, location]);
 
     useEffect(() => {
         if (checkedStatuses) {
@@ -444,7 +444,7 @@ function ActivitiesManagement() {
                             <th scope="col">Forms/Registers & Returns</th>
                             <th scope="col">Associate Company</th>
                             <th scope="col">Location Name</th>
-                            <th scope="col">Audit Due Date</th>
+                            <th scope="col" width={'120px'}>Audit Due Date</th>
                             <th scope="col">Audit Status</th>
                             <th scope="col">Forms Status</th>
                             <th scope="col">Audit Remarks</th>
@@ -466,8 +466,8 @@ function ActivitiesManagement() {
                                         <td>{item.activity.name}</td>
                                         <td>{item.associateCompany.name}</td>
                                         <td>{item.location.name}</td>
-                                        <td className="text-warning">{dayjs(item.dueDate).format('DD-MM-YYYY')}</td>
-                                        <td className="text-danger">{item.auditStatus}</td>
+                                        <td className="text-warning" width={'120px'}>{dayjs(item.dueDate).format('DD-MM-YYYY')}</td>
+                                        <td className="text-danger">{STATUS_MAPPING[item.auditStatus]}</td>
                                         <td><StatusTmp status={item.status} /></td>
                                         <td className="text-danger">{item.auditRemarks}</td>
                                         <td>

@@ -28,7 +28,6 @@ function Chart({ data, keys }) {
 
     useEffect(() => {
         if (Object.keys(data || {}).length) {
-            console.log(data);
             const _legends = [];
             const _data = keys.map(key => {
                 const _chart = CHART_MAPPING.find(x => x.key === key) || {};

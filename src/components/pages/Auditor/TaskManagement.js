@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { sortBy } from "underscore";
-import * as api from "../../../backend/request";
-import Select from 'react-select';
-import { toast } from 'react-toastify';
-import PageLoader from "../../shared/PageLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faClose, faSave, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { useGetUserCompanies } from "../../../backend/query";
+import { faInfoCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ViewActivityModal from "./ViewActivityModal";
+import EditActivityModal from "./EditActivityModal";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger"
+import Tooltip from 'react-bootstrap/Tooltip';
+import Location from "../../common/Location";
+import { useGetAuditorActivites } from "../../../backend/auditor";
+import PageLoader from "../../shared/PageLoader";
+import * as api from "../../../backend/request";
+import { toast } from 'react-toastify';
+import { ACTIVITY_STATUS, STATUS_MAPPING } from "../../common/Constants";
 
 const STATUS_BTNS = [
-    { name: 'Submitted', label: 'Submitted', style: 'danger' },
-    { name: 'Approved', label: 'Audited', style: 'success' },
-    { name: 'Rejected', label: 'Rejected', style: 'danger' },
+    { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
+    { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'success' },
+    { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' }
 ];
 
 const ACTIONS = {
@@ -25,52 +28,52 @@ const ACTIONS = {
 
 function StatusTmp({ status }) {
     function computeStatusColor(status) {
-        if (status === 'Submitted') {
+        if (status === ACTIVITY_STATUS.SUBMITTED) {
             return 'text-success';
-        } else if (status === 'Approved') {
+        } else if (status === ACTIVITY_STATUS.AUDITED) {
             return 'text-success-emphasis'
         }
         return 'text-secondary'
     }
     return (
-        <span className={computeStatusColor(status)}>{status}</span>
+        <span className={computeStatusColor(status)}>{STATUS_MAPPING[status]}</span>
     )
 }
 
 function TaskManagement() {
-    const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
-    const [companies, setCompanies] = useState([]);
-    const [associateCompanies, setAssociateCompanies] = useState([]);
-    const [locations, setLocations] = useState([]);
-    const [company, setCompany] = useState(null);
-    const [associateCompany, setAssociateCompany] = useState(null);
-    const [location, setLocation] = useState(null);
+    const [statusBtns] = useState(STATUS_BTNS);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [checkedStatuses, setCheckedStatuses] = useState({});
-    const [statuses, setStatuses] = useState(null);
-    const [activities, setActivities] = useState([]);
     const [action, setAction] = useState(null);
     const [activity, setActivity] = useState(null);
-    const { userCompanies, isFetching } = useGetUserCompanies();
     const [selectedActivities, setSelectedActivities] = useState([]);
+    const [payload, setPayload] = useState();
+    const { activities, refetch } = useGetAuditorActivites(payload);
 
-    function getActivities() {
-        if (company && associateCompany && location) {
-            const payload = {
-                company: company.value,
-                associateCompany: associateCompany.value,
-                location: location.value,
-                fromDate: fromDate ? new Date(fromDate).toISOString() : null,
-                toDate: toDate ? new Date(toDate).toISOString() : null,
-                statuses: statuses || ['Submitted', 'Approved', 'Rejected']
+    function search() {
+        setPayload({
+            ...payload,
+            fromDate: fromDate ? new Date(fromDate).toISOString() : null,
+            toDate: toDate ? new Date(toDate).toISOString() : null,
+        });
+    }
+
+    function downloadForm(activity) {
+        setSubmitting(true);
+        api.get(`/api/ActStateMapping/Get?id=${activity.actStateMappingId}`).then(response => {
+            if (response.data.filePath) {
+                const link = document.createElement('a');
+                link.href = response.data.filePath;
+                link.download = response.data.fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                toast.warn('No files available');
             }
-            api.post('/api/ToDo/GetToDoByCriteria', payload).then(response => {
-                setSelectedActivities([]);
-                setActivities(response.data || []);
-            });
-        }
+        }).finally(() => setSubmitting(false));
     }
 
     function editActivity(activity) {
@@ -121,106 +124,18 @@ function TaskManagement() {
         setSelectedActivities(_selected);
     }
 
-    function appoveActivity() {
-        setSubmitting(true);
-        const payload = {
-            status: 'Approved',
-            ToDoIds: selectedActivities
-        };
-        api.post('/api/ToDo/Audit', payload).then(response => {
-            if (response.data.result === 'SUCCESS') {
-                toast.success(response.data.message);
-                getActivities();
-            } else {
-                toast.error(response.data.message);
-            }
-        }).finally(() => setSubmitting(false))
+    function onLocationChange({ company, associateCompany, location }) {
+        setPayload({ ...payload, company, associateCompany, location })
     }
-
-    function rejectActivity() {
-        setSubmitting(true);
-        const payload = {
-            status: 'Rejected',
-            ToDoIds: selectedActivities
-        };
-        api.post('/api/ToDo/Audit', payload).then(response => {
-            if (response.data.result === 'SUCCESS') {
-                toast.success(response.data.message);
-                getActivities();
-            } else {
-                toast.error(response.data.message);
-            }
-        }).finally(() => setSubmitting(false))
-    }
-
-    function publishActivity() {
-
-    }
-
-
-    useEffect(() => {
-        setAssociateCompanies([]);
-        setLocations([]);
-        setAssociateCompany(null);
-        setLocation(null);
-        if (company) {
-            const associateCompanies = (company.company.associateCompanies || []).map(associateCompany => {
-                return {
-                    label: associateCompany.associateCompany.name,
-                    value: associateCompany.associateCompany.id,
-                    associateCompany: associateCompany.associateCompany,
-                    locations: associateCompany.locations
-                };
-            });
-            const sorted = sortBy(associateCompanies, 'label');
-            setAssociateCompanies(sorted);
-            setAssociateCompany(sorted[0]);
-        }
-    }, [company]);
-
-    useEffect(() => {
-        setLocations([]);
-        setLocation(null);
-        if (associateCompany) {
-            const locations = (associateCompany.locations || []).map(location => {
-                return { label: `${location.name}, ${location.cities.name}`, value: location.id, location, stateId: location.stateId };
-            });
-            const sorted = sortBy(locations, 'label');
-            setLocations(sorted);
-            setLocation(sorted[0]);
-        }
-    }, [associateCompany]);
-
-    useEffect(() => {
-        if (company && associateCompany && location) {
-            getActivities();
-        }
-    }, [location]);
 
     useEffect(() => {
         if (checkedStatuses) {
             const keys = Object.keys(checkedStatuses);
             const result = keys.filter(key => !!checkedStatuses[key]);
-            setStatuses(result.length ? result : ['Submitted', 'Approved', 'Rejected']);
+            setPayload({ ...payload, statuses: result.length ? result : ['Submitted', 'Approved', 'Rejected'] });
         }
     }, [checkedStatuses]);
 
-    useEffect(() => {
-        if (statuses) {
-            getActivities();
-        }
-    }, [statuses]);
-
-    useEffect(() => {
-        if (!isFetching && userCompanies) {
-            const companies = userCompanies.map(company => {
-                return { value: company.id, label: company.name, company }
-            });
-            const sorted = sortBy(companies, 'label');
-            setCompanies(sorted);
-            setCompany(sorted[0]);
-        }
-    }, [isFetching]);
 
     return (
         <>
@@ -242,18 +157,7 @@ function TaskManagement() {
                 <form className="card border-0 p-0 mb-3 mx-3">
                     <div className="card-body">
                         <div className="row">
-                            <div className="col-2 col-md-2">
-                                <label className="filter-label"><small>Company</small></label>
-                                <Select placeholder='Company' options={companies} onChange={setCompany} value={company} />
-                            </div>
-                            <div className="col-3 col-md-3">
-                                <label className="filter-label"><small>Associate Company</small></label>
-                                <Select placeholder='Asscociate Company' options={associateCompanies} onChange={setAssociateCompany} value={associateCompany} />
-                            </div>
-                            <div className="col-2 col-md-2">
-                                <label className="filter-label"><small>Location</small></label>
-                                <Select placeholder='Location' options={locations} onChange={setLocation} value={location} />
-                            </div>
+                            <Location onChange={onLocationChange} />
                             <div className="col-5">
                                 <div className="d-flex justify-content-end">
                                     <div className="d-flex flex-column me-2">
@@ -271,7 +175,7 @@ function TaskManagement() {
                                             <button type="submit" className="btn btn-primary d-flex align-items-center"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    getActivities();
+                                                    search();
                                                 }}>
                                                 <FontAwesomeIcon icon={faSearch} />
                                                 <span className="ms-2">Search</span>
@@ -301,7 +205,7 @@ function TaskManagement() {
                                 }
                             </div>
                             <div className="d-flex">
-                                <div className="mx-2">
+                                {/* <div className="mx-2">
                                     <button className="btn btn-primary" onClick={(e) => {
                                         e.preventDefault();
                                         appoveActivity();
@@ -322,7 +226,7 @@ function TaskManagement() {
                                             <span className="ms-2">Reject</span>
                                         </div>
                                     </button>
-                                </div>
+                                </div> */}
 
                                 {/* <div>
                                     <button className="btn btn-success" onClick={(e) => {
@@ -350,11 +254,10 @@ function TaskManagement() {
                             <th scope="col">Forms/Registers & Returns</th>
                             <th scope="col">Associate Company</th>
                             <th scope="col">Location Name</th>
-                            <th scope="col">Audit Due Date</th>
+                            <th scope="col" width={'120px'}>Audit Due Date</th>
                             <th scope="col">Vendor Submitted Date</th>
                             <th scope="col">Audit Status</th>
                             <th scope="col">Forms Status</th>
-                            <th scope="col">Audit Remarks</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -370,21 +273,51 @@ function TaskManagement() {
                                         <td>{item.activity.name}</td>
                                         <td>{item.associateCompany.name}</td>
                                         <td>{item.location.name}</td>
-                                        <td className="text-warning">{dayjs(item.dueDate).format('DD-MM-YYYY')}</td>
+                                        <td className="text-warning" width={'120px'}>{dayjs(item.dueDate).format('DD-MM-YYYY')}</td>
                                         <td className="text-success">{dayjs(item.submittedDate).format('DD-MM-YYYY')}</td>
-                                        <td className="text-danger">{item.auditStatus}</td>
-                                        <td><StatusTmp status={item.status} /></td>
-                                        <td className="text-danger">{item.auditRemarks}</td>
+                                        <td className="text-danger">
+                                            <div className="d-flex align-items-center">
+                                                {
+                                                    !!item.auditRemarks &&
+                                                    <OverlayTrigger overlay={<Tooltip>{item.auditRemarks}</Tooltip>}
+                                                        placement="bottom" >
+                                                        <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
+                                                    </OverlayTrigger>
+                                                }
+                                                <span>{STATUS_MAPPING[item.auditStatus]}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className="d-flex align-items-center">
+                                                {
+                                                    !!item.formsStatusRemarks &&
+                                                    <OverlayTrigger overlay={<Tooltip>{item.formsStatusRemarks}</Tooltip>}
+                                                        placement="bottom" >
+                                                        <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
+                                                    </OverlayTrigger>
+                                                }
+                                                <StatusTmp status={item.status} />
+                                            </div>
+                                        </td>
                                         <td>
                                             <div className="d-flex flex-row align-items-center">
-                                                {/* <span className="me-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => editActivity(item)} title="Edit">
+                                                <span className="me-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => downloadForm(item)} title="Download">
                                                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M2.5 10.8499C2.225 10.8499 1.9895 10.7521 1.7935 10.5564C1.5975 10.3607 1.49967 10.1252 1.5 9.8499V2.8499C1.5 2.5749 1.598 2.3394 1.794 2.1434C1.99 1.9474 2.22533 1.84957 2.5 1.8499H6.9625L5.9625 2.8499H2.5V9.8499H9.5V6.3749L10.5 5.3749V9.8499C10.5 10.1249 10.402 10.3604 10.206 10.5564C10.01 10.7524 9.77467 10.8502 9.5 10.8499H2.5ZM8.0875 2.1374L8.8 2.8374L5.5 6.1374V6.8499H6.2L9.5125 3.5374L10.225 4.2374L6.9125 7.5499C6.82083 7.64157 6.7145 7.71457 6.5935 7.7689C6.4725 7.82324 6.3455 7.85024 6.2125 7.8499H5C4.85833 7.8499 4.7395 7.8019 4.6435 7.7059C4.5475 7.6099 4.49967 7.49124 4.5 7.3499V6.1374C4.5 6.00407 4.525 5.8769 4.575 5.7559C4.625 5.6349 4.69583 5.52874 4.7875 5.4374L8.0875 2.1374ZM10.225 4.2374L8.0875 2.1374L9.3375 0.887402C9.5375 0.687402 9.77717 0.587402 10.0565 0.587402C10.3358 0.587402 10.5712 0.687402 10.7625 0.887402L11.4625 1.5999C11.6542 1.79157 11.75 2.0249 11.75 2.2999C11.75 2.5749 11.6542 2.80824 11.4625 2.9999L10.225 4.2374Z" fill="var(--bs-green)" />
+                                                        <path d="M9.75 7.875V9.75H2.25V7.875H1V9.75C1 10.4375 1.5625 11 2.25 11H9.75C10.4375 11 11 10.4375 11 9.75V7.875H9.75Z" fill="var(--bs-blue)" />
+                                                        <path d="M9.125 5.375L8.24375 4.49375L6.625 6.10625L6.625 1L5.375 1L5.375 6.10625L3.75625 4.49375L2.875 5.375L6 8.5L9.125 5.375Z" fill="var(--bs-blue)" />
                                                     </svg>
-                                                </span> */}
+                                                </span>
                                                 <span className="mx-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => viewActivity(item)} title="View">
                                                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M6 4.5C6.39782 4.5 6.77936 4.65804 7.06066 4.93934C7.34196 5.22064 7.5 5.60218 7.5 6C7.5 6.39782 7.34196 6.77936 7.06066 7.06066C6.77936 7.34196 6.39782 7.5 6 7.5C5.60218 7.5 5.22064 7.34196 4.93934 7.06066C4.65804 6.77936 4.5 6.39782 4.5 6C4.5 5.60218 4.65804 5.22064 4.93934 4.93934C5.22064 4.65804 5.60218 4.5 6 4.5ZM6 2.25C8.5 2.25 10.635 3.805 11.5 6C10.635 8.195 8.5 9.75 6 9.75C3.5 9.75 1.365 8.195 0.5 6C1.365 3.805 3.5 2.25 6 2.25ZM1.59 6C1.99413 6.82515 2.62165 7.52037 3.40124 8.00663C4.18083 8.49288 5.0812 8.75066 6 8.75066C6.9188 8.75066 7.81917 8.49288 8.59876 8.00663C9.37835 7.52037 10.0059 6.82515 10.41 6C10.0059 5.17485 9.37835 4.47963 8.59876 3.99337C7.81917 3.50712 6.9188 3.24934 6 3.24934C5.0812 3.24934 4.18083 3.50712 3.40124 3.99337C2.62165 4.47963 1.99413 5.17485 1.59 6Z" fill="#322C2D" />
+                                                    </svg>
+                                                </span>
+                                                {/* {
+                                                    item.status === 'Submitted' &&
+                                                } */}
+                                                <span className="ms-1" style={{ zoom: 1.6, opacity: 0.5, cursor: "pointer" }} onClick={() => editActivity(item)} title="Edit">
+                                                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M2.5 10.8499C2.225 10.8499 1.9895 10.7521 1.7935 10.5564C1.5975 10.3607 1.49967 10.1252 1.5 9.8499V2.8499C1.5 2.5749 1.598 2.3394 1.794 2.1434C1.99 1.9474 2.22533 1.84957 2.5 1.8499H6.9625L5.9625 2.8499H2.5V9.8499H9.5V6.3749L10.5 5.3749V9.8499C10.5 10.1249 10.402 10.3604 10.206 10.5564C10.01 10.7524 9.77467 10.8502 9.5 10.8499H2.5ZM8.0875 2.1374L8.8 2.8374L5.5 6.1374V6.8499H6.2L9.5125 3.5374L10.225 4.2374L6.9125 7.5499C6.82083 7.64157 6.7145 7.71457 6.5935 7.7689C6.4725 7.82324 6.3455 7.85024 6.2125 7.8499H5C4.85833 7.8499 4.7395 7.8019 4.6435 7.7059C4.5475 7.6099 4.49967 7.49124 4.5 7.3499V6.1374C4.5 6.00407 4.525 5.8769 4.575 5.7559C4.625 5.6349 4.69583 5.52874 4.7875 5.4374L8.0875 2.1374ZM10.225 4.2374L8.0875 2.1374L9.3375 0.887402C9.5375 0.687402 9.77717 0.587402 10.0565 0.587402C10.3358 0.587402 10.5712 0.687402 10.7625 0.887402L11.4625 1.5999C11.6542 1.79157 11.75 2.0249 11.75 2.2999C11.75 2.5749 11.6542 2.80824 11.4625 2.9999L10.225 4.2374Z" fill="var(--bs-green)" />
                                                     </svg>
                                                 </span>
                                             </div>
@@ -400,18 +333,10 @@ function TaskManagement() {
                 action === ACTIONS.VIEW && <ViewActivityModal activity={activity} onClose={dismissAction} />
             }
 
-            {/* {
-                bulkUpload &&
-                <BulkUploadModal onClose={() => setBulkUpload(false)} onSubmit={getActivities} />
-            }
             {
-                submitToAuditor &&
-                <SubmitToAuditorModal todo={activities} onClose={() => setSubmitToAuditor(false)} onSubmit={onSubmitToAuditorHandler} />
+                action === ACTIONS.EDIT &&
+                <EditActivityModal activity={activity} onClose={dismissAction} onSubmit={refetch} />
             }
-            {
-                !!activity &&
-                <EditActivityModal activity={activity} onClose={() => setActivity(null)} onSubmit={getActivities} />
-            } */}
             {submitting && <PageLoader />}
         </>
     );
