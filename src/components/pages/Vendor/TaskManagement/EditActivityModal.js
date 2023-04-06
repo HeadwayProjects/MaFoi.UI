@@ -8,18 +8,19 @@ import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { useGetActivityDocuments } from "../../../../backend/query";
 import PageLoader from "../../../shared/PageLoader";
+import { ACTIVITY_STATUS, ALLOWED_FILES_REGEX } from "../../../common/Constants";
 
-const SUBMITED_STATUSES = ['Submitted', 'Audited'];
+const SUBMITED_STATUSES = [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED];
 
 function StatusTmp({ status }) {
     function computeStatusColor(status) {
-        if (status === 'Pending') {
+        if (status === ACTIVITY_STATUS.PENDING) {
             return 'text-warning';
-        } else if (status === 'Reject' || status === 'Overdue') {
+        } else if (status === ACTIVITY_STATUS.REJECTED || status === ACTIVITY_STATUS.OVERDUE) {
             return 'text-danger';
-        } else if (status === 'Submitted') {
+        } else if (status === ACTIVITY_STATUS.SUBMITTED) {
             return 'text-success';
-        } else if (status === 'Audited') {
+        } else if (status === ACTIVITY_STATUS.AUDITED) {
             return 'text-success-emphasis'
         }
         return 'text-secondary'
@@ -38,8 +39,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }) {
 
     function onFileChange(event) {
         const file = event.target.files[0];
-        const allowedExtensions = /(\.xlsx|\.xls|\.pdf)$/i;
-        const invalidFile = !allowedExtensions.exec(file.name);
+        const invalidFile = !ALLOWED_FILES_REGEX.exec(file.name);
         setFile(file);
         setInvalidFile(invalidFile);
     }

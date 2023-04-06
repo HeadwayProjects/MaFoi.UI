@@ -9,6 +9,7 @@ import * as api from "../../../../backend/request";
 import { useGetUserCompanies } from "../../../../backend/query";
 import { toast } from 'react-toastify';
 import PageLoader from "../../../shared/PageLoader";
+import { ALLOWED_FILES_REGEX } from "../../../common/Constants";
 
 const Months = [
     { value: 'January', label: 'January' },
@@ -67,10 +68,9 @@ function BulkUploadModal({ onClose }) {
         if (event) {
             const length = event.target.files.length;
             const time = new Date().getTime();
-            const allowedExtensions = /(\.xlsx|\.xls|\.pdf)$/i;
             for (let i = 0; i < length; i++) {
                 const file = event.target.files[i];
-                const invalidFile = !allowedExtensions.exec(file.name);
+                const invalidFile = !ALLOWED_FILES_REGEX.exec(file.name);
                 _uploadedFiles.push({ id: time + i, file, invalidFile });
             }
             setUploadedFiles(_uploadedFiles);
