@@ -220,7 +220,7 @@ function TaskManagement() {
                                 }
                             </div>
                             <div className="d-flex">
-                                <div className="mx-2">
+                                {/* <div className="mx-2">
                                     <button className="btn btn-primary" onClick={(e) => {
                                         e.preventDefault();
                                         appoveActivity();
@@ -241,7 +241,7 @@ function TaskManagement() {
                                             <span className="ms-2">Reject</span>
                                         </div>
                                     </button>
-                                </div>
+                                </div> */}
 
                                 {/* <div>
                                     <button className="btn btn-success" onClick={(e) => {
