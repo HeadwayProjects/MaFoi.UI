@@ -183,7 +183,7 @@ function ActivitiesManagement() {
         if (company && associateCompany && location) {
             getActivities();
         }
-    }, [location]);
+    }, [company, associateCompany, location]);
 
     useEffect(() => {
         if (checkedStatuses) {

@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { sortBy } from "underscore";
 import * as api from "../../../backend/request";
-import Select from 'react-select';
 import { toast } from 'react-toastify';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose, faInfoCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { useGetUserCompanies } from "../../../backend/query";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ViewActivityModal from "./ViewActivityModal";
@@ -14,6 +11,8 @@ import EditActivityModal from "./EditActivityModal";
 import PageLoader from "../../shared/PageLoader";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
+import Location from "../../common/Location";
+import { useGetAuditorActivites } from "../../../backend/auditor";
 
 const STATUS_BTNS = [
     { name: 'Submitted', label: 'Submitted', style: 'danger' },
@@ -43,37 +42,21 @@ function StatusTmp({ status }) {
 function TaskManagement() {
     const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
-    const [companies, setCompanies] = useState([]);
-    const [associateCompanies, setAssociateCompanies] = useState([]);
-    const [locations, setLocations] = useState([]);
-    const [company, setCompany] = useState(null);
-    const [associateCompany, setAssociateCompany] = useState(null);
-    const [location, setLocation] = useState(null);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const [checkedStatuses, setCheckedStatuses] = useState({});
-    const [statuses, setStatuses] = useState(null);
-    const [activities, setActivities] = useState([]);
     const [action, setAction] = useState(null);
     const [activity, setActivity] = useState(null);
-    const { userCompanies, isFetching } = useGetUserCompanies();
     const [selectedActivities, setSelectedActivities] = useState([]);
+    const [payload, setPayload] = useState();
+    const { activities, refetch } = useGetAuditorActivites(payload);
 
-    function getActivities() {
-        if (company && associateCompany && location) {
-            const payload = {
-                company: company.value,
-                associateCompany: associateCompany.value,
-                location: location.value,
-                fromDate: fromDate ? new Date(fromDate).toISOString() : null,
-                toDate: toDate ? new Date(toDate).toISOString() : null,
-                statuses: statuses || ['Submitted', 'Approved', 'Rejected']
-            }
-            api.post('/api/ToDo/GetToDoByCriteria', payload).then(response => {
-                setSelectedActivities([]);
-                setActivities(response.data || []);
-            });
-        }
+    function search() {
+        setPayload({
+            ...payload,
+            fromDate: fromDate ? new Date(fromDate).toISOString() : null,
+            toDate: toDate ? new Date(toDate).toISOString() : null,
+        });
     }
 
     function editActivity(activity) {
@@ -133,7 +116,7 @@ function TaskManagement() {
         api.post('/api/ToDo/Audit', payload).then(response => {
             if (response.data.result === 'SUCCESS') {
                 toast.success(response.data.message);
-                getActivities();
+                refetch();
             } else {
                 toast.error(response.data.message);
             }
@@ -149,81 +132,25 @@ function TaskManagement() {
         api.post('/api/ToDo/Audit', payload).then(response => {
             if (response.data.result === 'SUCCESS') {
                 toast.success(response.data.message);
-                getActivities();
+                refetch();
             } else {
                 toast.error(response.data.message);
             }
         }).finally(() => setSubmitting(false))
     }
 
-    function publishActivity() {
-
+    function onLocationChange({ company, associateCompany, location }) {
+        setPayload({ ...payload, company, associateCompany, location })
     }
-
-
-    useEffect(() => {
-        setAssociateCompanies([]);
-        setLocations([]);
-        setAssociateCompany(null);
-        setLocation(null);
-        if (company) {
-            const associateCompanies = (company.company.associateCompanies || []).map(associateCompany => {
-                return {
-                    label: associateCompany.associateCompany.name,
-                    value: associateCompany.associateCompany.id,
-                    associateCompany: associateCompany.associateCompany,
-                    locations: associateCompany.locations
-                };
-            });
-            const sorted = sortBy(associateCompanies, 'label');
-            setAssociateCompanies(sorted);
-            setAssociateCompany(sorted[0]);
-        }
-    }, [company]);
-
-    useEffect(() => {
-        setLocations([]);
-        setLocation(null);
-        if (associateCompany) {
-            const locations = (associateCompany.locations || []).map(location => {
-                return { label: `${location.name}, ${location.cities.name}`, value: location.id, location, stateId: location.stateId };
-            });
-            const sorted = sortBy(locations, 'label');
-            setLocations(sorted);
-            setLocation(sorted[0]);
-        }
-    }, [associateCompany]);
-
-    useEffect(() => {
-        if (company && associateCompany && location) {
-            getActivities();
-        }
-    }, [location]);
 
     useEffect(() => {
         if (checkedStatuses) {
             const keys = Object.keys(checkedStatuses);
             const result = keys.filter(key => !!checkedStatuses[key]);
-            setStatuses(result.length ? result : ['Submitted', 'Approved', 'Rejected']);
+            setPayload({ ...payload, statuses: result.length ? result : ['Submitted', 'Approved', 'Rejected'] });
         }
     }, [checkedStatuses]);
 
-    useEffect(() => {
-        if (statuses) {
-            getActivities();
-        }
-    }, [statuses]);
-
-    useEffect(() => {
-        if (!isFetching && userCompanies) {
-            const companies = userCompanies.map(company => {
-                return { value: company.id, label: company.name, company }
-            });
-            const sorted = sortBy(companies, 'label');
-            setCompanies(sorted);
-            setCompany(sorted[0]);
-        }
-    }, [isFetching]);
 
     return (
         <>
@@ -245,18 +172,7 @@ function TaskManagement() {
                 <form className="card border-0 p-0 mb-3 mx-3">
                     <div className="card-body">
                         <div className="row">
-                            <div className="col-2 col-md-2">
-                                <label className="filter-label"><small>Company</small></label>
-                                <Select placeholder='Company' options={companies} onChange={setCompany} value={company} />
-                            </div>
-                            <div className="col-3 col-md-3">
-                                <label className="filter-label"><small>Associate Company</small></label>
-                                <Select placeholder='Asscociate Company' options={associateCompanies} onChange={setAssociateCompany} value={associateCompany} />
-                            </div>
-                            <div className="col-2 col-md-2">
-                                <label className="filter-label"><small>Location</small></label>
-                                <Select placeholder='Location' options={locations} onChange={setLocation} value={location} />
-                            </div>
+                            <Location onChange={onLocationChange} />
                             <div className="col-5">
                                 <div className="d-flex justify-content-end">
                                     <div className="d-flex flex-column me-2">
@@ -274,7 +190,7 @@ function TaskManagement() {
                                             <button type="submit" className="btn btn-primary d-flex align-items-center"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    getActivities();
+                                                    search();
                                                 }}>
                                                 <FontAwesomeIcon icon={faSearch} />
                                                 <span className="ms-2">Search</span>
@@ -428,7 +344,7 @@ function TaskManagement() {
 
             {
                 action === ACTIONS.EDIT &&
-                <EditActivityModal activity={activity} onClose={dismissAction} onSubmit={getActivities} />
+                <EditActivityModal activity={activity} onClose={dismissAction} onSubmit={refetch} />
             }
             {submitting && <PageLoader />}
         </>
