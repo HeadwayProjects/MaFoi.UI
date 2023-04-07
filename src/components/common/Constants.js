@@ -15,7 +15,7 @@ export const AUDIT_STATUS = {
     NOT_APPLICABLE: 'Not Applicable'
 }
 
-export const ALLOWED_FILES_REGEX = /(\.xlsx|\.xls|\.csv|\.pdf|\.jpg|\.jpeg|\.png|\.doc|\.docs)$/i;
+export const ALLOWED_FILES_REGEX = /(\.xlsx|\.xls|\.csv|\.pdf|\.jpg|\.jpeg|\.png|\.doc|\.docx)$/i;
 
 export const STATUS_MAPPING = {
     [ACTIVITY_STATUS.PENDING]: 'Pending',
