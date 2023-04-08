@@ -26,5 +26,5 @@ export const STATUS_MAPPING = {
     [ACTIVITY_STATUS.SUBMITTED]: 'Submitted',
     [AUDIT_STATUS.COMPLIANT]: 'Compliant',
     [AUDIT_STATUS.NON_COMPLIANCE]: 'Non-Compliance',
-    [ACTIVITY_STATUS.NOT_APPLICABLE]: 'Not Applicable'
+    [AUDIT_STATUS.NOT_APPLICABLE]: 'Not Applicable'
 }
