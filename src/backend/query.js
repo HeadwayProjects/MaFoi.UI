@@ -30,3 +30,17 @@ export function useGetActivityDocuments(activityId) {
     );
     return { documents: (data || {}).data || [], isFetching, invalidate };
 }
+
+export function useGetVendorActivites(payload) {
+    const { data, isFetching, refetch } = useQuery(
+        ['auditorActivities', payload],
+        async () => await api.post('/api/ToDo/GetToDoByCriteria', payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: !!payload
+        }
+    );
+
+    return { activities: (data || {}).data || [], isFetching, refetch };
+}

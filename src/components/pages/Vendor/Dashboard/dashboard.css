@@ -30,7 +30,7 @@
     color: var(--white) !important;
 }
 
-.status-btn-group input[name="ActivitiesSaved"]+.btn {
+.status-btn-group input[name="ActivitySaved"]+.btn {
     color: rgba(50, 44, 45, 0.5);
 }
 
@@ -47,6 +47,6 @@
     color: #A9D18E;
 }
 
-.status-btn-group input[name="Audited"]+.btn {
+.status-btn-group input[name="Approved"]+.btn {
     color: #548235;
 }

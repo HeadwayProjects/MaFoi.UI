@@ -19,6 +19,7 @@ link {
 
 body {
   background-color: #f4f9fd !important;
+  overflow: hidden;
 }
 
 
@@ -296,4 +297,28 @@ body {
 
 table.table {
   font-size: 14px;
+}
+
+.status-ActivitySaved,
+.status-not-applicable {
+  color: rgba(50, 44, 45, 0.5);
+}
+
+.status-Pending {
+  color: #FFC000;
+}
+
+.status-Overdue,
+.status-Rejected,
+.status-non-compliance {
+  color: #FF0000;
+}
+
+.status-Submitted {
+  color: #A9D18E;
+}
+
+.status-Approved,
+.status-compliant {
+  color: #548235;
 }

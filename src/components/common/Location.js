@@ -13,7 +13,6 @@ function Location({ onChange }) {
     const [associateCompany, setAssociateCompany] = useState(null);
     const [location, setLocation] = useState(null);
     const { userCompanies, isFetching } = useGetUserCompanies();
-    const [initialLoad, setInitialLoad] = useState(true);
 
     useEffect(() => {
         setAssociateCompanies([]);
@@ -52,27 +51,12 @@ function Location({ onChange }) {
 
     useEffect(() => {
         if (company && associateCompany && location) {
-            if (initialLoad) {
-                setInitialLoad(false);
-                const _state = state ? { ...state } : {};
-                if (_state.company !== company.value
-                    || _state.associateCompany !== associateCompany.value
-                    || _state.location !== location.value) {
-                    onChange({
-                        company: company.value,
-                        associateCompany: associateCompany.value,
-                        location: location.value,
-                        stateId: location.stateId
-                    });
-                }
-            } else {
-                onChange({
-                    company: company.value,
-                    associateCompany: associateCompany.value,
-                    location: location.value,
-                    stateId: location.stateId
-                });
-            }
+            onChange({
+                company: company.value,
+                associateCompany: associateCompany.value,
+                location: location.value,
+                stateId: location.stateId
+            });
         }
     }, [location]);
 

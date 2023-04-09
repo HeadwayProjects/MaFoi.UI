@@ -28,3 +28,5 @@ export const STATUS_MAPPING = {
     [AUDIT_STATUS.NON_COMPLIANCE]: 'Non-Compliance',
     [AUDIT_STATUS.NOT_APPLICABLE]: 'Not Applicable'
 }
+
+export const TOOLTIP_DELAY = 500; // Milliseconds

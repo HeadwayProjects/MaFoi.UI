@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { ActiveLink } from 'raviger';
+import { ActiveLink, navigate } from 'raviger';
 import '../shared/Sidenav.css';
 import * as auth from "../../backend/auth";
+import { preventDefault } from '../../utils/common';
 
 function Sidenav() {
     const [user] = useState(auth.getUserDetails());
@@ -14,8 +15,13 @@ function Sidenav() {
     }, [user])
 
     function NavItem({ children, url }) {
+        function onClick(e) {
+            preventDefault(e);
+            navigate(url, { replace: true, state: null });
+        }
+
         return (
-            <ActiveLink href={url} activeClass="active">
+            <ActiveLink href={url} activeClass="active" onClick={onClick}>
                 {children}
             </ActiveLink>
         )

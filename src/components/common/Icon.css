@@ -1,0 +1,19 @@
+.btn-icon {
+    opacity: 0.6;
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+.btn-icon:disabled {
+    opacity: 0.4;
+}
+
+.btn-icon:disabled:hover {
+    cursor: not-allowed;
+}
+
+.btn-icon:not([disabled]):hover {
+    opacity: 1;
+    cursor: pointer;
+}
