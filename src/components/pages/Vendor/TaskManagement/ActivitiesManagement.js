@@ -142,7 +142,7 @@ function ActivitiesManagement() {
                         <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
                     </OverlayTrigger>
                 }
-                <span className={`status-${status} ellipse`}>{STATUS_MAPPING[status]}</span>
+                <span className={`status-${status} ellipse`}>{STATUS_MAPPING[status] || status}</span>
             </div>
         )
     }
@@ -166,7 +166,7 @@ function ActivitiesManagement() {
                 }
                 {
                     status &&
-                    <span className={`${color[status]} ellipse`}>{STATUS_MAPPING[status]}</span>
+                    <span className={`${color[status]} ellipse`}>{STATUS_MAPPING[status] || status}</span>
                 }
             </div>
         )
@@ -415,7 +415,10 @@ function ActivitiesManagement() {
             }
             {
                 submitToAuditor &&
-                <SubmitToAuditorModal todo={activities} onClose={() => setSubmitToAuditor(false)} onSubmit={onSubmitToAuditorHandler} />
+                <SubmitToAuditorModal todo={activities}
+                    onClose={() => setSubmitToAuditor(false)}
+                    onSubmit={onSubmitToAuditorHandler}
+                    selectedRows={selectedRows} />
             }
             {
                 !!activity &&

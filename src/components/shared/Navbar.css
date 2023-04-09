@@ -22,3 +22,9 @@
 .dropdown-item {
     cursor: pointer;
 }
+
+.last-login-time {
+    font-size: 11px;
+    text-align: center;
+    font-weight: bold;
+}

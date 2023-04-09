@@ -35,6 +35,7 @@ function Navbar() {
                             </div>
                         </ul>
                         <ul className="d-flex row disabled mb-0 text-muted ps-2 m-0 align-items-center align-content-center">
+                            <span className='last-login-time'>Last Login Time</span>
                             <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('hh:mm A')}</span></small>
                             <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('DD/MM/YYYY')}</span></small>
                         </ul>

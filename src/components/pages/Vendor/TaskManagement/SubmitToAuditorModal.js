@@ -2,7 +2,7 @@ import React from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
-function SubmitToAuditorModal({ onClose, onSubmit }) {
+function SubmitToAuditorModal({ onClose, onSubmit, selectedRows }) {
   return (
     <>
       <Modal show={true} backdrop="static" animation={false} size="lg">
@@ -12,7 +12,9 @@ function SubmitToAuditorModal({ onClose, onSubmit }) {
         <Modal.Body>
           <div className="row mb-4">
             <div className="col-12">
-              This will actually submit all the activities has submitted and you will not be able to edit further, Do you want to Submit (Yes/No)?
+              <p>You have selected <strong>{selectedRows.length} {selectedRows.length > 1 ? 'activities' : 'activity'}</strong> for submission. Upon submission to Auditor, you will not be able to edit them further</p>
+              <p>Do you want to submit ? click "Yes"</p>
+              <p>To cancel, click "No"</p>
             </div>
           </div>
         </Modal.Body>
