@@ -112,7 +112,10 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }) {
                                                 <div className="col-6 mb-4">
                                                     <label><small>Vendor Due Date</small><span className="required">*</span></label>
                                                     <DatePicker className="form-control" selected={dueDate} dateFormat="dd-MM-yyyy"
-                                                        onChange={setDueDate} placeholderText="dd-mm-yyyy" />
+                                                        onChange={setDueDate} placeholderText="dd-mm-yyyy"
+                                                        showMonthDropdown
+                                                        showYearDropdown
+                                                        dropdownMode="select" />
                                                 </div>
                                             }
                                         </div>

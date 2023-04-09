@@ -334,12 +334,18 @@ function ActivitiesManagement() {
                                     <div className="d-flex flex-column me-2">
                                         <label className="filter-label"><small>Due Date: From</small></label>
                                         <DatePicker className="form-control" selected={fromDate} dateFormat="dd-MM-yyyy"
-                                            onChange={fromDateChange} placeholderText="dd-mm-yyyy" />
+                                            onChange={fromDateChange} placeholderText="dd-mm-yyyy"
+                                            showMonthDropdown
+                                            showYearDropdown
+                                            dropdownMode="select" />
                                     </div>
                                     <div className="d-flex flex-column ms-3">
                                         <label className="filter-label"><small>Due Date: To</small></label>
                                         <DatePicker className="form-control" selected={toDate} dateFormat="dd-MM-yyyy"
-                                            onChange={toDateChange} placeholderText="dd-mm-yyyy" />
+                                            onChange={toDateChange} placeholderText="dd-mm-yyyy"
+                                            showMonthDropdown
+                                            showYearDropdown
+                                            dropdownMode="select" />
                                     </div>
                                     <div className="d-flex align-items-end ms-3">
                                         <div className="d-flex flex-column">
