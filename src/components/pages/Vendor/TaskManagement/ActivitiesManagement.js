@@ -7,19 +7,20 @@ import EditActivityModal from "./EditActivityModal";
 import { toast } from 'react-toastify';
 import PageLoader from "../../../shared/PageLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave, faSearch, faUpload, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faSave, faUpload, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import BulkUploadModal from "./BulkuploadModal";
 import { Link, usePath, useHistory } from "raviger";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
-import { ACTIVITY_STATUS, AUDIT_STATUS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../../common/Constants";
+import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../../common/Constants";
 import Location from "../../../common/Location";
 import { useGetVendorActivites } from "../../../../backend/query";
 import Icon from "../../../common/Icon";
 import { preventDefault } from "../../../../utils/common";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
+import AdvanceSearch from "../../../common/AdvanceSearch";
+import AlertModal from "../../../common/AlertModal";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -35,8 +36,6 @@ function ActivitiesManagement() {
     const { state } = useHistory();
     const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
-    const [fromDate, setFromDate] = useState((state || {}).fromDate || null);
-    const [toDate, setToDate] = useState((state || {}).toDate || null);
     const [checkedStatuses, setCheckedStatuses] = useState((state || {}).status ? { [state.status]: true } : {});
     const [activity, setActivity] = useState(null);
     const [bulkUpload, setBulkUpload] = useState(false);
@@ -45,12 +44,13 @@ function ActivitiesManagement() {
     const [fromDashboard] = useState(path.includes('/dashboard/activities'));
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [filters, setFilters] = useState();
+    const [filters, setFilters] = useState(state && state.fromDate ? { fromDate: state.fromDate, toDate: state.toDate } : undefined);
     const filterRef = useRef();
     filterRef.current = filters;
     const [payload, setPayload] = useState();
     const { activities, isFetching, refetch } = useGetVendorActivites(payload);
     const [selectedRows, setSelectedRows] = useState([]);
+    const [alertMessage, setAlertMessage] = useState(null);
 
     function onLocationChange(event) {
         setFilters({ ...filterRef.current, ...event });
@@ -76,6 +76,36 @@ function ActivitiesManagement() {
         }).finally(() => setSubmitting(false));
     }
 
+    function onSubmitToAuditor(e) {
+        preventDefault(e);
+        const _filter = filterRef.current;
+        if (!_filter.month) {
+            setAlertMessage(`
+                <div class="mb-2">There might be some hidden activies or activities from different months and years. Please restrict your search to specific month and year.</div>
+                <p class="mt-3"><strong>Advance Search &gt; Filter By Month & Year &gt; Select Specific Month and Year</strong</p>
+            `);
+        } else {
+            setSubmitting(true);
+            const _payload = {
+                company: payload.company,
+                associateCompany: payload.associateCompany,
+                location: payload.location,
+                month: payload.month,
+                year: payload.year,
+                statuses: ['']
+            };
+            api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
+                if (response && response.data) {
+                    const _rows = response.data || [];
+                    if (_rows.length) {
+                        setSelectedRows(_rows);
+                        setSubmitToAuditor(true);
+                    }
+                }
+            }).finally(() => setSubmitting(false));
+        }
+    }
+
     function onSubmitToAuditorHandler(e) {
         preventDefault(e);
         setSubmitting(true);
@@ -94,33 +124,17 @@ function ActivitiesManagement() {
         });
     }
 
-    function fromDateChange(date) {
-        setFromDate(date);
-        if (toDate && date > toDate) {
-            setToDate(date);
-        }
-    }
-
-    function toDateChange(date) {
-        if (fromDate && date > fromDate) {
-            setToDate(date);
-        } else {
-            setToDate(fromDate);
-        }
-    }
-
-    function search() {
+    function search(event) {
         setFilters({
             ...filterRef.current,
-            fromDate: fromDate ? new Date(fromDate).toISOString() : null,
-            toDate: toDate ? new Date(toDate).toISOString() : null,
+            ...event
         });
     }
 
     function MonthTmpl({ cell }) {
         const row = cell.getData();
         return (
-            <>{row.month} (${row.year})</>
+            <>{row.month} ({row.year})</>
         )
     }
     function DueDateTmpl({ cell }) {
@@ -184,12 +198,6 @@ function ActivitiesManagement() {
     }
 
     const columns = [
-        // {
-        //     formatter: "rowSelection", titleFormatter: "rowSelection", hozAlign: "center", headerSort: false, width: 10, cellClick: function (e, cell) {
-        //         preventDefault(e);
-        //         cell.getRow().toggleSelect();
-        //     }
-        // },
         {
             title: "Month (year)", field: "month", width: 140,
             formatter: reactFormatter(<MonthTmpl />),
@@ -255,10 +263,7 @@ function ActivitiesManagement() {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
-        selectableCheck: (row) => {
-            const data = row.getData();
-            return ![ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.SUBMITTED].includes(data.status);
-        }
+        selectable: false
     });
 
     function formatApiResponse(params, list, pagination = {}) {
@@ -282,9 +287,12 @@ function ActivitiesManagement() {
     useEffect(() => {
         if (filters) {
             setPayload({
-                fromDate: fromDate ? new Date(fromDate).toISOString() : null,
-                toDate: toDate ? new Date(toDate).toISOString() : null,
-                ...filterRef.current, ...params
+                fromDate: null,
+                toDate: null,
+                month: '',
+                year: null,
+                ...filterRef.current,
+                ...params
             });
         }
     }, [filters]);
@@ -330,36 +338,7 @@ function ActivitiesManagement() {
                         <div className="row">
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
-                                <div className="d-flex justify-content-end">
-                                    <div className="d-flex flex-column me-2">
-                                        <label className="filter-label"><small>Due Date: From</small></label>
-                                        <DatePicker className="form-control" selected={fromDate} dateFormat="dd-MM-yyyy"
-                                            onChange={fromDateChange} placeholderText="dd-mm-yyyy"
-                                            showMonthDropdown
-                                            showYearDropdown
-                                            dropdownMode="select" />
-                                    </div>
-                                    <div className="d-flex flex-column ms-3">
-                                        <label className="filter-label"><small>Due Date: To</small></label>
-                                        <DatePicker className="form-control" selected={toDate} dateFormat="dd-MM-yyyy"
-                                            onChange={toDateChange} placeholderText="dd-mm-yyyy"
-                                            showMonthDropdown
-                                            showYearDropdown
-                                            dropdownMode="select" />
-                                    </div>
-                                    <div className="d-flex align-items-end ms-3">
-                                        <div className="d-flex flex-column">
-                                            <button type="submit" className="btn btn-primary d-flex align-items-center"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    search();
-                                                }}>
-                                                <FontAwesomeIcon icon={faSearch} />
-                                                <span className="ms-2">Search</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.DUE_DATE]} payload={payload} onSubmit={search} />
                             </div>
                         </div>
                     </div>
@@ -397,10 +376,8 @@ function ActivitiesManagement() {
                                     </div>
 
                                     <div>
-                                        <button className="btn btn-primary" onClick={(e) => {
-                                            e.preventDefault();
-                                            setSubmitToAuditor(true)
-                                        }} disabled={selectedRows.length === 0}>
+                                        <button className="btn btn-primary" onClick={onSubmitToAuditor}
+                                            disabled={activities.length === 0}>
                                             <div className="d-flex align-items-center">
                                                 <FontAwesomeIcon icon={faSave} />
                                                 <span className="ms-2">Submit To Auditor</span>
@@ -429,6 +406,13 @@ function ActivitiesManagement() {
             {
                 !!activity &&
                 <EditActivityModal activity={activity} onClose={() => setActivity(null)} onSubmit={refetch} />
+            }
+            {
+                !!alertMessage &&
+                <AlertModal message={alertMessage} onClose={(e) => {
+                    preventDefault(e);
+                    setAlertMessage(null);
+                }} />
             }
             {submitting && <PageLoader />}
         </>

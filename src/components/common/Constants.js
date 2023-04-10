@@ -12,7 +12,7 @@ export const ACTIVITY_STATUS = {
 export const AUDIT_STATUS = {
     COMPLIANT: 'Compliant',
     NON_COMPLIANCE: 'Non-Compliance',
-    NOT_APPLICABLE: 'Not Applicable'
+    NOT_APPLICABLE: 'Not-Applicable'
 }
 
 export const ALLOWED_FILES_REGEX = /(\.xlsx|\.xls|\.csv|\.pdf|\.jpg|\.jpeg|\.png|\.doc|\.docx)$/i;
@@ -30,3 +30,41 @@ export const STATUS_MAPPING = {
 }
 
 export const TOOLTIP_DELAY = 500; // Milliseconds
+
+export const MONTHS = [
+    { value: 'January', label: 'January' },
+    { value: 'February', label: 'February' },
+    { value: 'March', label: 'March' },
+    { value: 'April', label: 'April' },
+    { value: 'May', label: 'May' },
+    { value: 'June', label: 'June' },
+    { value: 'July', label: 'July' },
+    { value: 'August', label: 'August' },
+    { value: 'September', label: 'September' },
+    { value: 'October', label: 'October' },
+    { value: 'November', label: 'November' },
+    { value: 'December', label: 'December' }
+]
+
+export const YEARS = (() => {
+    const year = new Date().getFullYear();
+    let years = [year + 1];
+    for (let i = 0; i < 5; i++) {
+        years.push(year - i);
+    }
+    return years.map(year => {
+        return { value: `${year}`, label: year }
+    });
+})();
+
+export const FILTERS = {
+    MONTH: 'month',
+    DUE_DATE: 'dueDate',
+    SUBMITTED_DATE: 'submittedDate'
+}
+
+export const SEARCH_FIELDS = [
+    { value: FILTERS.MONTH, label: 'Month & Year' },
+    { value: FILTERS.DUE_DATE, label: 'Due Date' },
+    { value: FILTERS.SUBMITTED_DATE, label: 'Submitted Date' }
+]
