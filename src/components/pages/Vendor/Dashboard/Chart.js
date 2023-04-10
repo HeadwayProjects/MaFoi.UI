@@ -20,8 +20,8 @@ const defaultConfig = {
         {
             data: [],
             type: 'pie',
-            radius: [20, '55%'],
-            center: ['60%', '50%'],
+            radius: [40, '80%'],
+            center: ['50%', '50%'],
             smooth: true,
             height: 250,
             label: {
@@ -63,7 +63,8 @@ function Chart({ data, keys }) {
             _config.series[0].label.formatter = ({ value }) => {
                 const _valueByTotal = value / total;
                 if (_valueByTotal === NaN) return '0 %';
-                return `${_valueByTotal * 100} %`;
+                const _percentageValue = _valueByTotal * 100;
+                return `${Math.round(_percentageValue)} %`;
             };
             _config.series[0].data = _data;
             _config.legend.data = _legentData;
