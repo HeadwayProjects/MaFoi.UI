@@ -30,7 +30,7 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
             const month = MONTHS[new Date().getMonth()];
             const year = YEARS.find(x => x.value === `${new Date().getFullYear()}`);
             setPayload({ month, year, fromDate: null, toDate: null });
-        } else {
+        } else if (!event) {
             search(false);
         }
     }

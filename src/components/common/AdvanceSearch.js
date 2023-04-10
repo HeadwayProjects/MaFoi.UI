@@ -1,32 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { FILTERS, SEARCH_FIELDS } from "./Constants";
+import { FILTERS, SEARCH_FIELDS, TOOLTIP_DELAY } from "./Constants";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import AdvanceSearchModal from "./AdvanceSearchModal";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger"
+import Tooltip from 'react-bootstrap/Tooltip';
 
-function AdvanceSearch({ payload, fields, onSubmit }) {
+function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
     const [showModal, setShowModal] = useState(false);
     const [label, setLabel] = useState('');
-    const [filter, setFilter] = useState('');
+    const [value, setValue] = useState('');
+    const [filter, setFilter] = useState();
 
     useEffect(() => {
         if (payload) {
             if (payload.month) {
                 const filter = SEARCH_FIELDS.find(x => x.value === FILTERS.MONTH);
                 setLabel(filter.label);
-                setFilter(`${payload.month} (${payload.year})`);
+                setValue(`${payload.month} (${payload.year})`);
+                setFilter(FILTERS.MONTH);
             } else if (payload.fromDate) {
                 const filter = SEARCH_FIELDS.find(x => x.value !== FILTERS.MONTH && fields.includes(x.value));
                 setLabel(filter.label);
-                setFilter(`${dayjs(new Date(payload.fromDate)).format('DD/MM/YYYY')} -  ${dayjs(new Date(payload.toDate || payload.fromDate)).format('DD/MM/YYYY')}`);
+                setValue(`${dayjs(new Date(payload.fromDate)).format('DD/MM/YYYY')} -  ${dayjs(new Date(payload.toDate || payload.fromDate)).format('DD/MM/YYYY')}`);
+                setFilter(filter.value);
             } else {
                 setLabel('');
-                setFilter('');
+                setValue('');
+                setFilter(null);
             }
         } else {
             setLabel('');
-            setFilter('');
+            setValue('');
+            setFilter(null);
         }
     }, [payload]);
 
@@ -37,7 +44,16 @@ function AdvanceSearch({ payload, fields, onSubmit }) {
                     label && filter &&
                     <div className="d-flex flex-column me-2 h-100">
                         <label className="filter-label"><small>{label}</small></label>
-                        <div className="d-flex h-100 align-items-center">{filter}</div>
+                        <div className="d-flex h-100 align-items-center">
+                            {
+                                filter === FILTERS.MONTH ?
+                                    <OverlayTrigger overlay={<Tooltip>Click to download report</Tooltip>}
+                                        placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
+                                        <a href="#" onClick={downloadReport}>{value}</a>
+                                    </OverlayTrigger>
+                                    : <>{value}</>
+                            }
+                        </div>
                     </div>
 
                 }

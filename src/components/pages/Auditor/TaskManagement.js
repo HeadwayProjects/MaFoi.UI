@@ -18,12 +18,14 @@ import Table, { reactFormatter, CellTmpl, TitleTmpl } from "../../common/Table";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
 import AdvanceSearch from "../../common/AdvanceSearch";
 import AlertModal from "../../common/AlertModal";
-import { preventDefault } from "../../../utils/common";
+import { download, preventDefault } from "../../../utils/common";
+import PublishModal from "./PublishModal";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
     { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'success' },
-    { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' }
+    { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' },
+    { name: ACTIVITY_STATUS.PUBLISHED, label: STATUS_MAPPING[ACTIVITY_STATUS.PUBLISHED], style: 'danger' }
 ];
 
 const ACTIONS = {
@@ -46,6 +48,7 @@ function TaskManagement() {
     const { activities, isFetching, refetch } = useGetAuditorActivites(payload);
     const [selectedRows, setSelectedRows] = useState([]);
     const [alertMessage, setAlertMessage] = useState(null);
+    const [publish, setPublish] = useState(false);
 
     function onLocationChange(event) {
         setFilters({ ...filterRef.current, ...event });
@@ -55,12 +58,7 @@ function TaskManagement() {
         setSubmitting(true);
         api.get(`/api/ActStateMapping/Get?id=${activity.actStateMappingId}`).then(response => {
             if (response.data.filePath) {
-                const link = document.createElement('a');
-                link.href = response.data.filePath;
-                link.download = response.data.fileName;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                download(response.data.fileName, response.data.filePath)
             } else {
                 toast.warn('No files available');
             }
@@ -84,6 +82,29 @@ function TaskManagement() {
         setActivity(activity);
     }
 
+    function downloadReport(event) {
+        preventDefault(event);
+        setSubmitting(true);
+        const _payload = {
+            company: payload.company,
+            associateCompany: payload.associateCompany,
+            location: payload.location,
+            month: payload.month,
+            year: payload.year
+        };
+
+        api.post('/api/Auditor/Report', _payload).then(response => {
+            if (response && response.data) {
+                const { fileName, filePath } = response.data || {};
+                if (filePath) {
+                    download(fileName, filePath);
+                } else {
+                    toast.warn('There are no reports available for the selected month and year.');
+                }
+            }
+        }).finally(() => setSubmitting(false));
+    }
+
     function dismissAction() {
         setAction(null);
         setActivity(null);
@@ -105,7 +126,7 @@ function TaskManagement() {
                 location: payload.location,
                 month: payload.month,
                 year: payload.year,
-                statuses: [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.APPROVE, ACTIVITY_STATUS.REJECT]
+                statuses: STATUS_BTNS.map(x => x.name)
             };
             api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
                 if (response && response.data) {
@@ -122,10 +143,34 @@ function TaskManagement() {
                         );
                     } else if (_rows.length > 0) {
                         setSelectedRows(_rows);
+                        setPublish(true);
                     }
                 }
             }).finally(() => setSubmitting(false));
         }
+    }
+
+    function onPublish(e) {
+        preventDefault(e);
+        setSubmitting(true);
+        const _payload = {
+            company: payload.company,
+            associateCompany: payload.associateCompany,
+            location: payload.location,
+            month: payload.month,
+            year: payload.year
+        };
+        api.post('/api/Auditor/Publish', _payload).then(response => {
+            refetch();
+            setPublish(false);
+            if (response && response.data) {
+                const { fileName, filePath } = response.data;
+                if (filePath) {
+                    toast.success(`Activites published successfully.`);
+                    download(fileName, filePath);
+                }
+            }
+        }).finally(() => setSubmitting(false));
     }
 
     function onFormStatusChangeHandler(e) {
@@ -312,7 +357,7 @@ function TaskManagement() {
         if (checkedStatuses) {
             const keys = Object.keys(checkedStatuses);
             const result = keys.filter(key => !!checkedStatuses[key]);
-            setFilters({ ...filterRef.current, statuses: result.length ? result : ['Submitted', 'Approved', 'Rejected'] });
+            setFilters({ ...filterRef.current, statuses: result.length ? result : STATUS_BTNS.map(x => x.name) });
         }
     }, [checkedStatuses]);
 
@@ -328,13 +373,13 @@ function TaskManagement() {
             <div className="d-flex flex-column">
                 <div className="d-flex  p-2 align-items-center pageHeading">
                     <div className="ps-4">
-                        <h4 className="mb-0 ps-1">Task Management</h4>
+                        <h4 className="mb-0 ps-1">Auditor - Activity</h4>
                     </div>
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 d-flex justify-content-end">
                                 <li className="breadcrumb-item">Home</li>
-                                <li className="breadcrumb-item active">Task Management</li>
+                                <li className="breadcrumb-item active">Activity</li>
                             </ol>
                         </nav>
                     </div>
@@ -345,7 +390,8 @@ function TaskManagement() {
                         <div className="row">
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
-                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={payload} onSubmit={search} />
+                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={payload} onSubmit={search}
+                                    downloadReport={downloadReport} />
                             </div>
                         </div>
                     </div>
@@ -369,7 +415,7 @@ function TaskManagement() {
                             </div>
                             <div className="d-flex">
                                 <button className="btn btn-success" onClick={publishActivity}
-                                    >
+                                >
                                     <div className="d-flex align-items-center">
                                         <FontAwesomeIcon icon={faSave} />
                                         <span className="ms-2">Publish</span>
@@ -396,6 +442,13 @@ function TaskManagement() {
                     preventDefault(e);
                     setAlertMessage(null);
                 }} />
+            }
+            {
+                publish &&
+                <PublishModal
+                    onClose={() => setPublish(false)}
+                    onSubmit={onPublish}
+                    selectedRows={selectedRows} />
             }
             {submitting && <PageLoader />}
         </>

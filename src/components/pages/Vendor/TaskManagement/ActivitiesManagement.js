@@ -16,7 +16,7 @@ import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY }
 import Location from "../../../common/Location";
 import { useGetVendorActivites } from "../../../../backend/query";
 import Icon from "../../../common/Icon";
-import { preventDefault } from "../../../../utils/common";
+import { download, preventDefault } from "../../../../utils/common";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import AdvanceSearch from "../../../common/AdvanceSearch";
@@ -28,7 +28,8 @@ const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.OVERDUE, label: STATUS_MAPPING[ACTIVITY_STATUS.OVERDUE], style: 'danger' },
     { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
     { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' },
-    { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'danger' }
+    { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'danger' },
+    { name: ACTIVITY_STATUS.PUBLISHED, label: STATUS_MAPPING[ACTIVITY_STATUS.PUBLISHED], style: 'danger' }
 ];
 
 function ActivitiesManagement() {
@@ -44,7 +45,7 @@ function ActivitiesManagement() {
     const [fromDashboard] = useState(path.includes('/dashboard/activities'));
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [filters, setFilters] = useState(state && state.fromDate ? { fromDate: state.fromDate, toDate: state.toDate } : undefined);
+    const [filters, setFilters] = useState({ fromDate: (state || {}).fromDate || null, toDate: (state || {}).toDate || null });
     const filterRef = useRef();
     filterRef.current = filters;
     const [payload, setPayload] = useState();
@@ -64,14 +65,31 @@ function ActivitiesManagement() {
         setSubmitting(true);
         api.get(`/api/ActStateMapping/Get?id=${activity.actStateMappingId}`).then(response => {
             if (response.data.filePath) {
-                const link = document.createElement('a');
-                link.href = response.data.filePath;
-                link.download = response.data.fileName;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                download(response.data.fileName, response.data.filePath)
             } else {
                 toast.warn('No files available');
+            }
+        }).finally(() => setSubmitting(false));
+    }
+
+    function downloadReport(event) {
+        preventDefault(event);
+        setSubmitting(true);
+        const _payload = {
+            company: payload.company,
+            associateCompany: payload.associateCompany,
+            location: payload.location,
+            month: payload.month,
+            year: payload.year
+        };
+        api.post('/api/Auditor/Report', _payload).then(response => {
+            if (response && response.data) {
+                const { fileName, filePath } = response.data || {};
+                if (filePath) {
+                    download(fileName, filePath);
+                } else {
+                    toast.warn('There are no reports available for the selected month and year.');
+                }
             }
         }).finally(() => setSubmitting(false));
     }
@@ -280,7 +298,10 @@ function ActivitiesManagement() {
 
     function ajaxRequestFunc(url, config, params) {
         setParams(params);
-        setPayload((filterRef.current || {}).company ? { ...filterRef.current, ...params } : null);
+        setPayload((filterRef.current || {}).company ? {
+            ...filterRef.current,
+            ...params
+        } : null);
         return Promise.resolve(formatApiResponse(params, activities));
     }
 
@@ -317,7 +338,7 @@ function ActivitiesManagement() {
             <div className="d-flex flex-column">
                 <div className="d-flex  p-2 align-items-center pageHeading">
                     <div className="ps-4">
-                        <h4 className="mb-0 ps-1">Vendor-Activity</h4>
+                        <h4 className="mb-0 ps-1">Vendor - Activity</h4>
                     </div>
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
@@ -338,7 +359,8 @@ function ActivitiesManagement() {
                         <div className="row">
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
-                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.DUE_DATE]} payload={payload} onSubmit={search} />
+                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.DUE_DATE]} payload={payload} onSubmit={search}
+                                    downloadReport={downloadReport} />
                             </div>
                         </div>
                     </div>
@@ -398,7 +420,7 @@ function ActivitiesManagement() {
             }
             {
                 submitToAuditor &&
-                <SubmitToAuditorModal todo={activities}
+                <SubmitToAuditorModal
                     onClose={() => setSubmitToAuditor(false)}
                     onSubmit={onSubmitToAuditorHandler}
                     selectedRows={selectedRows} />

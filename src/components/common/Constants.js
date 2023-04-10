@@ -6,7 +6,8 @@ export const ACTIVITY_STATUS = {
     AUDITED: 'Approved',
     SUBMITTED: 'Submitted',
     APPROVE: 'Approved',
-    REJECT: 'Rejected'
+    REJECT: 'Rejected',
+    PUBLISHED: 'Published'
 }
 
 export const AUDIT_STATUS = {
@@ -24,6 +25,7 @@ export const STATUS_MAPPING = {
     [ACTIVITY_STATUS.REJECTED]: 'Rejected',
     [ACTIVITY_STATUS.AUDITED]: 'Audited',
     [ACTIVITY_STATUS.SUBMITTED]: 'Submitted',
+    [ACTIVITY_STATUS.PUBLISHED]: 'Published',
     [AUDIT_STATUS.COMPLIANT]: 'Compliant',
     [AUDIT_STATUS.NON_COMPLIANCE]: 'Non-Compliance',
     [AUDIT_STATUS.NOT_APPLICABLE]: 'Not Applicable'
