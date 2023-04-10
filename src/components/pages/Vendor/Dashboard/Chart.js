@@ -8,7 +8,7 @@ const CHART_MAPPING = [
 const defaultConfig = {
     tooltip: {
         trigger: 'item',
-        formatter: "{b} : {c}"
+        formatter: "{b}"
     },
     legend: {
         orient: 'vertical',
@@ -20,14 +20,13 @@ const defaultConfig = {
         {
             data: [],
             type: 'pie',
-            radius: [20, '55%'],
-            center: ['60%', '50%'],
+            radius: [40, '80%'],
+            center: ['50%', '50%'],
             smooth: true,
             height: 250,
             label: {
                 show: true,
-                position: 'inner',
-                formatter: '{c}'
+                position: 'inner'
             },
             emphasis: {
                 itemStyle: {
@@ -50,7 +49,7 @@ function Chart({ data, keys }) {
                 const _chart = CHART_MAPPING.find(x => x.key === key) || {};
                 return {
                     value: data[key],
-                    name: _chart.label,
+                    name: `${data[key]} ${_chart.label}`,
                     itemStyle: {
                         color: _chart.color
                     }
@@ -58,8 +57,15 @@ function Chart({ data, keys }) {
             });
             const _legentData = keys.map(key => {
                 const _chart = CHART_MAPPING.find(x => x.key === key) || {};
-                return _chart.label
+                return `${data[key]} ${_chart.label}`
             });
+            const total = _data.reduce((n, { value }) => n + value, 0);
+            _config.series[0].label.formatter = ({ value }) => {
+                const _valueByTotal = value / total;
+                if (_valueByTotal === NaN) return '0 %';
+                const _percentageValue = _valueByTotal * 100;
+                return `${Math.round(_percentageValue)} %`;
+            };
             _config.series[0].data = _data;
             _config.legend.data = _legentData;
             setConfig(_config);
