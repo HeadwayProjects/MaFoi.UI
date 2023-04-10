@@ -3,7 +3,7 @@ import ReactECharts from "echarts-for-react";
 
 const CHART_MAPPING = [
     { color: '#0D9500', label: 'Compliant', key: 'compliant' },
-    { color: '#FF0000', label: 'Non-Compliant', key: 'nonCompliant' }
+    { color: '#FF0000', label: 'Non-Compliance', key: 'nonCompliant' }
 ]
 const defaultConfig = {
     tooltip: {
@@ -62,7 +62,7 @@ function Chart({ data, keys }) {
             const total = _data.reduce((n, { value }) => n + value, 0);
             _config.series[0].label.formatter = ({ value }) => {
                 const _valueByTotal = value / total;
-                if (_valueByTotal === NaN) return '0 %';
+                if (isNaN(_valueByTotal)) return '0 %';
                 const _percentageValue = _valueByTotal * 100;
                 return `${Math.round(_percentageValue)} %`;
             };

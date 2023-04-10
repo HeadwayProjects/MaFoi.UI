@@ -5,18 +5,37 @@ import "./AuditorModule.css";
 const CHART_MAPPING = [
     { color: '#0D9500', label: 'Audited', key: 'audited' },
     { color: '#FF0000', label: 'Not-Audited', key: 'notAudited' }
-]
+];
+
 const defaultConfig = {
+    tooltip: {
+        trigger: 'item',
+        formatter: "{b}"
+    },
+    legend: {
+        orient: 'vertical',
+        bottom: '10',
+        left: "center",
+        data: []
+    },
     series: [
         {
             data: [],
             type: 'pie',
+            radius: [40, '80%'],
+            center: ['50%', '50%'],
             smooth: true,
             height: 250,
             label: {
                 show: true,
-                position: 'inner',
-                formatter: '{c}'
+                position: 'inner'
+            },
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
             }
         },
     ]
@@ -24,26 +43,34 @@ const defaultConfig = {
 
 function Chart({ data, keys }) {
     const [config, setConfig] = useState(null);
-    const [legends, setLegends] = useState([]);
 
     useEffect(() => {
         if (Object.keys(data || {}).length) {
-            const _legends = [];
+            const _config = { ...defaultConfig };
             const _data = keys.map(key => {
                 const _chart = CHART_MAPPING.find(x => x.key === key) || {};
-                _legends.push({ color: _chart.color, value: data[key], label: _chart.label, key });
                 return {
                     value: data[key],
-                    label: _chart.label,
+                    name: `${data[key]} ${_chart.label}`,
                     itemStyle: {
                         color: _chart.color
                     }
                 }
             });
-            const _config = { ...defaultConfig };
+            const _legentData = keys.map(key => {
+                const _chart = CHART_MAPPING.find(x => x.key === key) || {};
+                return `${data[key]} ${_chart.label}`
+            });
+            const total = _data.reduce((n, { value }) => n + value, 0);
+            _config.series[0].label.formatter = ({ value }) => {
+                const _valueByTotal = value / total;
+                if (isNaN(_valueByTotal)) return '0 %'; 
+                const _percentageValue = _valueByTotal * 100;
+                return `${Math.round(_percentageValue)} %`;
+            };
             _config.series[0].data = _data;
+            _config.legend.data = _legentData;
             setConfig(_config);
-            setLegends(_legends);
         }
     }, [data]);
 
@@ -53,22 +80,6 @@ function Chart({ data, keys }) {
                 {
                     config && <ReactECharts option={config} />
                 }
-            </div>
-            <div className="performance-chart-legends d-flex flex-row w-100 justify-content-center">
-                <div className="col-4">
-                    {
-                        config && legends.map(legend => {
-                            return (
-                                <div className="d-flex fs-6 align-items-center mb-1" key={legend.key}>
-                                    <span className="legend-marker" style={{ background: `${legend.color}` }}>{ }</span>
-                                    <small className="ms-2 me-1 fw-bold">{legend.value}</small>
-                                    <small>{legend.label}</small>
-                                </div>
-                            )
-                        })
-                    }
-
-                </div>
             </div>
         </div>
     )
