@@ -62,7 +62,7 @@ function Chart({ data, keys }) {
             const total = _data.reduce((n, { value }) => n + value, 0);
             _config.series[0].label.formatter = ({ value }) => {
                 const _valueByTotal = value / total;
-                if (_valueByTotal === NaN) return '0 %';
+                if (isNaN(_valueByTotal)) return '0 %';
                 const _percentageValue = _valueByTotal * 100;
                 return `${Math.round(_percentageValue)} %`;
             };
