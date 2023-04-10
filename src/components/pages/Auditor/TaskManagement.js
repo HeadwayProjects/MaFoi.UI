@@ -178,10 +178,11 @@ function TaskManagement() {
             <div className="d-flex flex-row align-items-center position-relative">
                 <Icon className="mx-1" name="download" text="Download" data={row} action={downloadForm} />
                 {
-                    row.status === ACTIVITY_STATUS.SUBMITTED ?
-                        <Icon className="ms-2" name={'edit'} text={'Edit'} data={row} action={editActivity} /> :
-                        <Icon className="ms-2" name={'view'} text={'View'} data={row} action={viewActivity} />
+                    row.status === ACTIVITY_STATUS.SUBMITTED &&
+                    <Icon className="mx-2" name={'edit'} text={'Edit'} data={row} action={editActivity} />
+
                 }
+                <Icon className="ms-2" name={'view'} text={'View'} data={row} action={viewActivity} />
             </div>
         )
     }
@@ -247,7 +248,7 @@ function TaskManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Action", hozAlign: "center", width: 100,
+            title: "Action", hozAlign: "center", width: 120,
             sortable: false,
             formatter: reactFormatter(<ActionColumnElements />),
             titleFormatter: reactFormatter(<TitleTmpl />)
