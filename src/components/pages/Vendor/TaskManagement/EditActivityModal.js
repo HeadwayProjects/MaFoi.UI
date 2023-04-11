@@ -8,25 +8,13 @@ import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { useGetActivityDocuments } from "../../../../backend/query";
 import PageLoader from "../../../shared/PageLoader";
-import { ACTIVITY_STATUS, ALLOWED_FILES_REGEX } from "../../../common/Constants";
+import { ACTIVITY_STATUS, ALLOWED_FILES_REGEX, STATUS_MAPPING } from "../../../common/Constants";
 
-const SUBMITED_STATUSES = [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED];
+const SUBMITED_STATUSES = [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.PUBLISHED];
 
 function StatusTmp({ status }) {
-    function computeStatusColor(status) {
-        if (status === ACTIVITY_STATUS.PENDING) {
-            return 'text-warning';
-        } else if (status === ACTIVITY_STATUS.REJECTED || status === ACTIVITY_STATUS.OVERDUE) {
-            return 'text-danger';
-        } else if (status === ACTIVITY_STATUS.SUBMITTED) {
-            return 'text-success';
-        } else if (status === ACTIVITY_STATUS.AUDITED) {
-            return 'text-success-emphasis'
-        }
-        return 'text-secondary'
-    }
     return (
-        <span className={computeStatusColor(status)}>{status}</span>
+        <span className={`status-${status}`}>{STATUS_MAPPING[status]}</span>
     )
 }
 
