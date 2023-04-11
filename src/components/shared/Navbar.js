@@ -23,7 +23,7 @@ function Navbar() {
                         <ul className="navbar-nav">
                             <div className="nav-item dropdown">
                                 <div className="nav-link dropdown-toggle border rounded text-black" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span className='userNameL rounded-circle fw-semibold text-center text-white'>S</span> {user.name}
+                                    <span className='userNameL rounded-circle fw-semibold text-center text-white'>{(user.name || '').charAt(0)}</span> {user.name}
                                 </div>
                                 <div className="dropdown-menu">
                                     <div className="dropdown-item"><span className="fw-bold">Role: </span>{user.role}</div>
