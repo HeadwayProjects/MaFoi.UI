@@ -5,6 +5,9 @@ import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FILTERS, MONTHS, SEARCH_FIELDS, YEARS } from "./Constants";
+import * as dayjs from "dayjs";
+import * as utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 
 function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
@@ -71,8 +74,8 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
                     break;
                 case FILTERS.DUE_DATE:
                 case FILTERS.SUBMITTED_DATE:
-                    _payload.fromDate = new Date(payload.fromDate).toISOString();
-                    _payload.toDate = new Date(payload.toDate).toISOString();
+                    _payload.fromDate = dayjs(new Date(payload.fromDate)).local().format();
+                    _payload.toDate = dayjs(new Date(payload.toDate)).local().format();
                     break;
                 default:
                 // Do Nothing

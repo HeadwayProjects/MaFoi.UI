@@ -38,7 +38,7 @@ export function useGetVendorActivites(payload) {
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
-            enabled: !!payload
+            enabled: !!payload && !!payload.company
         }
     );
 

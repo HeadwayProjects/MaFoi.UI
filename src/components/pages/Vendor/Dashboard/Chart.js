@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react";
 
 const CHART_MAPPING = [
-    { color: '#0D9500', label: 'Compliant', key: 'compliant' },
-    { color: '#FF0000', label: 'Non-Compliance', key: 'nonCompliant' }
+    { color: '#4EC343', label: 'Compliant', key: 'compliant' },
+    { color: '#FFC000', label: 'Non-Compliance', key: 'nonCompliant' },
+    { color: '#5B5657', label: 'Not Applicable', key: 'notApplicable' },
+    { color: '#FF2D2D', label: 'Rejected', key: 'rejected' },
 ]
 const defaultConfig = {
     tooltip: {
@@ -20,7 +22,7 @@ const defaultConfig = {
         {
             data: [],
             type: 'pie',
-            radius: [40, '80%'],
+            radius: [20, '80%'],
             center: ['50%', '50%'],
             smooth: true,
             height: 250,
@@ -48,7 +50,7 @@ function Chart({ data, keys }) {
             const _data = keys.map(key => {
                 const _chart = CHART_MAPPING.find(x => x.key === key) || {};
                 return {
-                    value: data[key],
+                    value: data[key] || 0,
                     name: `${data[key]} ${_chart.label}`,
                     itemStyle: {
                         color: _chart.color

@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import * as api from '../../../../backend/request';
-import dayjs from "dayjs";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
+import * as dayjs from 'dayjs';
+import * as utc from "dayjs/plugin/utc";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import "./dashboard.css";
 import NavTabs from "../../../shared/NavTabs";
 import { preventDefault } from "../../../../utils/common";
 import Chart from "./Chart";
 import { navigate } from "raviger";
+dayjs.extend(utc);
 
 const CurrentPerformanceTabs = [
     { value: '0', label: 'Today' },
@@ -67,8 +69,8 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                 company: selectedCompany,
                 associateCompany: selectedAssociateCompany,
                 location: selectedLocation,
-                fromDate: new Date(performanceStatus.startDate),
-                toDate: new Date(performanceStatus.endDate),
+                fromDate: dayjs(performanceStatus.startDate).local().format(),
+                toDate: dayjs(performanceStatus.endDate).local().format(),
                 status
             }
         });
@@ -135,12 +137,12 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                                                         <h3 className="p-0 m-0">({performanceStatus[status.key]})</h3>
                                                                     }
                                                                 </div>
-                                                                <div className="col-1 px-0 py-0">
+                                                                {/* <div className="col-1 px-0 py-0">
                                                                     <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
                                                                         onClick={() => viewActivities(status.value)}>
                                                                         <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
                                                                     </span>
-                                                                </div>
+                                                                </div> */}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -168,12 +170,12 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                                                         <h3 className="p-0 m-0">({performanceStatus[status.key]})</h3>
                                                                     }
                                                                 </div>
-                                                                <div className="col-1 px-0 py-0">
+                                                                {/* <div className="col-1 px-0 py-0">
                                                                     <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
                                                                         onClick={() => viewActivities(status.value)}>
                                                                         <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
                                                                     </span>
-                                                                </div>
+                                                                </div> */}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -185,7 +187,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                 {
                                     (performanceStatus.approved > 0 || performanceStatus.rejected > 0) &&
                                     <div className="col-md-4">
-                                        <Chart data={performanceStatus} keys={['compliant', 'nonCompliant']} />
+                                        <Chart data={performanceStatus} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
                                     </div>
                                 }
                             </div>

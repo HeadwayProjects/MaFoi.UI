@@ -1,5 +1,5 @@
-import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import * as auth from "../../../backend/auth";
 import "./AuditorModule.css";
@@ -8,7 +8,7 @@ import Performance from "./Performance"
 
 const StatusMapping = [
     { label: 'Total Vendors', key: 'totalVendors', color: 'grey', value: 'ActivitySaved' },
-    { label: 'Audit To Be Done This Month', key: 'auditToBeDoneForThisMonth', color: 'yellow', value: 'Pending' },
+    // { label: 'Audit To Be Done This Month', key: 'auditToBeDoneForThisMonth', color: 'yellow', value: 'Pending' },
     { label: 'Audit Approval Pending', key: 'auditApprovalPending', color: 'red', value: 'Overdue' },
     { label: 'Vendors Not Submitted', key: 'vendorsNotSubmitted', color: 'yellow', value: 'Submitted' }
 ]
@@ -18,9 +18,9 @@ function AuditorPerformance() {
     const user = auth.getUserDetails() || {};
     const { limeStatus } = useGetAuditorLimeStatus(user.userid);
 
-    function viewActivities(status) {
-        console.log(status);
-    }
+    // function viewActivities(status) {
+    //     console.log(status);
+    // }
     return (
         <div>
             <div className="mx-0 my-3 row">
@@ -37,12 +37,12 @@ function AuditorPerformance() {
                                             <div className="col-3 px-0 py-1">
                                                 <h3 className="p-0 m-0">({(limeStatus || {})[status.key] || 0})</h3>
                                             </div>
-                                            <div className="col-2 px-0 py-1">
+                                            {/* <div className="col-2 px-0 py-1">
                                                 <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
                                                     onClick={() => viewActivities(status.value)}>
                                                     <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
                                                 </span>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                 </div>

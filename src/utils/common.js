@@ -168,9 +168,10 @@ export function checkList(summary, data) {
     const compliant = activities.filter(x => x.auditStatus === AUDIT_STATUS.COMPLIANT);
     const nonCompliance = activities.filter(x => x.auditStatus === AUDIT_STATUS.NON_COMPLIANCE);
     const notApplicable = activities.filter(x => x.auditStatus === AUDIT_STATUS.NOT_APPLICABLE);
-    const total = compliant.length + nonCompliance.length + notApplicable.length;
-    const compliancePer = total > 0 ? Math.round((compliant.length + notApplicable.length) * 100 / total) : 0;
-    const nonCompliancePer = total > 0 ? Math.round(nonCompliance.length * 100 / total) : 0;
+    const total = compliant.length + nonCompliance.length + rejected.length;
+    const compliancePer = total > 0 ? (compliant.length * 100 / total).toFixed(1) : 0;
+    const nonCompliancePer = total > 0 ? (nonCompliance.length * 100 / total).toFixed(1) : 0;
+    const rejectedPer = total > 0 ? (rejected.length * 100 / total).toFixed(1) : 0;
 
     const _summary = `
         <div class="flex" style="margin-bottom: 20px">
@@ -208,22 +209,26 @@ export function checkList(summary, data) {
                         <th colspan="2"><b style="text-decoration:underline;">Audit Summary</b></th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody style="color:white">
                     <tr style="background: green;">
                         <td><strong>Audited</strong></td>
                         <td>: ${audited.length}</td>
                     </tr>
+                    <tr style="background: gray;">
+                        <td><strong>Non-Compliance</strong></td>
+                        <td>: ${notApplicable.length}</td>
+                    </tr>
                     <tr style="background: red;">
                         <td><strong>Rejected</strong></td>
-                        <td>: ${rejected.length}</td>
+                        <td>: ${rejectedPer}% (${rejected.length || 0})</td>
                     </tr>
-                    <tr style="background: lightgreen;">
+                    <tr style="background: forestgreen;">
                         <td><strong>Compliant</strong></td>
-                        <td>: ${compliancePer}%</td>
+                        <td>: ${compliancePer}% (${compliant.length || 0})</td>
                     </tr>
-                    <tr style="background: orange;">
+                    <tr style="background: red;">
                         <td><strong>Non-Compliance</strong></td>
-                        <td>: ${nonCompliancePer}%</td>
+                        <td>: ${nonCompliancePer}% (${nonCompliance.length || 0})</td>
                     </tr>
                     </tbody>
                 </table>
@@ -248,9 +253,30 @@ export function checkList(summary, data) {
             </tr>
         `
     }).join('');
+    const _audited = `
+        <tr>
+            <td colspan="6" style="background-color: green;">Audited</td>
+            <td>${audited.length || 0}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    `;
+    const _rejected = `
+        <tr>
+            <td colspan="6" style="background-color: red;">Rejected</td>
+            <td>${rejected.length || 0}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    `;
     const _compliant = `
         <tr>
-            <td colspan="7" style="background-color: lightgreen;">Compliant</td>
+            <td colspan="6" style="background-color: lightgreen;">Compliant</td>
+            <td></td>
             <td>${compliant.length || 0}</td>
             <td></td>
             <td></td>
@@ -259,7 +285,8 @@ export function checkList(summary, data) {
     `;
     const _nonCompliance = `
         <tr>
-            <td colspan="7" style="background-color: red;">Non-Compliance</td>
+            <td colspan="6" style="background-color: red;">Non-Compliance</td>
+            <td></td>
             <td></td>
             <td>${nonCompliance.length || 0}</td>
             <td></td>
@@ -268,7 +295,8 @@ export function checkList(summary, data) {
     `;
     const _notApplicable = `
         <tr>
-            <td colspan="7" style="background-color: orange;">Not Applicable</td>
+            <td colspan="6" style="background-color: orange;">Not Applicable</td>
+            <td></td>
             <td></td>
             <td></td>
             <td>${notApplicable.length || 0}</td>
@@ -287,14 +315,16 @@ export function checkList(summary, data) {
                     <th style="background-color: rgb(85, 205, 226);">Audit Due Date</th>
                     <th style="background-color: rgb(85, 205, 226);">Vendor Submitted Date</th>
                     <th style="background-color: rgb(85, 205, 226);">Status</th>
-                    <th style="background-color: lightgreen;">Compliant</th>
+                    <th style="background-color: forestgreen;">Compliant</th>
                     <th style="background-color: red;">Non-Compliance</th>
-                    <th style="background-color: orange;">Not Applicable</th>
+                    <th style="background-color: gray;">Not Applicable</th>
                     <th style="background-color: rgb(85, 205, 226);">Remarks, if any</th>
                 </tr>
             </thead>
             <tbody>
                 ${_activities}
+                ${_audited}
+                ${_rejected}
                 ${_compliant}
                 ${_nonCompliance}
                 ${_notApplicable}

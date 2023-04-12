@@ -110,7 +110,7 @@ function ActivitiesManagement() {
         const _filter = filterRef.current;
         if (!_filter.month) {
             setAlertMessage(`
-                <div class="mb-2">There might be some hidden activies or activities from different months and years. Please restrict your search to specific month and year.</div>
+                <div class="mb-2">Submit to auditor can be performed on a specfic month only. Please refine your search to specific month and year.</div>
                 <p class="mt-3"><strong>Advance Search &gt; Filter By Month & Year &gt; Select Specific Month and Year</strong</p>
             `);
         } else {
@@ -315,7 +315,8 @@ function ActivitiesManagement() {
         setParams(params);
         setPayload((filterRef.current || {}).company ? {
             ...filterRef.current,
-            ...params
+            ...params,
+            dateFilter: 'dueDate'
         } : null);
         return Promise.resolve(formatApiResponse(params, activities));
     }
@@ -328,7 +329,8 @@ function ActivitiesManagement() {
                 month: '',
                 year: null,
                 ...filterRef.current,
-                ...params
+                ...params,
+                dateFilter: 'dueDate'
             });
         }
     }, [filters]);

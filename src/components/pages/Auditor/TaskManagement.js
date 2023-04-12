@@ -127,7 +127,7 @@ function TaskManagement() {
         const _filter = filterRef.current;
         if (!_filter.month) {
             setAlertMessage(`
-                <div class="mb-2">There might be some hidden activies or activities from different months and years. Please restrict your search to specific month and year.</div>
+                <div class="mb-2">Publish activities can be performed on a specfic month only. Please refine your search to specific month and year.</div>
                 <p class="mt-3"><strong>Advance Search &gt; Filter By Month & Year &gt; Select Specific Month and Year</strong</p>
             `);
         } else {
@@ -347,7 +347,7 @@ function TaskManagement() {
 
     function ajaxRequestFunc(url, config, params) {
         setParams(params);
-        setPayload((filterRef.current || {}).company ? { ...filterRef.current, ...params } : null);
+        setPayload((filterRef.current || {}).company ? { ...filterRef.current, ...params, dateFilter: 'submittedDate' } : null);
         return Promise.resolve(formatApiResponse(params, activities));
     }
 
@@ -359,7 +359,8 @@ function TaskManagement() {
                 month: '',
                 year: null,
                 ...filterRef.current,
-                ...params
+                ...params,
+                dateFilter: 'submittedDate'
             });
         }
     }, [filters]);

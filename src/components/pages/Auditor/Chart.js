@@ -3,8 +3,8 @@ import ReactECharts from "echarts-for-react";
 import "./AuditorModule.css";
 
 const CHART_MAPPING = [
-    { color: '#0D9500', label: 'Audited', key: 'audited' },
-    { color: '#FF0000', label: 'Not-Audited', key: 'notAudited' }
+    { color: '#4EC343', label: 'Audited', key: 'audited' },
+    { color: '#FF2D2D', label: 'Not-Audited', key: 'notAudited' }
 ];
 
 const defaultConfig = {
