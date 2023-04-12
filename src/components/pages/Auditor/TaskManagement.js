@@ -180,14 +180,7 @@ function TaskManagement() {
         api.post('/api/Auditor/UpdatePublishStatus', _payload).then(response => {
             refetch();
             setPublish(false);
-            console.log(response);
-            if (response && response.data) {
-                const { fileName, filePath } = response.data;
-                if (filePath) {
-                    toast.success(`Activites published successfully.`);
-                    download(fileName, filePath);
-                }
-            }
+            toast.success(`Activites published successfully.`);
         }).finally(() => setSubmitting(false));
     }
 
