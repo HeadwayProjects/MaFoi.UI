@@ -19,7 +19,7 @@ link {
 
 body {
   background-color: #f4f9fd !important;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
 

@@ -16,7 +16,7 @@ import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY }
 import Location from "../../../common/Location";
 import { useGetVendorActivites } from "../../../../backend/query";
 import Icon from "../../../common/Icon";
-import { download, preventDefault } from "../../../../utils/common";
+import { checkList, download, preventDefault } from "../../../../utils/common";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import AdvanceSearch from "../../../common/AdvanceSearch";
@@ -29,7 +29,7 @@ const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
     { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' },
     { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'danger' },
-    { name: ACTIVITY_STATUS.PUBLISHED, label: STATUS_MAPPING[ACTIVITY_STATUS.PUBLISHED], style: 'danger' }
+    // { name: ACTIVITY_STATUS.PUBLISHED, label: STATUS_MAPPING[ACTIVITY_STATUS.PUBLISHED], style: 'danger' }
 ];
 
 function ActivitiesManagement() {
@@ -80,13 +80,24 @@ function ActivitiesManagement() {
             associateCompany: payload.associateCompany,
             location: payload.location,
             month: payload.month,
-            year: payload.year
+            year: payload.year,
+            statuses: ['']
         };
-        api.post('/api/Auditor/Report', _payload).then(response => {
+
+        api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
             if (response && response.data) {
-                const { fileName, filePath } = response.data || {};
-                if (filePath) {
-                    download(fileName, filePath);
+                const list = response.data || [];
+                const _report = list.filter(x => x.published);
+                if (_report.length > 0) {
+                    const _record = _report[0];
+                    const _summary = {
+                        company: _record.company.name,
+                        associateCompany: _record.associateCompany.name,
+                        location: _record.location.name,
+                        month: _record.month,
+                        year: _record.year
+                    };
+                    checkList(_summary, _report);
                 } else {
                     toast.warn('There are no reports available for the selected month and year.');
                 }
@@ -210,7 +221,11 @@ function ActivitiesManagement() {
         return (
             <div className="d-flex flex-row align-items-center position-relative">
                 <Icon className="mx-1" name="download" text="Download" data={row} action={downloadForm} />
-                <Icon className="ms-2" name={readOnly ? 'view' : 'edit'} text={readOnly ? 'View' : 'Edit'} data={row} action={editActivity} />
+                {
+                    (readOnly || [ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED, ACTIVITY_STATUS.SUBMITTED].includes(row.status)) ?
+                        <Icon className="ms-2" name="view" text="View" data={row} action={editActivity} />
+                        : <Icon className="ms-2" name="edit" text="Edit" data={row} action={editActivity} />
+                }
             </div>
         )
     }

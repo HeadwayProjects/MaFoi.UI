@@ -18,14 +18,15 @@ import Table, { reactFormatter, CellTmpl, TitleTmpl } from "../../common/Table";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
 import AdvanceSearch from "../../common/AdvanceSearch";
 import AlertModal from "../../common/AlertModal";
-import { download, preventDefault } from "../../../utils/common";
+import { checkList, download, preventDefault } from "../../../utils/common";
 import PublishModal from "./PublishModal";
+import Report from "../../shared/Report";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
     { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'success' },
     { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' },
-    { name: ACTIVITY_STATUS.PUBLISHED, label: STATUS_MAPPING[ACTIVITY_STATUS.PUBLISHED], style: 'danger' }
+    // { name: ACTIVITY_STATUS.PUBLISHED, label: STATUS_MAPPING[ACTIVITY_STATUS.PUBLISHED], style: 'danger' }
 ];
 
 const ACTIONS = {
@@ -49,6 +50,7 @@ function TaskManagement() {
     const [selectedRows, setSelectedRows] = useState([]);
     const [alertMessage, setAlertMessage] = useState(null);
     const [publish, setPublish] = useState(false);
+    const [report, setReport] = useState(null);
 
     function onLocationChange(event) {
         setFilters({ ...filterRef.current, ...event });
@@ -90,14 +92,24 @@ function TaskManagement() {
             associateCompany: payload.associateCompany,
             location: payload.location,
             month: payload.month,
-            year: payload.year
+            year: payload.year,
+            statuses: STATUS_BTNS.map(x => x.name)
         };
 
-        api.post('/api/Auditor/Report', _payload).then(response => {
+        api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
             if (response && response.data) {
-                const { fileName, filePath } = response.data || {};
-                if (filePath) {
-                    download(fileName, filePath);
+                const list = response.data || [];
+                const _report = list.filter(x => x.published);
+                if (_report.length > 0) {
+                    const _record = _report[0];
+                    const _summary = {
+                        company: _record.company.name,
+                        associateCompany: _record.associateCompany.name,
+                        location: _record.location.name,
+                        month: _record.month,
+                        year: _record.year
+                    };
+                    checkList(_summary, _report);
                 } else {
                     toast.warn('There are no reports available for the selected month and year.');
                 }
@@ -132,13 +144,18 @@ function TaskManagement() {
                 if (response && response.data) {
                     const _rows = response.data || [];
                     const submittedRows = _rows.filter(x => x.status === ACTIVITY_STATUS.SUBMITTED);
+                    const published = _rows.filter(x => x.published);
                     if (_rows.length === 0) {
                         setAlertMessage(
                             `<p class="my-3">There are no Audited / Rejected activities available to publish for the selected month and year</p>`
                         );
+                    } else if (published.length > 0) {
+                        setAlertMessage(
+                            `<p class="my-3">There are no pending activities available to publish for the selected month and year</p>`
+                        );
                     } else if (submittedRows.length > 0) {
                         setAlertMessage(
-                            `<p class="my-3">There are ${submittedRows.length} activities available for the selected month and year. You cannot publish submitted activies.</p>
+                            `<p class="my-3">There are ${submittedRows.length} submitted activities available for the selected month and year. You cannot publish submitted activies.</p>
                             <p>Please Approve / Reject them before publishing.</p>`
                         );
                     } else if (_rows.length > 0) {
@@ -154,15 +171,16 @@ function TaskManagement() {
         preventDefault(e);
         setSubmitting(true);
         const _payload = {
-            company: payload.company,
-            associateCompany: payload.associateCompany,
-            location: payload.location,
+            companyId: payload.company,
+            associateCompanyId: payload.associateCompany,
+            locationId: payload.location,
             month: payload.month,
             year: payload.year
         };
-        api.post('/api/Auditor/Publish', _payload).then(response => {
+        api.post('/api/Auditor/UpdatePublishStatus', _payload).then(response => {
             refetch();
             setPublish(false);
+            console.log(response);
             if (response && response.data) {
                 const { fileName, filePath } = response.data;
                 if (filePath) {
@@ -451,6 +469,13 @@ function TaskManagement() {
                     selectedRows={selectedRows} />
             }
             {submitting && <PageLoader />}
+            {
+                !!report &&
+                <Report data={report} onClose={(e) => {
+                    preventDefault(e);
+                    setReport(null);
+                }} />
+            }
         </>
     );
 }
