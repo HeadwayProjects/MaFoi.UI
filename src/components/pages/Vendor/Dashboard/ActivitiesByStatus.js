@@ -7,7 +7,7 @@ import { preventDefault } from "../../../../utils/common";
 import { navigate } from "raviger";
 
 const StatusTabs = [
-    { value: 'Overdue', label: 'Overdue' },
+    { value: 'OverDue', label: 'OverDue' },
     { value: 'Pending', label: 'Pending' },
     { value: 'Rejected', label: 'Rejected' },
     { value: 'Approved', label: 'Audited' }
