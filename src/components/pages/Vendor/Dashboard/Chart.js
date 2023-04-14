@@ -25,7 +25,7 @@ const defaultConfig = {
             radius: [20, '80%'],
             center: ['50%', '50%'],
             smooth: true,
-            height: 220,
+            height: 200,
             label: {
                 show: true,
                 position: 'inner'
