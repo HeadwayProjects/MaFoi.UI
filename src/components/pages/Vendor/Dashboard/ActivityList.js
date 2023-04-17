@@ -1,5 +1,6 @@
 import React from "react";
 import dayjs from "dayjs";
+import { STATUS_MAPPING } from "../../../common/Constants";
 
 function StatusTmp({ status }) {
     function computeStatusColor(status) {
@@ -29,7 +30,7 @@ function ActivityList({ list }) {
                             <li className="list-group-item" key={activity.id} style={{ height: '40px' }}>
                                 <span>{activity.location.name}</span>
                                 <span>-</span>
-                                <StatusTmp status={activity.status} />
+                                <StatusTmp status={STATUS_MAPPING[activity.status]} />
                                 <span>-</span>
                                 <span>{dayjs(new Date(activity.dueDate)).format('DD/MMM/YYYY')}</span>
                                 <span>-</span>

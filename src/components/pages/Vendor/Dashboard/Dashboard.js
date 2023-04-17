@@ -1,7 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import DashboardDataGrid from "./DashboardDataGrid";
+import Preview from "../../../common/Preview";
 
 function VendorDashboard() {
+    const [showPreview, setShowPreview] = useState(null);
+    const [documentUrl, setDocumentUrl] = useState(null);
+    const [updates] = useState([
+        {
+            label: 'New Rule 3B(6) Updates',
+            documentUrl: 'https://ezycomp.blob.core.windows.net/todofiles/1f5756d1-f195-46ad-8ed0-caa53bc76b00/ede00f75-200f-4d8f-bde0-1953f30906ce/03676b64-b2ce-4cbd-b601-27d5c9b01122/2023/February/FORM XV.pdf'
+        },
+        {
+            label: 'New Rule 24(6) Updates',
+            documentUrl: 'https://ezycomp.blob.core.windows.net/todofiles/1f5756d1-f195-46ad-8ed0-caa53bc76b00/ede00f75-200f-4d8f-bde0-1953f30906ce/03676b64-b2ce-4cbd-b601-27d5c9b01122/2023/February/FORM XV.pdf'
+        },
+        {
+            label: 'Rule 9A Update',
+            documentUrl: 'https://ezycomp.blob.core.windows.net/todofiles/1f5756d1-f195-46ad-8ed0-caa53bc76b00/ede00f75-200f-4d8f-bde0-1953f30906ce/03676b64-b2ce-4cbd-b601-27d5c9b01122/2023/February/FORM XV.pdf'
+        }
+    ]);
+
+    function onPreview(update) {
+        setDocumentUrl(update.documentUrl);
+        setShowPreview(true);
+    }
+
     return (
         <div className="d-flex flex-column">
             <div className="d-flex  p-2 align-items-center pageHeading">
@@ -30,17 +53,23 @@ function VendorDashboard() {
                                 <h5 className="underline text-appprimary fw-semibold fs-5 ms-2">New Updates</h5>
                             </div>
                         </div>
-                        <ul className="p-2 d-flex flex-row w-100" style={{ background: "var(--bs-gray-200)", listStyleType: "none", gap: "1.5rem" }}>
-                            <li>New Rule 3B(6) Updates</li>
-                            <li>New Rule 24(6) Updates</li>
-                            <li>Rule 9A Update</li>
-                            <li>Rule 21(2) Updates</li>
-                            <li>Rule 42C(8) Updates</li>
+                        <ul className="p-2 d-flex flex-row w-100 updates" style={{ background: "var(--bs-gray-200)", listStyleType: "none", gap: "1.5rem" }}>
+                            {
+                                updates && updates.map((update, index) => {
+                                    return (
+                                        <li key={index} onClick={() => onPreview(update)}>{update.label}</li>
+                                    )
+                                })
+                            }
                         </ul>
                     </div>
                 </div>
             </div>
             <DashboardDataGrid />
+            {
+                showPreview && documentUrl &&
+                <Preview documentUrl={documentUrl} onClose={() => setShowPreview(false)} />
+            }
         </div>
     );
 }

@@ -50,3 +50,9 @@
 .status-btn-group input[name="Approved"]+.btn {
     color: #548235;
 }
+
+.updates li:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--blue);
+}
