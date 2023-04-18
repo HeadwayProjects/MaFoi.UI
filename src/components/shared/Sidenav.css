@@ -2,6 +2,21 @@
     list-style: none;
 }
 
+.sideNav li button {
+    background: transparent;
+    border: none;
+    width: 100%;
+    padding: 0;
+}
+
+.sideNav li button:disabled {
+    pointer-events: none;
+}
+
+.sideNav li button:disabled:hover {
+    cursor: not-allowed !important;
+}
+
 .sideNav li a {
     display: flex;
     flex-direction: row;
