@@ -1,7 +1,7 @@
 import React from "react";
 import * as auth from "../backend/auth"
-import Login from "../components/pages/login";
 import AuthenticatedContent from "./AuthenticatedContent";
+import Authenticate from "../components/pages/Authenticate/Authenticate";
 
 function Container() {
 
@@ -10,7 +10,7 @@ function Container() {
         return !!token;
     }
 
-    return isLoggedIn() ? <AuthenticatedContent /> : <Login />
+    return isLoggedIn() ? <AuthenticatedContent /> : <Authenticate />
 
 }
 

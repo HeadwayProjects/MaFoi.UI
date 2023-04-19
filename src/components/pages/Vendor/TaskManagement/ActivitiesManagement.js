@@ -223,8 +223,8 @@ function ActivitiesManagement() {
                 <Icon className="mx-1" name="download" text="Download" data={row} action={downloadForm} />
                 {
                     (readOnly || [ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED, ACTIVITY_STATUS.SUBMITTED].includes(row.status)) ?
-                        <Icon className="ms-2" name="view" text="View" data={row} action={editActivity} />
-                        : <Icon className="ms-2" name="edit" text="Edit" data={row} action={editActivity} />
+                        <Icon className="ms-2" name="eye" text="View" data={row} action={editActivity} />
+                        : <Icon className="ms-2" name="pencil" text="Edit" data={row} action={editActivity} />
                 }
             </div>
         )

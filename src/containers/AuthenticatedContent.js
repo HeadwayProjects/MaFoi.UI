@@ -6,6 +6,13 @@ import ActivitiesManagement from "../components/pages/Vendor/TaskManagement/Acti
 import LayoutWithSideNav from "../components/shared/LayoutWithSideNav";
 import AuditorDashboard from "../components/pages/Auditor/AuditorDashboard";
 import TaskManagement from "../components/pages/Auditor/TaskManagement";
+import Act from "../components/pages/Masters/Act";
+import Activity from "../components/pages/Masters/Activity";
+import Rule from "../components/pages/Masters/Rule";
+import Location from "../components/pages/Masters/Location";
+import Companies from "../components/pages/Masters/Companies";
+import City from "../components/pages/Masters/City";
+import State from "../components/pages/Masters/State";
 
 function AuthenticatedContent() {
     const user = auth.getUserDetails();
@@ -26,7 +33,28 @@ function AuthenticatedContent() {
             layout(<ActivitiesManagement />)
         ),
         '/activities': () => (
-            layout(isVendor ? <ActivitiesManagement /> : <TaskManagement />)
+            layout(isVendor ? < ActivitiesManagement /> : <TaskManagement />)
+        ),
+        '/masters/act': () => (
+            layout(<Act />)
+        ),
+        '/masters/activity': () => (
+            layout(<Activity />)
+        ),
+        '/masters/rule': () => (
+            layout(<Rule />)
+        ),
+        '/masters/state': () => (
+            layout(<State />)
+        ),
+        '/masters/city': () => (
+            layout(<City />)
+        ),
+        '/masters/location': () => (
+            layout(<Location />)
+        ),
+        '/masters/companies': () => (
+            layout(<Companies />)
         ),
         '/': () => (
             layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)

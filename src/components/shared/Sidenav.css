@@ -19,9 +19,17 @@
 
 .sideNav li a {
     display: flex;
-    flex-direction: row;
-    height: 40px;
+    flex-direction: column;
+    min-height: 40px;
     align-items: center;
+}
+
+.sideNav li a .children {
+    display: none !important;
+}
+
+.sidenav-container:hover .sideNav li a .children {
+    display: flex !important;
 }
 
 .sideNav li a span.sidenav-item-icon {

@@ -255,10 +255,10 @@ function TaskManagement() {
                 <Icon className="mx-1" name="download" text="Download" data={row} action={downloadForm} />
                 {
                     row.status === ACTIVITY_STATUS.SUBMITTED &&
-                    <Icon className="mx-2" name={'edit'} text={'Edit'} data={row} action={editActivity} />
+                    <Icon className="mx-2" name={'pencil'} text={'Edit'} data={row} action={editActivity} />
 
                 }
-                <Icon className="ms-2" name={'view'} text={'View'} data={row} action={viewActivity} />
+                <Icon className="ms-2" name={'eye'} text={'View'} data={row} action={viewActivity} />
             </div>
         )
     }
