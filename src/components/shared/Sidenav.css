@@ -51,7 +51,14 @@
 
 .sideNav a.active {
     background-color: var(--royal-blue);
+}
+
+.sideNav a.active * {
     color: var(--white);
+}
+
+.sideNav li a.active span.sidenav-item-icon .btn-icon {
+    opacity: 1;
 }
 
 .sideNav li a.active span.sidenav-item-icon svg {

@@ -3,8 +3,6 @@ import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import "react-datepicker/dist/react-datepicker.css";
-import ViewActivityModal from "./ViewActivityModal";
-import EditActivityModal from "./EditActivityModal";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import Location from "../../common/Location";
@@ -21,6 +19,7 @@ import AlertModal from "../../common/AlertModal";
 import { checkList, download, preventDefault } from "../../../utils/common";
 import PublishModal from "./PublishModal";
 import Report from "../../shared/Report";
+import ActivityModal from "./ActivityModal";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
@@ -76,11 +75,6 @@ function TaskManagement() {
 
     function editActivity(activity) {
         setAction(ACTIONS.EDIT);
-        setActivity(activity);
-    }
-
-    function viewActivity(activity) {
-        setAction(ACTIONS.VIEW);
         setActivity(activity);
     }
 
@@ -253,12 +247,7 @@ function TaskManagement() {
         return (
             <div className="d-flex flex-row align-items-center position-relative">
                 <Icon className="mx-1" name="download" text="Download" data={row} action={downloadForm} />
-                {
-                    row.status === ACTIVITY_STATUS.SUBMITTED &&
-                    <Icon className="mx-2" name={'pencil'} text={'Edit'} data={row} action={editActivity} />
-
-                }
-                <Icon className="ms-2" name={'eye'} text={'View'} data={row} action={viewActivity} />
+                <Icon className="mx-2" name={'pencil'} text={'Edit'} data={row} action={editActivity} />
             </div>
         )
     }
@@ -440,13 +429,10 @@ function TaskManagement() {
 
                 <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} />
             </div>
-            {
-                action === ACTIONS.VIEW && <ViewActivityModal activity={activity} onClose={dismissAction} />
-            }
 
             {
                 action === ACTIONS.EDIT &&
-                <EditActivityModal activity={activity} onClose={dismissAction} onSubmit={refetch} />
+                <ActivityModal activity={activity} onClose={dismissAction} onSubmit={refetch} />
             }
             {
                 !!alertMessage &&
