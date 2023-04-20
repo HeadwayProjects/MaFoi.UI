@@ -84,19 +84,19 @@ function Sidenav() {
                                                     }
                                                     <span className="sidenav-item-label">{item.label}</span>
                                                 </div>
-                                                {
-                                                    item.children &&
-                                                    <div className='d-flex flex-column w-100 ps-3 justify-content-start children'>
-                                                        {
-                                                            item.children.map(child => (
-                                                                <NavItem url={child.url} key={child.id} name={child.id}>
-                                                                    <span className="sidenav-item-label">{child.label}</span>
-                                                                </NavItem>
-                                                            ))
-                                                        }
-                                                    </div>
-                                                }
                                             </NavItem>
+                                            {
+                                                item.children &&
+                                                <div className='d-flex flex-column w-100 justify-content-start children'>
+                                                    {
+                                                        item.children.map(child => (
+                                                            <NavItem url={child.url} key={child.id} name={child.id}>
+                                                                <span className="sidenav-item-label">{child.label}</span>
+                                                            </NavItem>
+                                                        ))
+                                                    }
+                                                </div>
+                                            }
                                         </button>
                                     </li>
                                 )

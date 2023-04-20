@@ -24,11 +24,28 @@
     align-items: center;
 }
 
-.sideNav li a .children {
+.sideNav li a+.children {
     display: none !important;
 }
 
-.sidenav-container:hover .sideNav li a .children {
+.sideNav li a+.children a {
+    padding: 0px 15px 0 60px;
+    margin: 3px 0;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    min-height: 30px;
+}
+
+.sideNav li a.active+.children {
+    background-color: var(--blue);
+}
+
+.sideNav li a.active+.children a {
+    color: var(--white);
+}
+
+.sidenav-container:hover .sideNav li a+.children {
     display: flex !important;
 }
 
