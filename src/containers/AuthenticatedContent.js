@@ -13,6 +13,7 @@ import Location from "../components/pages/Masters/Location";
 import Companies from "../components/pages/Masters/Companies";
 import City from "../components/pages/Masters/City";
 import State from "../components/pages/Masters/State";
+import ChangePassword from "../components/pages/Authenticate/ChangePassword";
 
 function AuthenticatedContent() {
     const user = auth.getUserDetails();
@@ -55,6 +56,9 @@ function AuthenticatedContent() {
         ),
         '/masters/companies': () => (
             layout(<Companies />)
+        ),
+        '/change-password': () => (
+            layout(<ChangePassword />, false)
         ),
         '/': () => (
             layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)

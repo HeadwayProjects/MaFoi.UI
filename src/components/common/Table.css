@@ -55,7 +55,7 @@
     box-sizing: border-box;
     flex-direction: column;
     justify-content: flex-start;
-    background: var(--blueLight);
+    background: var(--pale-blue);
     text-align: left;
     vertical-align: bottom;
     overflow: hidden;

@@ -1,15 +1,28 @@
 :root {
-  --blue: #2965ad;
-  --blueLight: #deeff9;
-  --blueLight1: #3c93d8;
-  --greyLite: #efeeee;
-  --grey: #cdd0d3;
-  --greyDark: #5b5657;
-  --yellow: #ffc000;
-  --red: #ff0000;
-  --green: #0d9500;
-  --white: #ffffff;
-  --black: #322c2d;
+  --white: #FFFFFF;
+  --black: #000000;
+
+  --royal-blue: #2965AD;
+  --blue: #3C93D8;
+  --pale-blue: #DEEFF9;
+
+  --dark-gray: #322C2D;
+  --gray: #A5A5A5;
+  --medium-gray: #CCD0D3;
+  --gray-300: rgba(50, 44, 45, 0.3);
+  --gray-500: rgba(50, 44, 45, 0.5);
+  --gray-800: rgba(50, 44, 45, 0.08);
+
+  --yellow: #FFC000;
+
+  --red: #FF0000;
+  --medium-red: #FF2D2D;
+
+  --dark-green: #548235;
+  --green: #4EC343;
+  --light-green: #A9D18E;
+
+  --page-bg: #F3F9FD;
 }
 
 a,
@@ -18,18 +31,17 @@ link {
 }
 
 body {
-  background-color: #f4f9fd !important;
+  background-color: var(--page-bg) !important;
   overflow: hidden !important;
 }
 
-
 /* overwrite css */
 .text-appprimary {
-  color: var(--blue) !important;
+  color: var(--royal-blue) !important;
 }
 
 .btn-check:checked+.btn {
-  background-color: var(--blue) !important;
+  background-color: var(--royal-blue) !important;
 }
 
 
@@ -45,14 +57,14 @@ body {
 }
 
 .pageHeading {
-  background-color: var(--blueLight);
+  background-color: var(--pale-blue);
   height: 72px;
   padding-left: 2.25rem !important;
   justify-content: space-between;
 }
 
 .pageHeading h4 {
-  color: var(--blue);
+  color: var(--royal-blue);
 }
 
 .breadcrumb li {
@@ -60,25 +72,25 @@ body {
 }
 
 .breadcrumb a {
-  color: var(--blue);
+  color: var(--royal-blue);
 }
 
 
 /* Dashboard-Tabs Start */
 .nav-tabs.dashboardTabs {
-  border-bottom: 3px solid var(--blue);
+  border-bottom: 3px solid var(--royal-blue);
 }
 
 .nav-tabs.dashboardTabs .nav-link {
   border-radius: 25px 25px 0 0;
-  background-color: var(--grey);
-  color: var(--black);
+  background-color: var(--medium-gray);
+  color: var(--dark-gray);
   padding: 10px 35px;
   font-weight: 600;
 }
 
 .nav-tabs.dashboardTabs .nav-link.active {
-  background-color: var(--blue);
+  background-color: var(--royal-blue);
   color: var(--white);
   border-color: transparent;
 }
@@ -93,7 +105,7 @@ body {
 .cardCount a {
   width: 25px;
   height: 25px;
-  background-color: var(--blue);
+  background-color: var(--royal-blue);
   display: inline-block;
   text-align: center;
   color: var(--white);
@@ -101,11 +113,11 @@ body {
 
 
 .cardCount.grey {
-  border-left: 5px solid var(--greyDark);
+  border-left: 5px solid var(--gray);
 }
 
 .cardCount.grey a {
-  background-color: var(--greyDark);
+  background-color: var(--gray);
 }
 
 .cardCount.red {
@@ -151,21 +163,21 @@ body {
 
 
 .nav-tabs-rounded {
-  background-color: var(--greyLite);
-  color: var(--black);
+  background-color: var(--light-gray);
+  color: var(--dark-gray);
   border-radius: 5px;
   font-size: 1rem;
 }
 
 .nav-tabs-rounded .nav-item .nav-link {
   background-color: transparent;
-  color: var(--black);
+  color: var(--dark-gray);
   border-radius: 5px;
   padding: 5px 10px;
 }
 
 .nav-tabs-rounded .nav-item .nav-link.active {
-  background-color: var(--blueLight1);
+  background-color: var(--blue);
   color: var(--white);
   border-color: transparent;
 }
@@ -205,8 +217,6 @@ body {
 
 
 /* progress bar prime override  */
-
-
 .progress {
   background-color: #cdd7dc !important;
 }
@@ -214,7 +224,6 @@ body {
 .progress .progress-bar {
   background-color: #21a7e6 !important;
 }
-
 
 /*vendor dashboard Newupdates */
 
@@ -234,7 +243,7 @@ body {
 }
 
 .loginSection:before {
-  border-left: 16px solid var(--blue);
+  border-left: 16px solid var(--royal-blue);
   background-color: var(--white);
   position: absolute;
   z-index: -1;
@@ -272,7 +281,7 @@ body {
 }
 
 .grey path {
-  fill: var(--grey);
+  fill: var(--gray);
 }
 
 .green path {
@@ -301,24 +310,24 @@ table.table {
 
 .status-ActivitySaved,
 .status-not-applicable {
-  color: rgba(50, 44, 45, 0.5);
+  color: var(--gray-500);
 }
 
 .status-Pending {
-  color: #FFC000;
+  color: var(--yellow);
 }
 
 .status-Overdue,
 .status-Rejected,
 .status-non-compliance {
-  color: #FF0000;
+  color: var(--red);
 }
 
 .status-Submitted {
-  color: #A9D18E;
+  color: var(--light-green);
 }
 
 .status-Approved,
 .status-compliant {
-  color: #548235;
+  color: var(--dark-green);
 }

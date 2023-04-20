@@ -46,11 +46,11 @@
 .sideNav a {
     display: block;
     padding: 5px 15px;
-    color: var(--black);
+    color: var(--dark-gray);
 }
 
 .sideNav a.active {
-    background-color: var(--blue);
+    background-color: var(--royal-blue);
     color: var(--white);
 }
 

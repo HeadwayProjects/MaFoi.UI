@@ -54,5 +54,5 @@
 .updates li:hover {
     cursor: pointer;
     text-decoration: underline;
-    color: var(--blue);
+    color: var(--royal-blue);
 }

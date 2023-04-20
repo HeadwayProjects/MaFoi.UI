@@ -4,6 +4,7 @@ import "./Navbar.css";
 import logo from '../../assets/img/header-logo.png';
 import * as auth from '../../backend/auth';
 import { preventDefault } from '../../utils/common';
+import { navigate } from 'raviger';
 
 function Navbar() {
     const [user] = useState(auth.getUserDetails() || {});
@@ -12,6 +13,11 @@ function Navbar() {
         preventDefault(event)
         auth.clearAuthToken();
         window.location.replace('/login');
+    }
+
+    function changePassword(event) {
+        preventDefault(event);
+        navigate('/change-password', { state: null });
     }
 
     return (
@@ -28,7 +34,8 @@ function Navbar() {
                                 <div className="dropdown-menu">
                                     <div className="dropdown-item"><span className="fw-bold">Role: </span>{user.role}</div>
                                     <div className="dropdown-item" to="">Settings</div>
-                                    <div className="dropdown-item" to="">Change Password</div>
+                                    <div className="dropdown-item" to=""></div>
+                                    <a className="dropdown-item" href="/" onClick={changePassword}>Change Password</a>
                                     <hr className="dropdown-divider" />
                                     <a className="dropdown-item" href="/" onClick={logout}>Logout</a>
                                 </div>
