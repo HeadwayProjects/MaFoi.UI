@@ -5,6 +5,10 @@
     padding: 0;
 }
 
+.btn-icon svg {
+    fill: currentColor;
+}
+
 .btn-icon:disabled {
     opacity: 0.4;
 }

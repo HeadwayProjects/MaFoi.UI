@@ -1,6 +1,7 @@
 :root {
   --white: #FFFFFF;
   --black: #000000;
+  --black-600: rgba(0, 0, 0, 0.6);
 
   --royal-blue: #2965AD;
   --blue: #3C93D8;
@@ -17,12 +18,80 @@
 
   --red: #FF0000;
   --medium-red: #FF2D2D;
+  --light-red: rgba(220, 53, 69, 0.5);
 
   --dark-green: #548235;
+  --emarald-green: #0D9500;
   --green: #4EC343;
   --light-green: #A9D18E;
 
   --page-bg: #F3F9FD;
+
+  /* Fonts */
+  /* 10px */
+  --font-xs: 0.625rem;
+  /* 12px */
+  --font-sm: 0.75rem;
+  /* 14px */
+  --font-md: 0.875rem;
+  /* 16px */
+  --font-base: 1rem;
+  /* 20px */
+  --font-lg: 1.25rem;
+  /* 24px */
+  --font-xl: 1.5rem;
+  /* 32px */
+  --font-xxl: 2rem;
+}
+
+.text-xs {
+  font-size: var(--font-xs);
+}
+
+.text-sm {
+  font-size: var(--font-sm);
+}
+
+.text-md {
+  font-size: var(--font-md);
+}
+
+.text-lg {
+  font-size: var(--font-lg);
+}
+
+.text-xl {
+  font-size: var(--font-xl);
+}
+
+.text-xxl {
+  font-size: var(--font-xxl);
+}
+
+.text-success {
+  color: var(--emarald-green);
+  fill: var(--emarald-green);
+}
+
+.text-error {
+  color: var(--red);
+  fill: var(--red);
+}
+
+.text-dark-gray {
+  color: var(--dark-gray);
+}
+
+.text-gray-800 {
+  color: var(--gray-800);
+}
+
+.text-appprimary {
+  color: var(--royal-blue) !important;
+}
+
+.text-black-600 {
+  color: var(--black-600) !important;
 }
 
 a,
@@ -33,12 +102,10 @@ link {
 body {
   background-color: var(--page-bg) !important;
   overflow: hidden !important;
+  font-size: var(--font-base);
 }
 
 /* overwrite css */
-.text-appprimary {
-  color: var(--royal-blue) !important;
-}
 
 .btn-check:checked+.btn {
   background-color: var(--royal-blue) !important;
@@ -46,7 +113,7 @@ body {
 
 
 .underline {
-  text-decoration: underline;
+  text-decoration: underline !important;
 }
 
 .userNameL {
@@ -210,8 +277,7 @@ body {
 
 /* Forms styling */
 
-.form-select,
-.form-control {
+.form-select {
   border: 1px solid var(--black) !important;
 }
 
@@ -301,7 +367,7 @@ body {
 }
 
 .form-control {
-  border-color: hsl(0, 0%, 80%) !important
+  border-color: hsl(0, 0%, 80%);
 }
 
 table.table {

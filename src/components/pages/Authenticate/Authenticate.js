@@ -1,15 +1,23 @@
 import { useRoutes } from "raviger";
 import React from "react";
 import Login from "./Login";
-import ForgotPassword from "./ForgotPassword";
+import ChangePassword from "./ChangePassword";
+import Navbar from "../../shared/Navbar";
 
 function Authenticate() {
     const routes = {
         '/login': () => (
             <Login />
         ),
-        '/forgotPassword': () => (
-            <ForgotPassword />
+        '/changePassword/:token': ({ token }) => (
+            <>
+                <Navbar showUser={false} />
+                <div className="page-layout-container bg-white">
+                    <div className="main-container overflow-hidden">
+                        <ChangePassword token={token} />
+                    </div>
+                </div>
+            </>
         ),
         '/': () => (
             <Login />

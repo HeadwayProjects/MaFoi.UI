@@ -1,0 +1,24 @@
+.loginSection .navbar-brand {
+    min-height: 10%;
+}
+
+.loginSection .navbar-brand img {
+    max-width: 70%;
+}
+
+
+.popup1 .modal-content {
+    border-radius: 20px;
+}
+
+.popup1 .modal-header {
+    background-color: white;
+    color: var(--royal-blue);
+    border-color: var(--royal-blue);
+    border-radius: 20px 20px 0 0;
+    text-align: center;
+}
+
+.popup1 .modal-body {
+    min-height: 400px;
+}

@@ -1,0 +1,48 @@
+.modal-dialog.alert-modal {
+    max-width: 700px;
+    padding: 30px;
+}
+
+.modal-dialog.alert-modal .modal-content {
+    min-height: 440px;
+    padding: 30px;
+}
+
+.modal-dialog.alert-modal .modal-content .modal-header {
+    background-color: var(--white);
+    color: var(--royal-blue);
+    border-color: var(--royal-blue);
+    border-radius: 20px 20px 0 0;
+    text-align: center;
+}
+
+.modal-dialog.alert-modal .modal-header button.btn-close {
+    margin-top: -4rem;
+    margin-right: -1rem;
+}
+
+.modal-dialog.alert-modal .modal-title {
+    font-size: var(--font-xxl);
+    font-weight: 700;
+}
+
+.modal-dialog.alert-modal .modal-body {
+    padding: 2rem var(--bs-modal-padding);
+}
+
+.modal-dialog.confirm-modal .modal-content {
+    padding: 2rem;
+}
+
+.modal-dialog.confirm-modal .modal-header {
+    border-bottom: none;
+}
+
+.modal-dialog.confirm-modal .modal-header button.btn-close {
+    margin-top: -4rem;
+    margin-right: -1rem;
+}
+
+.modal-dialog.confirm-modal .modal-footer {
+    border-top: none;
+}

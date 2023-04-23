@@ -1,8 +1,12 @@
 @import url('./assets/style.css');
+@import url('./assets/buttons.css');
+@import url('./assets/form.css');
+@import url('./assets/modals.css');
+
 
 body {
   margin: 0;
-  font-family: 'Montserrat', sans-serif !important;
+  font-family: 'Montserrat' !important;
 }
 
 code {
