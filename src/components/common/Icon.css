@@ -1,16 +1,16 @@
+.icon svg {
+    fill: currentColor;
+}
+
 .btn-icon {
-    opacity: 0.6;
+    opacity: 0.4;
     border: none;
     background: transparent;
     padding: 0;
 }
 
-.btn-icon svg {
-    fill: currentColor;
-}
-
 .btn-icon:disabled {
-    opacity: 0.4;
+    opacity: 0.2;
 }
 
 .btn-icon:disabled:hover {

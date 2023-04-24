@@ -46,3 +46,29 @@
 .modal-dialog.confirm-modal .modal-footer {
     border-top: none;
 }
+
+.modal-dialog.drawer {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    margin: 0;
+    right: 0;
+    width: 90%;
+    max-width: 500px;
+    transform: none;
+    translate: left .2s ease;
+}
+
+.modal-dialog.drawer .modal-content {
+    height: 100%;
+    width: 100%;
+    border: none;
+    border-radius: 0;
+    padding: 1rem 2.5rem;
+
+}
+
+.modal-dialog.drawer .modal-header button.btn-close {
+    margin-top: -3rem;
+    margin-right: -2rem;
+}

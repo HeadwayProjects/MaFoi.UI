@@ -220,11 +220,11 @@ function ActivitiesManagement() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                <Icon className="mx-1" name="download" text="Download" data={row} action={downloadForm} />
+                <Icon className="mx-1" type="button" name="download" text="Download" data={row} action={downloadForm} />
                 {
                     (readOnly || [ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED, ACTIVITY_STATUS.SUBMITTED].includes(row.status)) ?
-                        <Icon className="ms-2" name="eye" text="View" data={row} action={editActivity} />
-                        : <Icon className="ms-2" name="pencil" text="Edit" data={row} action={editActivity} />
+                        <Icon className="ms-2" type="button" name="eye" text="View" data={row} action={editActivity} />
+                        : <Icon className="ms-2" type="button" name="pencil" text="Edit" data={row} action={editActivity} />
                 }
             </div>
         )

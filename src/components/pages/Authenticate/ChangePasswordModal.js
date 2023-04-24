@@ -45,7 +45,7 @@ function ChangePasswordModal({ onClose }) {
                 fieldType: 'password',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.PATTERN, pattern: PATTERNS.PASSWORD }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.PASSWORD, message: 'Should contain at least 8 letters and 1 numeric' }
                 ]
             },
             {

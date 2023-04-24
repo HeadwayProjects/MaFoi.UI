@@ -3,6 +3,14 @@ export const PATTERNS = {
     PASSWORD: /^(?=.*[\d])[\w!@#$%^&*]{9,16}$/
 };
 
+export const ACTIONS = {
+    ADD: '1',
+    EDIT: '2',
+    DELETE: '3',
+    VIEW: '4',
+    NONE: '0'
+}
+
 export const ACTIVITY_STATUS = {
     PENDING: 'Pending',
     ACTIVITY_SAVED: 'ActivitySaved',

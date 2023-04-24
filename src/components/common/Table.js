@@ -40,7 +40,9 @@ export function CellTmpl({ cell }) {
                 !!value &&
                 <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>}
                     placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
-                    <div className="ellipse two-lines">{value}</div>
+                    <div className="d-flex align-items-center h-100">
+                        <div className="ellipse two-lines">{value}</div>
+                    </div>
                 </OverlayTrigger>
             }
         </>

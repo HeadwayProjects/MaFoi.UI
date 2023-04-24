@@ -46,13 +46,61 @@ function TextField(props) {
             }
             {
                 meta.touched && meta.error && <div className="invalid-feedback d-block">
-                    {
-                        meta.error === 'Required' ?
-                            <>{label} required</> :
-                            <>Invalid {label}</>
-                    }
+                    {meta.error}
                 </div>
             }
+        </div>
+    )
+}
+
+function TextAreaField(props) {
+    const { label, meta = {}, input, name } = useFieldApi(props);
+    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    const maxLength = ((props.validate || []).find(x => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
+
+    function onInput(input) {
+        return {
+            ...input,
+            required,
+            placeholder: props.placeholder || `Enter ${label}`,
+            onChange: (e) => {
+                input.onChange(e);
+                if (props.onChange) {
+                    props.onChange(e);
+                }
+            }
+        }
+    }
+
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            <div className="input-group">
+                <textarea id={name} className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''}`}
+                    maxLength={maxLength} {...onInput(input)} cols={3} />
+            </div>
+            {
+                props.description &&
+                <span className="text-muted form-text">{props.description}</span>
+            }
+            {
+                meta.touched && meta.error && <div className="invalid-feedback d-block">
+                    {meta.error}
+                </div>
+            }
+        </div>
+    )
+}
+
+function HtmlField(props) {
+    const { label } = useFieldApi(props);
+
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            <label className="form-label text-sm">{label}</label>
+            <div className="input-group">
+                <div dangerouslySetInnerHTML={{ __html: props.content || '--NA--' }}></div>
+            </div>
         </div>
     )
 }
@@ -60,8 +108,9 @@ function TextField(props) {
 export const ComponentMapper = {
     [componentTypes.TEXT_FIELD]: TextField,
     [componentTypes.DATE_PICKER]: TextField,
-    [componentTypes.TEXTAREA]: TextField,
-    [componentTypes.SELECT]: TextField
+    [componentTypes.TEXTAREA]: TextAreaField,
+    [componentTypes.SELECT]: TextField,
+    [componentTypes.PLAIN_TEXT]: HtmlField
 };
 
 
