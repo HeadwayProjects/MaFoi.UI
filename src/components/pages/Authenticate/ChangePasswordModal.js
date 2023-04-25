@@ -7,7 +7,7 @@ import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-re
 import { PATTERNS } from "../../common/Constants";
 import { preventDefault } from "../../../utils/common";
 import { navigate } from "raviger";
-import { Button } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 import { getUserDetails, clearAuthToken } from "../../../backend/auth";
 import { post } from "../../../backend/request";
 import PageLoader from "../../shared/PageLoader";
@@ -112,8 +112,7 @@ function ChangePasswordModal({ onClose }) {
                                             <span className="fs-6 text-black-600"> Password Requirements </span>
                                             <div><small className="text-error text-sm">Password must contain at least 8 letters and 1 number.</small></div>
                                             {
-                                                !!apiError &&
-                                                <div class="alert alert-danger mt-2" role="alert">{apiError}</div>
+                                                !!apiError && <Alert variant="danger">{apiError}</Alert>
                                             }
                                         </div>
                                         <div className="col-md-9 mx-auto">

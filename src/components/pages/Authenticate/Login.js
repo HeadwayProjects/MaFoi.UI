@@ -14,11 +14,14 @@ import ForgotPasswordModal from "./ForgotPasswordModal";
 import { PATTERNS } from "../../common/Constants";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
+import PageLoader from "../../shared/PageLoader";
 
 function Login() {
     const [forgotPassword, setForgotPassword] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     function login({ username, password }) {
+        setSubmitting(true);
         api.post(`/api/Auth/Login?username=${username}&password=${password}`).then(response => {
             if (response && response.data) {
                 auth.setAuthToken(response.data);
@@ -27,6 +30,8 @@ function Login() {
             } else {
                 toast.error('Email/Phone No. or password is incorrect.');
             }
+        }).finally(() => {
+            setSubmitting(false);
         });
     }
 
@@ -92,6 +97,9 @@ function Login() {
             </div>
             {
                 forgotPassword && <ForgotPasswordModal onClose={() => setForgotPassword(false)} />
+            }
+            {
+                submitting && <PageLoader />
             }
         </>
     );
