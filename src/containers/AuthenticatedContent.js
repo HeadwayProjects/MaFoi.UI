@@ -16,7 +16,7 @@ import State from "../components/pages/Masters/State";
 import ChangePassword from "../components/pages/Authenticate/ChangePassword";
 
 function AuthenticatedContent() {
-    const user = auth.getUserDetails();
+    const user = auth.getUserDetails() || {};
     const isVendor = ['VendorAdmin', 'VendorUser'].includes(user.role)
 
     function layout(children, layoutWithSidenav = true) {

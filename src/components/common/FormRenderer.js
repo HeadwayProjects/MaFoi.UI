@@ -24,6 +24,11 @@ function TextField(props) {
                 if (props.onChange) {
                     props.onChange(e);
                 }
+            },
+            onPaste: (e) => {
+                if (props.onPaste) {
+                    props.onPaste(e);
+                }
             }
         }
     }

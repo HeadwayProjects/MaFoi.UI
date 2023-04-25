@@ -5,15 +5,13 @@ import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { PATTERNS } from "../../common/Constants";
+import PageLoader from "../../shared/PageLoader";
+import { get } from "../../../backend/request";
 
 function ForgotPasswordModal({ onClose }) {
     const [recoverySent, setRecoverySent] = useState(false);
-
-
-    function recoverPassword(event) {
-        console.log(event);
-        setRecoverySent(true);
-    }
+    const [apiError, setError] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
 
     const schema = {
         fields: [
@@ -24,11 +22,28 @@ function ForgotPasswordModal({ onClose }) {
                 fieldType: 'email',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.PATTERN, pattern: PATTERNS.EMAIL }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.EMAIL, message: 'Invalid email address' }
                 ]
             }
         ],
     };
+
+    function recoverPassword({ username }) {
+        setError(null);
+        setSubmitting(true);
+        get(`/api/Auth/ForgotPassword?username=${username}`).then(response => {
+            const data = (response || {}).data || {};
+            if (data.result === 'SUCCESS') {
+                setRecoverySent(true);
+            } else {
+                setError(data.message || 'Error');
+            }
+        }).catch(e => {
+            setError('Something went wrong! Please try again.');
+        }).finally(() => {
+            setSubmitting(false);
+        });
+    }
 
     return (
         <>
@@ -60,6 +75,7 @@ function ForgotPasswordModal({ onClose }) {
                     </div>
                 </Modal.Body>
             </Modal>
+            {submitting && <PageLoader />}
         </>
     )
 }

@@ -8,36 +8,36 @@ import { PATTERNS } from "../../common/Constants";
 import { preventDefault } from "../../../utils/common";
 import { navigate } from "raviger";
 import { Button } from "react-bootstrap";
+import { getUserDetails, clearAuthToken } from "../../../backend/auth";
+import { post } from "../../../backend/request";
+import PageLoader from "../../shared/PageLoader";
 
 function ChangePasswordModal({ onClose }) {
     const [pwdChanged, setPwdChanged] = useState(false);
-
-
-    function changePassword(event) {
-        console.log(event);
-        setPwdChanged(true);
-    }
-
-    function validateConfirmPwd(value, values = {}) {
-        return value === values.newPassword ? undefined : 'Mismatch';
-    }
+    const [user] = useState(getUserDetails());
+    const [apiError, setApiError] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
 
     function signIn(event) {
         preventDefault(event);
+        clearAuthToken();
         navigate('/login', { replace: true });
+        setTimeout(() => {
+            window.location.reload();
+        });
     }
 
     const schema = {
         fields: [
-            {
-                component: componentTypes.TEXT_FIELD,
-                name: 'oldPassword',
-                label: 'Old Password',
-                fieldType: 'password',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ]
-            },
+            // {
+            //     component: componentTypes.TEXT_FIELD,
+            //     name: 'oldPassword',
+            //     label: 'Old Password',
+            //     fieldType: 'password',
+            //     validate: [
+            //         { type: validatorTypes.REQUIRED }
+            //     ]
+            // },
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'newPassword',
@@ -45,7 +45,10 @@ function ChangePasswordModal({ onClose }) {
                 fieldType: 'password',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.PATTERN, pattern: PATTERNS.PASSWORD, message: 'Should contain at least 8 letters and 1 numeric' }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.PASSWORD, message: 'Should contain at least 8 letters and 1 numeric' },
+                    // (value, { oldPassword }) => {
+                    //     return value && value === oldPassword ? 'New password cannot be same as old password' : undefined
+                    // }
                 ]
             },
             {
@@ -55,12 +58,33 @@ function ChangePasswordModal({ onClose }) {
                 fieldType: 'password',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    validateConfirmPwd.bind(this)
-                ]
+                    (value, { newPassword }) => {
+                        return value === newPassword ? undefined : 'New password and Re-enter password should be same';
+                    }
+                ],
+                onPaste: (e) => {
+                    preventDefault(e);
+                }
             }
-
-        ],
+        ]
     };
+
+    function changePassword({ newPassword }) {
+        setApiError(null);
+        setSubmitting(true);
+        post(`/api/Auth/ChangePassword?username=${user.username}&password=${newPassword}`, {}).then(response => {
+            const data = (response || {}).data || {};
+            if (data.result === 'SUCCESS') {
+                setPwdChanged(true);
+            } else {
+                setApiError(data.message);
+            }
+        }).catch(e => {
+            setApiError('Something went wrong! Please try again.');
+        }).finally(() => {
+            setSubmitting(false);
+        });
+    }
 
     return (
         <>
@@ -87,6 +111,10 @@ function ChangePasswordModal({ onClose }) {
                                         <div className="pt-4 pb-4">
                                             <span className="fs-6 text-black-600"> Password Requirements </span>
                                             <div><small className="text-error text-sm">Password must contain at least 8 letters and 1 number.</small></div>
+                                            {
+                                                !!apiError &&
+                                                <div class="alert alert-danger mt-2" role="alert">{apiError}</div>
+                                            }
                                         </div>
                                         <div className="col-md-9 mx-auto">
                                             <FormRenderer FormTemplate={FormTemplate}
@@ -102,6 +130,7 @@ function ChangePasswordModal({ onClose }) {
                     </div>
                 </Modal.Body>
             </Modal>
+            {submitting && <PageLoader />}
         </>
     )
 }

@@ -39,7 +39,7 @@ function Login() {
                 fieldType: 'email',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.PATTERN, pattern: PATTERNS.EMAIL }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.EMAIL, message: 'Invalid email address' }
                 ]
             },
             {
