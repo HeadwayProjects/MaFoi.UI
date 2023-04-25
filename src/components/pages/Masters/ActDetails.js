@@ -4,6 +4,7 @@ import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-re
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
+import { preventDefault } from "../../../utils/common";
 
 function ActDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
@@ -41,7 +42,8 @@ function ActDetails({ action, data, onClose, onSubmit }) {
         ],
     };
 
-    function onSubmit() {
+    function submit(e) {
+        preventDefault(e);
         if (form.valid) {
             onSubmit();
         }
@@ -84,7 +86,7 @@ function ActDetails({ action, data, onClose, onSubmit }) {
                         action !== ACTIONS.VIEW ?
                             <>
                                 <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onClose}>{'Cancel'}</Button>
-                                <Button variant="primary" onClick={onSubmit} className="px-4" disabled={!form.valid}>{'Submit'}</Button>
+                                <Button variant="primary" onClick={submit} className="px-4" disabled={!form.valid}>{'Submit'}</Button>
                             </> :
                             <Button variant="primary" onClick={onClose} className="px-4 ms-auto">{'Close'}</Button>
 

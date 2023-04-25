@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     FormRenderer as DDFFormRenderer, componentTypes,
     useFieldApi, useFormApi, validatorTypes
 } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
+import Select from 'react-select';
 import Icon from "./Icon";
 
 function TextField(props) {
@@ -92,6 +93,60 @@ function TextAreaField(props) {
     )
 }
 
+function SelectField(props) {
+    const { label, meta = {}, input, name } = useFieldApi(props);
+    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    const [options, setOptions] = useState(props.options);
+
+    function onInput(input) {
+        return {
+            ...input,
+            required,
+            placeholder: props.placeholder || `Select ${label}`,
+            onChange: (e) => {
+                input.onChange(e);
+                if (props.onChange) {
+                    props.onChange(e);
+                }
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (props.options) {
+            setOptions((props.options || []).map(x => {
+                return { value: x.id, label: x.name }
+            }));
+        }
+    }, [props.options])
+
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            <div className="input-group">
+                {/* <Select placeholder='Asscociate Company' options={associateCompanies} onChange={setAssociateCompany} value={associateCompany} /> */}
+                <Select
+                    name={name}
+                    className={`select-control ${meta.touched && meta.error ? 'error-field' : ''}`}
+                    options={options}
+                    id={name}
+                    label="label"
+                    {...onInput(input)}
+                />
+            </div>
+            {
+                props.description &&
+                <span className="text-muted form-text">{props.description}</span>
+            }
+            {
+                meta.touched && meta.error && <div className="invalid-feedback d-block">
+                    {meta.error}
+                </div>
+            }
+        </div>
+    )
+}
+
 function HtmlField(props) {
     const { label } = useFieldApi(props);
 
@@ -109,7 +164,7 @@ export const ComponentMapper = {
     [componentTypes.TEXT_FIELD]: TextField,
     [componentTypes.DATE_PICKER]: TextField,
     [componentTypes.TEXTAREA]: TextAreaField,
-    [componentTypes.SELECT]: TextField,
+    [componentTypes.SELECT]: SelectField,
     [componentTypes.PLAIN_TEXT]: HtmlField
 };
 

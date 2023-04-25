@@ -54,3 +54,21 @@ textarea::placeholder {
     margin-top: 0;
     line-height: var(--font-sm);
 }
+
+.select-control {
+    width: 100%;
+}
+
+.select-control [class$="-control"],
+.select-control [class$="-control"]:hover {
+    box-shadow: none;
+    border-color: hsl(0, 0%, 80%);
+}
+
+.select-control [class$="-indicatorSeparator"] {
+    display: none;
+}
+
+.select-control.error-field [class$="-control"] {
+    border-color: var(--light-red);
+}
