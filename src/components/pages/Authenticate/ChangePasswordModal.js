@@ -8,7 +8,7 @@ import { PATTERNS } from "../../common/Constants";
 import { preventDefault } from "../../../utils/common";
 import { navigate } from "raviger";
 import { Alert, Button } from "react-bootstrap";
-import { getUserDetails, clearAuthToken } from "../../../backend/auth";
+import { getUserDetails, clearAuthToken, getAuthToken } from "../../../backend/auth";
 import { post } from "../../../backend/request";
 import PageLoader from "../../shared/PageLoader";
 
@@ -29,15 +29,15 @@ function ChangePasswordModal({ onClose }) {
 
     const schema = {
         fields: [
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'oldPassword',
-            //     label: 'Old Password',
-            //     fieldType: 'password',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'oldPassword',
+                label: 'Old Password',
+                fieldType: 'password',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'newPassword',
@@ -46,9 +46,9 @@ function ChangePasswordModal({ onClose }) {
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.PATTERN, pattern: PATTERNS.PASSWORD, message: 'Should contain at least 8 letters and 1 numeric' },
-                    // (value, { oldPassword }) => {
-                    //     return value && value === oldPassword ? 'New password cannot be same as old password' : undefined
-                    // }
+                    (value, { oldPassword }) => {
+                        return value && value === oldPassword ? 'New password cannot be same as old password' : undefined
+                    }
                 ]
             },
             {
@@ -69,10 +69,13 @@ function ChangePasswordModal({ onClose }) {
         ]
     };
 
-    function changePassword({ newPassword }) {
+    function changePassword({ oldPassword, newPassword }) {
         setApiError(null);
         setSubmitting(true);
-        post(`/api/Auth/ChangePassword?username=${user.username}&password=${newPassword}`, {}).then(response => {
+        const headers = {
+            Authorization: getAuthToken()
+        };
+        post(`/api/Auth/ChangePassword?username=${user.username}&oldPassword=${oldPassword}&newPassword=${newPassword}`, {}, headers).then(response => {
             const data = (response || {}).data || {};
             if (data.result === 'SUCCESS') {
                 setPwdChanged(true);

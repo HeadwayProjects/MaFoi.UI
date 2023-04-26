@@ -7,6 +7,9 @@ import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-re
 import { PATTERNS } from "../../common/Constants";
 import PageLoader from "../../shared/PageLoader";
 import { get } from "../../../backend/request";
+import { preventDefault } from "../../../utils/common";
+import { Alert } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 function ForgotPasswordModal({ onClose }) {
     const [recoverySent, setRecoverySent] = useState(false);
@@ -34,7 +37,7 @@ function ForgotPasswordModal({ onClose }) {
         get(`/api/Auth/ForgotPassword?username=${username}`).then(response => {
             const data = (response || {}).data || {};
             if (data.result === 'SUCCESS') {
-                setRecoverySent(true);
+                setRecoverySent(data.message);
             } else {
                 setError(data.message || 'Error');
             }
@@ -43,6 +46,16 @@ function ForgotPasswordModal({ onClose }) {
         }).finally(() => {
             setSubmitting(false);
         });
+    }
+
+    async function copyUrl(event) {
+        preventDefault(event);
+        try {
+            await navigator.clipboard.writeText(recoverySent);
+            toast.success('URL Copied.');
+        } catch (e) {
+            console.error('Error copying url');
+        }
     }
 
     return (
@@ -59,9 +72,15 @@ function ForgotPasswordModal({ onClose }) {
                                     <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: '106px' }} className="mb-4 text-success" />
                                     <div className="text-xxl text-success">Email Sent</div>
                                     <div className="text-md mb-4">Check your email and open the link we sent to continue.</div>
+                                    <div className="text-right">
+                                        <a href="/" onClick={copyUrl}>Copy URL</a>
+                                    </div>
                                 </> :
                                 <>
                                     <div className="text-md mb-4">Enter your email and we'll send you a link to reset your password</div>
+                                    {
+                                        apiError && <Alert variant="danger" message={apiError} />
+                                    }
                                     <div className="col-md-9 m-auto">
                                         <FormRenderer FormTemplate={FormTemplate}
                                             initialValues={{ submitBtnText: 'Send link to email', fullWidth: false }}

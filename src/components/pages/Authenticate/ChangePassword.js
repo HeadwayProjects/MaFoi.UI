@@ -10,12 +10,12 @@ import { Button } from "react-bootstrap";
 import { getUserDetails, useValidateToken } from "../../../backend/auth";
 import PageLoader from "../../shared/PageLoader";
 import { post } from "../../../backend/request";
+import { toast } from "react-toastify";
 
 function ChangePassword({ token }) {
     const [changePwdSuccess, setChangePwdSuccess] = useState(false);
     const [user] = useState(getUserDetails(token));
     const { status, isFetching } = useValidateToken(token);
-    const [apiError, setApiError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
 
     function signIn(event) {
@@ -51,17 +51,19 @@ function ChangePassword({ token }) {
     };
 
     function onSubmit({ newPassword }) {
-        setApiError(null);
         setSubmitting(true);
-        post(`/api/Auth/ChangePassword?username=${user.username}&password=${newPassword}`, {}).then(response => {
+        const headers = {
+            Authorization: token
+        }
+        post(`/api/Auth/ChangePassword?username=${user.username}&oldPassword=null&newPassword=${newPassword}`, {}, headers).then(response => {
             const data = (response || {}).data || {};
             if (data.result === 'SUCCESS') {
                 setChangePwdSuccess(true);
             } else {
-                setApiError(data.message);
+                toast.error(data.message);
             }
         }).catch(e => {
-            setApiError('Something went wrong! Please try again.');
+            toast.error('Something went wrong! Please try again.');
         }).finally(() => {
             setSubmitting(false);
         });
@@ -73,7 +75,7 @@ function ChangePassword({ token }) {
                 isFetching ? <p>Loading...</p> :
                     <>
                         {
-                            !status ? <div class="alert alert-danger m-3" role="alert">The url is either invalid / expired. Please contact admin for more details.</div> :
+                            (status || {}).result === 'FAILURE' ? <div class="alert alert-danger m-3" role="alert">The url is either invalid / expired. Please contact admin for more details.</div> :
                                 <>
                                     {
                                         !changePwdSuccess ?
