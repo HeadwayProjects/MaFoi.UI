@@ -43,6 +43,8 @@
   --font-xl: 1.5rem;
   /* 32px */
   --font-xxl: 2rem;
+  /* 64px */
+  --font-xxxl: 3rem;
 }
 
 .text-xs {
@@ -69,6 +71,10 @@
   font-size: var(--font-xxl);
 }
 
+.text-xxxl {
+  font-size: var(--font-xxxl);
+}
+
 .text-success {
   color: var(--emarald-green);
   fill: var(--emarald-green);
@@ -93,6 +99,10 @@
 
 .text-black-600 {
   color: var(--black-600) !important;
+}
+
+.letter-spacing-2 {
+  letter-spacing: 0.5rem;
 }
 
 a,

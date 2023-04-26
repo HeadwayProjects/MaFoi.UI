@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import jwtDecode from "jwt-decode";
-import { get } from "./request";
+import { get, post } from "./request";
 
 export function getAuthToken() {
     return sessionStorage.getItem('auth-token') || null;
@@ -19,7 +19,7 @@ export function getUserDetails(_token) {
     if (token || _token) {
         try {
             return jwtDecode(token || _token);
-        } catch(e) {
+        } catch (e) {
             return null;
         }
     }
@@ -38,6 +38,20 @@ export function isVendor() {
     return false;
 }
 
+export function useUserLogin(onSuccess, onError) {
+    const { mutate: userLogin, error } = useMutation(
+        ['userLogin'],
+        async ({ username, password }) => await post(`/api/Auth/Login?username=${username}&password=${password}`, {}, null, false),
+        {
+            onError,
+            onSuccess: (response) => {
+                onSuccess((response || {}).data)
+            }
+        }
+    );
+    return { userLogin, error };
+}
+
 export function useValidateToken(token) {
     const { data, isFetching } = useQuery(
         ['validateToken', token],
@@ -48,6 +62,33 @@ export function useValidateToken(token) {
             enabled: !!token
         }
     );
-
     return { status: (data || {}).data || {}, isFetching };
+}
+
+export function useGenerateOTP(onSuccess, onError) {
+    const { mutate: generateOTP, error } = useMutation(
+        ['generateOTP'],
+        async ({ username }) => await get(`/api/Auth/GenerateOTP?username=${username}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                onSuccess((response || {}).data || {})
+            }
+        }
+    );
+    return { generateOTP, error };
+}
+
+export function useLoginWithOtp(onSuccess, onError) {
+    const { mutate: loginWithOtp, error } = useMutation(
+        ['updateLocation'],
+        async ({ username, otp }) => await post(`/api/Auth/LoginWithOtp?username=${username}&loginOtp=${otp}`, {}, null, false),
+        {
+            onError,
+            onSuccess: (response) => {
+                onSuccess((response || {}).data || {})
+            }
+        }
+    );
+    return { loginWithOtp, error };
 }

@@ -16,9 +16,9 @@ function TextField(props) {
     function onInput(input) {
         return {
             ...input,
-            type: isPasswordField ? (showPassword ? 'text' : 'password') : (type || 'text'),
+            type: isPasswordField ? (showPassword ? 'text' : 'password') : (props.fieldType || 'text'),
             required,
-            placeholder: props.placeholder || `Enter ${label}`,
+            placeholder: label ? (props.placeholder || `Enter ${label}`) : undefined,
             onChange: (e) => {
                 input.onChange(e);
                 if (props.onChange) {
@@ -35,9 +35,14 @@ function TextField(props) {
 
     return (
         <div className={`form-group ${props.className || ''}`}>
-            <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            {
+                label &&
+                <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            }
             <div className={`input-group ${isPasswordField ? 'has-group-text-right' : ''}`}>
-                <input id={name} className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''}`} {...onInput(input)} />
+                <input id={name}
+                    className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''} ${props.styleClass || ''}`}
+                    {...onInput(input)} />
                 {
                     isPasswordField &&
                     <span className="text-black-600 input-group-text">

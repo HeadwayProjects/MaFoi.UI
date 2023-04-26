@@ -75,7 +75,7 @@ function ChangePassword({ token }) {
                 isFetching ? <p>Loading...</p> :
                     <>
                         {
-                            (status || {}).result === 'FAILURE' ? <div class="alert alert-danger m-3" role="alert">The url is either invalid / expired. Please contact admin for more details.</div> :
+                            (status || {}).result === 'FAILURE' ? <div className="alert alert-danger m-3" role="alert">The url is either invalid / expired. Please contact admin for more details.</div> :
                                 <>
                                     {
                                         !changePwdSuccess ?
