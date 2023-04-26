@@ -3,49 +3,41 @@ import Modal from 'react-bootstrap/Modal';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
-import { PATTERNS } from "../../common/Constants";
 import PageLoader from "../../shared/PageLoader";
-import { get } from "../../../backend/request";
 import { preventDefault } from "../../../utils/common";
 import { Alert } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
+import { useForgotPassword } from "../../../backend/auth";
+import { LOGIN_FIELDS } from "./Authenticate.constants";
 
 function ForgotPasswordModal({ onClose }) {
     const [recoverySent, setRecoverySent] = useState(false);
     const [apiError, setError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const [form, setForm] = useState({});
+    const { forgotPassword } = useForgotPassword(({ result, message }) => {
+        setSubmitting(false);
+        if (result === API_RESULT.SUCCESS) {
+            setRecoverySent(message);
+        } else {
+            setError(message);
+        }
+    }, () => {
+        setSubmitting(false);
+        setError(ERROR_MESSAGES.DEFAULT);
+    });
 
     const schema = {
-        fields: [
-            {
-                component: componentTypes.TEXT_FIELD,
-                name: 'username',
-                label: 'Email Address',
-                fieldType: 'email',
-                validate: [
-                    { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.PATTERN, pattern: PATTERNS.EMAIL, message: 'Invalid email address' }
-                ]
-            }
-        ],
+        fields: [{ ...LOGIN_FIELDS.USERNAME }],
     };
 
     function recoverPassword({ username }) {
         setError(null);
-        setSubmitting(true);
-        get(`/api/Auth/ForgotPassword?username=${username}`).then(response => {
-            const data = (response || {}).data || {};
-            if (data.result === 'SUCCESS') {
-                setRecoverySent(data.message);
-            } else {
-                setError(data.message || 'Error');
-            }
-        }).catch(e => {
-            setError('Something went wrong! Please try again.');
-        }).finally(() => {
-            setSubmitting(false);
-        });
+        if (form.valid) {
+            setSubmitting(true);
+            forgotPassword({ username });
+        }
     }
 
     async function copyUrl(event) {
@@ -79,13 +71,14 @@ function ForgotPasswordModal({ onClose }) {
                                 <>
                                     <div className="text-md mb-4">Enter your email and we'll send you a link to reset your password</div>
                                     {
-                                        apiError && <Alert variant="danger" message={apiError} />
+                                        apiError && <Alert variant="danger">{apiError}</Alert>
                                     }
                                     <div className="col-md-9 m-auto">
                                         <FormRenderer FormTemplate={FormTemplate}
                                             initialValues={{ submitBtnText: 'Send link to email', fullWidth: false }}
                                             componentMapper={ComponentMapper}
                                             schema={schema}
+                                            debug={setForm}
                                             onSubmit={recoverPassword}
                                         />
                                     </div>

@@ -65,6 +65,38 @@ export function useValidateToken(token) {
     return { status: (data || {}).data || {}, isFetching };
 }
 
+export function useChangePassword(onSuccess, onError) {
+    const { mutate: changePassword, error } = useMutation(
+        ['changePassword'],
+        async ({ username, oldPassword, newPassword, token }) => {
+            const url = `/api/Auth/ChangePassword?username=${username}&oldPassword=${oldPassword || null}&newPassword=${newPassword}`;
+            const _response = await post(url, {}, { Authorization: token });
+            return _response
+        },
+        {
+            onError,
+            onSuccess: (response) => {
+                onSuccess((response || {}).data || {})
+            }
+        }
+    );
+    return { changePassword, error };
+}
+
+export function useForgotPassword(onSuccess, onError) {
+    const { mutate: forgotPassword, error } = useMutation(
+        ['forgotPassword'],
+        async ({ username }) => await get(`/api/Auth/ForgotPassword?username=${username}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                onSuccess((response || {}).data || {})
+            }
+        }
+    );
+    return { forgotPassword, error };
+}
+
 export function useGenerateOTP(onSuccess, onError) {
     const { mutate: generateOTP, error } = useMutation(
         ['generateOTP'],

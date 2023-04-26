@@ -8,6 +8,7 @@ import { getValue, preventDefault } from "../../../utils/common";
 import { useCreateLocation, useGetCities, useGetStates, useUpdateLocation } from "../../../backend/masters";
 import { toast } from 'react-toastify';
 import { AxiosError } from "axios";
+import { ERROR_MESSAGES } from "../../../utils/constants";
 
 function LocationDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
@@ -18,19 +19,19 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
     const { updateLocation } = useUpdateLocation(() => {
         toast.success(`${locationDetails.name} updated successsfully.`);
         onSubmit();
-    }, () => {
-        toast.error('Something went wrong! Please try again.');
-    });
+    }, errorCallback);
     const { createLocation } = useCreateLocation((response) => {
-        if (response instanceof AxiosError ) {
-            toast.error('Something went wrong! Please try again.');
+        if (response instanceof AxiosError) {
+            errorCallback();
         } else {
             toast.success(`${locationDetails.name} created successsfully.`);
             onSubmit();
         }
-    }, () => {
-        toast.error('Something went wrong! Please try again.');
-    });
+    }, errorCallback);
+
+    function errorCallback() {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    }
 
     const schema = {
         fields: [

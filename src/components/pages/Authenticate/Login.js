@@ -15,6 +15,7 @@ import PageLoader from "../../shared/PageLoader";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
 import VerifyOTP from "./VerifyOTP";
 import { setAuthToken, useGenerateOTP, useUserLogin } from "../../../backend/auth";
+import { ERROR_MESSAGES } from "../../../utils/constants";
 
 function Login() {
     const [forgotPassword, setForgotPassword] = useState(false);
@@ -43,7 +44,7 @@ function Login() {
 
     function errorCallback() {
         setSubmitting(false);
-        toast.error('Something went wrong! Please try again.');
+        toast.error(ERROR_MESSAGES.DEFAULT);
     }
 
     function login({ username, password }) {

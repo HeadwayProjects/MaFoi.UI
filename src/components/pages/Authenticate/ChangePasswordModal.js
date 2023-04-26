@@ -3,20 +3,32 @@ import Modal from 'react-bootstrap/Modal';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { PATTERNS } from "../../common/Constants";
 import { preventDefault } from "../../../utils/common";
 import { navigate } from "raviger";
 import { Alert, Button } from "react-bootstrap";
-import { getUserDetails, clearAuthToken, getAuthToken } from "../../../backend/auth";
-import { post } from "../../../backend/request";
+import { getUserDetails, clearAuthToken, getAuthToken, useChangePassword } from "../../../backend/auth";
 import PageLoader from "../../shared/PageLoader";
+import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
+import { LOGIN_FIELDS } from "./Authenticate.constants";
 
 function ChangePasswordModal({ onClose }) {
     const [pwdChanged, setPwdChanged] = useState(false);
     const [user] = useState(getUserDetails());
     const [apiError, setApiError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const { changePassword } = useChangePassword(({ result, message }) => {
+        setSubmitting(false);
+        if (result === API_RESULT.SUCCESS) {
+            setPwdChanged(true);
+        } else {
+            setApiError(message);
+        }
+    }, () => {
+        setSubmitting(false);
+        setApiError(ERROR_MESSAGES.DEFAULT);
+    });
 
     function signIn(event) {
         preventDefault(event);
@@ -30,19 +42,12 @@ function ChangePasswordModal({ onClose }) {
     const schema = {
         fields: [
             {
-                component: componentTypes.TEXT_FIELD,
+                ...LOGIN_FIELDS.PASSWORD,
                 name: 'oldPassword',
-                label: 'Old Password',
-                fieldType: 'password',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ]
+                label: 'Old Password'
             },
             {
-                component: componentTypes.TEXT_FIELD,
-                name: 'newPassword',
-                label: 'New Password',
-                fieldType: 'password',
+                ...LOGIN_FIELDS.NEW_PASSWORD,
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.PATTERN, pattern: PATTERNS.PASSWORD, message: 'Should contain at least 8 letters and 1 numeric' },
@@ -51,42 +56,14 @@ function ChangePasswordModal({ onClose }) {
                     }
                 ]
             },
-            {
-                component: componentTypes.TEXT_FIELD,
-                name: 'confirmPassword',
-                label: 'Re-Enter New Password',
-                fieldType: 'password',
-                validate: [
-                    { type: validatorTypes.REQUIRED },
-                    (value, { newPassword }) => {
-                        return value === newPassword ? undefined : 'New password and Re-enter password should be same';
-                    }
-                ],
-                onPaste: (e) => {
-                    preventDefault(e);
-                }
-            }
+            { ...LOGIN_FIELDS.CONFIRM_PASSWORD }
         ]
     };
 
-    function changePassword({ oldPassword, newPassword }) {
+    function onSubmit({ oldPassword, newPassword }) {
         setApiError(null);
         setSubmitting(true);
-        const headers = {
-            Authorization: getAuthToken()
-        };
-        post(`/api/Auth/ChangePassword?username=${user.username}&oldPassword=${oldPassword}&newPassword=${newPassword}`, {}, headers).then(response => {
-            const data = (response || {}).data || {};
-            if (data.result === 'SUCCESS') {
-                setPwdChanged(true);
-            } else {
-                setApiError(data.message);
-            }
-        }).catch(e => {
-            setApiError('Something went wrong! Please try again.');
-        }).finally(() => {
-            setSubmitting(false);
-        });
+        changePassword({ username: user.username, oldPassword, newPassword, token: getAuthToken() });
     }
 
     return (
@@ -123,7 +100,7 @@ function ChangePasswordModal({ onClose }) {
                                                 initialValues={{ submitBtnText: 'Change Password', fullWidth: true }}
                                                 componentMapper={ComponentMapper}
                                                 schema={schema}
-                                                onSubmit={changePassword}
+                                                onSubmit={onSubmit}
                                             />
                                         </div>
                                     </div>

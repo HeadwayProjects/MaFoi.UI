@@ -8,6 +8,7 @@ import ConfirmModal from "../../common/ConfirmModal";
 import { useDeleteLocation, useGetLocations } from "../../../backend/masters";
 import LocationDetails from "./LocationDetails";
 import { toast } from "react-toastify";
+import { ERROR_MESSAGES } from "../../../utils/constants";
 
 function Location() {
     const [breadcrumb] = useState([
@@ -28,7 +29,7 @@ function Location() {
         setLocation(null);
         refetch();
     }, () => {
-        toast.error('Something went wrong! Please try again.');
+        toast.error(ERROR_MESSAGES.DEFAULT);
     });
 
     function ActionColumnElements({ cell }) {

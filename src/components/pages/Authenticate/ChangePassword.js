@@ -1,22 +1,34 @@
 import React, { useState } from "react";
 import changePasswordImg from '../../../assets/img/change-password.jpg';
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { preventDefault } from "../../../utils/common";
-import { PATTERNS } from "../../common/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 import { Button } from "react-bootstrap";
-import { getUserDetails, useValidateToken } from "../../../backend/auth";
+import { getUserDetails, useChangePassword, useValidateToken } from "../../../backend/auth";
 import PageLoader from "../../shared/PageLoader";
-import { post } from "../../../backend/request";
 import { toast } from "react-toastify";
+import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
+import { LOGIN_FIELDS } from "./Authenticate.constants";
 
 function ChangePassword({ token }) {
     const [changePwdSuccess, setChangePwdSuccess] = useState(false);
     const [user] = useState(getUserDetails(token));
     const { status, isFetching } = useValidateToken(token);
     const [submitting, setSubmitting] = useState(false);
+    const [form, setForm] = useState({});
+    const { changePassword } = useChangePassword(({ result, message }) => {
+        setSubmitting(false);
+        if (result === API_RESULT.SUCCESS) {
+            setChangePwdSuccess(true);
+        } else {
+            toast.error(message);
+        }
+    }, () => {
+        setSubmitting(false);
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+
 
     function signIn(event) {
         preventDefault(event);
@@ -24,49 +36,14 @@ function ChangePassword({ token }) {
     }
 
     const schema = {
-        fields: [
-            {
-                component: componentTypes.TEXT_FIELD,
-                name: 'newPassword',
-                label: 'New Password',
-                fieldType: 'password',
-                validate: [
-                    { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.PATTERN, pattern: PATTERNS.PASSWORD }
-                ]
-            },
-            {
-                component: componentTypes.TEXT_FIELD,
-                name: 'confirmPassword',
-                label: 'Re-Enter New Password',
-                fieldType: 'password',
-                validate: [
-                    { type: validatorTypes.REQUIRED },
-                    (value, { newPassword }) => {
-                        return value === newPassword ? undefined : 'New password and Re-enter password should be same';
-                    }
-                ]
-            }
-        ],
+        fields: [{ ...LOGIN_FIELDS.NEW_PASSWORD }, { ...LOGIN_FIELDS.CONFIRM_PASSWORD }],
     };
 
     function onSubmit({ newPassword }) {
-        setSubmitting(true);
-        const headers = {
-            Authorization: token
+        if (form.valid) {
+            setSubmitting(true);
+            changePassword({ username: user.username, newPassword, token });
         }
-        post(`/api/Auth/ChangePassword?username=${user.username}&oldPassword=null&newPassword=${newPassword}`, {}, headers).then(response => {
-            const data = (response || {}).data || {};
-            if (data.result === 'SUCCESS') {
-                setChangePwdSuccess(true);
-            } else {
-                toast.error(data.message);
-            }
-        }).catch(e => {
-            toast.error('Something went wrong! Please try again.');
-        }).finally(() => {
-            setSubmitting(false);
-        });
     }
 
     return (
@@ -98,6 +75,7 @@ function ChangePassword({ token }) {
                                                                     initialValues={{ submitBtnText: 'Change Password', fullWidth: true }}
                                                                     componentMapper={ComponentMapper}
                                                                     schema={schema}
+                                                                    debug={setForm}
                                                                     onSubmit={onSubmit}
                                                                 />
                                                             </div>

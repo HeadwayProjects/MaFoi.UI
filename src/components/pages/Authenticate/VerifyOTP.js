@@ -8,6 +8,7 @@ import { LOGIN_FIELDS } from "./Authenticate.constants";
 import { useGenerateOTP, useLoginWithOtp } from "../../../backend/auth";
 import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
+import { ERROR_MESSAGES } from "../../../utils/constants";
 
 function VerifyOTP({ request, editUser, onCancel, onSubmit }) {
     const [form, setForm] = useState({});
@@ -31,7 +32,7 @@ function VerifyOTP({ request, editUser, onCancel, onSubmit }) {
 
     function errorCallback() {
         setSubmitting(false);
-        toast.error('Something went wrong! Please try again.');
+        toast.error(ERROR_MESSAGES.DEFAULT);
     }
 
     const schema = {
