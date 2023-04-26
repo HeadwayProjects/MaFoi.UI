@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import * as api from "./request";
 
 export function useGetActs() {
@@ -38,4 +38,79 @@ export function useGetRules() {
     );
 
     return { rules: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useGetStates() {
+    const { data, isFetching, refetch } = useQuery(
+        ['states'],
+        async () => await api.get(`/api/State/GetAll`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+        }
+    );
+
+    return { states: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useGetCities() {
+    const { data, isFetching, refetch } = useQuery(
+        ['cities'],
+        async () => await api.get(`/api/City/GetAll`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+        }
+    );
+
+    return { cities: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useGetLocations() {
+    const { data, isFetching, refetch } = useQuery(
+        ['locations'],
+        async () => await api.get(`/api/Location/GetAll`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+        }
+    );
+
+    return { locations: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useCreateLocation(onSuccess, onError) {
+    const { mutate: createLocation, error } = useMutation(
+        ['createLocation'],
+        async (payload) => await api.post('/api/Location/Add', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { createLocation, error };
+}
+
+export function useUpdateLocation(onSuccess, onError) {
+    const { mutate: updateLocation, error } = useMutation(
+        ['updateLocation'],
+        async (payload) => await api.put('/api/Location/Update', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { updateLocation, error };
+}
+
+export function useDeleteLocation(onSuccess, onError) {
+    const { mutate: deleteLocation, error } = useMutation(
+        ['deleteLocation'],
+        async (id) => await api.del(`/api/Location/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { deleteLocation, error };
 }

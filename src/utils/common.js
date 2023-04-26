@@ -8,6 +8,18 @@ export function preventDefault(event) {
     }
 }
 
+export function getValue(obj, key) {
+    if (!obj || !key) {
+        return null
+    }
+    let value = { ...obj };
+    const keys = (key || '').split('.');
+    keys.forEach(_key => {
+        value = (value || {})[_key];
+    });
+    return value;
+}
+
 export function download(fileName, filePath) {
     if (fileName && filePath) {
         const link = document.createElement('a');

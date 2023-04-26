@@ -113,8 +113,10 @@ function SelectField(props) {
                 if (props.onChange) {
                     props.onChange(e);
                 }
-            }
-        }
+            },
+            isLoading: props.isLoading,
+            isDisabled: props.isDisabled
+        };
     }
 
     useEffect(() => {
@@ -129,7 +131,6 @@ function SelectField(props) {
         <div className={`form-group ${props.className || ''}`}>
             <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
             <div className="input-group">
-                {/* <Select placeholder='Asscociate Company' options={associateCompanies} onChange={setAssociateCompany} value={associateCompany} /> */}
                 <Select
                     name={name}
                     className={`select-control ${meta.touched && meta.error ? 'error-field' : ''}`}
