@@ -103,6 +103,10 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     white-space: normal;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
 }
 
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title.tabulator-col-title-wrap {

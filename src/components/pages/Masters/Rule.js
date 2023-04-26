@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
 import { Button, InputGroup } from "react-bootstrap";
 import Icon from "../../common/Icon";
-import Table, { CellTmpl, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
 import ConfirmModal from "../../common/ConfirmModal";
 import RuleDetails from "./RuleDetails";
-import { useGetRules } from "../../../backend/masters";
+import { useDeleteRule, useGetRules } from "../../../backend/masters";
+import { GetMastersBreadcrumb, RuleType } from "./Master.constants";
+import { toast } from "react-toastify";
+import { ERROR_MESSAGES } from "../../../utils/constants";
+import PageLoader from "../../shared/PageLoader";
 
 function Rule() {
-    const [breadcrumb] = useState([
-        { id: 'home', label: 'Home', path: '/' },
-        { id: 'masters', label: 'Masters', path: '/masters/act' },
-        { id: 'rule', label: 'Rule' }
-    ]);
+    const [breadcrumb] = useState(GetMastersBreadcrumb('Rule'));
     const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [rule, setRule] = useState(null);
@@ -21,10 +21,12 @@ function Rule() {
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
     const { rules, isFetching, refetch } = useGetRules();
+    const { deleteRule, isLoading: deletingRule } = useDeleteRule(() => {
+        refetch();
+    }, () => toast.error(ERROR_MESSAGES.DEFAULT));
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
-
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
                 <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event) => {
@@ -35,23 +37,49 @@ function Rule() {
                     setRule(row);
                     setAction(ACTIONS.DELETE)
                 }} />
-                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
+                {/* <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
                     setRule(row);
                     setAction(ACTIONS.VIEW)
-                }} />
+                }} /> */}
             </div>
         )
     }
 
     const columns = [
-        { title: "Rule Code", field: "code", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Rule Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
-        { title: "Description", field: "description", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
+        {
+            title: "Name", field: "name", widthGrow: 2,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Description", field: "description", widthGrow: 2,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Type", field: "type", width: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            formatter: (cell) => {
+                const value = cell.getValue();
+                return value ? (RuleType.find(x => x.id === value) || {}).name : '';
+            }
+        },
+        {
+            title: "Section No.", field: "type", minWidth: 140,
+            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Rule No.", field: "type", minWidth: 140,
+            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
         {
             title: "", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
-    ]
+    ];
 
     const [tableConfig] = useState({
         paginationMode: 'remote',
@@ -79,8 +107,8 @@ function Rule() {
         return Promise.resolve(formatApiResponse(params, rules));
     }
 
-    function deleteAct() {
-
+    function deleteRuleMaster() {
+        deleteRule(rule.id);
     }
 
     useEffect(() => {
@@ -115,14 +143,18 @@ function Rule() {
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <RuleDetails action={action} data={action !== ACTIONS.ADD ? rule : null}
-                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={() => setAction(ACTIONS.NONE)} />
+                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={() => {
+                        setAction(ACTIONS.NONE);
+                        refetch();
+                    }} />
             }
             {
                 action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Rule Master'} onSubmit={deleteAct} onClose={() => setAction(ACTIONS.NONE)}>
-                    <div className="text-center mb-4">Are you sure you want to delete <strong>{(rule || {}).code}</strong> ?</div>
+                <ConfirmModal title={'Delete Rule Master'} onSubmit={deleteRuleMaster} onClose={() => setAction(ACTIONS.NONE)}>
+                    <div className="text-center mb-4">Are you sure you want to delete the rule <strong>{(rule || {}).name}</strong> ?</div>
                 </ConfirmModal>
             }
+            {deletingRule && <PageLoader message={'Deleting Rule. Please wait...'} />}
         </>
     )
 }

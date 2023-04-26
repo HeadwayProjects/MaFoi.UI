@@ -40,6 +40,42 @@ export function useGetRules() {
     return { rules: (data || {}).data || [], isFetching, refetch };
 }
 
+export function useCreateRule(onSuccess, onError) {
+    const { mutate: createRule, error, isLoading } = useMutation(
+        ['createRule'],
+        async (payload) => await api.post('/api/Rule/Add', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { createRule, error, isLoading };
+}
+
+export function useUpdateRule(onSuccess, onError) {
+    const { mutate: updateRule, error, isLoading } = useMutation(
+        ['updateRule'],
+        async (payload) => await api.put('/api/Rule/Update', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { updateRule, error, isLoading };
+}
+
+export function useDeleteRule(onSuccess, onError) {
+    const { mutate: deleteRule, error, isLoading } = useMutation(
+        ['deleteRule'],
+        async (id) => await api.del(`/api/Rule/Delete?Id=${id}`),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { deleteRule, error, isLoading };
+}
+
 export function useGetStates() {
     const { data, isFetching, refetch } = useQuery(
         ['states'],
