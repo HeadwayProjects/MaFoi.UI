@@ -10,6 +10,7 @@ import Icon from "./Icon";
 function TextField(props) {
     const { label, meta = {}, input, type = 'text', name } = useFieldApi(props);
     const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    const maxLength = ((props.validate || []).find(x => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
     const isPasswordField = props.fieldType === 'password';
     const [showPassword, setShowPassword] = useState(false);
 
@@ -42,7 +43,7 @@ function TextField(props) {
             <div className={`input-group ${isPasswordField ? 'has-group-text-right' : ''}`}>
                 <input id={name}
                     className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''} ${props.styleClass || ''}`}
-                    {...onInput(input)} />
+                    {...onInput(input)} maxLength={maxLength || 255}/>
                 {
                     isPasswordField &&
                     <span className="text-black-600 input-group-text">

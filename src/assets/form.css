@@ -1,6 +1,7 @@
 input::placeholder,
 textarea::placeholder {
     font-size: var(--font-sm);
+    text-transform: initial !important;
 }
 
 .form-label {

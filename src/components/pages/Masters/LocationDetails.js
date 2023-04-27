@@ -37,21 +37,24 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
         fields: [
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'code',
-                label: 'Short Code',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: getValue(locationDetails, 'code')
-            },
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'name',
                 label: 'Location Name',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
                 content: getValue(locationDetails, 'name')
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'code',
+                label: 'Short Code',
+                validate: [
+                    { type: validatorTypes.REQUIRED },
+                    { type: validatorTypes.MAX_LENGTH, threshold: 4 },
+                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{3,4}/, message: 'Should be alphanumeric value of length 3 or 4' }
+                ],
+                styleClass: 'text-uppercase',
+                content: getValue(locationDetails, 'code')
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
@@ -94,7 +97,8 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
         if (form.valid) {
             const { code, name, state, city } = locationDetails;
             const payload = {
-                code, name,
+                code: code.toUpperCase(),
+                name,
                 stateId: state.value,
                 cityId: city.value
             };

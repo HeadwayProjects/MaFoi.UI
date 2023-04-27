@@ -34,8 +34,7 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
                 name: 'name',
                 label: 'Rule Name',
                 validate: [
-                    { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.MAX_LENGTH, threshold: 255 }
+                    { type: validatorTypes.REQUIRED }
                 ],
                 content: getValue(ruleDetails, 'name')
             },
