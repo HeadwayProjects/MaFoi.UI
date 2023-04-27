@@ -13,15 +13,6 @@ function StateDetails({ action, data, onClose, onSubmit }) {
         fields: [
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'code',
-                label: 'State Code',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: (data || {}).code
-            },
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'name',
                 label: 'State Name',
                 validate: [
@@ -29,6 +20,15 @@ function StateDetails({ action, data, onClose, onSubmit }) {
                 ],
                 content: (data || {}).name
             },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'code',
+                label: 'State Code',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: (data || {}).code
+            }   
         ],
     };
 

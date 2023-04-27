@@ -45,10 +45,6 @@ function State() {
                     setState(row);
                     setAction(ACTIONS.DELETE)
                 }} />
-                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
-                    setState(row);
-                    setAction(ACTIONS.VIEW)
-                }} />
             </div>
         )
     }

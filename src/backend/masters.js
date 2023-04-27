@@ -14,17 +14,7 @@ export function useGetActs() {
     return { acts: (data || {}).data || [], isFetching, refetch };
 }
 
-export function useDeleteState(onSuccess, onError) {
-    const { mutate: deleteLocation, error } = useMutation(
-        ['deleteLocation'],
-        async (id) => await api.del(`/api/State/Delete?id=${id}`),
-        {
-            onError,
-            onSuccess
-        }
-    );
-    return { deleteLocation, error };
-}
+
 
 export function useGetActivities() {
     const { data, isFetching, refetch } = useQuery(
@@ -99,6 +89,18 @@ export function useGetStates() {
     );
 
     return { states: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useDeleteState(onSuccess, onError) {
+    const { mutate: deleteState, error } = useMutation(
+        ['deleteState'],
+        async (id) => await api.del(`/api/State/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { deleteState, error };
 }
 
 export function useGetCities() {
