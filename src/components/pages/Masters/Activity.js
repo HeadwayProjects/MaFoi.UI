@@ -2,18 +2,16 @@ import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
 import { Button, InputGroup } from "react-bootstrap";
 import Icon from "../../common/Icon";
-import Table, { CellTmpl, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
 import ActivityDetails from "./ActivityDetails";
 import ConfirmModal from "../../common/ConfirmModal";
-import { useGetActivities } from "../../../backend/masters";
+import { useDeleteActivity, useGetActivities } from "../../../backend/masters";
+import { ActivityType, CalendarType, GetMastersBreadcrumb, Periodicity } from "./Master.constants";
+import PageLoader from "../../shared/PageLoader";
 
 function Activity() {
-    const [breadcrumb] = useState([
-        { id: 'home', label: 'Home', path: '/' },
-        { id: 'masters', label: 'Masters', path: '/masters/act' },
-        { id: 'activity', label: 'Activity' }
-    ]);
+    const [breadcrumb] = useState(GetMastersBreadcrumb('Activity'));
     const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [activity, setActivity] = useState(null);
@@ -21,6 +19,7 @@ function Activity() {
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
     const { activities, isFetching, refetch } = useGetActivities();
+    const { deleteActivity, deleting } = useDeleteActivity();
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
@@ -44,9 +43,35 @@ function Activity() {
     }
 
     const columns = [
-        { title: "Activity Code", field: "code", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Activity Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
-        { title: "Description", field: "description", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
+        {
+            title: "Activity", field: "name", widthGrow: 2,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Type", field: "type",
+            formatter: (cell) => {
+                const value = cell.getValue();
+                return (ActivityType.find(x => x.id === value) || {}).name || value;
+            },
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Periodicity", field: "periodicity",
+            formatter: (cell) => {
+                const value = cell.getValue();
+                return (Periodicity.find(x => x.id === value) || {}).name || value;
+            },
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Calendar Type", field: "calendarType",
+            formatter: (cell) => {
+                const value = cell.getValue();
+                return (CalendarType.find(x => x.id === value) || {}).name || value;
+            },
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
         {
             title: "", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -79,8 +104,19 @@ function Activity() {
         return Promise.resolve(formatApiResponse(params, activities));
     }
 
-    function deleteActivity() {
+    function successCallback() {
+        setAction(ACTIONS.NONE);
+        setActivity(null);
+        refetch();
+    }
 
+    function cancelCallback() {
+        setAction(ACTIONS.NONE);
+        setActivity(null);
+    }
+
+    function onDelete() {
+        deleteActivity(activity);
     }
 
     useEffect(() => {
@@ -115,13 +151,16 @@ function Activity() {
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <ActivityDetails action={action} data={action !== ACTIONS.ADD ? activity : null}
-                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={() => setAction(ACTIONS.NONE)} />
+                    onClose={cancelCallback} onSubmit={successCallback} />
             }
             {
                 action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Activity Master'} onSubmit={deleteActivity} onClose={() => setAction(ACTIONS.NONE)}>
-                    <div className="text-center mb-4">Are you sure you want to delete <strong>{(activity || {}).code}</strong> ?</div>
+                <ConfirmModal title={'Delete Activity Master'} onSubmit={onDelete} onClose={cancelCallback}>
+                    <div className="text-center mb-4">Are you sure you want to delete the Activity, <strong>{(activity || {}).name}</strong> ?</div>
                 </ConfirmModal>
+            }
+            {
+                deleting && <PageLoader>Deleting...</PageLoader>
             }
         </>
     )
