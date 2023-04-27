@@ -39,7 +39,7 @@ export function isVendor() {
 }
 
 export function useUserLogin(onSuccess, onError) {
-    const { mutate: userLogin, error } = useMutation(
+    const { mutate: userLogin, error, isLoading } = useMutation(
         ['userLogin'],
         async ({ username, password }) => await post(`/api/Auth/Login?username=${username}&password=${password}`, {}, null, false),
         {
@@ -49,7 +49,7 @@ export function useUserLogin(onSuccess, onError) {
             }
         }
     );
-    return { userLogin, error };
+    return { userLogin, error, isLoading };
 }
 
 export function useValidateToken(token) {
@@ -69,7 +69,7 @@ export function useChangePassword(onSuccess, onError) {
     const { mutate: changePassword, error } = useMutation(
         ['changePassword'],
         async ({ username, oldPassword, newPassword, token }) => {
-            const url = `/api/Auth/ChangePassword?username=${username}&oldPassword=${oldPassword || null}&newPassword=${newPassword}`;
+            const url = `/api/Auth/ChangePassword?username=${username}&oldPassword=${oldPassword || ''}&newPassword=${newPassword}`;
             const _response = await post(url, {}, { Authorization: token });
             return _response
         },
@@ -98,7 +98,7 @@ export function useForgotPassword(onSuccess, onError) {
 }
 
 export function useGenerateOTP(onSuccess, onError) {
-    const { mutate: generateOTP, error } = useMutation(
+    const { mutate: generateOTP, error, isLoading } = useMutation(
         ['generateOTP'],
         async ({ username }) => await get(`/api/Auth/GenerateOTP?username=${username}`),
         {
@@ -108,13 +108,13 @@ export function useGenerateOTP(onSuccess, onError) {
             }
         }
     );
-    return { generateOTP, error };
+    return { generateOTP, error, isLoading };
 }
 
 export function useLoginWithOtp(onSuccess, onError) {
-    const { mutate: loginWithOtp, error } = useMutation(
+    const { mutate: loginWithOtp, error, isLoading } = useMutation(
         ['updateLocation'],
-        async ({ username, otp }) => await post(`/api/Auth/LoginWithOtp?username=${username}&loginOtp=${otp}`, {}, null, false),
+        async ({ username, otp, token }) => await post(`/api/Auth/LoginWithOtp?username=${username}&loginOtp=${otp}`, {}, { Authorization: token }),
         {
             onError,
             onSuccess: (response) => {
@@ -122,5 +122,5 @@ export function useLoginWithOtp(onSuccess, onError) {
             }
         }
     );
-    return { loginWithOtp, error };
+    return { loginWithOtp, error, isLoading };
 }

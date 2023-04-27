@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import '../shared/PageLoader.css';
 
-function PageLoader({ message = 'Please wait...' }) {
+function PageLoader({ message, children }) {
     useEffect(() => {
         window.document.body.style.overflow = 'hidden';
         return () => {
@@ -13,7 +13,11 @@ function PageLoader({ message = 'Please wait...' }) {
             <div className="pageload-container">
                 <div className="spinner-border text-primary" role="status">
                 </div>
-                <p className="mt-2 mb-0">{message}</p>
+                {
+                    (message || !children) &&
+                    <p className="mt-2 mb-0">{message || 'Please wait...'}</p>
+                }
+                {children}
             </div>
         </div>
     )

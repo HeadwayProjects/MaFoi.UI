@@ -1,6 +1,8 @@
 export const PATTERNS = {
     EMAIL: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-    PASSWORD: /^(?=.*[\d])[\w!@#$%^&*]{9,16}$/
+    PASSWORD: /^(?=.*[\d])[\w!@#$%^&*]{9,16}$/,
+    NOSPACE: /^\S.+\S$/,
+
 };
 
 export const ACTIONS = {

@@ -2,27 +2,25 @@ import React, { useState } from "react";
 import verifyOtpImg from "../../../assets/img/verify-otp.svg";
 import ezycompLogo from "../../../assets/img/logo.png";
 import Navbar from "../../shared/Navbar";
-import { preventDefault } from "../../../utils/common";
+import { MaskEmail, preventDefault } from "../../../utils/common";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
-import { useGenerateOTP, useLoginWithOtp } from "../../../backend/auth";
+import { getUserDetails, useGenerateOTP, useLoginWithOtp } from "../../../backend/auth";
 import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 
 function VerifyOTP({ request, editUser, onCancel, onSubmit }) {
     const [form, setForm] = useState({});
-    const [submitting, setSubmitting] = useState(false);
-    const { loginWithOtp } = useLoginWithOtp(({ key, value }) => {
-        setSubmitting(false);
+    const [user] = useState(getUserDetails(request.token));
+    const { loginWithOtp, isLoading: logging } = useLoginWithOtp(({ key, value }) => {
         if (key === 'SUCCESS') {
             onSubmit(value);
         } else {
             toast.error(value || 'Error!!!');
         }
     }, errorCallback);
-    const { generateOTP } = useGenerateOTP(({ result, message }) => {
-        setSubmitting(false);
+    const { generateOTP, isLoading: generatingOTP } = useGenerateOTP(({ result, message }) => {
         if (result === 'SUCCESS') {
             toast.success('OTP resent to your registered email.')
         } else {
@@ -31,7 +29,6 @@ function VerifyOTP({ request, editUser, onCancel, onSubmit }) {
     }, errorCallback);
 
     function errorCallback() {
-        setSubmitting(false);
         toast.error(ERROR_MESSAGES.DEFAULT);
     }
 
@@ -46,14 +43,12 @@ function VerifyOTP({ request, editUser, onCancel, onSubmit }) {
 
     function verifyOTP({ otp }) {
         if (form.valid) {
-            setSubmitting(true);
-            loginWithOtp({ username: request.username, otp });
+            loginWithOtp({ username: request.username, otp, token: request.token });
         }
     }
 
     function resendOTP(event) {
         preventDefault(event);
-        setSubmitting(true);
         generateOTP({ username: request.username });
     }
 
@@ -80,7 +75,10 @@ function VerifyOTP({ request, editUser, onCancel, onSubmit }) {
                                 <div className="d-flex flex-column justify-content-center mx-auto">
                                     <div className="text-center mt-5">
                                         <span>Please verify the OTP sent to </span>
-                                        <a href="/" className="text-decoration-underline fw-bold">{request.username}</a>
+                                        {
+                                            (user || {}).email &&
+                                            <a href="/" className="text-decoration-underline fw-bold" onClick={preventDefault}>{MaskEmail(user.email)}</a>
+                                        }
                                     </div>
                                     <div className="text-end">
                                         <a href="/" className="text-sm" onClick={editUsername}>(Edit)</a>
@@ -111,7 +109,15 @@ function VerifyOTP({ request, editUser, onCancel, onSubmit }) {
                 </div>
             </div>
             {
-                submitting && <PageLoader />
+                (logging || generatingOTP) &&
+                <PageLoader>
+                    {
+                        logging && <p>Logging...</p>
+                    }
+                    {
+                        generatingOTP && <p>Resending OTP...</p>
+                    }
+                </PageLoader>
             }
         </>
     );

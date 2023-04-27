@@ -19,23 +19,21 @@ import { ERROR_MESSAGES } from "../../../utils/constants";
 
 function Login() {
     const [forgotPassword, setForgotPassword] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
     const [loginWithOtp, setLoginWithOtp] = useState(false);
     const [verifyOTP, setVerifyOTP] = useState(false);
     const [schema, setSchema] = useState({ fields: [LOGIN_FIELDS.USERNAME, LOGIN_FIELDS.PASSWORD] });
     const [form, setForm] = useState({});
     const [payload, setPayload] = useState({});
-    const { userLogin } = useUserLogin((token) => {
-        setSubmitting(false);
+    const { userLogin, isLoading: logging } = useUserLogin((token) => {
         if (token) {
             loginCallback(token);
         } else {
             toast.error('Email/Phone No. or password is incorrect.');
         }
     }, errorCallback);
-    const { generateOTP } = useGenerateOTP(({ result, message }) => {
-        setSubmitting(false);
+    const { generateOTP, isLoading: generatingOTP } = useGenerateOTP(({ result, message, token }) => {
         if (result === 'SUCCESS') {
+            setPayload({ ...payload, token });
             setVerifyOTP(true);
         } else {
             toast.error(message || 'Error');
@@ -43,12 +41,10 @@ function Login() {
     }, errorCallback)
 
     function errorCallback() {
-        setSubmitting(false);
         toast.error(ERROR_MESSAGES.DEFAULT);
     }
 
     function login({ username, password }) {
-        setSubmitting(true);
         userLogin({ username, password });
     }
 
@@ -60,7 +56,6 @@ function Login() {
 
     function getOtp({ username }) {
         if (form.valid) {
-            setSubmitting(true);
             setPayload({ username });
             generateOTP({ username });
         }
@@ -157,7 +152,14 @@ function Login() {
                 forgotPassword && <ForgotPasswordModal onClose={() => setForgotPassword(false)} />
             }
             {
-                submitting && <PageLoader />
+                (logging || generatingOTP) && <PageLoader>
+                    {
+                        logging && <p>Logging...</p>
+                    }
+                    {
+                        generatingOTP && <p>Generating OTP...</p>
+                    }
+                </PageLoader>
             }
         </>
     );

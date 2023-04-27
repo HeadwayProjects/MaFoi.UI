@@ -20,6 +20,12 @@ export function getValue(obj, key) {
     return value;
 }
 
+export function MaskEmail(email) {
+    return (email || '').replace(/^(.)(.*)(.@.*)$/,
+        (_, a, b, c) => a + b.replace(/./g, '*') + c
+    );
+}
+
 export function download(fileName, filePath) {
     if (fileName && filePath) {
         const link = document.createElement('a');
