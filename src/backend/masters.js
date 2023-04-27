@@ -14,6 +14,18 @@ export function useGetActs() {
     return { acts: (data || {}).data || [], isFetching, refetch };
 }
 
+export function useDeleteState(onSuccess, onError) {
+    const { mutate: deleteLocation, error } = useMutation(
+        ['deleteLocation'],
+        async (id) => await api.del(`/api/State/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { deleteLocation, error };
+}
+
 export function useGetActivities() {
     const { data, isFetching, refetch } = useQuery(
         ['activities'],

@@ -6,6 +6,7 @@ import ActivitiesManagement from "../components/pages/Vendor/TaskManagement/Acti
 import LayoutWithSideNav from "../components/shared/LayoutWithSideNav";
 import AuditorDashboard from "../components/pages/Auditor/AuditorDashboard";
 import TaskManagement from "../components/pages/Auditor/TaskManagement";
+import Law from "../components/pages/Masters/Law";
 import Act from "../components/pages/Masters/Act";
 import Activity from "../components/pages/Masters/Activity";
 import Rule from "../components/pages/Masters/Rule";
@@ -35,6 +36,9 @@ function AuthenticatedContent() {
         ),
         '/activities': () => (
             layout(isVendor ? < ActivitiesManagement /> : <TaskManagement />)
+        ),
+        '/masters/law': () => (
+            layout(<Law />)
         ),
         '/masters/act': () => (
             layout(<Act />)

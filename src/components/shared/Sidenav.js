@@ -7,17 +7,18 @@ import Icon from '../common/Icon';
 
 const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard' },
-    // {
-    //     id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters', children: [
-    //         { id: 'Act', url: '/masters/Act', label: 'Act' },
-    //         { id: 'activity', url: '/masters/activity', label: 'Activity' },
-    //         { id: 'rule', url: '/masters/rule', label: 'Rule' },
-    //         { id: 'state', url: '/masters/state', label: 'State' },
-    //         { id: 'city', url: '/masters/city', label: 'City' },
-    //         { id: 'location', url: '/masters/location', label: 'Location' },
-    //         { id: 'companies', url: '/masters/companies', label: 'Companies' }
-    //     ]
-    // },
+    {
+        id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters', children: [
+            { id: 'law', url: '/masters/law', label: 'Law' },
+            { id: 'Act', url: '/masters/Act', label: 'Act' },
+            { id: 'activity', url: '/masters/activity', label: 'Activity' },
+            { id: 'rule', url: '/masters/rule', label: 'Rule' },
+            { id: 'state', url: '/masters/state', label: 'State' },
+            { id: 'city', url: '/masters/city', label: 'City' },
+            { id: 'location', url: '/masters/location', label: 'Location' },
+            { id: 'companies', url: '/masters/companies', label: 'Companies' }
+        ]
+    },
     { id: 'manage-users', url: '/manage-users', icon: 'users', label: 'Manage Users', disable: true },
     // { id: 'input-module', url: '/input-modules', icon: 'input', label: 'Input Module', disable: true },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activites' },
