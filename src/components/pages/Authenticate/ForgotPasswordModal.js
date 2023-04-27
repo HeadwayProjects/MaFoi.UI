@@ -4,9 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import PageLoader from "../../shared/PageLoader";
-import { preventDefault } from "../../../utils/common";
 import { Alert } from "react-bootstrap";
-import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { useForgotPassword } from "../../../backend/auth";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
@@ -40,16 +38,6 @@ function ForgotPasswordModal({ onClose }) {
         }
     }
 
-    async function copyUrl(event) {
-        preventDefault(event);
-        try {
-            await navigator.clipboard.writeText(recoverySent);
-            toast.success('URL Copied.');
-        } catch (e) {
-            console.error('Error copying url');
-        }
-    }
-
     return (
         <>
             <Modal show={true} backdrop="static" animation={true} dialogClassName="alert-modal" size="lg" centered={true}>
@@ -64,9 +52,6 @@ function ForgotPasswordModal({ onClose }) {
                                     <FontAwesomeIcon icon={faCircleCheck} style={{ fontSize: '106px' }} className="mb-4 text-success" />
                                     <div className="text-xxl text-success">Email Sent</div>
                                     <div className="text-md mb-4">Check your email and open the link we sent to continue.</div>
-                                    <div className="text-right">
-                                        <a href="/" onClick={copyUrl}>Copy URL</a>
-                                    </div>
                                 </> :
                                 <>
                                     <div className="text-md mb-4">Enter your email and we'll send you a link to reset your password</div>
