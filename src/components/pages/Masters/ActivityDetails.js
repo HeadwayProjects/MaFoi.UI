@@ -4,69 +4,100 @@ import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-re
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
+import { getValue } from "../../../utils/common";
+import { ActivityType, CalendarType, GetActionTitle, Periodicity } from "./Master.constants";
+import { useCreateActivity, useUpdateActivity } from "../../../backend/masters";
+import { toast } from "react-toastify";
+import { ERROR_MESSAGES } from "../../../utils/constants";
+import PageLoader from "../../shared/PageLoader"
 
 function ActivityDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
-    const [title, setTitle] = useState();
+    const { createActivity, creating } = useCreateActivity(({ id, message }) => {
+        if (id) {
+            onSubmit();
+        } else {
+            toast.error(message);
+        }
+    }, errorCallback);
+    const { updateActivity, updating } = useUpdateActivity(() => ({ id, message }) => {
+        if (id) {
+            onSubmit();
+        } else {
+            toast.error(message);
+        }
+    }, errorCallback);
 
     const schema = {
         fields: [
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'code',
-                label: 'Short Code',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: (data || {}).code
-            },
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'name',
-                label: 'Activity Name',
+                label: 'Activity',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: (data || {}).name
+                content: action === ACTIONS.VIEW ? getValue(data, 'name') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
-                name: 'description',
-                label: 'Description',
-                content: (data || {}).description
+                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.TEXT_FIELD,
+                name: 'type',
+                label: 'Activity Type',
+                options: ActivityType,
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: action === ACTIONS.VIEW ? getValue(data, 'type') : ''
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.TEXT_FIELD,
+                name: 'periodicity',
+                label: 'Periodicity',
+                options: Periodicity,
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: action === ACTIONS.VIEW ? getValue(data, 'periodicity') : ''
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.TEXT_FIELD,
+                name: 'calendarType',
+                label: 'Calendar Type',
+                options: CalendarType,
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: action === ACTIONS.VIEW ? getValue(data, 'calendarType') : ''
             }
-        ],
+        ]
     };
+
+    function errorCallback() {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    }
 
     function onSubmit() {
         if (form.valid) {
-            onSubmit();
-        }
-    }
-
-    useEffect(() => {
-        if (action) {
-            switch (action) {
-                case ACTIONS.ADD:
-                    setTitle('Add Activity Master');
-                    break;
-                case ACTIONS.EDIT:
-                    setTitle('Edit Activity Master');
-                    break;
-                case ACTIONS.VIEW:
-                    setTitle('View Activity Master');
-                    break;
-                default:
-                    setTitle('Activity Master');
+            const { name, type, periodicity, calendarType } = form.values;
+            const payload = {
+                name,
+                type: type.value,
+                periodicity: periodicity.value,
+                calendarType: calendarType.value,
+            };
+            if (action === ACTIONS.ADD) {
+                createActivity(payload);
+            } else if (action === ACTIONS.EDIT) {
+                updateActivity(payload);
             }
         }
-    }, [action]);
+    }
 
     return (
         <>
             <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
                 <Modal.Header closeButton={true} onHide={onClose}>
-                    <Modal.Title className="bg">{title}</Modal.Title>
+                    <Modal.Title className="bg">{GetActionTitle('Activity', action)}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <FormRenderer FormTemplate={FormTemplate}
@@ -88,6 +119,12 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
                     }
                 </Modal.Footer>
             </Modal>
+            {
+                (creating || updating) &&
+                <PageLoader>
+                    {creating ? 'Adding...' : 'Updating...'}
+                </PageLoader>
+            }
         </>
     )
 }

@@ -29,6 +29,51 @@ export function useGetActivities() {
     return { activities: (data || {}).data || [], isFetching, refetch };
 }
 
+export function useCreateActivity(onSuccess, onError) {
+    const { mutate: createActivity, error, isLoading: creating } = useMutation(
+        ['createActivity'],
+        async (payload) => await api.post('/api/Activity/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createActivity, error, creating };
+}
+
+export function useUpdateActivity(onSuccess, onError) {
+    const { mutate: updateActivity, error, isLoading: updating } = useMutation(
+        ['updateActivity'],
+        async (payload) => await api.put('/api/Activity/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateActivity, error, updating };
+}
+
+export function useDeleteActivity(onSuccess, onError) {
+    const { mutate: deleteActivity, error, isLoading: deleting } = useMutation(
+        ['deleteActivity'],
+        async (id) => await api.del(`/api/Activity/Delete?Id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteActivity, error, deleting };
+}
+
 export function useGetRules() {
     const { data, isFetching, refetch } = useQuery(
         ['rules'],
