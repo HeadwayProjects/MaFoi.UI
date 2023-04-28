@@ -14,6 +14,8 @@ import Companies from "../components/pages/Masters/Companies";
 import City from "../components/pages/Masters/City";
 import State from "../components/pages/Masters/State";
 import ChangePassword from "../components/pages/Authenticate/ChangePassword";
+import Login from "../components/pages/Authenticate/Login";
+import Navbar from "../components/shared/Navbar";
 
 function AuthenticatedContent() {
     const user = auth.getUserDetails() || {};
@@ -57,16 +59,30 @@ function AuthenticatedContent() {
         '/masters/companies': () => (
             layout(<Companies />)
         ),
-        '/change-password': () => (
-            layout(<ChangePassword />, false)
+        '/changePassword/:token': ({ token }) => (
+            <>
+                <Navbar showUser={false} />
+                <div className="page-layout-container bg-white">
+                    <div className="main-container overflow-hidden">
+                        <ChangePassword token={token} />
+                    </div>
+                </div>
+            </>
         ),
         '/': () => (
             layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
         ),
+        '/login': () => (
+            <Login />
+        ),
     }
 
     const route = useRoutes(routes, { basePath: '' })
-    return <>{route}</>
+    return (
+        <>
+            {route}
+        </>
+    );
 
 }
 

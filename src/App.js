@@ -1,15 +1,22 @@
 import React, { Suspense } from "react";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import "./App.css";
-import Container from "./containers/Container";
 import { ToastContainer } from "react-toastify";
+import { RouterProvider } from "raviger";
+import AuthenticatedContent from "./containers/AuthenticatedContent";
+
+export function getBasePath() {
+    return window.location.origin;
+}
 
 function App() {
     const queryClient = new QueryClient();
     return (
         <QueryClientProvider client={queryClient}>
             <Suspense fallback="loading...">
-                <Container />
+                <RouterProvider >
+                    <AuthenticatedContent />
+                </RouterProvider>
                 <ToastContainer
                     position="top-right"
                     autoClose={5000}

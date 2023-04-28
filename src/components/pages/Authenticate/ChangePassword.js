@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import changePasswordImg from '../../../assets/img/change-password.jpg';
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import { preventDefault } from "../../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 import { Button } from "react-bootstrap";
-import { getUserDetails, useChangePassword, useValidateToken } from "../../../backend/auth";
+import { clearAuthToken, getUserDetails, useChangePassword, useValidateToken } from "../../../backend/auth";
 import PageLoader from "../../shared/PageLoader";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
@@ -45,6 +45,10 @@ function ChangePassword({ token }) {
             changePassword({ username: user.username, newPassword, token });
         }
     }
+
+    useEffect(() => {
+        clearAuthToken();
+    }, []);
 
     return (
         <>

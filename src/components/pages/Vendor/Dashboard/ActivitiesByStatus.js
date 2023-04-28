@@ -5,6 +5,7 @@ import * as api from "../../../../backend/request";
 import "./dashboard.css";
 import { preventDefault } from "../../../../utils/common";
 import { navigate } from "raviger";
+import { getBasePath } from "../../../../App";
 
 const StatusTabs = [
     { value: 'Overdue', label: 'Overdue' },
@@ -44,7 +45,7 @@ function ActivitiesByStatus({ tabs, selectedCompany, selectedAssociateCompany, s
 
     function viewActivities(e) {
         preventDefault(e);
-        navigate('/dashboard/activities', {
+        navigate(`${getBasePath()}/dashboard/activities`, {
             state: {
                 company: selectedCompany,
                 associateCompany: selectedAssociateCompany,

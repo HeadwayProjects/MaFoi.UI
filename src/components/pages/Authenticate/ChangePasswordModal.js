@@ -12,6 +12,7 @@ import { getUserDetails, clearAuthToken, getAuthToken, useChangePassword } from 
 import PageLoader from "../../shared/PageLoader";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
+import { getBasePath } from "../../../App";
 
 function ChangePasswordModal({ onClose }) {
     const [pwdChanged, setPwdChanged] = useState(false);
@@ -33,7 +34,7 @@ function ChangePasswordModal({ onClose }) {
     function signIn(event) {
         preventDefault(event);
         clearAuthToken();
-        navigate('/login', { replace: true });
+        navigate(`${getBasePath()}/login`, { replace: true });
         setTimeout(() => {
             window.location.reload();
         });

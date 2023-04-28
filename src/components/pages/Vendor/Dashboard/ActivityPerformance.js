@@ -9,6 +9,7 @@ import NavTabs from "../../../shared/NavTabs";
 import { preventDefault } from "../../../../utils/common";
 import Chart from "./Chart";
 import { navigate } from "raviger";
+import { getBasePath } from "../../../../App";
 dayjs.extend(utc);
 
 const CurrentPerformanceTabs = [
@@ -64,7 +65,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
     }
 
     function viewActivities(status) {
-        navigate('/dashboard/activities', {
+        navigate(`${getBasePath()}/dashboard/activities`, {
             state: {
                 company: selectedCompany,
                 associateCompany: selectedAssociateCompany,

@@ -4,6 +4,7 @@ import '../shared/Sidenav.css';
 import * as auth from "../../backend/auth";
 import { preventDefault } from '../../utils/common';
 import Icon from '../common/Icon';
+import { getBasePath } from '../../App';
 
 const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard' },
@@ -47,7 +48,7 @@ function Sidenav() {
         function onClick(e) {
             preventDefault(e);
             if (!hasChild) {
-                navigate(url, { replace: true, state: null });
+                navigate(`${getBasePath()}${url}`, { replace: true, state: null });
             }
         }
 

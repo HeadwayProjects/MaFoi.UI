@@ -6,6 +6,7 @@ import ActivityList from "./ActivityList";
 import "./dashboard.css";
 import { navigate } from "raviger";
 import { preventDefault } from "../../../../utils/common";
+import { getBasePath } from "../../../../App";
 
 const TodosTabs = [
     { value: 'Today', label: 'Today' },
@@ -55,7 +56,7 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
 
     function viewAll(e) {
         preventDefault(e);
-        navigate('/dashboard/activities', {
+        navigate(`${getBasePath()}/dashboard/activities`, {
             state: {
                 company: selectedCompany,
                 associateCompany: selectedAssociateCompany,

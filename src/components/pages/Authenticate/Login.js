@@ -16,6 +16,7 @@ import { LOGIN_FIELDS } from "./Authenticate.constants";
 import VerifyOTP from "./VerifyOTP";
 import { setAuthToken, useGenerateOTP, useUserLogin } from "../../../backend/auth";
 import { ERROR_MESSAGES } from "../../../utils/constants";
+import { getBasePath } from "../../../App";
 
 function Login() {
     const [forgotPassword, setForgotPassword] = useState(false);
@@ -50,7 +51,7 @@ function Login() {
 
     function loginCallback(token) {
         setAuthToken(token);
-        navigate('/dashboard', { replace: true });
+        navigate(`${getBasePath()}/dashboard`, { replace: true });
         window.location.reload();
     }
 

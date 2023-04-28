@@ -6,51 +6,54 @@ import 'react-toastify/dist/ReactToastify.css';
 import './Toaster.css';
 import "./Layout.css"
 import { useIdleTimer } from "react-idle-timer";
+import { navigate } from "raviger";
+import { getBasePath } from "../../App";
 
 function AuthProtector(props) {
-  const [authToken] = useState(auth.getAuthToken());
+    const [authToken] = useState(auth.getAuthToken());
 
-  function logout() {
-    auth.clearAuthToken();
-    window.location.replace('/login');
-  }
-
-  useIdleTimer({
-    onIdle: () => logout(),
-    timeout: 20 * 60 * 1000, // In milliseconds,
-    events: [
-      'keydown',
-      'mousedown'
-    ]
-  })
-
-  useEffect(() => {
-    if (!authToken) {
-      logout();
+    function logout() {
+        auth.clearAuthToken();
+        navigate(`${getBasePath()}/login`, { replace: true });
+        window.location.reload();
     }
-  }, [authToken]);
 
-  return (
-    <>{
-      authToken ? props.children : null
-    }</>
-  )
+    useIdleTimer({
+        onIdle: () => logout(),
+        timeout: 20 * 60 * 1000, // In milliseconds,
+        events: [
+            'keydown',
+            'mousedown'
+        ]
+    })
+
+    useEffect(() => {
+        if (!authToken) {
+            logout();
+        }
+    }, [authToken]);
+
+    return (
+        <>{
+            authToken ? props.children : null
+        }</>
+    )
 }
 
 function LayoutWithSideNav(props) {
-  return (
-    <AuthProtector>
-      <Navbar />
-      <div className="page-layout-container">
-        <div className="sidenav-container">
-          <Sidenav />
-        </div>
-        <div className="main-container">
-          {props.children}
-        </div>
-      </div>
-    </AuthProtector>
-  )
+    return (
+        <AuthProtector>
+            <Navbar />
+            <div className="page-layout-container">
+                <div className="sidenav-container">
+                    <Sidenav />
+                </div>
+                <div className="main-container">
+                    {props.children}
+                </div>
+            </div>
+        </AuthProtector>
+    )
 }
 
 export default LayoutWithSideNav;
