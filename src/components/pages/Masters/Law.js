@@ -40,8 +40,8 @@ function Law() {
     }
 
     const columns = [
-        { title: "Name", field: "code", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Description", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
+        { title: "Name", field: "name", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Description", field: "description", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         {
             title: "", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -74,7 +74,7 @@ function Law() {
         return Promise.resolve(formatApiResponse(params, activities));
     }
 
-    function deleteActivity() {
+    function deleteLaw() {
 
     }
 
@@ -114,7 +114,7 @@ function Law() {
             }
             {
                 action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Law Master'} onSubmit={deleteActivity} onClose={() => setAction(ACTIONS.NONE)}>
+                <ConfirmModal title={'Delete Law Master'} onSubmit={deleteLaw} onClose={() => setAction(ACTIONS.NONE)}>
                     <div className="text-center mb-4">Are you sure you want to delete the Law <strong>{(law || {}).name}</strong> ?</div>
                 </ConfirmModal>
             }

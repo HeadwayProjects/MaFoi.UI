@@ -84,8 +84,14 @@ function State() {
         return Promise.resolve(formatApiResponse(params, states));
     }
 
+    function successCallback() {
+        setAction(ACTIONS.NONE);
+        setState(null);
+        refetch();
+    }
+
     function onDelete() {
-        useDeleteState(state.id);
+        deleteState(state.id);
     }
 
     useEffect(() => {
@@ -120,7 +126,7 @@ function State() {
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <StateDetails action={action} data={action !== ACTIONS.ADD ? state : null}
-                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={() => setAction(ACTIONS.NONE)} />
+                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={successCallback} />
             }
             {
                 action === ACTIONS.DELETE &&

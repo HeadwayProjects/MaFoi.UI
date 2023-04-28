@@ -148,6 +148,30 @@ export function useDeleteState(onSuccess, onError) {
     return { deleteState, error };
 }
 
+export function useCreateState(onSuccess, onError) {
+    const { mutate: createState, error } = useMutation(
+        ['createState'],
+        async (payload) => await api.post('/api/State/Add', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { createState, error };
+}
+
+export function useUpdateState(onSuccess, onError) {
+    const { mutate: updateState, error } = useMutation(
+        ['updateState'],
+        async (payload) => await api.put('/api/State/Update', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { updateState, error };
+}
+
 export function useGetCities() {
     const { data, isFetching, refetch } = useQuery(
         ['cities'],

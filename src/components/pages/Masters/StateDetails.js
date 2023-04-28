@@ -4,11 +4,33 @@ import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-re
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
+import { getValue, preventDefault } from "../../../utils/common";
+import { useCreateState,useUpdateState } from "../../../backend/masters";
+import { toast } from 'react-toastify';
+import { AxiosError } from "axios";
+import { ERROR_MESSAGES } from "../../../utils/constants";
 
 function StateDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [title, setTitle] = useState();
 
+    const { updateState } = useUpdateState(() => {
+        toast.success(`${ form.values.name} updated successsfully.`);
+        onSubmit();
+    }, errorCallback);
+
+    const { createState } = useCreateState((response) => {
+        if (response instanceof AxiosError) {
+            errorCallback();
+        } else {
+            toast.success(`${form.values.name} created successsfully.`);
+            onSubmit();
+        }
+    }, errorCallback);
+
+    function errorCallback() {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    }
     const schema = {
         fields: [
             {
@@ -18,23 +40,38 @@ function StateDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: (data || {}).name
+                content: getValue(data, 'name')
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'code',
                 label: 'State Code',
                 validate: [
-                    { type: validatorTypes.REQUIRED }
+                    { type: validatorTypes.REQUIRED },
+                    { type: validatorTypes.MAX_LENGTH, threshold: 2 },
+                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z]{2}/, message: 'Should be alpha value of length 2' }
                 ],
-                content: (data || {}).code
+                styleClass: 'text-uppercase',
+                content: getValue(data, 'code')
+                
             }   
         ],
     };
 
-    function onSubmit() {
+    function submitState(e) {
+        preventDefault(e);
         if (form.valid) {
-            onSubmit();
+            const { code, name } = form.values;
+            const payload = {
+                code: code.toUpperCase(),
+                name,
+            };
+            if (action === ACTIONS.EDIT) {
+                payload['id'] = data.id;
+                updateState(payload)
+            } else if (action === ACTIONS.ADD) {
+                createState(payload);
+            }
         }
     }
 
@@ -75,7 +112,7 @@ function StateDetails({ action, data, onClose, onSubmit }) {
                         action !== ACTIONS.VIEW ?
                             <>
                                 <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onClose}>{'Cancel'}</Button>
-                                <Button variant="primary" onClick={onSubmit} className="px-4" disabled={!form.valid}>{'Submit'}</Button>
+                                <Button variant="primary" onClick={submitState} className="px-4" disabled={!form.valid}>{'Submit'}</Button>
                             </> :
                             <Button variant="primary" onClick={onClose} className="px-4 ms-auto">{'Close'}</Button>
 
