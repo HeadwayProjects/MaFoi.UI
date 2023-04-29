@@ -6,6 +6,8 @@ import * as auth from '../../backend/auth';
 import { preventDefault } from '../../utils/common';
 import ChangePasswordModal from '../pages/Authenticate/ChangePasswordModal';
 import ConfirmModal from '../common/ConfirmModal';
+import { navigate } from 'raviger';
+import { getBasePath } from '../../App';
 
 function Navbar({ showUser = true }) {
     const [user] = useState(auth.getUserDetails() || {});
@@ -15,7 +17,10 @@ function Navbar({ showUser = true }) {
     function logout(event) {
         preventDefault(event)
         auth.clearAuthToken();
-        window.location.replace('/login');
+        setTimeout(() => {
+            navigate(`${getBasePath()}/`);
+            window.location.reload();
+        });
     }
 
     function changePassword(event) {

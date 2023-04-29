@@ -14,7 +14,7 @@ function AuthProtector(props) {
 
     function logout() {
         auth.clearAuthToken();
-        navigate(`${getBasePath()}/login`, { replace: true });
+        navigate(`${getBasePath()}/`, { replace: true });
         window.location.reload();
     }
 

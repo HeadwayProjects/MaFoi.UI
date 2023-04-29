@@ -5,7 +5,6 @@ import logo from './../../../assets/img/logo.png';
 import bannerimg1 from "./../../../assets/img/banner1.jpg";
 import bannerimg2 from "./../../../assets/img/banner2.jpg";
 import bannerimg3 from "./../../../assets/img/banner3.jpg";
-import * as api from "./../../../backend/request";
 import { preventDefault } from "../../../utils/common";
 import { toast } from 'react-toastify';
 import "./Authenticate.css";
@@ -14,11 +13,12 @@ import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRe
 import PageLoader from "../../shared/PageLoader";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
 import VerifyOTP from "./VerifyOTP";
-import { setAuthToken, useGenerateOTP, useUserLogin } from "../../../backend/auth";
+import { clearAuthToken, getAuthToken, setAuthToken, useGenerateOTP, useUserLogin } from "../../../backend/auth";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import { getBasePath } from "../../../App";
 
 function Login() {
+    const [token] = useState(getAuthToken());
     const [forgotPassword, setForgotPassword] = useState(false);
     const [loginWithOtp, setLoginWithOtp] = useState(false);
     const [verifyOTP, setVerifyOTP] = useState(false);
@@ -51,7 +51,7 @@ function Login() {
 
     function loginCallback(token) {
         setAuthToken(token);
-        navigate(`${getBasePath()}/dashboard`, { replace: true });
+        navigate(`${getBasePath()}/`);
         window.location.reload();
     }
 
@@ -91,6 +91,12 @@ function Login() {
             setSchema({ fields });
         }
     }, [loginWithOtp]);
+
+    useEffect(() => {
+        if (token) {
+            clearAuthToken();
+        }
+    }, [token]);
 
     return (
         <>

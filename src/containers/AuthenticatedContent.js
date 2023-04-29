@@ -19,6 +19,7 @@ import Navbar from "../components/shared/Navbar";
 
 function AuthenticatedContent() {
     const user = auth.getUserDetails() || {};
+    const hasToken = !!auth.getAuthToken();
     const isVendor = ['VendorAdmin', 'VendorUser'].includes(user.role)
 
     function layout(children, layoutWithSidenav = true) {
@@ -70,7 +71,13 @@ function AuthenticatedContent() {
             </>
         ),
         '/': () => (
-            layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
+            <>
+                {
+                    hasToken ?
+                        layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />) :
+                        <Login />
+                }
+            </>
         ),
         '/login': () => (
             <Login />
