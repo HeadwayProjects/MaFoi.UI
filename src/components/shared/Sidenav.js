@@ -10,6 +10,7 @@ const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard' },
     // {
     //     id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters', children: [
+    //         { id: 'law', url: '/masters/law', label: 'Law' },
     //         { id: 'Act', url: '/masters/Act', label: 'Act' },
     //         { id: 'activity', url: '/masters/activity', label: 'Activity' },
     //         { id: 'rule', url: '/masters/rule', label: 'Rule' },

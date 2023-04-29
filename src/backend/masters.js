@@ -13,7 +13,6 @@ export function useGetActs() {
 
     return { acts: (data || {}).data || [], isFetching, refetch };
 }
-
 export function useGetActivities() {
     const { data, isFetching, refetch } = useQuery(
         ['activities'],
@@ -134,6 +133,42 @@ export function useGetStates() {
     return { states: (data || {}).data || [], isFetching, refetch };
 }
 
+export function useDeleteState(onSuccess, onError) {
+    const { mutate: deleteState, error } = useMutation(
+        ['deleteState'],
+        async (id) => await api.del(`/api/State/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { deleteState, error };
+}
+
+export function useCreateState(onSuccess, onError) {
+    const { mutate: createState, error } = useMutation(
+        ['createState'],
+        async (payload) => await api.post('/api/State/Add', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { createState, error };
+}
+
+export function useUpdateState(onSuccess, onError) {
+    const { mutate: updateState, error } = useMutation(
+        ['updateState'],
+        async (payload) => await api.put('/api/State/Update', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { updateState, error };
+}
+
 export function useGetCities() {
     const { data, isFetching, refetch } = useQuery(
         ['cities'],
@@ -145,6 +180,41 @@ export function useGetCities() {
     );
 
     return { cities: (data || {}).data || [], isFetching, refetch };
+}
+export function useDeleteCity(onSuccess, onError) {
+    const { mutate: deleteCity, error } = useMutation(
+        ['deleteCity'],
+        async (id) => await api.del(`/api/City/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { deleteCity, error };
+}
+
+export function useCreateCity(onSuccess, onError) {
+    const { mutate: createCity, error } = useMutation(
+        ['createCity'],
+        async (payload) => await api.post('/api/City/Add', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { createCity, error };
+}
+
+export function useUpdateCity(onSuccess, onError) {
+    const { mutate: updateCity, error } = useMutation(
+        ['updateState'],
+        async (payload) => await api.put('/api/City/Update', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { updateCity, error };
 }
 
 export function useGetLocations() {
