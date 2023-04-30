@@ -64,8 +64,18 @@
     width: 100%;
     border: none;
     border-radius: 0;
-    padding: 1rem 2.5rem;
+    padding: 1rem 0;
+}
 
+.modal-dialog.drawer .modal-content .modal-header,
+.modal-dialog.drawer .modal-content .modal-body,
+.modal-dialog.drawer .modal-content .modal-footer {
+    padding: 1rem 2.5rem;
+}
+
+.modal-dialog.drawer .modal-content .modal-body {
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
 }
 
 .modal-dialog.drawer .modal-header button.btn-close {

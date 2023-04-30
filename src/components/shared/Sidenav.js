@@ -17,7 +17,8 @@ const SideNavMenu = [
     //         { id: 'state', url: '/masters/state', label: 'State' },
     //         { id: 'city', url: '/masters/city', label: 'City' },
     //         { id: 'location', url: '/masters/location', label: 'Location' },
-    //         { id: 'companies', url: '/masters/companies', label: 'Companies' }
+    //         { id: 'companies', url: '/masters/companies', label: 'Companies' },
+    //         { id: 'ruleCompliance', url: '/masters/ruleCompliance', label: 'Rule Compliance' }
     //     ]
     // },
     { id: 'manage-users', url: '/manage-users', icon: 'users', label: 'Manage Users', disable: true },

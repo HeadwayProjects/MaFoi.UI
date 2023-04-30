@@ -17,8 +17,8 @@ function MastersLayout({ title, breadcrumbs, children }) {
 
                                     <li className="breadcrumb-item" key={index}>
                                         {
-                                            breadcrumb.path ?
-                                                <Link href={breadcrumb.path}>{breadcrumb.label}</Link> :
+                                            (breadcrumb.path || breadcrumb.action) ?
+                                                <Link href={breadcrumb.path} onClick={breadcrumb.action}>{breadcrumb.label}</Link> :
                                                 <>{breadcrumb.label}</>
                                         }
                                     </li>

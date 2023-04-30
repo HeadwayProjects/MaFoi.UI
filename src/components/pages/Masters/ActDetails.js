@@ -4,23 +4,40 @@ import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-re
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
-import { preventDefault } from "../../../utils/common";
+import { getValue, preventDefault } from "../../../utils/common";
+import { useCreateAct, useGetLaws, useUpdateAct } from "../../../backend/masters";
+import { GetActionTitle } from "./Master.constants";
+import { toast } from "react-toastify";
+import { ERROR_MESSAGES } from "../../../utils/constants";
+import PageLoader from "../../shared/PageLoader";
 
 function ActDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
-    const [title, setTitle] = useState();
+    const [act, setAct] = useState({ hideButtons: true });
+    const { laws, isFetching: loadingLaws } = useGetLaws();
+    const { createAct, creating } = useCreateAct(({ id, message }) => {
+        if (id) {
+            toast.success(`${act.name} created successfully.`);
+            onSubmit();
+        } else {
+            toast.error(message);
+        }
+    }, errorCallback);
+    const { updateAct, updating } = useUpdateAct(({ id, message }) => {
+        if (id) {
+            toast.success(`${act.name} updated successfully.`);
+            onSubmit();
+        } else {
+            toast.error(message);
+        }
+    }, errorCallback);
+
+    function errorCallback() {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    }
 
     const schema = {
         fields: [
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'code',
-                label: 'Short Code',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: (data || {}).code
-            },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'name',
@@ -28,57 +45,74 @@ function ActDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: (data || {}).name
+                content: getValue(data, 'name')
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
-                name: 'description',
-                label: 'Description',
-                content: (data || {}).description,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'establishmentType',
+                label: 'Establishment Type',
+                content: (data || {}).establishmentType,
                 validate: [
-                    { type: validatorTypes.MAX_LENGTH, threshold: 255 }
-                ]
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: getValue(data, 'establishmentType')
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                name: 'law',
+                label: 'Law',
+                content: (data || {}).establishmentType,
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: getValue(data, 'law.name'),
+                options: laws,
+                isLoading: loadingLaws,
             }
         ],
     };
 
+    function debugForm(_form) {
+        setForm(_form);
+        setAct(_form.values);
+    }
+
     function submit(e) {
         preventDefault(e);
         if (form.valid) {
-            onSubmit();
+            const { name, establishmentType, law } = act;
+            const request = {
+                name, establishmentType,
+                lawId: law.value
+            };
+
+            if (action === ACTIONS.EDIT) {
+                request['id'] = data.id;
+                updateAct(request);
+            } else {
+                createAct(request);
+            }
         }
     }
 
     useEffect(() => {
-        if (action) {
-            switch (action) {
-                case ACTIONS.ADD:
-                    setTitle('Add Act Master');
-                    break;
-                case ACTIONS.EDIT:
-                    setTitle('Edit Act Master');
-                    break;
-                case ACTIONS.VIEW:
-                    setTitle('View Act Master');
-                    break;
-                default:
-                    setTitle('Act Master');
-            }
+        if (data) {
+            setAct({ ...act, ...data });
         }
-    }, [action]);
+    }, [data]);
 
     return (
         <>
             <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
                 <Modal.Header closeButton={true} onHide={onClose}>
-                    <Modal.Title className="bg">{title}</Modal.Title>
+                    <Modal.Title className="bg">{GetActionTitle('Act', action)}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <FormRenderer FormTemplate={FormTemplate}
-                        initialValues={{ hideButtons: true, ...data }}
+                        initialValues={act}
                         componentMapper={ComponentMapper}
                         schema={schema}
-                        debug={setForm}
+                        debug={debugForm}
                     />
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">
@@ -93,6 +127,12 @@ function ActDetails({ action, data, onClose, onSubmit }) {
                     }
                 </Modal.Footer>
             </Modal>
+            {
+                (creating || updating) &&
+                <PageLoader>
+                    {creating ? 'Creating Act...' : 'Updating Act...'}
+                </PageLoader>
+            }
         </>
     )
 }

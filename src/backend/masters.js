@@ -1,6 +1,63 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as api from "./request";
 
+export function useGetLaws() {
+    const { data, isFetching, refetch } = useQuery(
+        ['laws'],
+        async () => await api.get(`/api/Law/GetAll`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+        }
+    );
+    return { laws: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useCreateLaw(onSuccess, onError) {
+    const { mutate: createLaw, error, isLoading: creating } = useMutation(
+        ['createLaw'],
+        async (payload) => await api.post('/api/Law/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createLaw, error, creating };
+}
+
+export function useUpdateLaw(onSuccess, onError) {
+    const { mutate: updateLaw, error, isLoading: updating } = useMutation(
+        ['updateLaw'],
+        async (payload) => await api.put('/api/Law/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateLaw, error, updating };
+}
+
+export function useDeleteLaw(onSuccess, onError) {
+    const { mutate: deleteLaw, error, isLoading: deleting } = useMutation(
+        ['deleteLaw'],
+        async (id) => await api.del(`/api/Law/Delete?Id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteLaw, error, deleting };
+}
+
 export function useGetActs() {
     const { data, isFetching, refetch } = useQuery(
         ['acts'],
@@ -13,6 +70,52 @@ export function useGetActs() {
 
     return { acts: (data || {}).data || [], isFetching, refetch };
 }
+
+export function useCreateAct(onSuccess, onError) {
+    const { mutate: createAct, error, isLoading: creating } = useMutation(
+        ['createAct'],
+        async (payload) => await api.post('/api/Act/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createAct, error, creating };
+}
+
+export function useUpdateAct(onSuccess, onError) {
+    const { mutate: updateAct, error, isLoading: updating } = useMutation(
+        ['updateAct'],
+        async (payload) => await api.put('/api/Act/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateAct, error, updating };
+}
+
+export function useDeleteAct(onSuccess, onError) {
+    const { mutate: deleteAct, error, isLoading: deleting } = useMutation(
+        ['deleteAct'],
+        async (id) => await api.del(`/api/Act/Delete?Id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteAct, error, deleting };
+}
+
 export function useGetActivities() {
     const { data, isFetching, refetch } = useQuery(
         ['activities'],
@@ -169,13 +272,14 @@ export function useUpdateState(onSuccess, onError) {
     return { updateState, error };
 }
 
-export function useGetCities() {
+export function useGetCities(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
-        ['cities'],
-        async () => await api.get(`/api/City/GetAll`),
+        ['cities', payload],
+        async () => await api.get(`/api/City/GetAll`, payload),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 
@@ -217,13 +321,19 @@ export function useUpdateCity(onSuccess, onError) {
     return { updateCity, error };
 }
 
-export function useGetLocations() {
+export async function getLocations(payload) {
+    const response = await api.get(`/api/Location/GetAll`, payload);
+    return (response || {}).data || [];
+}
+
+export function useGetLocations(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
-        ['locations'],
-        async () => await api.get(`/api/Location/GetAll`),
+        ['locations', payload],
+        async () => await api.get(`/api/Location/GetAll`, payload),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 
@@ -264,4 +374,42 @@ export function useDeleteLocation(onSuccess, onError) {
         }
     );
     return { deleteLocation, error };
+}
+
+export function useGetCompanies(payload) {
+    const { data, isFetching, refetch } = useQuery(
+        ['companies', payload],
+        async () => await api.get(`/api/Company/GetAll`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+        }
+    );
+
+    return { companies: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useDeleteCompany(onSuccess, onError) {
+    const { mutate: deleteCompany, error } = useMutation(
+        ['deleteCompany'],
+        async (id) => await api.del(`/api/Company/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { deleteCompany, error };
+}
+
+export function useGetRuleCompliances(payload) {
+    const { data, isFetching, refetch } = useQuery(
+        ['ruleCompliances', payload],
+        async () => await api.get(`/api/RuleComplianceDetail/GetAll`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+        }
+    );
+
+    return { ruleCompliances: (data || {}).data || [], isFetching, refetch };
 }

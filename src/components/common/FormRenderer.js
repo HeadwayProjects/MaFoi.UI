@@ -43,7 +43,7 @@ function TextField(props) {
             <div className={`input-group ${isPasswordField ? 'has-group-text-right' : ''}`}>
                 <input id={name}
                     className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''} ${props.styleClass || ''}`}
-                    {...onInput(input)} maxLength={maxLength || 255}/>
+                    {...onInput(input)} maxLength={maxLength || 255} />
                 {
                     isPasswordField &&
                     <span className="text-black-600 input-group-text">
@@ -143,6 +143,7 @@ function SelectField(props) {
                     options={options}
                     id={name}
                     label="label"
+                    menuPosition="fixed"
                     {...onInput(input)}
                 />
             </div>
@@ -172,12 +173,37 @@ function HtmlField(props) {
     )
 }
 
+function CheckboxField(props) {
+    const { label, input } = useFieldApi(props);
+
+    function onInput(input) {
+        return {
+            ...input,
+            type: 'checkbox',
+            onChange: (e) => {
+                input.onChange(e);
+                if (props.onChange) {
+                    props.onChange(e);
+                }
+            }
+        }
+    }
+    return (
+        <div className="form-check my-3">
+            <input type="checkbox" id={props.name} className="form-check-input" {...onInput(input)} />
+            <label title={label} htmlFor={props.name} className="form-check-label">{label}</label>
+        </div>
+    )
+
+}
+
 export const ComponentMapper = {
     [componentTypes.TEXT_FIELD]: TextField,
     [componentTypes.DATE_PICKER]: TextField,
     [componentTypes.TEXTAREA]: TextAreaField,
     [componentTypes.SELECT]: SelectField,
-    [componentTypes.PLAIN_TEXT]: HtmlField
+    [componentTypes.PLAIN_TEXT]: HtmlField,
+    [componentTypes.CHECKBOX]: CheckboxField
 };
 
 

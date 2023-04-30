@@ -23,37 +23,53 @@ export function GetActionTitle(type, action) {
     }
 }
 
-export const RuleType = [
-    { id: 'S', name: 'State' },
-    { id: 'C', name: 'Central' }
-];
+export function FindDuplicateMasters(data, obj) {
+    if (!data || !obj) {
+        return [];
+    }
+
+    const keys = Object.keys(obj);
+    const parsedObj = {};
+    keys.forEach(key => {
+        const value = (obj[key] || '').toUpperCase();
+        parsedObj[key] = value.replace(/[^A-Z0-9]/ig, '');
+    })
+
+    return data.filter(x => {
+        const duplicateKey = keys.find(key => {
+            const value = (x[key] || '').toUpperCase();
+            const parsedValue = value.replace(/[^A-Z0-9]/ig, '');
+            return value && value === parsedObj[key];
+        });
+        return Boolean(duplicateKey);
+    });
+}
+
+export const RuleType = ['State', 'Central'];
 
 export const ActivityType = [
-    { id: 'RET', name: 'Return' },
-    { id: 'ASS', name: 'Assurance' },
-    { id: 'REGS', name: 'Registration' },
-    { id: 'REG', name: 'Register' },
-    { id: 'DIS', name: 'Display' },
-    { id: 'AUD', name: 'Audit' },
-    { id: 'INT', name: 'Intimation' },
-    { id: 'DEP', name: 'Deposit' },
-    { id: 'E/I', name: 'Export/Import' },
-    { id: 'APP', name: 'Appointment' },
-    { id: 'IC', name: 'Internal Compliance' },
-    { id: 'MTG', name: 'Meeting' },
-    { id: 'PLCY', name: 'Policy' }
+    'Appointment',
+    'Assurance',
+    'Audit',
+    'Deposit',
+    'Display',
+    'Export/Import',
+    'Internal Compliance',
+    'Intimation',
+    'Meeting',
+    'Policy',
+    'Register',
+    'Registration',
+    'Return'
 ];
 
 export const Periodicity = [
-    { id: 'E', name: 'Emburance' },
-    { id: 'M', name: 'Monthly' },
-    { id: 'Q', name: 'Quarterly' },
-    { id: 'H', name: 'Half Yealy' },
-    { id: 'A', name: 'Anually' },
-    { id: '0', name: 'One Time' }
+    'Anually', 'Emburance', 'Half Yealy', 'Monthly', 'One Time', 'Quarterly'
 ];
 
 export const CalendarType = [
-    { id: 'C', name: 'Calendar Year' },
-    { id: 'F', name: 'Financial Year' }
+    'Calendar Year',
+    'Financial Year'
 ];
+
+export const RiskType = ['Low', 'Medium', 'High'];

@@ -1,41 +1,39 @@
 import React, { useEffect, useState } from "react";
-import MastersLayout from "./MastersLayout";
+import MastersLayout from "./../MastersLayout";
 import { Button, InputGroup } from "react-bootstrap";
-import Icon from "../../common/Icon";
-import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../common/Table";
-import { ACTIONS } from "../../common/Constants";
-import ActivityDetails from "./ActivityDetails";
-import ConfirmModal from "../../common/ConfirmModal";
-import { useDeleteActivity, useGetActivities } from "../../../backend/masters";
-import { GetMastersBreadcrumb } from "./Master.constants";
-import PageLoader from "../../shared/PageLoader";
+import { GetMastersBreadcrumb } from "./../Master.constants"
+import { ACTIONS } from "../../../common/Constants";
+import { useGetRuleCompliances } from "../../../../backend/masters";
+import Icon from "../../../common/Icon";
+import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
+import ConfirmModal from "../../../common/ConfirmModal";
+import RuleComplianceDetails from "./RuleComplianceDetails";
 
-function Activity() {
-    const [breadcrumb] = useState(GetMastersBreadcrumb('Activity'));
+function RuleCompliance() {
+    const [breadcrumb] = useState(GetMastersBreadcrumb('Rule Compliance'));
     const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
-    const [activity, setActivity] = useState(null);
+    const [compliance, setCompliance] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
-    const { activities, isFetching, refetch } = useGetActivities();
-    const { deleteActivity, deleting } = useDeleteActivity();
+    const { ruleCompliances, isFetching, refetch } = useGetRuleCompliances();
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
 
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event) => {
-                    setActivity(row);
+                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
+                    setCompliance(row);
                     setAction(ACTIONS.EDIT)
                 }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event) => {
-                    setActivity(row);
+                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    setCompliance(row);
                     setAction(ACTIONS.DELETE)
                 }} />
-                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
-                    setActivity(row);
+                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
+                    setCompliance(row);
                     setAction(ACTIONS.VIEW)
                 }} />
             </div>
@@ -44,27 +42,46 @@ function Activity() {
 
     const columns = [
         {
-            title: "Activity", field: "name", widthGrow: 2,
+            title: "Name", field: "complianceName",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Type", field: "type",
+            title: "Description", field: "complianceDescription", widthGrow: 2,
+            formatter: reactFormatter(<CellTmpl />), titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "State", field: "state.name",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Periodicity", field: "periodicity",
+            title: "Rule", field: "rule.name",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Calendar Type", field: "calendarType",
+            title: "Section", field: "rule.sectionNo",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "", hozAlign: "center", width: 140,
+            title: "Rule No", field: "rule.ruleNo",
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Compliance Nature", field: "complianceNature",
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Type", field: "statutoryAuthority",
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "", hozAlign: "center", width: 120,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ]
@@ -92,39 +109,28 @@ function Activity() {
     function ajaxRequestFunc(url, config, params) {
         setParams(params);
         setPayload(search ? { ...params, search } : { ...params });
-        return Promise.resolve(formatApiResponse(params, activities));
+        return Promise.resolve(formatApiResponse(params, ruleCompliances));
     }
 
-    function successCallback() {
-        setAction(ACTIONS.NONE);
-        setActivity(null);
-        refetch();
-    }
+    function deleteAct() {
 
-    function cancelCallback() {
-        setAction(ACTIONS.NONE);
-        setActivity(null);
-    }
-
-    function onDelete() {
-        deleteActivity(activity);
     }
 
     useEffect(() => {
         if (!isFetching && payload) {
-            setData(formatApiResponse(params, activities));
+            setData(formatApiResponse(params, ruleCompliances));
         }
     }, [isFetching]);
 
     return (
         <>
-            <MastersLayout title="Masters - Activity" breadcrumbs={breadcrumb}>
+            <MastersLayout title="Masters - Rule Compliance" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
                         <div className="col-6">
                             <div className="d-flex">
                                 <InputGroup>
-                                    <input type="text" className="form-control" placeholder="Search for Activity / Code / Name" />
+                                    <input type="text" className="form-control" placeholder="Search for Act / Code / Name" />
                                     <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
                                         <div className="d-flex flex-row align-items-center text-white">
                                             <Icon name={'search'} />
@@ -132,7 +138,7 @@ function Activity() {
                                         </div>
                                     </InputGroup.Text>
                                 </InputGroup>
-                                <Button variant="primary" className="px-4 ms-4 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Activity</Button>
+                                <Button variant="primary" className="px-4 ms-4 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Rule Compliance</Button>
                             </div>
                         </div>
                     </div>
@@ -141,20 +147,17 @@ function Activity() {
             </MastersLayout>
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
-                <ActivityDetails action={action} data={action !== ACTIONS.ADD ? activity : null}
-                    onClose={cancelCallback} onSubmit={successCallback} />
+                <RuleComplianceDetails action={action} data={action !== ACTIONS.ADD ? compliance : null}
+                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={() => setAction(ACTIONS.NONE)} />
             }
             {
                 action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Activity Master'} onSubmit={onDelete} onClose={cancelCallback}>
-                    <div className="text-center mb-4">Are you sure you want to delete the Activity, <strong>{(activity || {}).name}</strong> ?</div>
+                <ConfirmModal title={'Delete Rule Compliance Master'} onSubmit={deleteAct} onClose={() => setAction(ACTIONS.NONE)}>
+                    <div className="text-center mb-4">Are you sure you want to delete the Rule Compliance, <strong>{(compliance || {}).name}</strong> ?</div>
                 </ConfirmModal>
-            }
-            {
-                deleting && <PageLoader>Deleting...</PageLoader>
             }
         </>
     )
 }
 
-export default Activity;
+export default RuleCompliance;

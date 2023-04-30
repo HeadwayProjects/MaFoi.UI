@@ -165,11 +165,15 @@ function Table(props) {
             // setPage(_page);
             // setLastPage(_lastPage);
             if (table.replaceData) {
-                table.replaceData((props.data || {}).data || []);
-                if (((props.data || {}).data || []).length === 0) {
-                    table.rowManager._showPlaceholder();
+                try {
+                    table.replaceData((props.data || {}).data || []);
+                    if (((props.data || {}).data || []).length === 0) {
+                        table.rowManager._showPlaceholder();
+                    }
+                    updatePageCounter(((props.data || {}).data || []).length);
+                } catch (e) {
+                    console.error(e);
                 }
-                updatePageCounter(((props.data || {}).data || []).length);
             }
             setTimeout(() => {
                 table.redraw();

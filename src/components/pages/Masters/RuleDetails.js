@@ -5,7 +5,7 @@ import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRe
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
 import { getValue } from "../../../utils/common";
-import { RuleType } from "./Master.constants";
+import { GetActionTitle, RuleType } from "./Master.constants";
 import { useCreateRule, useUpdateRule } from "../../../backend/masters";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../utils/constants";
@@ -13,7 +13,6 @@ import PageLoader from "../../shared/PageLoader";
 
 function RuleDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
-    const [title, setTitle] = useState();
     const [ruleDetails, setRuleDetails] = useState({ hideButtons: true });
     const { createRule, isLoading: creatingRule } = useCreateRule((response) => {
         onSubmit();
@@ -51,8 +50,10 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'type',
                 label: 'Type',
-                content: action === ACTIONS.VIEW ? (RuleType.find(x => x.id === getValue(ruleDetails, 'type')) || {}).name : '',
-                options: [...RuleType],
+                content: action === ACTIONS.VIEW ? getValue(ruleDetails, 'type.value') : '',
+                options: RuleType.map(x => {
+                    return { id: x, name: x }
+                }),
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
@@ -100,26 +101,11 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
     }
 
     useEffect(() => {
-        if (action) {
-            switch (action) {
-                case ACTIONS.ADD:
-                    setTitle('Add Rule Master');
-                    break;
-                case ACTIONS.EDIT:
-                    setTitle('Edit Rule Master');
-                    break;
-                case ACTIONS.VIEW:
-                    setTitle('View Rule Master');
-                    break;
-                default:
-                    setTitle('Rule Master');
-            }
-        }
-    }, [action]);
-
-    useEffect(() => {
         if (data) {
-            setRuleDetails({ ...ruleDetails, ...data });
+            setRuleDetails({
+                ...ruleDetails, ...data,
+                type: { value: data.type, label: data.type }
+            });
         }
     }, [data]);
 
@@ -127,7 +113,7 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
         <>
             <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
                 <Modal.Header closeButton={true} onHide={onClose}>
-                    <Modal.Title className="bg">{title}</Modal.Title>
+                    <Modal.Title className="bg">{GetActionTitle('Rule', action)}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <FormRenderer FormTemplate={FormTemplate}
@@ -150,10 +136,10 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
                 </Modal.Footer>
             </Modal>
             {
-                creatingRule && <PageLoader message="Creating Rule. Please wait..." />
+                creatingRule && <PageLoader message="Creating Rule..." />
             }
             {
-                updatingRule && <PageLoader message="Updating Rule. Please wait..." />
+                updatingRule && <PageLoader message="Updating Rule..." />
             }
         </>
     )

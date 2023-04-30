@@ -13,6 +13,7 @@ import PageLoader from "../../shared/PageLoader"
 
 function ActivityDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
+    const [activity, setActivity] = useState({ hideButtons: true })
     const { createActivity, creating } = useCreateActivity(({ id, message }) => {
         if (id) {
             onSubmit();
@@ -37,40 +38,51 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? getValue(data, 'name') : ''
+                content: action === ACTIONS.VIEW ? getValue(activity, 'name') : ''
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.TEXT_FIELD,
                 name: 'type',
                 label: 'Activity Type',
-                options: ActivityType,
+                options: ActivityType.map(x => {
+                    return { id: x, name: x };
+                }),
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? getValue(data, 'type') : ''
+                content: action === ACTIONS.VIEW ? getValue(activity, 'type') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.SELECT,
                 name: 'periodicity',
                 label: 'Periodicity',
-                options: Periodicity,
+                options: Periodicity.map(x => {
+                    return { id: x, name: x };
+                }),
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? getValue(data, 'periodicity') : ''
+                content: action === ACTIONS.VIEW ? getValue(activity, 'periodicity.label') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.SELECT,
                 name: 'calendarType',
                 label: 'Calendar Type',
-                options: CalendarType,
+                options: CalendarType.map(x => {
+                    return { id: x, name: x };
+                }),
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? getValue(data, 'calendarType') : ''
+                content: action === ACTIONS.VIEW ? getValue(activity, 'calendarType.label') : ''
             }
         ]
     };
+
+    function debugForm(_form) {
+        setForm(_form);
+        setActivity(_form.values);
+    }
 
     function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
@@ -81,7 +93,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
             const { name, type, periodicity, calendarType } = form.values;
             const payload = {
                 name,
-                type: type.value,
+                type,
                 periodicity: periodicity.value,
                 calendarType: calendarType.value,
             };
@@ -93,6 +105,19 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
         }
     }
 
+    useEffect(() => {
+        if (data) {
+            const { name, type, periodicity, calendarType } = data;
+            setActivity({
+                ...activity,
+                name,
+                type,
+                periodicity: periodicity ? { value: periodicity, label: periodicity } : null,
+                calendarType: calendarType ? { value: calendarType, label: calendarType } : null
+            });
+        }
+    }, [data]);
+
     return (
         <>
             <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
@@ -101,10 +126,10 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
                 </Modal.Header>
                 <Modal.Body>
                     <FormRenderer FormTemplate={FormTemplate}
-                        initialValues={{ hideButtons: true, ...data }}
+                        initialValues={activity}
                         componentMapper={ComponentMapper}
                         schema={schema}
-                        debug={setForm}
+                        debug={debugForm}
                     />
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">

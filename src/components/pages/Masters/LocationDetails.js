@@ -5,16 +5,23 @@ import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRe
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
 import { getValue, preventDefault } from "../../../utils/common";
-import { useCreateLocation, useGetCities, useGetStates, useUpdateLocation } from "../../../backend/masters";
+import {
+    useCreateLocation, useGetCities, useGetLocations,
+    useGetStates, useUpdateLocation
+} from "../../../backend/masters";
 import { toast } from 'react-toastify';
 import { AxiosError } from "axios";
 import { ERROR_MESSAGES } from "../../../utils/constants";
+import { FindDuplicateMasters, GetActionTitle } from "./Master.constants";
 
 function LocationDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [title, setTitle] = useState();
+    const [stateId, setStateId] = useState();
+    const [cityId, setCityId] = useState();
     const { states, isFetching: loadingStates } = useGetStates();
-    const { cities, isFetching: loadingCities } = useGetCities();
+    const { cities, isFetching: loadingCities } = useGetCities(stateId ? { stateId } : null, Boolean(stateId));
+    const { locations, isFetching: loadingLocations } = useGetLocations(stateId && cityId ? { stateId, cityId } : null, Boolean(stateId) && Boolean(cityId));
     const [locationDetails, setLocationDetails] = useState({ hideButtons: true });
     const { updateLocation } = useUpdateLocation(() => {
         toast.success(`${locationDetails.name} updated successsfully.`);
@@ -78,6 +85,7 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
+                onChange: onCityChange.bind(this),
                 isDisabled: !locationDetails.state,
                 isLoading: loadingCities,
                 content: getValue(locationDetails, 'city.label')
@@ -88,7 +96,13 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
     function onStateChange(state) {
         if (state) {
             setLocationDetails({ ...locationDetails, state, city: null });
-            console.log(state);
+            setStateId(state.value);
+        }
+    }
+
+    function onCityChange(city) {
+        if (city) {
+            setCityId(city.value);
         }
     }
 
@@ -96,6 +110,12 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
         preventDefault(e);
         if (form.valid) {
             const { code, name, state, city } = locationDetails;
+            const existingData = locations.filter(x => x.id !== (data || {}).id && x.stateId === state.value && x.cityId === city.value);
+            const duplicateLocations = FindDuplicateMasters(existingData, { code, name });
+            if (duplicateLocations.length) {
+                toast.error(`There are ${duplicateLocations.length} locations matching code or name. Please update code or name`);
+                return;
+            }
             const payload = {
                 code: code.toUpperCase(),
                 name,
@@ -117,24 +137,6 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
     }
 
     useEffect(() => {
-        if (action) {
-            switch (action) {
-                case ACTIONS.ADD:
-                    setTitle('Add Location Master');
-                    break;
-                case ACTIONS.EDIT:
-                    setTitle('Edit Location Master');
-                    break;
-                case ACTIONS.VIEW:
-                    setTitle('View Location Master');
-                    break;
-                default:
-                    setTitle('Location Master');
-            }
-        }
-    }, [action]);
-
-    useEffect(() => {
         if (data) {
             const { id, code, name, states: state, cities: city } = data;
             setLocationDetails({
@@ -142,6 +144,7 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
                 state: { value: state.id, label: state.name },
                 city: { value: city.id, label: city.name }
             });
+            setStateId(state.id);
         }
     }, [data])
 
@@ -149,7 +152,7 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
         <>
             <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
                 <Modal.Header closeButton={true} onHide={onClose}>
-                    <Modal.Title className="bg">{title}</Modal.Title>
+                    <Modal.Title className="bg">{GetActionTitle('Location', action)}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <FormRenderer FormTemplate={FormTemplate}
@@ -164,7 +167,7 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
                         action !== ACTIONS.VIEW ?
                             <>
                                 <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onClose}>{'Cancel'}</Button>
-                                <Button variant="primary" onClick={submit} className="px-4" disabled={!form.valid}>{'Submit'}</Button>
+                                <Button variant="primary" onClick={submit} className="px-4" disabled={!form.valid || loadingLocations}>{'Submit'}</Button>
                             </> :
                             <Button variant="primary" onClick={onClose} className="px-4 ms-auto">{'Close'}</Button>
 

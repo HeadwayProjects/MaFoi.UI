@@ -1,7 +1,7 @@
 import React from "react";
 import { preventDefault } from "../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faUpload, faInfoCircle, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faUpload, faInfoCircle, faSearch, faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import "./Icon.css";
@@ -104,6 +104,9 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
                     ),
                     search: (
                         <FontAwesomeIcon icon={faSearch} />
+                    ),
+                    'external-link': (
+                        <FontAwesomeIcon icon={faExternalLink} />
                     )
                 }[name]}
             </span>

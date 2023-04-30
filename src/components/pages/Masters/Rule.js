@@ -59,11 +59,7 @@ function Rule() {
         {
             title: "Type", field: "type", width: 140,
             formatter: reactFormatter(<CellTmpl />),
-            titleFormatter: reactFormatter(<TitleTmpl />),
-            formatter: (cell) => {
-                const value = cell.getValue();
-                return value ? (RuleType.find(x => x.id === value) || {}).name : '';
-            }
+            titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
             title: "Section No.", field: "type", minWidth: 140,

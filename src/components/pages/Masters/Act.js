@@ -7,13 +7,10 @@ import { ACTIONS } from "../../common/Constants";
 import ActDetails from "./ActDetails";
 import ConfirmModal from "../../common/ConfirmModal";
 import { useGetActs } from "../../../backend/masters";
+import { GetMastersBreadcrumb } from "./Master.constants";
 
 function Act() {
-    const [breadcrumb] = useState([
-        { id: 'home', label: 'Home', path: '/' },
-        { id: 'masters', label: 'Masters', path: '/masters/act' },
-        { id: 'act', label: 'Act' }
-    ]);
+    const [breadcrumb] = useState(GetMastersBreadcrumb('Act'));
     const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [act, setAct] = useState(null);
@@ -44,9 +41,9 @@ function Act() {
     }
 
     const columns = [
-        { title: "Act Code", field: "code", formatter: reactFormatter(<CellTmpl />) },
         { title: "Act Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
-        { title: "Description", field: "description", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
+        { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Law", field: "law.name", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -120,7 +117,7 @@ function Act() {
             {
                 action === ACTIONS.DELETE &&
                 <ConfirmModal title={'Delete Act Master'} onSubmit={deleteAct} onClose={() => setAction(ACTIONS.NONE)}>
-                    <div className="text-center mb-4">Are you sure you want to delete <strong>{(act || {}).code}</strong> ?</div>
+                    <div className="text-center mb-4">Are you sure you want to delete the Act, <strong>{(act || {}).name}</strong> ?</div>
                 </ConfirmModal>
             }
         </>

@@ -6,21 +6,26 @@ import Table, { CellTmpl, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
 import LawDetails from "./LawDetails";
 import ConfirmModal from "../../common/ConfirmModal";
-import { useGetActivities } from "../../../backend/masters";
+import { useDeleteLaw, useGetActivities, useGetLaws } from "../../../backend/masters";
+import { GetMastersBreadcrumb } from "./Master.constants";
+import { toast } from "react-toastify";
+import { ERROR_MESSAGES } from "../../../utils/constants";
+import PageLoader from "../../shared/PageLoader";
 
 function Law() {
-    const [breadcrumb] = useState([
-        { id: 'home', label: 'Home', path: '/' },
-        { id: 'masters', label: 'Masters', path: '/masters/act' },
-        { id: 'law', label: 'Law' }
-    ]);
+    const [breadcrumb] = useState(GetMastersBreadcrumb('Law'));
     const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [law, setLaw] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
-    const { activities, isFetching, refetch } = useGetActivities();
+    const { laws, isFetching, refetch } = useGetLaws();
+    const { deleteLaw, deleting } = useDeleteLaw(() => {
+        submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
@@ -71,16 +76,22 @@ function Law() {
     function ajaxRequestFunc(url, config, params) {
         setParams(params);
         setPayload(search ? { ...params, search } : { ...params });
-        return Promise.resolve(formatApiResponse(params, activities));
+        return Promise.resolve(formatApiResponse(params, laws));
     }
 
-    function deleteLaw() {
+    function submitCallback() {
+        setAction(ACTIONS.NONE);
+        setLaw(null);
+        refetch();
+    }
 
+    function handleDelete() {
+        deleteLaw(law.id);
     }
 
     useEffect(() => {
         if (!isFetching && payload) {
-            setData(formatApiResponse(params, activities));
+            setData(formatApiResponse(params, laws));
         }
     }, [isFetching]);
 
@@ -110,13 +121,16 @@ function Law() {
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <LawDetails action={action} data={action !== ACTIONS.ADD ? law : null}
-                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={() => setAction(ACTIONS.NONE)} />
+                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={submitCallback} />
             }
             {
                 action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Law Master'} onSubmit={deleteLaw} onClose={() => setAction(ACTIONS.NONE)}>
+                <ConfirmModal title={'Delete Law Master'} onSubmit={handleDelete} onClose={() => setAction(ACTIONS.NONE)}>
                     <div className="text-center mb-4">Are you sure you want to delete the Law <strong>{(law || {}).name}</strong> ?</div>
                 </ConfirmModal>
+            }
+            {
+                deleting && <PageLoader>Deleting Law...</PageLoader>
             }
         </>
     )

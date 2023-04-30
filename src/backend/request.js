@@ -22,7 +22,22 @@ function getHeaders(headers = {}) {
     }
 }
 
-export function get(url, config) {
+function getQueryString(payload) {
+    const keys = Object.keys(payload);
+    const queries = [];
+    keys.forEach(key => {
+        const value = payload[key];
+        if (typeof value !== undefined) {
+            queries.push(`${key}=${value}`);
+        }
+    });
+    return queries.join('&');
+}
+
+export function get(url, payload, config) {
+    if (Object.keys(payload || {}).length > 0) {
+        url = `${url}?${getQueryString(payload)}`
+    }
     return apiInstance.get(url, { headers: getHeaders(config) });
 }
 
