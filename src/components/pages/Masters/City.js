@@ -132,7 +132,7 @@ function City() {
             {
                 action === ACTIONS.DELETE &&
                 <ConfirmModal title={'Delete City Master'} onSubmit={onDelete} onClose={() => setAction(ACTIONS.NONE)}>
-                    <div className="text-center mb-4">Are you sure you want to delete the city, <strong>{(city || {}).name}</strong> ?</div>
+                    <div className="text-center mb-4">Are you sure you want to delete the City, <strong>{(city || {}).name}</strong> ?</div>
                 </ConfirmModal>
             }
         </>

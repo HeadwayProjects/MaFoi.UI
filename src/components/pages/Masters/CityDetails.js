@@ -9,10 +9,10 @@ import { useCreateCity,useUpdateCity,useGetStates } from "../../../backend/maste
 import { toast } from 'react-toastify';
 import { AxiosError } from "axios";
 import { ERROR_MESSAGES } from "../../../utils/constants";
+import { GetActionTitle } from "./Master.constants";
 
 function CityDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
-    const [title, setTitle] = useState();
     const { states, isFetching, refetch } = useGetStates();
 
     const { updateCity } = useUpdateCity(() => {
@@ -50,7 +50,7 @@ function CityDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 50 },
-                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z]{2}/, message: 'Should be alpha value of length 2' }
+                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{2,3}/, message: 'Should be alphanumaric value of length 2' }
                 ],
                 styleClass: 'text-uppercase',
                 content: getValue(data, 'code')
@@ -89,29 +89,11 @@ function CityDetails({ action, data, onClose, onSubmit }) {
         }
     }
 
-    useEffect(() => {
-        if (action) {
-            switch (action) {
-                case ACTIONS.ADD:
-                    setTitle('Add City Master');
-                    break;
-                case ACTIONS.EDIT:
-                    setTitle('Edit City Master');
-                    break;
-                case ACTIONS.VIEW:
-                    setTitle('View City Master');
-                    break;
-                default:
-                    setTitle('City Master');
-            }
-        }
-    }, [action]);
-
     return (
         <>
             <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
                 <Modal.Header closeButton={true} onHide={onClose}>
-                    <Modal.Title className="bg">{title}</Modal.Title>
+                    <Modal.Title className="bg">{GetActionTitle('City', action)}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <FormRenderer FormTemplate={FormTemplate}
