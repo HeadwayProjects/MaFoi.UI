@@ -65,7 +65,7 @@ function AuthenticatedContent() {
         '/masters/companies': () => (
             layout(<Companies />)
         ),
-        '/masters/ruleCompliance': () => (
+        '/masters/compliance': () => (
             layout(<RuleCompliance />)
         ),
         '/changePassword/:token': ({ token }) => (

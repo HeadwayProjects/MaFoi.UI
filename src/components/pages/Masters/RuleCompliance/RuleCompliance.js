@@ -3,11 +3,14 @@ import MastersLayout from "./../MastersLayout";
 import { Button, InputGroup } from "react-bootstrap";
 import { GetMastersBreadcrumb } from "./../Master.constants"
 import { ACTIONS } from "../../../common/Constants";
-import { useGetRuleCompliances } from "../../../../backend/masters";
+import { useDeleteRuleCompliance, useGetRuleCompliances } from "../../../../backend/masters";
 import Icon from "../../../common/Icon";
 import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
 import ConfirmModal from "../../../common/ConfirmModal";
 import RuleComplianceDetails from "./RuleComplianceDetails";
+import { toast } from "react-toastify";
+import { ERROR_MESSAGES } from "../../../../utils/constants";
+import PageLoader from "../../../shared/PageLoader";
 
 function RuleCompliance() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Rule Compliance'));
@@ -18,6 +21,12 @@ function RuleCompliance() {
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
     const { ruleCompliances, isFetching, refetch } = useGetRuleCompliances();
+    const { deleteRuleCompliance, deleting } = useDeleteRuleCompliance(() => {
+        toast.success(`${compliance.complianceName} deleted successfully.`);
+        submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
@@ -112,8 +121,14 @@ function RuleCompliance() {
         return Promise.resolve(formatApiResponse(params, ruleCompliances));
     }
 
-    function deleteAct() {
+    function submitCallback() {
+        setAction(ACTIONS.NONE);
+        setCompliance(null);
+        refetch();
+    }
 
+    function handleDelete() {
+        deleteRuleCompliance(compliance.id);
     }
 
     useEffect(() => {
@@ -148,13 +163,16 @@ function RuleCompliance() {
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <RuleComplianceDetails action={action} data={action !== ACTIONS.ADD ? compliance : null}
-                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={() => setAction(ACTIONS.NONE)} />
+                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={submitCallback} />
             }
             {
                 action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Rule Compliance Master'} onSubmit={deleteAct} onClose={() => setAction(ACTIONS.NONE)}>
-                    <div className="text-center mb-4">Are you sure you want to delete the Rule Compliance, <strong>{(compliance || {}).name}</strong> ?</div>
+                <ConfirmModal title={'Delete Rule Compliance Master'} onSubmit={handleDelete} onClose={() => setAction(ACTIONS.NONE)}>
+                    <div className="text-center mb-4">Are you sure you want to delete the Rule Compliance, <strong>{(compliance || {}).complianceName}</strong> ?</div>
                 </ConfirmModal>
+            }
+            {
+                deleting && <PageLoader>Deleting Rule Complaince...</PageLoader>
             }
         </>
     )

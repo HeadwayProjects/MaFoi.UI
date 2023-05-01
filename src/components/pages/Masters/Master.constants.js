@@ -73,3 +73,5 @@ export const CalendarType = [
 ];
 
 export const RiskType = ['Low', 'Medium', 'High'];
+
+export const AuditType = ['Statutory', 'Internal'];

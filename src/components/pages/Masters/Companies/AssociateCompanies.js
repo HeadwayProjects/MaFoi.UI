@@ -7,10 +7,12 @@ import { VIEWS } from "./Companies";
 import { ACTIONS, TOOLTIP_DELAY } from "../../../common/Constants";
 import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
 import { Button, InputGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import AddEditCompany from "./AddEditCompany";
 import ViewCompany from "./ViewCompany";
 import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
+import styles from "../Masters.module.css";
+import { Link } from "raviger";
+import { preventDefault } from "../../../../utils/common";
 
 function AssociateCompanies({ company, changeView }) {
     const [search, setSearch] = useState(null);
@@ -29,7 +31,7 @@ function AssociateCompanies({ company, changeView }) {
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
                 <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event) => {
-                    changeView(VIEWS.EDIT, row);
+                    changeView(VIEWS.EDIT, { company: row, parentCompany: company });
                 }} />
                 <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event) => {
                     setAssociateCompany(row);
@@ -143,7 +145,20 @@ function AssociateCompanies({ company, changeView }) {
 
     return (
         <>
-            <div className="d-flex flex-column mx-0 mt-4">
+            <div className="d-flex flex-column mx-0">
+                <nav aria-label="breadcrumb">
+                    <ol className={`breadcrumb d-flex justify-content-start my-4 px-2 ${styles.breadcrumb}`}>
+                        <li className="breadcrumb-item ">
+                            <Link href="/" onClick={(e) => {
+                                preventDefault(e);
+                                changeView(VIEWS.LIST);
+                            }} className="fw-bold">Companies</Link>
+                        </li>
+                        <li className="breadcrumb-item">
+                            <span className="fw-bold">{company.name}</span>
+                        </li>
+                    </ol>
+                </nav>
                 <div className="d-flex flex-row justify-content-center mb-4">
                     <div className="col-6">
                         <div className="d-flex">
@@ -156,16 +171,13 @@ function AssociateCompanies({ company, changeView }) {
                                     </div>
                                 </InputGroup.Text>
                             </InputGroup>
-                            <Button variant="primary" className="px-4 ms-4 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Associate Company</Button>
+                            <Button variant="primary" className="px-4 ms-4 text-nowrap"
+                                onClick={() => changeView(VIEWS.ADD, { parentCompany: company })}>Add New Associate Company</Button>
                         </div>
                     </div>
                 </div>
                 <Table data={data} options={tableConfig} isLoading={isFetching} />
             </div>
-            {
-                [ACTIONS.ADD, ACTIONS.EDIT].includes(action) &&
-                <AddEditCompany company={associateCompany} action={action} changeView={changeView} />
-            }
             {
                 action === ACTIONS.VIEW && associateCompany &&
                 <ViewCompany company={associateCompany} parentCompany={company} onClose={() => {

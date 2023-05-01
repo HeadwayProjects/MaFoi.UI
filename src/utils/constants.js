@@ -7,3 +7,8 @@ export const API_RESULT = {
     SUCCESS: 'SUCCESS',
     FAILURE: 'FAILURE'
 };
+
+export const STEPPER_CONFIG = {
+    completeColor: 'var(--light-green)',
+    activeColor: 'var(--royal-blue)'
+}

@@ -89,7 +89,7 @@ function TextAreaField(props) {
             <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
             <div className="input-group">
                 <textarea id={name} className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''}`}
-                    maxLength={maxLength} {...onInput(input)} cols={3} />
+                    maxLength={maxLength} {...onInput(input)} rows={3} />
             </div>
             {
                 props.description &&
@@ -144,6 +144,7 @@ function SelectField(props) {
                     id={name}
                     label="label"
                     menuPosition="fixed"
+                    styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
                     {...onInput(input)}
                 />
             </div>

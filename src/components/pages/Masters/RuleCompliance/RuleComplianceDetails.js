@@ -3,30 +3,32 @@ import Modal from 'react-bootstrap/Modal';
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
-import { useGetRules, useGetStates } from "../../../../backend/masters";
+import { useCreateRuleCompliance, useGetRules, useGetStates, useUpdateRuleCompliance } from "../../../../backend/masters";
 import { getValue, preventDefault } from "../../../../utils/common";
-import { ActivityType, GetActionTitle, RiskType } from "../Master.constants";
+import { ActivityType, AuditType, GetActionTitle, RiskType } from "../Master.constants";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { ACTIONS } from "../../../common/Constants";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import PageLoader from "../../../shared/PageLoader";
 
 function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const { states, isFetching: loadingStates } = useGetStates();
     const { rules, isFetching: loadingRules } = useGetRules();
     const [compliance, setCompliance] = useState({ hideButtons: true });
-    // const { updateLocation } = useUpdateLocation(() => {
-    //     toast.success(`${locationDetails.name} updated successsfully.`);
-    //     onSubmit();
-    // }, errorCallback);
-    // const { createLocation } = useCreateLocation((response) => {
-    //     if (response instanceof AxiosError) {
-    //         errorCallback();
-    //     } else {
-    //         toast.success(`${locationDetails.name} created successsfully.`);
-    //         onSubmit();
-    //     }
-    // }, errorCallback);
+    const { updateRuleCompliance, updating } = useUpdateRuleCompliance(() => {
+        toast.success(`${compliance.complianceName} updated successsfully.`);
+        onSubmit();
+    }, errorCallback);
+    const { createRuleCompliance, creating } = useCreateRuleCompliance((response) => {
+        if (response instanceof AxiosError) {
+            errorCallback();
+        } else {
+            toast.success(`${compliance.complianceName} created successsfully.`);
+            onSubmit();
+        }
+    }, errorCallback);
 
     function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
@@ -59,21 +61,21 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: getValue(compliance, 'state.name'),
+                content: getValue(compliance, 'state.label'),
                 isLoading: loadingStates,
                 options: states
             },
-            // {
-            //     component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
-            //     name: 'rule',
-            //     label: 'Rule',
-            //     options: rules,
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ],
-            //     isLoading: loadingRules,
-            //     content: getValue(compliance, 'rule.name')
-            // },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                name: 'rule',
+                label: 'Rule',
+                options: rules,
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                isLoading: loadingRules,
+                content: getValue(compliance, 'rule.label')
+            },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'proofOfCompliance',
@@ -118,6 +120,12 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 content: getValue(compliance, 'continuingPenalty')
             },
             {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.CHECKBOX,
+                name: 'cancellationSuspensionOfLicense',
+                label: 'Cancellation/Suspension Of License',
+                content: getValue(compliance, 'cancellationSuspensionOfLicense')
+            },
+            {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'statutoryAuthority',
                 label: 'Statutory Authority',
@@ -139,10 +147,16 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 ]
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'auditType',
                 label: 'Audit Type',
-                content: getValue(compliance, 'auditType')
+                content: getValue(compliance, 'auditType'),
+                options: AuditType.map(x => {
+                    return { id: x, name: x }
+                }),
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
             }
         ],
     };
@@ -154,25 +168,24 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 complianceName: compliance.complianceName,
                 complianceDescription: compliance.complianceDescription || '',
                 stateId: compliance.state.value,
-                // ruleId: compliance.rule.value,
+                ruleId: compliance.rule.value,
                 proofOfCompliance: compliance.proofOfCompliance || '',
                 penalty: compliance.penalty,
                 risk: compliance.risk.value,
-                maximumPenaltyAmount: compliance.maximumPenaltyAmount || 0,
+                maximumPenaltyAmount: `${compliance.maximumPenaltyAmount || 0}`,
                 impriosonment: compliance.impriosonment,
                 continuingPenalty: compliance.continuingPenalty || false,
                 cancellationSuspensionOfLicense: compliance.cancellationSuspensionOfLicense,
                 statutoryAuthority: compliance.statutoryAuthority,
                 complianceNature: compliance.complianceNature.value,
-                auditType: compliance.auditType || ''
+                auditType: compliance.auditType.value
             };
             if (action === ACTIONS.EDIT) {
                 payload['id'] = data.id;
-                // updateLocation(payload)
+                updateRuleCompliance(payload)
             } else if (action === ACTIONS.ADD) {
-                // createLocation(payload);
+                createRuleCompliance(payload);
             }
-            console.log(payload);
         }
     }
 
@@ -183,13 +196,16 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
 
     useEffect(() => {
         if (data) {
-            // const { id, code, name, states: state, cities: city } = data;
-            // setLocationDetails({
-            //     ...locationDetails, id, code, name,
-            //     state: { value: state.id, label: state.name },
-            //     city: { value: city.id, label: city.name }
-            // });
-            // setStateId(state.id);
+            const { risk, complianceNature, state, rule, auditType } = data;
+            setCompliance({
+                ...compliance,
+                ...data,
+                risk: risk ? { value: risk, label: risk } : null,
+                auditType: risk ? { value: auditType, label: auditType } : null,
+                complianceNature: complianceNature ? { value: complianceNature, label: complianceNature } : null,
+                state: { value: state.id, label: state.name },
+                rule: { value: rule.id, label: rule.name }
+            });
         }
     }, [data])
 
@@ -218,6 +234,10 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                     }
                 </Modal.Footer>
             </Modal>
+            {
+                (creating || updating) &&
+                <PageLoader>{creating ? 'Creating' : 'Updating'}  Rule Compliance...</PageLoader>
+            }
         </>
     )
 }

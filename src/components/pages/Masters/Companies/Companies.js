@@ -4,6 +4,7 @@ import CompaniesList from "./CompaniesList";
 import MastersLayout from "../MastersLayout";
 import { preventDefault } from "../../../../utils/common";
 import AssociateCompanies from "./AssociateCompanies";
+import AddEditCompany from "./AddEditCompany";
 
 export const VIEWS = {
     LIST: 'list',
@@ -14,7 +15,7 @@ export const VIEWS = {
 }
 
 function Companies() {
-    const [view, setView] = useState(VIEWS.LIST);
+    const [view, setView] = useState(VIEWS.ADD);
     const [breadcrumb, setBreadcrumb] = useState(GetMastersBreadcrumb('Companies'));
     const [viewData, setViewData] = useState(null);
 
@@ -46,7 +47,11 @@ function Companies() {
             }
             {
                 view === VIEWS.ASSOCIATE_COMPANIES && viewData &&
-                <AssociateCompanies changeView={changeView} company={viewData} />
+                <AssociateCompanies changeView={changeView} {...viewData} />
+            }
+            {
+                [VIEWS.ADD, VIEWS.EDIT].includes(view) &&
+                <AddEditCompany changeView={changeView} {...viewData} />
             }
         </MastersLayout>
     )

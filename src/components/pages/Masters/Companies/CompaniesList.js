@@ -30,7 +30,7 @@ function CompaniesList({ changeView }) {
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
                 <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event) => {
-                    changeView(VIEWS.EDIT, row);
+                    changeView(VIEWS.EDIT, { company: row });
                 }} />
                 <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event) => {
                     setCompany(row);
@@ -85,7 +85,11 @@ function CompaniesList({ changeView }) {
             <div className="d-flex align-items-center h-100">
                 <a href="/" onClick={(e) => {
                     preventDefault(e);
-                    changeView(VIEWS.ASSOCIATE_COMPANIES, row);
+                    if (value) {
+                        changeView(VIEWS.ASSOCIATE_COMPANIES, { company: row });
+                    } else {
+                        changeView(VIEWS.ADD, { parentCompany: row });
+                    }
                 }}>{value || 'Add Associate Company'}</a>
             </div>
         )
@@ -190,16 +194,12 @@ function CompaniesList({ changeView }) {
                                     </div>
                                 </InputGroup.Text>
                             </InputGroup>
-                            <Button variant="primary" className="px-4 ms-4 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Company</Button>
+                            <Button variant="primary" className="px-4 ms-4 text-nowrap" onClick={() => changeView(VIEWS.ADD)}>Add New Company</Button>
                         </div>
                     </div>
                 </div>
                 <Table data={data} options={tableConfig} isLoading={isFetching} />
             </div>
-            {
-                [ACTIONS.ADD, ACTIONS.EDIT].includes(action) &&
-                <AddEditCompany company={company} action={action} changeView={changeView} />
-            }
             {
                 action === ACTIONS.VIEW && company &&
                 <ViewCompany company={company} onClose={() => {

@@ -413,3 +413,39 @@ export function useGetRuleCompliances(payload) {
 
     return { ruleCompliances: (data || {}).data || [], isFetching, refetch };
 }
+
+export function useCreateRuleCompliance(onSuccess, onError) {
+    const { mutate: createRuleCompliance, error, isLoading: creating } = useMutation(
+        ['createRuleCompliance'],
+        async (payload) => await api.post('/api/RuleComplianceDetail/Add', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { createRuleCompliance, error, creating };
+}
+
+export function useUpdateRuleCompliance(onSuccess, onError) {
+    const { mutate: updateRuleCompliance, error, isLoading: updating } = useMutation(
+        ['updateRuleCompliance'],
+        async (payload) => await api.put('/api/RuleComplianceDetail/Update', payload),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { updateRuleCompliance, error, updating };
+}
+
+export function useDeleteRuleCompliance(onSuccess, onError) {
+    const { mutate: deleteRuleCompliance, error, isLoading: deleting } = useMutation(
+        ['deleteRuleCompliance'],
+        async (id) => await api.del(`/api/RuleComplianceDetail/Delete?Id=${id}`),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { deleteRuleCompliance, error, deleting };
+}
