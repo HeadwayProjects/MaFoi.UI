@@ -376,13 +376,14 @@ export function useDeleteLocation(onSuccess, onError) {
     return { deleteLocation, error };
 }
 
-export function useGetCompanies(payload) {
+export function useGetCompanies(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['companies', payload],
         async () => await api.get(`/api/Company/GetAll`),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 
