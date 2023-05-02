@@ -19,7 +19,48 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
-            }
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'tan',
+                label: 'TAN No.',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'name',
+                label: 'Full Name.',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'mobilenumber',
+                label: 'Mobile Number.',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'email',
+                label: 'Email.',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'place',
+                label: 'Place.',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            
         ]
     }
 
