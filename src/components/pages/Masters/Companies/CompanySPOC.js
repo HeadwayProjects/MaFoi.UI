@@ -14,17 +14,6 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
         fields: [
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'code',
-                label: 'Code',
-                validate: [
-                    { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.MAX_LENGTH, threshold: 4 },
-                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{3,4}/, message: 'Should be alphanumeric value of length 3 or 4' }
-                ],
-                styleClass: 'text-uppercase',
-            },
-            {
-                component: componentTypes.TEXT_FIELD,
                 name: 'name',
                 label: 'Name',
                 validate: [
@@ -82,15 +71,14 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
     return (
         <>
             <div className="card border-0 p-4 m-4 ">
-                <div className="d-flex flex-column h-100 justify-space-between w-25 p-4">
+                <div className="d-flex flex-column h-100 justify-space-between  col-5 p-4">
                     <FormRenderer FormTemplate={FormTemplate}
                         initialValues={{ hideButtons: true }}
                         componentMapper={ComponentMapper}
                         schema={schema}
                         debug={debugForm}
                     />
-                    <div className="d-flex justify-content-between">
-                        <div></div>
+                    <div className="d-flex justify-content-between mt-4">
                         <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={handleCancel}>{'Previous'}</Button>
                         <Button variant="primary" onClick={handleSubmit} className="px-4" disabled={!form.valid}>{'Save & Continue'}</Button>
                     </div>

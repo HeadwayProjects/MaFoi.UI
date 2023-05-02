@@ -6,8 +6,11 @@ import Table, { CellTmpl, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
 import ActDetails from "./ActDetails";
 import ConfirmModal from "../../common/ConfirmModal";
-import { useGetActs } from "../../../backend/masters";
+import { useDeleteAct, useGetActs } from "../../../backend/masters";
 import { GetMastersBreadcrumb } from "./Master.constants";
+import { toast } from "react-toastify";
+import { ERROR_MESSAGES } from "../../../utils/constants";
+import PageLoader from "../../shared/PageLoader";
 
 function Act() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Act'));
@@ -18,6 +21,12 @@ function Act() {
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
     const { acts, isFetching, refetch } = useGetActs();
+    const { deleteAct, deleting } = useDeleteAct(() => {
+        toast.success(`${act.name} deleted successfully.`);
+        submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
@@ -76,8 +85,10 @@ function Act() {
         return Promise.resolve(formatApiResponse(params, acts));
     }
 
-    function deleteAct() {
-
+    function submitCallback() {
+        setAction(ACTIONS.NONE);
+        setAct(null);
+        refetch();
     }
 
     useEffect(() => {
@@ -112,13 +123,16 @@ function Act() {
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <ActDetails action={action} data={action !== ACTIONS.ADD ? act : null}
-                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={() => setAction(ACTIONS.NONE)} />
+                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={submitCallback} />
             }
             {
                 action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Act Master'} onSubmit={deleteAct} onClose={() => setAction(ACTIONS.NONE)}>
+                <ConfirmModal title={'Delete Act Master'} onSubmit={() => deleteAct(act.id)} onClose={() => setAction(ACTIONS.NONE)}>
                     <div className="text-center mb-4">Are you sure you want to delete the Act, <strong>{(act || {}).name}</strong> ?</div>
                 </ConfirmModal>
+            }
+            {
+                deleting && <PageLoader>Deleting Act...</PageLoader>
             }
         </>
     )
