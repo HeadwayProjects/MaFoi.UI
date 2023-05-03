@@ -5,17 +5,19 @@ import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRe
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
 import { getValue, preventDefault } from "../../../utils/common";
-import { useCreateState,useUpdateState } from "../../../backend/masters";
+import { useCreateState, useGetStates, useUpdateState } from "../../../backend/masters";
 import { toast } from 'react-toastify';
 import { AxiosError } from "axios";
 import { ERROR_MESSAGES } from "../../../utils/constants";
+import { FindDuplicateMasters } from "./Master.constants";
 
 function StateDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [title, setTitle] = useState();
+    const { states } = useGetStates();
 
     const { updateState } = useUpdateState(() => {
-        toast.success(`${ form.values.name} updated successsfully.`);
+        toast.success(`${form.values.name} updated successsfully.`);
         onSubmit();
     }, errorCallback);
 
@@ -53,8 +55,8 @@ function StateDetails({ action, data, onClose, onSubmit }) {
                 ],
                 styleClass: 'text-uppercase',
                 content: getValue(data, 'code')
-                
-            }   
+
+            }
         ],
     };
 
@@ -62,6 +64,12 @@ function StateDetails({ action, data, onClose, onSubmit }) {
         preventDefault(e);
         if (form.valid) {
             const { code, name } = form.values;
+            const existingData = states.filter(x => x.id !== (data || {}).id);
+            const duplicateStates = FindDuplicateMasters(existingData, { code, name });
+            if (duplicateStates.length) {
+                toast.error(`${duplicateStates.length} state(s) matching code or name. Please update code or name`);
+                return;
+            }
             const payload = {
                 code: code.toUpperCase(),
                 name,

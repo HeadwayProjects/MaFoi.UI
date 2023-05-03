@@ -110,10 +110,10 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
         preventDefault(e);
         if (form.valid) {
             const { code, name, state, city } = locationDetails;
-            const existingData = locations.filter(x => x.id !== (data || {}).id && x.stateId === state.value && x.cityId === city.value);
+            const existingData = action === ACTIONS.EDIT ? locations.filter(x => x.id !== (data || {}).id) : [...locations];
             const duplicateLocations = FindDuplicateMasters(existingData, { code, name });
             if (duplicateLocations.length) {
-                toast.error(`There are ${duplicateLocations.length} locations matching code or name. Please update code or name`);
+                toast.error(`${duplicateLocations.length} location(s) matching code or name. Please update code or name`);
                 return;
             }
             const payload = {
