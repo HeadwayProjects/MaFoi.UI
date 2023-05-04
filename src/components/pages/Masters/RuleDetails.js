@@ -60,7 +60,7 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'section',
+                name: 'sectionNo',
                 label: 'Section',
                 validate: [
                     { type: validatorTypes.REQUIRED },
@@ -70,7 +70,7 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'rule',
+                name: 'ruleNo',
                 label: 'Rule',
                 validate: [
                     { type: validatorTypes.REQUIRED },
@@ -83,13 +83,13 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
 
     function submitData() {
         if (form.valid) {
-            const { name, description, type, section, rule } = form.values || {};
+            const { name, description, type, sectionNo, ruleNo } = form.values || {};
             const payload = {
                 name,
                 description,
                 type: type.value,
-                section,
-                rule
+                sectionNo,
+                ruleNo
             }
             if (action === ACTIONS.ADD) {
                 createRule(payload);

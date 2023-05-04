@@ -151,6 +151,7 @@ export function useUpdateActivity(onSuccess, onError) {
         {
             onError,
             onSuccess: (response) => {
+                console.log(response)
                 const data = (response || {}).data || {};
                 onSuccess(data);
             }
@@ -162,7 +163,7 @@ export function useUpdateActivity(onSuccess, onError) {
 export function useDeleteActivity(onSuccess, onError) {
     const { mutate: deleteActivity, error, isLoading: deleting } = useMutation(
         ['deleteActivity'],
-        async (id) => await api.del(`/api/Activity/Delete?Id=${id}`),
+        async ({id}) => await api.del(`/api/Activity/Delete?Id=${id}`),
         {
             onError,
             onSuccess: (response) => {

@@ -9,6 +9,7 @@ import ConfirmModal from "../../common/ConfirmModal";
 import { useDeleteActivity, useGetActivities } from "../../../backend/masters";
 import { GetMastersBreadcrumb } from "./Master.constants";
 import PageLoader from "../../shared/PageLoader";
+import { toast } from "react-toastify";
 
 function Activity() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Activity'));
@@ -19,7 +20,10 @@ function Activity() {
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
     const { activities, isFetching, refetch } = useGetActivities();
-    const { deleteActivity, deleting } = useDeleteActivity();
+    const { deleteActivity, deleting } = useDeleteActivity(({name}) => {
+        toast.success(`Activiy ${name} deleted successfully.`);
+        refetch();
+    });
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();

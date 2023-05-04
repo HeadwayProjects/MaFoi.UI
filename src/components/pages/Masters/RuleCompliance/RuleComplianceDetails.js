@@ -99,7 +99,7 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'risk',
                 label: 'Risk',
-                content: getValue(compliance, 'risk'),
+                content: getValue(compliance, 'risk.label'),
                 options: RiskType.map(x => {
                     return { id: x, name: x }
                 }),
@@ -111,19 +111,19 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.CHECKBOX,
                 name: 'impriosonment',
                 label: 'Impriosonment',
-                content: getValue(compliance, 'impriosonment')
+                content: getValue(compliance, 'impriosonment') ? 'Yes' : 'No'
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.CHECKBOX,
                 name: 'continuingPenalty',
                 label: 'Continuing Penalty',
-                content: getValue(compliance, 'continuingPenalty')
+                content: getValue(compliance, 'continuingPenalty') ? 'Yes' : 'No'
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.CHECKBOX,
                 name: 'cancellationSuspensionOfLicense',
                 label: 'Cancellation/Suspension Of License',
-                content: getValue(compliance, 'cancellationSuspensionOfLicense')
+                content: getValue(compliance, 'cancellationSuspensionOfLicense') ? 'Yes' : 'No'
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -138,7 +138,7 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'complianceNature',
                 label: 'Compliance Nature',
-                content: getValue(compliance, 'complianceNature'),
+                content: getValue(compliance, 'complianceNature.label'),
                 options: ActivityType.map(x => {
                     return { id: x, name: x }
                 }),
@@ -150,7 +150,7 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'auditType',
                 label: 'Audit Type',
-                content: getValue(compliance, 'auditType'),
+                content: getValue(compliance, 'auditType.label'),
                 options: AuditType.map(x => {
                     return { id: x, name: x }
                 }),

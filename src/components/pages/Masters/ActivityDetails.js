@@ -14,15 +14,17 @@ import PageLoader from "../../shared/PageLoader"
 function ActivityDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [activity, setActivity] = useState({ hideButtons: true })
-    const { createActivity, creating } = useCreateActivity(({ id, message }) => {
+    const { createActivity, creating } = useCreateActivity(({ id, name, message }) => {
         if (id) {
+            toast.success(`${name} created successfully.`);
             onSubmit();
         } else {
             toast.error(message);
         }
     }, errorCallback);
-    const { updateActivity, updating } = useUpdateActivity(() => ({ id, message }) => {
+    const { updateActivity, updating } = useUpdateActivity(({ id, name,  message }) => {
         if (id) {
+            toast.success(`${name} updated successfully.`);
             onSubmit();
         } else {
             toast.error(message);
@@ -88,7 +90,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
         toast.error(ERROR_MESSAGES.DEFAULT);
     }
 
-    function onSubmit() {
+    function handleSubmit() {
         if (form.valid) {
             const { name, type, periodicity, calendarType } = form.values;
             const payload = {
@@ -100,6 +102,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
             if (action === ACTIONS.ADD) {
                 createActivity(payload);
             } else if (action === ACTIONS.EDIT) {
+                payload['id'] = data.id;
                 updateActivity(payload);
             }
         }
@@ -137,7 +140,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
                         action !== ACTIONS.VIEW ?
                             <>
                                 <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onClose}>{'Cancel'}</Button>
-                                <Button variant="primary" onClick={onSubmit} className="px-4" disabled={!form.valid}>{'Submit'}</Button>
+                                <Button variant="primary" onClick={handleSubmit} className="px-4" disabled={!form.valid}>{'Submit'}</Button>
                             </> :
                             <Button variant="primary" onClick={onClose} className="px-4 ms-auto">{'Close'}</Button>
 
