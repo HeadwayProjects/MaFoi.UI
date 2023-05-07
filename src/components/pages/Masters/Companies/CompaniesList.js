@@ -167,9 +167,9 @@ function CompaniesList({ changeView }) {
         <>
             <div className="d-flex flex-column mx-0 mt-4">
                 <div className="d-flex flex-row justify-content-center mb-4">
-                    <div className="col-6">
+                    <div className="col-12 px-4">
                         <div className="d-flex">
-                            <InputGroup>
+                            {/* <InputGroup>
                                 <input type="text" className="form-control" placeholder="Search for Company - Code / Name" />
                                 <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
                                     <div className="d-flex flex-row align-items-center text-white">
@@ -177,8 +177,8 @@ function CompaniesList({ changeView }) {
                                         <span className="ms-2">Search</span>
                                     </div>
                                 </InputGroup.Text>
-                            </InputGroup>
-                            <Button variant="primary" className="px-4 ms-4 text-nowrap" onClick={() => changeView(VIEWS.ADD)}>Add New Company</Button>
+                            </InputGroup> */}
+                            <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>Add New Company</Button>
                         </div>
                     </div>
                 </div>

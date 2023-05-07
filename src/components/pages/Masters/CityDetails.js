@@ -111,7 +111,7 @@ function CityDetails({ action, data, onClose, onSubmit }) {
 
     useEffect(() => {
         if (data) {
-            setCity({...city, ...data});
+            setCity({ ...city, ...data, state: { value: data.state.id, label: data.state.name } });
             setStateId(data.stateId);
         }
     }, [data]);

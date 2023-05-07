@@ -8,13 +8,10 @@ import CityDetails from "./CityDetails";
 import ConfirmModal from "../../common/ConfirmModal";
 import { useGetCities ,useDeleteCity} from "../../../backend/masters";
 import { toast } from "react-toastify";
+import { GetMastersBreadcrumb } from "./Master.constants";
 
 function City() {
-    const [breadcrumb] = useState([
-        { id: 'home', label: 'Home', path: '/' },
-        { id: 'masters', label: 'Masters', path: '/masters/act' },
-        { id: 'city', label: 'City' }
-    ]);
+    const [breadcrumb] = useState(GetMastersBreadcrumb('City'));
     const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [city, setCity] = useState(null);
@@ -52,7 +49,7 @@ function City() {
     const columns = [
         { title: "Code", field: "code", formatter: reactFormatter(<CellTmpl />) },
         { title: "Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
-        { title: "state", field: "state", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
+        { title: "State", field: "state.name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         {
             title: "", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -106,9 +103,9 @@ function City() {
             <MastersLayout title="Masters - City" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
-                        <div className="col-6">
+                        <div className="col-12 px-4">
                             <div className="d-flex">
-                                <InputGroup>
+                                {/* <InputGroup>
                                     <input type="text" className="form-control" placeholder="Search for City / Code / Name" />
                                     <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
                                         <div className="d-flex flex-row align-items-center text-white">
@@ -116,8 +113,8 @@ function City() {
                                             <span className="ms-2">Search</span>
                                         </div>
                                     </InputGroup.Text>
-                                </InputGroup>
-                                <Button variant="primary" className="px-4 ms-4 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New City</Button>
+                                </InputGroup> */}
+                                <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New City</Button>
                             </div>
                         </div>
                     </div>

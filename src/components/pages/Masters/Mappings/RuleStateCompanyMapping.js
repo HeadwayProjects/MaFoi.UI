@@ -33,10 +33,10 @@ function RuleStateCompanyMapping() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event) => {
+                {/* <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event) => {
                     setMapping(row);
                     setAction(ACTIONS.DELETE)
-                }} />
+                }} /> */}
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
                     setMapping(row);
                     setAction(ACTIONS.VIEW)
@@ -48,7 +48,7 @@ function RuleStateCompanyMapping() {
     const columns = [
         { title: "Act", field: "act.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Rule", field: "rule.name", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Activity", field: "acivity.name", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Activity", field: "activity.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "State", field: "state.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Company", field: "company.name", formatter: reactFormatter(<CellTmpl />) },
         {
@@ -67,6 +67,14 @@ function RuleStateCompanyMapping() {
 
     function formatApiResponse(params, list, pagination = {}) {
         const total = list.length;
+        list = list.map(map => {
+            const { company } = map;
+            const { state, actRuleActivityMapping } = map.actStateMapping || {};
+            const { act, rule, activity } = actRuleActivityMapping || {};
+            return {
+                act, rule, activity, state, company
+            }
+        });
         const tdata = {
             data: list,
             total,
@@ -104,9 +112,9 @@ function RuleStateCompanyMapping() {
             <MastersLayout title="Masters - Mapping" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
-                        <div className="col-6">
+                        <div className="col-12">
                             <div className="d-flex">
-                                <InputGroup>
+                                {/* <InputGroup>
                                     <input type="text" className="form-control" placeholder="Search for Act / State / Acitivty" />
                                     <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
                                         <div className="d-flex flex-row align-items-center text-white">
@@ -114,8 +122,8 @@ function RuleStateCompanyMapping() {
                                             <span className="ms-2">Search</span>
                                         </div>
                                     </InputGroup.Text>
-                                </InputGroup>
-                                <Button variant="primary" className="px-4 ms-4 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Mapping</Button>
+                                </InputGroup> */}
+                                <Button variant="primary" className="px-4 ms-auto me-4 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Mapping</Button>
                             </div>
                         </div>
                     </div>

@@ -455,7 +455,7 @@ export function useDeleteRuleCompliance(onSuccess, onError) {
 export function useStateRuleCompanyMappings(payload) {
     const { data, isFetching, refetch } = useQuery(
         ['mappings', payload],
-        async () => await api.post(`/api/Mappings/GetAll`, payload || {}),
+        async () => await api.get(`/api/Mappings/GetActStateCompList`, payload || {}),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false

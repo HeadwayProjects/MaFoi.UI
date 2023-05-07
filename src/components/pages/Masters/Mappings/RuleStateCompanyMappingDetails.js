@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useCreateStateRuleCompanyMapping, useGetActivities, useGetActs, useGetCompanies, useGetRules, useGetStates } from "../../../../backend/masters";
 import { toast } from "react-toastify";
-import { ERROR_MESSAGES } from "../../../../utils/constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue, preventDefault } from "../../../../utils/common";
 import { Button, Modal } from "react-bootstrap";
@@ -18,12 +18,12 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     const { activities } = useGetActivities();
     const { states } = useGetStates();
     const { companies } = useGetCompanies();
-    const { createStateRuleCompanyMapping, creating } = useCreateStateRuleCompanyMapping(({ id, message }) => {
-        if (id) {
+    const { createStateRuleCompanyMapping, creating } = useCreateStateRuleCompanyMapping(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
             toast.success(`Mapping created successfully.`);
             onSubmit();
         } else {
-            toast.error(message);
+            toast.error(value || ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
 
