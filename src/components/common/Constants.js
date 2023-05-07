@@ -63,6 +63,8 @@ export const MONTHS = [
     { value: 'December', label: 'December' }
 ]
 
+export const USER_STATUS = ['Active', 'InActive'];
+
 export const YEARS = (() => {
     const year = new Date().getFullYear();
     let years = [year + 1];

@@ -5,44 +5,39 @@ import * as auth from "../../backend/auth";
 import { preventDefault } from '../../utils/common';
 import Icon from '../common/Icon';
 import { getBasePath } from '../../App';
+import { ROLE_MAPPING } from '../../containers/AuthenticatedContent';
 
 const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard' },
-    // {
-    //     id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters', children: [
-    //         { id: 'law', url: '/masters/law', label: 'Law' },
-    //         { id: 'Act', url: '/masters/Act', label: 'Act' },
-    //         { id: 'activity', url: '/masters/activity', label: 'Activity' },
-    //         { id: 'rule', url: '/masters/rule', label: 'Rule' },
-    //         { id: 'state', url: '/masters/state', label: 'State' },
-    //         { id: 'city', url: '/masters/city', label: 'City' },
-    //         { id: 'location', url: '/masters/location', label: 'Location' },
-    //         { id: 'companies', url: '/masters/companies', label: 'Companies' },
-    //         { id: 'compliance', url: '/masters/compliance', label: 'Rule Compliance' }
-    //     ]
-    // },
-    { id: 'manage-users', url: '/manage-users', icon: 'users', label: 'Manage Users', disable: true },
-    // { id: 'input-module', url: '/input-modules', icon: 'input', label: 'Input Module', disable: true },
-    { id: 'activities', url: '/activities', icon: 'task', label: 'Activites' },
+    {
+        id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters', children: [
+            { id: 'law', url: '/masters/law', label: 'Law' },
+            { id: 'Act', url: '/masters/Act', label: 'Act' },
+            { id: 'activity', url: '/masters/activity', label: 'Activity' },
+            { id: 'rule', url: '/masters/rule', label: 'Rule' },
+            { id: 'state', url: '/masters/state', label: 'State' },
+            { id: 'city', url: '/masters/city', label: 'City' },
+            { id: 'location', url: '/masters/location', label: 'Location' },
+            { id: 'companies', url: '/masters/companies', label: 'Companies' },
+            { id: 'compliance', url: '/masters/compliance', label: 'Rule Compliance' },
+            { id: 'mapping', url: '/masters/mapping', label: 'Mappings' }
+        ]
+    },
+    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities' },
+    { id: 'manageUsers', url: '/manageUsers', icon: 'users', label: 'Manage Users' },
     { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true }
 ];
 
-const VendorPages = ['dashboard', 'activities'];
-
 function Sidenav() {
     const [user] = useState(auth.getUserDetails());
-    const [isVendor, setIsVendor] = useState(true);
     const [sideMenu, setSideMenu] = useState([]);
 
     useEffect(() => {
         if (user) {
-            setIsVendor(['VendorAdmin', 'VendorUser'].includes(user.role))
+            const pages = ROLE_MAPPING[user.role] || [];
+            setSideMenu(SideNavMenu.filter(x => pages.includes(x.id)));
         }
     }, [user]);
-
-    useEffect(() => {
-        setSideMenu(SideNavMenu.filter(x => isVendor ? VendorPages.includes(x.id) : true));
-    }, [isVendor]);
 
     function NavItem({ children, url, name, hasChild }) {
         const [isActive, setActive] = useState(false);

@@ -115,7 +115,6 @@ function AssociateCompanies({ company, changeView }) {
     });
 
     function formatApiResponse(params, list, pagination = {}) {
-        list = (list || []).filter(x => !x.isParent && x.parentCompanyId === company.id);
         const total = list.length;
         const tdata = {
             data: list,

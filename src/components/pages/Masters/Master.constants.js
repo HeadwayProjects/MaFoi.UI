@@ -75,3 +75,13 @@ export const CalendarType = [
 export const RiskType = ['Low', 'Medium', 'High'];
 
 export const AuditType = ['Statutory', 'Internal'];
+
+export const Revenue = ['$1M - $10M', '$10M - $20M', '$2M - $50M', '$50M - $100M'];
+
+export const Reputation = ['Good', 'Moderate', 'Bad'];
+
+export const CompanyStatus = ['Active', 'InActive'];
+
+export const EmployeesCount = ['1-100', '101 - 200', '201 - 500', '> 500'];
+
+export const Salutation = ['Mr.', 'Miss.', 'Mrs.']

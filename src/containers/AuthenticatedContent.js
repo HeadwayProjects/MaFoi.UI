@@ -18,17 +18,43 @@ import ChangePassword from "../components/pages/Authenticate/ChangePassword";
 import Login from "../components/pages/Authenticate/Login";
 import Navbar from "../components/shared/Navbar";
 import RuleCompliance from "../components/pages/Masters/RuleCompliance/RuleCompliance";
+import RuleStateCompanyMapping from "../components/pages/Masters/Mappings/RuleStateCompanyMapping";
+import MangeUsers from "../components/pages/UserManagement/ManageUsers";
+
+export const ROLE_MAPPING = {
+    AuditorAdmin: ['dashboard', 'activities'],
+    AuditorUser: ['dashboard', 'activities'],
+    VendorAdmin: ['dashboard', 'activities'],
+    VendorUser: ['dashboard', 'activities'],
+    SuperAdmin: ['masters', 'manageUsers']
+}
 
 function AuthenticatedContent() {
     const user = auth.getUserDetails() || {};
+    console.log(user);
     const hasToken = !!auth.getAuthToken();
-    const isVendor = ['VendorAdmin', 'VendorUser'].includes(user.role)
+    const isVendor = ['VendorAdmin', 'VendorUser'].includes(user.role);
+    const pages = ROLE_MAPPING[user.role] || [];
 
     function layout(children, layoutWithSidenav = true) {
         if (layoutWithSidenav) {
             return <LayoutWithSideNav>{children}</LayoutWithSideNav>
         }
         return <>{children}</>
+    }
+
+    function getHomePage() {
+        if (!hasToken) {
+            return <Login />
+        } else {
+            const page = pages[0] || 'dashboard';
+            if (page.includes('dashboard')) {
+                return layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
+            } else if (page.includes('masters')) {
+                return layout(<Law />)
+            }
+            return <></>
+        }
     }
 
     const routes = {
@@ -68,6 +94,12 @@ function AuthenticatedContent() {
         '/masters/compliance': () => (
             layout(<RuleCompliance />)
         ),
+        '/masters/mapping': () => (
+            layout(<RuleStateCompanyMapping />)
+        ),
+        '/manageUsers': () => (
+            layout(<MangeUsers />)
+        ),
         '/changePassword/:token': ({ token }) => (
             <>
                 <Navbar showUser={false} />
@@ -80,11 +112,7 @@ function AuthenticatedContent() {
         ),
         '/': () => (
             <>
-                {
-                    hasToken ?
-                        layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />) :
-                        <Login />
-                }
+                {getHomePage()}
             </>
         ),
         '/login': () => (

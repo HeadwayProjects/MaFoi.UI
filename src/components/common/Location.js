@@ -80,7 +80,7 @@ function Location({ onChange }) {
             </div>
             <div className="col-3 col-md-3">
                 <label className="filter-label"><small>Associate Company</small></label>
-                <Select placeholder='Asscociate Company' options={associateCompanies} onChange={setAssociateCompany} value={associateCompany} />
+                <Select placeholder='Associate Company' options={associateCompanies} onChange={setAssociateCompany} value={associateCompany} />
             </div>
             <div className="col-2 col-md-2">
                 <label className="filter-label"><small>Location</small></label>

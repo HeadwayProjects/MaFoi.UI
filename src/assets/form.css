@@ -4,6 +4,12 @@ textarea::placeholder {
     text-transform: initial !important;
 }
 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .form-label {
     margin-bottom: 0;
 }
@@ -72,4 +78,21 @@ textarea::placeholder {
 
 .select-control.error-field [class$="-control"] {
     border-color: var(--light-red);
+}
+
+
+.horizontal-form form {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-column-gap: 30px;
+    grid-row-gap: 12px;
+}
+
+.horizontal-form .grid-col-100 {
+    grid-column-start: 1;
+    grid-column-end: 4;
+}
+
+.horizontal-form .form-check {
+    min-height: 42px;
 }

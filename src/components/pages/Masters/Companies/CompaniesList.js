@@ -20,7 +20,7 @@ function CompaniesList({ changeView }) {
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
-    const { companies, isFetching, refetch } = useGetCompanies();
+    const { companies, isFetching, refetch } = useGetCompanies({isParent: true});
     const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
         refetch();
     }, () => toast.error(ERROR_MESSAGES.DEFAULT));
@@ -136,22 +136,6 @@ function CompaniesList({ changeView }) {
     });
 
     function formatApiResponse(params, list, pagination = {}) {
-        const _ac = {};
-        list.forEach(c => {
-            if (!c.isParent) {
-                if (!_ac[c.parentCompanyId]) {
-                    _ac[c.parentCompanyId] = 0;
-                }
-                _ac[c.parentCompanyId] += 1;
-            }
-        });
-        list = (list || []).filter(company => company.isParent);
-        list = list.map(c => {
-            return {
-                ...c,
-                associateCompanies: _ac[c.id] || 0
-            }
-        });
         const total = list.length;
         const tdata = {
             data: list,

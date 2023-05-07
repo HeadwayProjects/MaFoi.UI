@@ -6,11 +6,10 @@ export const LOGIN_FIELDS = {
     USERNAME: {
         component: componentTypes.TEXT_FIELD,
         name: 'username',
-        label: 'Email Address',
+        label: 'Username',
         fieldType: 'email',
         validate: [
-            { type: validatorTypes.REQUIRED },
-            { type: validatorTypes.PATTERN, pattern: PATTERNS.EMAIL, message: 'Invalid email address' }
+            { type: validatorTypes.REQUIRED }
         ]
     },
     PASSWORD: {
@@ -28,7 +27,8 @@ export const LOGIN_FIELDS = {
         fieldType: 'number',
         styleClass: 'text-center p-2 fw-bold letter-spacing-2',
         validate: [
-            { type: validatorTypes.REQUIRED }
+            { type: validatorTypes.REQUIRED },
+            { type: validatorTypes.MAX_LENGTH, threshold: 6 }
         ]
     },
     NEW_PASSWORD: {

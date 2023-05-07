@@ -13,9 +13,15 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
     const schema = {
         fields: [
             {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader1',
+                content: 'TDS Details',
+                className: 'grid-col-100 text-lg fw-bold'
+            },
+            {
                 component: componentTypes.TEXT_FIELD,
                 name: 'pan',
-                label: 'PAN No.',
+                label: 'PAN No',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
@@ -23,15 +29,43 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'tan',
-                label: 'TAN No.',
+                label: 'TAN No',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.WIZARD,
+                name: 'emptySpace1',
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'name',
+                label: 'Full Name',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
             },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'name',
-                label: 'Full Name.',
+                name: 'fatherName',
+                label: 'S/o D/o W/o ',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'designation',
+                label: 'Designation',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'phoneNumber',
+                label: 'Phone Number',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
@@ -39,7 +73,7 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'mobilenumber',
-                label: 'Mobile Number.',
+                label: 'Mobile Number',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
@@ -47,7 +81,7 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'email',
-                label: 'Email.',
+                label: 'Email',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
@@ -55,12 +89,77 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'place',
-                label: 'Place.',
+                label: 'Place',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
             },
-            
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'assessmentRange',
+                label: 'Asmt. Range'
+            },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader2',
+                content: 'PF Details',
+                className: 'grid-col-100 text-lg fw-bold'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pfAccountNo',
+                label: 'PF Account No'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pfBaseLimit',
+                label: 'PF Base Limit'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pfPercentageDeduction',
+                label: 'PF % Deduction'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'eps',
+                label: 'EPS'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pfAdminPercentage',
+                label: 'PF Admin %'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pf',
+                label: 'PF'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'edliAdminPercentage',
+                label: 'EDLI Admin %'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'edliPercentage',
+                label: '% of EDLI'
+            },
+            {
+                component: componentTypes.CHECKBOX,
+                name: 'autoGeneratePF',
+                label: 'Auto Generate Employee PF No'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pfEstablishmentCode',
+                label: 'PF Establishment Code'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pfEstablishmentId',
+                label: 'PF Establishment Id'
+            }
         ]
     }
 
@@ -77,7 +176,7 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
     return (
         <>
             <div className="card border-0 p-4 m-4 ">
-                <div className="d-flex flex-column h-100 justify-space-between col-5 p-4">
+                <div className="d-flex flex-column h-100 justify-space-between horizontal-form p-4">
                     <FormRenderer FormTemplate={FormTemplate}
                         initialValues={{ hideButtons: true }}
                         componentMapper={ComponentMapper}

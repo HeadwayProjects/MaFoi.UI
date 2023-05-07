@@ -30,6 +30,20 @@ function TextField(props) {
                 if (props.onPaste) {
                     props.onPaste(e);
                 }
+            },
+            onKeyDown: (e) => {
+                if (props.fieldType === 'number') {
+                    const key = e.charCode || e.keyCode || 0;
+                    const value = e.target.value;
+                    const keys = [8, 9, 13, 35, 36, 37, 39, 46, 110, 190];
+                    if (keys.includes(key) || (key >= 48 && key <= 57) || (key >= 96 && key <= 105)) {
+                        if (((key >= 48 && key <= 57) || (key >= 96 && key <= 105)) && `${value}`.length >= maxLength) {
+                            e.preventDefault();
+                        }
+                    } else {
+                        e.preventDefault();
+                    }
+                }
             }
         }
     }
@@ -128,6 +142,9 @@ function SelectField(props) {
     useEffect(() => {
         if (props.options) {
             setOptions((props.options || []).map(x => {
+                if (typeof x === 'string') {
+                    return { value: x, label: x };
+                }
                 return { value: x.id, label: x.name }
             }));
         }
@@ -144,6 +161,7 @@ function SelectField(props) {
                     id={name}
                     label="label"
                     menuPosition="fixed"
+                    isMulti={props.isMulti || false}
                     styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
                     {...onInput(input)}
                 />
@@ -198,13 +216,25 @@ function CheckboxField(props) {
 
 }
 
+function TabItemField(props) {
+    return (
+        <div className={`form-group ${props.className || ''}`}
+            dangerouslySetInnerHTML={{ __html: props.content || '--NA--' }}>
+        </div>
+    )
+}
+
 export const ComponentMapper = {
     [componentTypes.TEXT_FIELD]: TextField,
     [componentTypes.DATE_PICKER]: TextField,
     [componentTypes.TEXTAREA]: TextAreaField,
     [componentTypes.SELECT]: SelectField,
     [componentTypes.PLAIN_TEXT]: HtmlField,
-    [componentTypes.CHECKBOX]: CheckboxField
+    [componentTypes.CHECKBOX]: CheckboxField,
+    [componentTypes.WIZARD]: () => {
+        return (<div></div>)
+    },
+    [componentTypes.TAB_ITEM]: TabItemField
 };
 
 

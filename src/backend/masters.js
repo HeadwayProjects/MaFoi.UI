@@ -163,7 +163,7 @@ export function useUpdateActivity(onSuccess, onError) {
 export function useDeleteActivity(onSuccess, onError) {
     const { mutate: deleteActivity, error, isLoading: deleting } = useMutation(
         ['deleteActivity'],
-        async ({id}) => await api.del(`/api/Activity/Delete?Id=${id}`),
+        async ({ id }) => await api.del(`/api/Activity/Delete?Id=${id}`),
         {
             onError,
             onSuccess: (response) => {
@@ -380,7 +380,7 @@ export function useDeleteLocation(onSuccess, onError) {
 export function useGetCompanies(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['companies', payload],
-        async () => await api.get(`/api/Company/GetAll`),
+        async () => await api.get(`/api/Company/GetAll`, payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
@@ -450,4 +450,47 @@ export function useDeleteRuleCompliance(onSuccess, onError) {
         }
     );
     return { deleteRuleCompliance, error, deleting };
+}
+
+export function useStateRuleCompanyMappings(payload) {
+    const { data, isFetching, refetch } = useQuery(
+        ['mappings', payload],
+        async () => await api.post(`/api/Mappings/GetAll`, payload || {}),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+        }
+    );
+
+    return { mappings: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useCreateStateRuleCompanyMapping(onSuccess, onError) {
+    const { mutate: createStateRuleCompanyMapping, error, isLoading: creating } = useMutation(
+        ['createStateRuleCompanyMapping'],
+        async (payload) => await api.post('/api/Mappings/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createStateRuleCompanyMapping, error, creating };
+}
+
+export function useDeleteStateRuleCompanyMapping(onSuccess, onError) {
+    const { mutate: deleteStateRuleCompanyMapping, error, isLoading: deleting } = useMutation(
+        ['deleteStateRuleCompanyMapping'],
+        async (payload) => await api.post(`/api/Mappings/Delete`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteStateRuleCompanyMapping, error, deleting };
 }

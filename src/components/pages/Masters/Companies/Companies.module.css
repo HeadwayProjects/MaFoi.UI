@@ -1,0 +1,9 @@
+.addressField {
+    grid-row-start: 2;
+    grid-row-end: 5;
+}
+
+.addressField textarea {
+    height: 128px;
+    resize: none;
+}

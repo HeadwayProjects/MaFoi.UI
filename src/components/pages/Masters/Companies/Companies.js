@@ -15,7 +15,7 @@ export const VIEWS = {
 }
 
 function Companies() {
-    const [view, setView] = useState(VIEWS.LIST);
+    const [view, setView] = useState(VIEWS.ADD);
     const [breadcrumb, setBreadcrumb] = useState(GetMastersBreadcrumb('Companies'));
     const [viewData, setViewData] = useState(null);
 
