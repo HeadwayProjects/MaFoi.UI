@@ -24,7 +24,7 @@ const SideNavMenu = [
         ]
     },
     {
-        id: 'companies', url: '/companies/list', icon: '', label: 'Companies', children: [
+        id: 'companies', url: '/companies/list', icon: 'building', label: 'Companies', children: [
             { id: 'companies/list', url: '/companies/list', label: 'Manage Companies' },
             { id: 'companies/associateCompanies', url: '/companies/associateCompanies', label: 'Associate Companies' },
             { id: 'companies/locationMapping', url: '/companies/locationMapping', label: 'Location Mapping' },

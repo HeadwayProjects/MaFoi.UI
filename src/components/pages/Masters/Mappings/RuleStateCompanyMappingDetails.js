@@ -32,6 +32,22 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         toast.error(ERROR_MESSAGES.DEFAULT);
     }
 
+    function getRule(rule) {
+        return (
+            <div className="flex flex-column">
+                <div>{rule.name}</div>
+                {
+                    rule.sectionNo &&
+                    <div className="fst-italic text-sm fw-bold">Section No. {rule.sectionNo}</div>
+                }
+                {
+                    rule.ruleNo &&
+                    <div className="fst-italic text-sm fw-bold">Rule No. {rule.ruleNo}</div>
+                }
+            </div>
+        )
+    }
+
     const schema = {
         fields: [
             {
@@ -51,8 +67,13 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: getValue(mapping, 'rule.name'),
-                options: rules
+                content: action === ACTIONS.VIEW ? getRule(getValue(mapping, 'rule') || {}) : '',
+                options: (rules || []).map(x => {
+                    return {
+                        id: x.id,
+                        name: getRule(x)
+                    }
+                })
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,

@@ -186,7 +186,7 @@ function HtmlField(props) {
         <div className={`form-group ${props.className || ''}`}>
             <label className="form-label text-sm">{label}</label>
             <div className="input-group">
-                <div dangerouslySetInnerHTML={{ __html: props.content || '--NA--' }}></div>
+                <div>{props.content}</div>
             </div>
         </div>
     )

@@ -45,9 +45,31 @@ function RuleStateCompanyMapping() {
         )
     }
 
+    function RuleTmpl({ cell }) {
+        const rule = cell.getValue();
+        return (
+            <div className="d-flex flex-column h-100 justify-content-center">
+                <div className="ellipse">{rule.name}</div>
+                {
+                    (rule.sectionNo || rule.ruleNo) &&
+                    <div className="d-flex flex-row align-items-center" style={{gap: '5px'}}>
+                        {
+                            rule.sectionNo &&
+                            <span className="fst-italic text-sm fw-bold">Section No. {rule.sectionNo}</span>
+                        }
+                        {
+                            rule.ruleNo &&
+                            <span className="fst-italic text-sm fw-bold">Rule No. {rule.ruleNo}</span>
+                        }
+                    </div>
+                }
+            </div>
+        )
+    }
+
     const columns = [
         { title: "Act", field: "act.name", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Rule", field: "rule.name", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Rule", field: "rule", widthGrow: 2, formatter: reactFormatter(<RuleTmpl />) },
         { title: "Activity", field: "activity.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "State", field: "state.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Company", field: "company.name", formatter: reactFormatter(<CellTmpl />) },

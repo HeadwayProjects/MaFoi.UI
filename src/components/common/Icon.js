@@ -5,7 +5,7 @@ import { faTrash, faUpload, faInfoCircle, faSearch, faExternalLink } from "@fort
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import "./Icon.css";
-import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import { faBuilding, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 
 function Icon({ className, name, action, data, style, disabled, text, type }) {
     function onClick(event) {
@@ -107,6 +107,9 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
                     ),
                     'external-link': (
                         <FontAwesomeIcon icon={faExternalLink} />
+                    ),
+                    building: (
+                        <FontAwesomeIcon icon={faBuilding} />
                     )
                 }[name]}
             </span>
