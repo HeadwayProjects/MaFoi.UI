@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "./request";
 
 export function useGetLaws() {
@@ -378,6 +378,10 @@ export function useDeleteLocation(onSuccess, onError) {
 }
 
 export function useGetCompanies(payload, enabled = true) {
+    const queryClient = useQueryClient();
+    function invalidate() {
+        queryClient.invalidateQueries(['companies', payload])
+    }
     const { data, isFetching, refetch } = useQuery(
         ['companies', payload],
         async () => await api.get(`/api/Company/GetAll`, payload),
@@ -388,7 +392,7 @@ export function useGetCompanies(payload, enabled = true) {
         }
     );
 
-    return { companies: (data || {}).data || [], isFetching, refetch };
+    return { companies: (data || {}).data || [], isFetching, refetch, invalidate };
 }
 
 export function useCreateCompany(onSuccess, onError) {
@@ -567,4 +571,33 @@ export function useDeleteCompanyLocation(onSuccess, onError) {
         }
     );
     return { deleteCompanyLocation, error, deleting };
+}
+
+export function useGetUserCompanies(payload, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['userCompanies', payload],
+        async () => await api.get(`/api/Mappings/GetUserCompanyLocation`, payload || {}),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { userCompanies: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useCreateUserLocationMapping(onSuccess, onError) {
+    const { mutate: createUserLocationMapping, error, isLoading: creating } = useMutation(
+        ['createUserLocationMapping'],
+        async (payload) => await api.post('/api/Mappings/AddUserCompanyLocation', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createUserLocationMapping, error, creating };
 }

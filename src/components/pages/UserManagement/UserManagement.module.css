@@ -1,0 +1,31 @@
+.locationsList {
+    min-height: 200px;
+    height: calc(100vh - 372px);
+    margin: 0 -40px;
+    padding: 0 40px;
+    overflow: auto;
+}
+
+.locationDetails {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border: 1px solid var(--gray-800);
+}
+
+.locationDetails:hover {
+    background-color: var(--gray-400);
+    cursor: pointer;
+}
+
+.locationDetails svg {
+    width: 24px;
+    height: 24px;
+    opacity: 0.6;
+}
+
+.locationDetails:hover svg {
+    opacity: 1;
+}

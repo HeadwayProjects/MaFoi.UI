@@ -160,6 +160,7 @@ function AssociateCompanies() {
     useEffect(() => {
         if (query && query.company) {
             setParentCompanyId(query.company);
+            console.log(query.company)
         }
     }, [query]);
 
@@ -174,8 +175,9 @@ function AssociateCompanies() {
             setList((parentCompanies || []).map(x => {
                 return { value: x.id, label: x.name };
             }));
-            if (parentCompanyId) {
-                const _parentCompany = parentCompanies.find(x => x.id === parentCompanyId) || {};
+            if (parentCompanyId || (query || {}).company) {
+                const _parentCompanyId = parentCompanyId || (query || {}).company;
+                const _parentCompany = parentCompanies.find(x => x.id === _parentCompanyId) || {};
                 setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
             } else {
                 const _parentCompany = parentCompanies[0];

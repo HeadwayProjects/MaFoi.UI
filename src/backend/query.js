@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "./request";
 
 export function useGetUserCompanies() {
-    const { data, isFetching } = useQuery(
+    const { data, isFetching, refetch } = useQuery(
         ['userCompanies'],
         async () => await api.get('/api/Company/GetUserCompanies'),
         {
@@ -11,7 +11,7 @@ export function useGetUserCompanies() {
         }
     );
 
-    return { userCompanies: (data || {}).data || [], isFetching };
+    return { userCompanies: (data || {}).data || [], isFetching, refetch };
 }
 
 export function useGetActivityDocuments(activityId) {

@@ -22,6 +22,7 @@ import MangeUsers from "../components/pages/UserManagement/ManageUsers";
 import AssociateCompanies from "../components/pages/Masters/Companies/AssociateCompanies";
 import Companies from "../components/pages/Masters/Companies/Companies";
 import CompanyLocationMappings from "../components/pages/Masters/Companies/CompanyLocationMappings";
+import UserCompanies from "../components/pages/UserManagement/UserCompanies";
 
 export const ROLE_MAPPING = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -108,7 +109,7 @@ function AuthenticatedContent() {
             layout(<MangeUsers />)
         ),
         '/userManagement/mapping': () => (
-            layout(<MangeUsers />)
+            layout(<UserCompanies />)
         ),
         '/changePassword/:token': ({ token }) => (
             <>

@@ -23,7 +23,7 @@ function CompanyLocationDetails({ action, parentCompany, associateCompany, data,
             toast.success(`${response.name} created successsfully.`);
             onSubmit();
         } else {
-            toast.error(response.message || ERROR_MESSAGES.ERROR);
+            toast.error(response.value || ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
     // const { updateCompany, updating } = useUpdateCompany((response) => {

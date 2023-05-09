@@ -20,7 +20,7 @@ function CompaniesList({ changeView }) {
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [payload, setPayload] = useState({ isParent: true });
-    const { companies, isFetching, refetch } = useGetCompanies({ isParent: true });
+    const { companies, isFetching, refetch, invalidate } = useGetCompanies({ isParent: true });
     const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
         refetch();
     }, () => toast.error(ERROR_MESSAGES.DEFAULT));
@@ -158,6 +158,12 @@ function CompaniesList({ changeView }) {
             setData(formatApiResponse(params, companies));
         }
     }, [isFetching]);
+
+    useEffect(() => {
+        return () => {
+            invalidate();
+        };
+    }, [])
 
     return (
         <>
