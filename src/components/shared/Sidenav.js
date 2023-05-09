@@ -53,7 +53,7 @@ function Sidenav() {
         }
     }, [user]);
 
-    function NavItem({ children, url, name, hasChild }) {
+    function NavItem({ children, url, name, hasChild, index, parentIndex }) {
         const [isActive, setActive] = useState(false);
         const urlPath = window.location.pathname;
         function onClick(e) {
@@ -65,7 +65,10 @@ function Sidenav() {
 
         useEffect(() => {
             if (urlPath) {
-                setActive(urlPath.includes(name))
+                setActive(urlPath.includes(name));
+                if (urlPath === '/' && parentIndex === 0 && (index === undefined || index === 0)) {
+                    setActive(true);
+                }
             }
         }, [urlPath]);
 
@@ -82,11 +85,11 @@ function Sidenav() {
                 user !== null ?
                     <ul className='sideNav m-0 p-0'>
                         {
-                            sideMenu.map(item => {
+                            sideMenu.map((item, index) => {
                                 return (
                                     <li key={item.id} >
                                         <button type="button" disabled={item.disable}>
-                                            <NavItem url={item.url} name={item.id} hasChild={(item.children || []).length > 0}>
+                                            <NavItem url={item.url} name={item.id} hasChild={(item.children || []).length > 0} parentIndex={index}>
                                                 <div className='d-flex flex-row align-items-center w-100'>
                                                     {
                                                         item.icon &&
@@ -101,8 +104,8 @@ function Sidenav() {
                                                 item.children &&
                                                 <div className='d-flex flex-column w-100 justify-content-start children'>
                                                     {
-                                                        item.children.map(child => (
-                                                            <NavItem url={child.url} key={child.id} name={child.id}>
+                                                        item.children.map((child, childIndex) => (
+                                                            <NavItem url={child.url} key={child.id} name={child.id} index={childIndex} parentIndex={index}>
                                                                 <span className="sidenav-item-label">{child.label}</span>
                                                             </NavItem>
                                                         ))
