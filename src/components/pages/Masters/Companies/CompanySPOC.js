@@ -1,15 +1,17 @@
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { Button } from "react-bootstrap";
-import { Salutation } from "../Master.constants";
 import styles from "./Companies.module.css"
+import { COMPANY_REQUEST } from "./Companies.constants";
 
 function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
     const [form, setForm] = useState({});
+    const [companyDetails, setCompanyDetails] = useState({ hideButtons: true });
 
     function debugForm(_form) {
         setForm(_form);
+        setCompanyDetails(_form.values);
     }
 
     const schema = {
@@ -22,7 +24,7 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
             },
             {
                 component: componentTypes.TEXTAREA,
-                name: 'address',
+                name: 'companyAddress',
                 label: 'Address',
                 validate: [
                     { type: validatorTypes.REQUIRED }
@@ -54,19 +56,19 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 content: 'Company Phone',
                 className: 'grid-col-100 text-lg fw-bold pb-0'
             },
+            // {
+            //     component: componentTypes.TEXT_FIELD,
+            //     name: 'phone',
+            //     label: 'Phone',
+            //     validate: [
+            //         { type: validatorTypes.REQUIRED },
+            //         { type: validatorTypes.MAX_LENGTH, threshold: 10 },
+            //         { type: validatorTypes.PATTERN, pattern: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, message: 'Should be numeric value of length 10' }
+            //     ]
+            // },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'phone',
-                label: 'Phone',
-                validate: [
-                    { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.MAX_LENGTH, threshold: 10 },
-                    { type: validatorTypes.PATTERN, pattern: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, message: 'Should be numeric value of length 10' }
-                ]
-            },
-            {
-                component: componentTypes.TEXT_FIELD,
-                name: 'mobile',
+                name: 'contactNumber',
                 label: 'Mobile',
                 validate: [
                     { type: validatorTypes.REQUIRED },
@@ -88,36 +90,36 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 content: 'Contact Person',
                 className: 'grid-col-100 text-lg fw-bold'
             },
-            {
-                component: componentTypes.SELECT,
-                name: 'salutation',
-                label: 'Salutation',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                options: Salutation.map(x => {
-                    return { id: x, name: x }
-                })
-            },
+            // {
+            //     component: componentTypes.SELECT,
+            //     name: 'salutation',
+            //     label: 'Salutation',
+            //     validate: [
+            //         { type: validatorTypes.REQUIRED }
+            //     ],
+            //     options: Salutation.map(x => {
+            //         return { id: x, name: x }
+            //     })
+            // },
+            // {
+            //     component: componentTypes.TEXT_FIELD,
+            //     name: 'firstName',
+            //     label: 'First Name',
+            //     validate: [
+            //         { type: validatorTypes.REQUIRED }
+            //     ]
+            // },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'firstName',
-                label: 'First Name',
+                name: 'contactPersonName',
+                label: 'Name',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
             },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'lastName',
-                label: 'Last Name',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ]
-            },
-            {
-                component: componentTypes.TEXT_FIELD,
-                name: 'designation',
+                name: 'contactPersonDesignation',
                 label: 'Designation',
                 validate: [
                     { type: validatorTypes.REQUIRED }
@@ -126,10 +128,7 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'department',
-                label: 'Department',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ]
+                label: 'Department'
             },
             {
                 component: componentTypes.TAB_ITEM,
@@ -137,47 +136,85 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 content: 'Contact Phone',
                 className: 'grid-col-100 text-lg fw-bold'
             },
+            // {
+            //     component: componentTypes.TEXT_FIELD,
+            //     name: 'business',
+            //     label: 'Business'
+            // },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'business',
-                label: 'Business'
+                name: 'contactPersonMobile',
+                label: 'Mobile',
+                validate: [
+                    { type: validatorTypes.REQUIRED },
+                    { type: validatorTypes.MAX_LENGTH, threshold: 10 },
+                    { type: validatorTypes.PATTERN, pattern: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, message: 'Should be numeric value of length 10' }
+                ]
             },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'mobile',
-                label: 'Mobile'
-            },
-            {
-                component: componentTypes.TEXT_FIELD,
-                name: 'businessEmail',
-                label: 'Business Email'
+                name: 'contactPersonEmail',
+                label: 'Business Email',
+                validate: [
+                    { type: validatorTypes.PATTERN, pattern: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, message: 'Invalid email format.' }
+                ]
             }
         ]
     }
 
     function handleSubmit() {
-        // if (form.valid) {
-        onNext();
-        // }
+        if (form.valid) {
+            const {
+                companyAddress, city, state, country, contactNumber, email,
+                contactPersonName, contactPersonDesignation, contactPersonMobile, contactPersonEmail
+            } = form.values
+            const payload = {
+                ...COMPANY_REQUEST,
+                ...company,
+                companyAddress,
+                city,
+                state,
+                country: country.value,
+                contactNumber,
+                email,
+                contactPersonName,
+                contactPersonDesignation,
+                contactPersonMobile,
+                contactPersonEmail
+            }
+            delete payload.hideButtons;
+            onNext(payload);
+        }
     }
 
     function handleCancel() {
         onPrevious();
     }
 
+    useEffect(() => {
+        if (company) {
+            const { country } = company || {};
+            setCompanyDetails({
+                hideButtons: true,
+                ...company,
+                country: Boolean(country) ? { value: country, label: country } : { value: 'India', label: 'India' }
+            });
+        }
+    }, [company]);
+
     return (
         <>
             <div className="card border-0 p-4 m-4 ">
                 <div className="d-flex flex-column h-100 justify-space-between horizontal-form p-4">
                     <FormRenderer FormTemplate={FormTemplate}
-                        initialValues={{ hideButtons: true }}
+                        initialValues={companyDetails}
                         componentMapper={ComponentMapper}
                         schema={schema}
                         debug={debugForm}
                     />
                     <div className="d-flex justify-content-between mt-4">
                         <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={handleCancel}>{'Previous'}</Button>
-                        <Button variant="primary" onClick={handleSubmit} className="px-4">{'Save & Continue'}</Button>
+                        <Button variant="primary" onClick={handleSubmit} className="px-4">{'Save'}</Button>
                     </div>
                 </div>
             </div>

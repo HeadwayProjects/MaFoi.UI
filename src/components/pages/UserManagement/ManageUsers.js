@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ACTIONS } from "../../common/Constants";
+import { ACTIONS, STATUS } from "../../common/Constants";
 import { useDeleteUser, useGetUsers } from "../../../backend/users";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../utils/constants";
@@ -51,12 +51,30 @@ function MangeUsers() {
         )
     }
 
+    function RoleTmpl({ cell }) {
+        const roles = (cell.getValue() || []).map(x => x.description).join(', ');
+        return (
+            <div className="d-flex flex-row align-items-center h-100">
+                {roles}
+            </div>
+        )
+    }
+
+    function StatusTmpl({ cell }) {
+        const value = cell.getValue();
+        return (
+            <div className="d-flex flex-row align-items-center h-100">
+                {value ? STATUS.ACTIVE : STATUS.INACTIVE}
+            </div>
+        )
+    }
+
     const columns = [
         { title: "Name", field: "name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Username", field: "userName", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Role", field: "role.description", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Role", field: "userRoles", formatter: reactFormatter(<RoleTmpl />), headerSort: false },
         { title: "Email", field: "email", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Status", field: "status", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Status", field: "status", formatter: reactFormatter(<StatusTmpl />) },
         {
             title: "", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -74,12 +92,7 @@ function MangeUsers() {
     function formatApiResponse(params, list, pagination = {}) {
         const total = list.length;
         const tdata = {
-            data: list.map(x => {
-                return {
-                    ...x,
-                    role: x.userRoles[0]
-                }
-            }),
+            data: list,
             total,
             last_page: Math.ceil(total / params.size) || 1,
             page: params.page || 1
@@ -111,9 +124,9 @@ function MangeUsers() {
             <MastersLayout title="User Management" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
-                        <div className="col-6">
+                        <div className="col-12 px-4">
                             <div className="d-flex">
-                                <InputGroup>
+                                {/* <InputGroup>
                                     <input type="text" className="form-control" placeholder="Search for User / Name" />
                                     <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
                                         <div className="d-flex flex-row align-items-center text-white">
@@ -121,8 +134,8 @@ function MangeUsers() {
                                             <span className="ms-2">Search</span>
                                         </div>
                                     </InputGroup.Text>
-                                </InputGroup>
-                                <Button variant="primary" className="px-4 ms-4 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New User</Button>
+                                </InputGroup> */}
+                                <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New User</Button>
                             </div>
                         </div>
                     </div>

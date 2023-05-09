@@ -391,10 +391,40 @@ export function useGetCompanies(payload, enabled = true) {
     return { companies: (data || {}).data || [], isFetching, refetch };
 }
 
+export function useCreateCompany(onSuccess, onError) {
+    const { mutate: createCompany, error, isLoading: creating } = useMutation(
+        ['createCompany'],
+        async (payload) => await api.post('/api/Company/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createCompany, error, creating };
+}
+
+export function useUpdateCompany(onSuccess, onError) {
+    const { mutate: updateCompany, error, isLoading: updating } = useMutation(
+        ['updateCompany'],
+        async (payload) => await api.put('/api/Company/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateCompany, error, updating };
+}
+
 export function useDeleteCompany(onSuccess, onError) {
     const { mutate: deleteCompany, error } = useMutation(
         ['deleteCompany'],
-        async (id) => await api.del(`/api/Company/Delete?id=${id}`),
+        async (id) => await api.del(`/api/Company/Delete?Id=${id}`),
         {
             onError,
             onSuccess

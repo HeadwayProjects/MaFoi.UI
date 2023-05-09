@@ -164,7 +164,7 @@ function Table(props) {
             // const _total = (props.data || {}).total || 0;
             // setPage(_page);
             // setLastPage(_lastPage);
-            if (table.replaceData) {
+            if (table.replaceData && (table.rowManager || {}).renderer) {
                 try {
                     table.replaceData((props.data || {}).data || []);
                     if (((props.data || {}).data || []).length === 0) {

@@ -3,35 +3,50 @@ import { useDeleteCompany, useGetCompanies } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
 import Icon from "../../../common/Icon";
-import { VIEWS } from "./Companies";
 import { ACTIONS, TOOLTIP_DELAY } from "../../../common/Constants";
 import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
 import { Button, InputGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import ViewCompany from "./ViewCompany";
 import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
-import styles from "../Masters.module.css";
-import { Link } from "raviger";
-import { preventDefault } from "../../../../utils/common";
+import { useQueryParams } from "raviger";
+import Select from 'react-select';
+import AssociateCompanyDetails from "./AssociateCompanyDetails";
+import { COMPANY_STATUS } from "./Companies.constants";
 
-function AssociateCompanies({ company, changeView }) {
+function AssociateCompanies() {
+    const [query] = useQueryParams();
     const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
+    const [parentCompanyId, setParentCompanyId] = useState(null);
+    const [parentCompany, setParentCompany] = useState(null);
     const [associateCompany, setAssociateCompany] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
-    const { companies, isFetching, refetch } = useGetCompanies({ isParent: false, parentCompanyId: company.parentCompanyId });
+    const { companies: parentCompanies, isFetching: fetching } = useGetCompanies({ isParent: true });
+    const { companies, isFetching, refetch } = useGetCompanies({ isParent: false, parentCompanyId: (parentCompany || {}).value }, Boolean(parentCompany));
+    const [list, setList] = useState([]);
     const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
         refetch();
     }, () => toast.error(ERROR_MESSAGES.DEFAULT));
+
+    function onCompanyChange(e) {
+        setParentCompany(e);
+    }
+
+    function submitCallback() {
+        setAction(ACTIONS.NONE);
+        setAssociateCompany(null);
+        refetch();
+    }
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
                 <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event) => {
-                    changeView(VIEWS.EDIT, { company: row, parentCompany: company });
+                    setAssociateCompany(row);
+                    setAction(ACTIONS.EDIT);
                 }} />
                 <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event) => {
                     setAssociateCompany(row);
@@ -66,16 +81,12 @@ function AssociateCompanies({ company, changeView }) {
         )
     }
 
-    function LocationTmpl({ cell }) {
-        const row = cell.getData();
-        const { location, city, state } = row;
-        const tooltip = `${(location || {}).name || 'NA'} - ${(city || {}).name || 'NA'} - ${(state || {}).name || 'NA'}`
+    function StatusTmpl({ cell }) {
+        const value = cell.getValue();
         return (
-            <OverlayTrigger overlay={<Tooltip>{tooltip}</Tooltip>} placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
-                <div className="d-flex align-items-center h-100">
-                    {(location || {}).code || 'NA'} - {(city || {}).code || 'NA'} - {(state || {}).code || 'NA'}
-                </div>
-            </OverlayTrigger>
+            <div className="d-flex align-items-center h-100">
+                {value ? COMPANY_STATUS.ACTIVE : COMPANY_STATUS.INACTIVE}
+            </div>
         )
     }
 
@@ -86,8 +97,13 @@ function AssociateCompanies({ company, changeView }) {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Location", field: "location",
-            formatter: reactFormatter(<LocationTmpl />),
+            title: "Code", field: "code", width: 120,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Business Type", field: "businessType",
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
@@ -98,6 +114,11 @@ function AssociateCompanies({ company, changeView }) {
         {
             title: "Email Address", field: "email", minWidth: 140,
             headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Status", field: "isActive", minWidth: 140,
+            headerSort: false, formatter: reactFormatter(<StatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
@@ -133,8 +154,14 @@ function AssociateCompanies({ company, changeView }) {
     }
 
     function deleteCompanyMaster() {
-        deleteCompany(company.id);
+        deleteCompany(associateCompany.id);
     }
+
+    useEffect(() => {
+        if (query && query.company) {
+            setParentCompanyId(query.company);
+        }
+    }, [query]);
 
     useEffect(() => {
         if (!isFetching && payload) {
@@ -142,23 +169,25 @@ function AssociateCompanies({ company, changeView }) {
         }
     }, [isFetching]);
 
+    useEffect(() => {
+        if (!fetching && parentCompanies) {
+            setList((parentCompanies || []).map(x => {
+                return { value: x.id, label: x.name };
+            }));
+            if (parentCompanyId) {
+                const _parentCompany = parentCompanies.find(x => x.id === parentCompanyId) || {};
+                setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
+            } else {
+                const _parentCompany = parentCompanies[0];
+                setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
+            }
+        }
+    }, [fetching]);
+
     return (
         <>
             <div className="d-flex flex-column mx-0">
-                <nav aria-label="breadcrumb">
-                    <ol className={`breadcrumb d-flex justify-content-start my-4 px-2 ${styles.breadcrumb}`}>
-                        <li className="breadcrumb-item ">
-                            <Link href="/" onClick={(e) => {
-                                preventDefault(e);
-                                changeView(VIEWS.LIST);
-                            }} className="fw-bold">Companies</Link>
-                        </li>
-                        <li className="breadcrumb-item">
-                            <span className="fw-bold">{company.name}</span>
-                        </li>
-                    </ol>
-                </nav>
-                <div className="d-flex flex-row justify-content-center mb-4">
+                <div className="d-flex flex-row justify-content-center mb-4 mt-4">
                     <div className="col-12 px-4">
                         <div className="d-flex">
                             {/* <InputGroup>
@@ -170,23 +199,25 @@ function AssociateCompanies({ company, changeView }) {
                                     </div>
                                 </InputGroup.Text>
                             </InputGroup> */}
+                            <div className="col-3 px-0">
+                                <Select placeholder='Company' options={list} onChange={onCompanyChange} value={parentCompany} />
+                            </div>
                             <Button variant="primary" className="px-4 ms-auto text-nowrap"
-                                onClick={() => changeView(VIEWS.ADD, { parentCompany: company })}>Add New Associate Company</Button>
+                                onClick={() => setAction(ACTIONS.ADD)}>Add New Associate Company</Button>
                         </div>
                     </div>
                 </div>
                 <Table data={data} options={tableConfig} isLoading={isFetching} />
             </div>
+
             {
-                action === ACTIONS.VIEW && associateCompany &&
-                <ViewCompany company={associateCompany} parentCompany={company} onClose={() => {
-                    setAction(ACTIONS.NONE);
-                    setAssociateCompany(null);
-                }} />
+                [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
+                <AssociateCompanyDetails action={action} parentCompany={parentCompany} data={action !== ACTIONS.ADD ? associateCompany : null}
+                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={submitCallback} />
             }
             {
                 action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Company Master'} onSubmit={deleteCompanyMaster} onClose={() => setAction(ACTIONS.NONE)}>
+                <ConfirmModal title={'Delete Associate Company'} onSubmit={deleteCompanyMaster} onClose={() => setAction(ACTIONS.NONE)}>
                     <div className="text-center mb-4">Are you sure you want to delete the Associate Company, <strong>{(associateCompany || {}).name}</strong> ?</div>
                 </ConfirmModal>
             }

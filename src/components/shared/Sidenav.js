@@ -11,20 +11,34 @@ const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard' },
     {
         id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters', children: [
-            { id: 'law', url: '/masters/law', label: 'Law' },
-            { id: 'Act', url: '/masters/Act', label: 'Act' },
-            { id: 'activity', url: '/masters/activity', label: 'Activity' },
-            { id: 'rule', url: '/masters/rule', label: 'Rule' },
-            { id: 'state', url: '/masters/state', label: 'State' },
-            { id: 'city', url: '/masters/city', label: 'City' },
-            { id: 'location', url: '/masters/location', label: 'Location' },
-            { id: 'companies', url: '/masters/companies', label: 'Companies' },
-            { id: 'compliance', url: '/masters/compliance', label: 'Rule Compliance' },
-            { id: 'mapping', url: '/masters/mapping', label: 'Mappings' }
+            { id: 'masters/law', url: '/masters/law', label: 'Law' },
+            { id: 'masters/Act', url: '/masters/Act', label: 'Act' },
+            { id: 'masters/activity', url: '/masters/activity', label: 'Activity' },
+            { id: 'masters/rule', url: '/masters/rule', label: 'Rule' },
+            { id: 'masters/state', url: '/masters/state', label: 'State' },
+            { id: 'masters/city', url: '/masters/city', label: 'City' },
+            { id: 'masters/location', url: '/masters/location', label: 'Location' },
+            { id: 'masters/companies', url: '/masters/companies', label: 'Companies' },
+            { id: 'masters/compliance', url: '/masters/compliance', label: 'Rule Compliance' },
+            { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings' }
+        ]
+    },
+    {
+        id: 'companies', url: '/companies/list', icon: '', label: 'Companies', children: [
+            { id: 'companies/list', url: '/companies/list', label: 'Manage Companies' },
+            { id: 'companies/associateCompanies', url: '/companies/associateCompanies', label: 'Associate Companies' },
+            { id: 'companies/locationMapping', url: '/companies/locationMapping', label: 'Location Mapping' },
+            { id: 'companies/auditSchedule', url: '/companies/auditSchedule', label: 'Audit Schedule' },
+            { id: 'companies/blockUnblock', url: '/companies/blockUnblock', label: 'Block Un-Block' }
+        ]
+    },
+    {
+        id: 'userManagement', url: '/userManagement/users', icon: 'users', label: 'User Management', children: [
+            { id: 'userManagement/users', url: '/userManagement/users', label: 'Users' },
+            { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Mapping' },
         ]
     },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities' },
-    { id: 'manageUsers', url: '/manageUsers', icon: 'users', label: 'Manage Users' },
     { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true }
 ];
 

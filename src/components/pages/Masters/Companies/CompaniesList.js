@@ -7,11 +7,11 @@ import { VIEWS } from "./Companies";
 import { ACTIONS, TOOLTIP_DELAY } from "../../../common/Constants";
 import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
 import { Button, InputGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import AddEditCompany from "./AddEditCompany";
 import ViewCompany from "./ViewCompany";
 import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
 import { preventDefault } from "../../../../utils/common";
+import { navigate } from "raviger";
 
 function CompaniesList({ changeView }) {
     const [search, setSearch] = useState(null);
@@ -19,8 +19,8 @@ function CompaniesList({ changeView }) {
     const [company, setCompany] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [payload, setPayload] = useState();
-    const { companies, isFetching, refetch } = useGetCompanies({isParent: true});
+    const [payload, setPayload] = useState({ isParent: true });
+    const { companies, isFetching, refetch } = useGetCompanies({ isParent: true });
     const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
         refetch();
     }, () => toast.error(ERROR_MESSAGES.DEFAULT));
@@ -85,12 +85,8 @@ function CompaniesList({ changeView }) {
             <div className="d-flex align-items-center h-100">
                 <a href="/" onClick={(e) => {
                     preventDefault(e);
-                    if (value) {
-                        changeView(VIEWS.ASSOCIATE_COMPANIES, { company: row });
-                    } else {
-                        changeView(VIEWS.ADD, { parentCompany: row });
-                    }
-                }}>{value || 'Add Associate Company'}</a>
+                    navigate('/companies/associateCompanies', { query: { company: row.id } });
+                }}>{value || 0}</a>
             </div>
         )
     }
@@ -135,7 +131,7 @@ function CompaniesList({ changeView }) {
         selectable: false
     });
 
-    function formatApiResponse(params, list, pagination = {}) {
+    function formatApiResponse(params = {}, list, pagination = {}) {
         const total = list.length;
         const tdata = {
             data: list,

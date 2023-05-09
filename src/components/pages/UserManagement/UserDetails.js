@@ -4,15 +4,16 @@ import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue, preventDefault } from "../../../utils/common";
-import { ACTIONS, PATTERNS, USER_STATUS } from "../../common/Constants";
+import { ACTIONS, PATTERNS, STATUS, USER_STATUS } from "../../common/Constants";
 import { Button, Modal } from "react-bootstrap";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import PageLoader from "../../shared/PageLoader";
 
 function UserDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
-    const [user, setUser] = useState({ hideButtons: true, status: { value: 'Active', label: 'Active' } });
+    const [user, setUser] = useState({ hideButtons: true, status: { value: STATUS.ACTIVE, label: STATUS.ACTIVE } });
     const { roles } = useGetUserRoles();
+    const [userPages, setUserpages] = useState('');
     const { createUser, creating } = useCreateUser(({ key, message }) => {
         if (key === 'SUCCESS') {
             toast.success(`${user.name} created successfully.`);
@@ -32,6 +33,11 @@ function UserDetails({ action, data, onClose, onSubmit }) {
 
     function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+
+    function onRoleChange(e) {
+        const {pages} = roles.find(x => x.id === e.value);
+        setUserpages(pages.split(';').join(', '));
     }
 
     const schema = {
@@ -68,6 +74,7 @@ function UserDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'role',
                 label: 'Role',
+                onChange: onRoleChange,
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
@@ -75,15 +82,17 @@ function UserDetails({ action, data, onClose, onSubmit }) {
                 options: (roles || []).map(x => {
                     return {
                         id: x.id,
-                        name: x.description
+                        name: x.description,
+                        role: x
                     }
-                })
+                }),
+                description: userPages ? `Accessible Modules: ${userPages}`: ''
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'status',
                 label: 'Status',
-                content: getValue(user, 'status'),
+                content: getValue(user, 'status.label'),
                 options: USER_STATUS
             },
         ],
@@ -102,7 +111,7 @@ function UserDetails({ action, data, onClose, onSubmit }) {
                 name, email,
                 userName: userName.toLowerCase(),
                 roleIds: [role.value],
-                status: status.value,
+                isActive: status.value === STATUS.ACTIVE,
                 mobile: '',
                 password: ''
             };
@@ -131,7 +140,8 @@ function UserDetails({ action, data, onClose, onSubmit }) {
             setUser({
                 ...user,
                 ...data,
-                role: { value: data.role.id, label: data.role.description }
+                role: { value: data.userRoles[0].id, label: data.userRoles[0].description },
+                status: { value: data.isActive ? STATUS.ACTIVE : STATUS.INACTIVE, label: data.isActive ? STATUS.ACTIVE : STATUS.INACTIVE }
             });
         }
     }, [data]);

@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import Stepper from "react-stepper-horizontal"
 import { preventDefault } from "../../../../utils/common";
 import { VIEWS } from "./Companies";
 import { Link } from "raviger";
 import styles from "../Masters.module.css";
-import { STEPPER_CONFIG } from "../../../../utils/constants";
+import { ERROR_MESSAGES } from "../../../../utils/constants";
 import CompanyDetails from "./CompanyDetails";
 import CompanySPOC from "./CompanySPOC";
 import CompanyTDS from "./CompanyTDS";
 import { Tab, Tabs } from "react-bootstrap";
+import { useCreateCompany, useUpdateCompany } from "../../../../backend/masters";
+import PageLoader from "../../../shared/PageLoader";
+import { toast } from "react-toastify";
 
 const STEPS = {
     DETAILS: 'STEP1',
@@ -19,6 +21,26 @@ const STEPS = {
 function AddEditCompany({ action, company, parentCompany, changeView }) {
     const [isParentCompany] = useState(!Boolean(parentCompany));
     const [activeStep, setActiveStep] = useState(STEPS.DETAILS);
+    const [companyDetails, setCompanyDetails] = useState(company);
+    const { createCompany, creating } = useCreateCompany((response) => {
+        if (response.id) {
+            toast.success(`Company ${response.name} created successfully.`);
+           setActiveStep(STEPS.SPOC);
+        } else {
+            toast.error(response.message || ERROR_MESSAGES.ERROR);
+        }
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+    const { updateCompany, updating } = useUpdateCompany((response) => {
+        if (response.id) {
+            toast.success(`Company ${response.name} updated successfully.`);
+        } else {
+            toast.error(response.message || ERROR_MESSAGES.ERROR);
+        }
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
     function backToCompaniesList(e) {
         preventDefault(e);
         changeView(VIEWS.LIST);
@@ -28,21 +50,15 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
         changeView(VIEWS.ASSOCIATE_COMPANIES, { company: parentCompany });
     }
 
-    // function onStepChange(e) {
-    //     const tab = e.target.text;
-    //     setActiveStep(TAB_INDEX.indexOf(tab));
-    // }
-
-    function submitDetails() {
-        // setActiveStep(TAB_INDEX.indexOf(STEPS.SPOC));
-    }
-
-    function submitSPOC() {
-        // setActiveStep(TAB_INDEX.indexOf(STEPS.TDS_PF));
-    }
-
-    function submitTDS() {
-        parentCompany ? backToAssociateCompaniesList() : backToCompaniesList()
+    function submitDetails(_company, step) {
+        if (_company) {
+            setCompanyDetails(_company);
+        }
+        if (companyDetails) {
+            updateCompany(_company);
+        } else {
+            createCompany(_company);
+        }
     }
 
     return (
@@ -60,7 +76,7 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
                             </li>
                         }
                         <li className="breadcrumb-item">
-                            <span className="fw-bold">Add New{!isParentCompany ? ' Associate' : ''} Company</span>
+                            <span className="fw-bold">{Boolean(companyDetails) ? companyDetails.name : 'Add New Company'}</span>
                         </li>
                     </ol>
                 </nav>
@@ -70,36 +86,27 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
                     <Tab eventKey={STEPS.DETAILS} title="Company Details">
                         {
                             activeStep === STEPS.DETAILS &&
-                            <CompanyDetails onNext={submitDetails} onPrevious={parentCompany ? backToAssociateCompaniesList : backToCompaniesList} />
+                            <CompanyDetails company={companyDetails} onNext={submitDetails} onPrevious={parentCompany ? backToAssociateCompaniesList : backToCompaniesList} />
                         }
                     </Tab>
-                    <Tab eventKey={STEPS.SPOC} title="SPOC Details" disabled={!Boolean(company)}>
+                    <Tab eventKey={STEPS.SPOC} title="SPOC Details" disabled={!Boolean(companyDetails)}>
                         {
                             activeStep === STEPS.SPOC &&
-                            <CompanySPOC onNext={submitSPOC} onSTEPSPrevious={() => {}}/>
+                            <CompanySPOC company={companyDetails} onNext={submitDetails} onSTEPSPrevious={() => { }} />
                         }
                     </Tab>
-                    <Tab eventKey={STEPS.TDS_PF} title="TDS/PF" disabled={!Boolean(company)}>
+                    <Tab eventKey={STEPS.TDS_PF} title="Statutory Details" disabled={!Boolean(companyDetails)}>
                         {
-                        activeStep  === STEPS.TDS_PF &&
-                            <CompanyTDS onNext={submitTDS} onPrevious={() => {}}/>
+                            activeStep === STEPS.TDS_PF &&
+                            <CompanyTDS company={companyDetails} onNext={submitDetails} onPrevious={() => { }} />
                         }
                     </Tab>
                 </Tabs>
-                {/* <Stepper steps={steps} activeStep={activeStep} {...STEPPER_CONFIG} className="custom-stepper" />
-                {
-                    activeStep === TAB_INDEX.indexOf(STEPS.DETAILS) &&
-                    <CompanyDetails onNext={submitDetails} onPrevious={parentCompany ? backToAssociateCompaniesList : backToCompaniesList}/>
-                }
-                {
-                    activeStep === TAB_INDEX.indexOf(.SPOC) &&
-                    <CompanySPOC onNext={submitSPOC} onSTEPSPrevious={() => setActiveStep(TAB_INDEX.indexOf(STEPS.DETAILS))}/>
-                }
-                {
-                    activeStep === TAB_INDEX.indexOf(STEPS.TDS_PF) &&
-                    <CompanyTDS onNext={submitTDS} onPrevious={() => setActiveStep(TAB_INDEX.indexOf(STEPS.SPOC))}/>
-                } */}
             </div>
+            {
+                (creating || updating) &&
+                <PageLoader>{creating ? 'Creating Company...' : 'Updating Company...'}</PageLoader>
+            }
         </>
     )
 }

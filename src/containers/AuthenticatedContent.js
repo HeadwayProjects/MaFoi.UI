@@ -13,25 +13,25 @@ import Rule from "../components/pages/Masters/Rule";
 import Location from "../components/pages/Masters/Location";
 import City from "../components/pages/Masters/City";
 import State from "../components/pages/Masters/State";
-import Companies from "../components/pages/Masters/Companies/Companies";
 import ChangePassword from "../components/pages/Authenticate/ChangePassword";
 import Login from "../components/pages/Authenticate/Login";
 import Navbar from "../components/shared/Navbar";
 import RuleCompliance from "../components/pages/Masters/RuleCompliance/RuleCompliance";
 import RuleStateCompanyMapping from "../components/pages/Masters/Mappings/RuleStateCompanyMapping";
 import MangeUsers from "../components/pages/UserManagement/ManageUsers";
+import AssociateCompanies from "../components/pages/Masters/Companies/AssociateCompanies";
+import Companies from "../components/pages/Masters/Companies/Companies";
 
 export const ROLE_MAPPING = {
     AuditorAdmin: ['dashboard', 'activities'],
     AuditorUser: ['dashboard', 'activities'],
     VendorAdmin: ['dashboard', 'activities'],
     VendorUser: ['dashboard', 'activities'],
-    SuperAdmin: ['masters', 'manageUsers']
+    SuperAdmin: ['masters', 'companies', 'userManagement']
 }
 
 function AuthenticatedContent() {
     const user = auth.getUserDetails() || {};
-    console.log(user);
     const hasToken = !!auth.getAuthToken();
     const isVendor = ['VendorAdmin', 'VendorUser'].includes(user.role);
     const pages = ROLE_MAPPING[user.role] || [];
@@ -88,16 +88,22 @@ function AuthenticatedContent() {
         '/masters/location': () => (
             layout(<Location />)
         ),
-        '/masters/companies': () => (
-            layout(<Companies />)
-        ),
         '/masters/compliance': () => (
             layout(<RuleCompliance />)
         ),
         '/masters/mapping': () => (
             layout(<RuleStateCompanyMapping />)
         ),
-        '/manageUsers': () => (
+        '/companies/list': () => (
+            layout(<Companies />)
+        ),
+        '/companies/associateCompanies': () => (
+            layout(<AssociateCompanies />)
+        ),
+        '/userManagement/users': () => (
+            layout(<MangeUsers />)
+        ),
+        '/userManagement/mapping': () => (
             layout(<MangeUsers />)
         ),
         '/changePassword/:token': ({ token }) => (

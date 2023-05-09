@@ -1,20 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
-import { useGetCompanies } from "../../../../backend/masters";
-import { CompanyStatus, EmployeesCount, Reputation, Revenue } from "../Master.constants";
+import { EmployeesCount, Reputation, Revenue } from "../Master.constants";
+import { BUSINESS_TYPES, COMPANY_REQUEST, COMPANY_STATUSES } from "./Companies.constants";
 
-function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
+
+
+function CompanyDetails({ onNext, onPrevious, company }) {
     const [form, setForm] = useState({});
-    const [isParent, setIsParent] = useState(true);
-    const { companies } = useGetCompanies(!isParent ? { isParent: true } : null, !isParent);
+    const [companyDetails, setCompanyDetails] = useState({ hideButtons: true, isParent: true });
 
     function debugForm(_form) {
         setForm(_form);
-        if (isParent !== _form.values.isParent) {
-            setIsParent(_form.values.isParent);
-        }
+        setCompanyDetails(_form.values);
     }
 
     const schema = {
@@ -28,33 +27,34 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                     { type: validatorTypes.MAX_LENGTH, threshold: 4 },
                     { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{3,4}/, message: 'Should be alphanumeric value of length 3 or 4' }
                 ],
+                styleClass: 'text-uppercase',
                 disabled: !Boolean(company)
             },
-            {
-                component: componentTypes.CHECKBOX,
-                name: 'isParent',
-                label: 'Is Associate Company'
-            },
-            {
-                component: componentTypes.SELECT,
-                name: 'parentCompany',
-                label: 'Parent Company',
-                condition: {
-                    when: 'isParent',
-                    is: false,
-                    then: { visible: true }
-                },
-                options: companies
-            },
-            {
-                component: componentTypes.WIZARD,
-                name: 'emptySpace1',
-                condition: {
-                    when: 'isParent',
-                    is: true,
-                    then: { visible: true }
-                },
-            },
+            // {
+            //     component: componentTypes.CHECKBOX,
+            //     name: 'isParent',
+            //     label: 'Is Associate Company'
+            // },
+            // {
+            //     component: componentTypes.SELECT,
+            //     name: 'parentCompany',
+            //     label: 'Parent Company',
+            //     condition: {
+            //         when: 'isParent',
+            //         is: false,
+            //         then: { visible: true }
+            //     },
+            //     options: companies
+            // },
+            // {
+            //     component: componentTypes.WIZARD,
+            //     name: 'emptySpace1',
+            //     condition: {
+            //         when: 'isParent',
+            //         is: true,
+            //         then: { visible: true }
+            //     },
+            // },
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'name',
@@ -63,27 +63,23 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                     { type: validatorTypes.REQUIRED }
                 ]
             },
-            {
-                component: componentTypes.TEXT_FIELD,
-                name: 'formalName',
-                label: 'Formal Name',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ]
-            },
+            // {
+            //     component: componentTypes.TEXT_FIELD,
+            //     name: 'formalName',
+            //     label: 'Formal Name',
+            //     validate: [
+            //         { type: validatorTypes.REQUIRED }
+            //     ]
+            // },
             {
                 component: componentTypes.SELECT,
-                name: 'businness',
+                name: 'businessType',
                 label: 'Business Type',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
                 isMulti: true,
-                options: [
-                    {id: 'IT', name: 'IT'},
-                    {id: 'ITES', name: 'ITES'},
-                    {id: 'NonIT', name: 'NonIT'},
-                ]
+                options: BUSINESS_TYPES
             },
             {
                 component: componentTypes.TEXT_FIELD,
@@ -182,44 +178,70 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                options: CompanyStatus.map(x => {
-                    return {id: x, name: x}
-                })
+                options: COMPANY_STATUSES
             },
             {
                 component: componentTypes.SELECT,
                 name: 'employees',
                 label: 'Employees',
                 options: EmployeesCount.map(x => {
-                    return {id: x, name: x}
+                    return { id: x, name: x }
                 })
             },
         ]
     }
 
     function handleSubmit() {
-        // if (form.valid) {
-            onNext();
-        // }
+        if (form.valid) {
+            const { code, name, businessType, websiteUrl, status, employees } = form.values;
+            const payload = {
+                ...COMPANY_REQUEST,
+                ...company,
+                code: code.toUpperCase(),
+                name,
+                businessType: businessType.map(x => x.value).join(','),
+                websiteUrl,
+                isActive: status.value === 'Active',
+                employees: employees.value,
+                isParent: true
+            }
+            delete payload.hideButtons;
+            onNext(payload);
+        }
     }
 
     function handleCancel() {
         onPrevious();
     }
 
+    useEffect(() => {
+        if (company) {
+            const { businessType, isActive, employees } = company || {};
+            setCompanyDetails({
+                hideButtons: true,
+                ...company,
+                businessType: (businessType || '').split(',').map(x => {
+                    return { value: x, label: x }
+                }),
+                status: isActive ? { value: 'Active', label: 'Active' } : { value: 'Inactive', label: 'Inactive' },
+                employees: employees ? { value: employees, label: employees } : null
+            });
+        }
+    }, [company]);
+
     return (
         <>
             <div className="card border-0 p-4 m-4 ">
                 <div className="d-flex flex-column h-100 justify-space-between p-4 horizontal-form">
                     <FormRenderer FormTemplate={FormTemplate}
-                        initialValues={{ hideButtons: true, isParent: true }}
+                        initialValues={companyDetails}
                         componentMapper={ComponentMapper}
                         schema={schema}
                         debug={debugForm}
                     />
                     <div className="d-flex justify-content-between mt-4">
                         <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={handleCancel}>{'Cancel'}</Button>
-                        <Button variant="primary" onClick={handleSubmit} className="px-4" >{'Save & Continue'}</Button>
+                        <Button variant="primary" onClick={handleSubmit} className="px-4" disabled={!form.valid}>{company ? 'Save' : 'Next'}</Button>
                     </div>
                 </div>
             </div>

@@ -38,7 +38,7 @@
 }
 
 .sidenav-container:hover {
-    width: 225px;
+    width: 264px;
 }
 
 .sidenav-container:hover .sidenav-item-label{
@@ -50,5 +50,5 @@
 }
 
 .sidenav-container:hover+.main-container {
-    width: calc(100vw - 225px);
+    width: calc(100vw - 264px);
 }
