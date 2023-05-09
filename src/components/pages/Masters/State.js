@@ -45,6 +45,10 @@ function State() {
                     setState(row);
                     setAction(ACTIONS.DELETE)
                 }} />
+                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
+                    setState(row);
+                    setAction(ACTIONS.VIEW)
+                }} />
             </div>
         )
     }
@@ -53,7 +57,7 @@ function State() {
         { title: "Code", field: "code", formatter: reactFormatter(<CellTmpl />) },
         { title: "Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         {
-            title: "", hozAlign: "center", width: 140,
+            title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ]

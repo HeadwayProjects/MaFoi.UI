@@ -90,7 +90,7 @@ function RuleCompliance() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "", hozAlign: "center", width: 120,
+            title: "Actions", hozAlign: "center", width: 120,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ]

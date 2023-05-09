@@ -307,7 +307,7 @@ function TaskManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Action", hozAlign: "center", width: 120,
+            title: "Actions", hozAlign: "center", width: 120,
             sortable: false,
             formatter: reactFormatter(<ActionColumnElements />),
             titleFormatter: reactFormatter(<TitleTmpl />)

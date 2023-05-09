@@ -81,6 +81,7 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 name: 'email',
                 label: 'Email',
                 validate: [
+                    { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.PATTERN, pattern: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, message: 'Invalid email format.' }
                 ]
             },
@@ -88,7 +89,7 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 component: componentTypes.TAB_ITEM,
                 name: 'subHeader3',
                 content: 'Contact Person',
-                className: 'grid-col-100 text-lg fw-bold'
+                className: 'grid-col-100 text-lg fw-bold  pb-0'
             },
             // {
             //     component: componentTypes.SELECT,
@@ -134,7 +135,7 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 component: componentTypes.TAB_ITEM,
                 name: 'subHeader4',
                 content: 'Contact Phone',
-                className: 'grid-col-100 text-lg fw-bold'
+                className: 'grid-col-100 text-lg fw-bold  pb-0'
             },
             // {
             //     component: componentTypes.TEXT_FIELD,
@@ -156,6 +157,7 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 name: 'contactPersonEmail',
                 label: 'Business Email',
                 validate: [
+                    { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.PATTERN, pattern: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, message: 'Invalid email format.' }
                 ]
             }
@@ -214,7 +216,7 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                     />
                     <div className="d-flex justify-content-between mt-4">
                         <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={handleCancel}>{'Previous'}</Button>
-                        <Button variant="primary" onClick={handleSubmit} className="px-4">{'Save'}</Button>
+                        <Button variant="primary" onClick={handleSubmit} className="px-4" disabled={!form.valid}>{'Save'}</Button>
                     </div>
                 </div>
             </div>

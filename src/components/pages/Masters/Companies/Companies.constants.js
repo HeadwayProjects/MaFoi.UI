@@ -35,7 +35,14 @@ export const COMPANY_REQUEST = {
     esiC_Place: '',
     parentCompanyId: '',
     isParent: false,
-    isActive: false
+    isActive: false,
+    pan_fullname: '',
+    pan_surname: '',
+    pan_designation: '',
+    pan_mobile: '',
+    pan_email: '',
+    pan_place: '',
+    gstn_no: ''
 };
 
 export const COMPANY_STATUS = {

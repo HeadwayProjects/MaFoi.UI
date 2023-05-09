@@ -284,7 +284,7 @@ function ActivitiesManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Action", hozAlign: "center", width: 100,
+            title: "Actions", hozAlign: "center", width: 100,
             sortable: false,
             formatter: reactFormatter(<ActionColumnElements />),
             titleFormatter: reactFormatter(<TitleTmpl />)

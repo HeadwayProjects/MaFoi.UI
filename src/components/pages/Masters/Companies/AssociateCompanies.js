@@ -122,7 +122,7 @@ function AssociateCompanies() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "", hozAlign: "center", width: 160,
+            title: "Actions", hozAlign: "center", width: 160,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ];

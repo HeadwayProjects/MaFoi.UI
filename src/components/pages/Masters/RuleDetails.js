@@ -41,7 +41,7 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
                 name: 'description',
                 label: 'Description',
-                content: getValue(ruleDetails, 'description'),
+                content: getValue(ruleDetails, 'description') || '-NA-',
                 validate: [
                     { type: validatorTypes.MAX_LENGTH, threshold: 999 }
                 ],
@@ -66,7 +66,7 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 255 }
                 ],
-                content: getValue(ruleDetails, 'section')
+                content: getValue(ruleDetails, 'sectionNo')
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -76,7 +76,7 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 255 }
                 ],
-                content: getValue(ruleDetails, 'rule')
+                content: getValue(ruleDetails, 'ruleNo')
             }
         ],
     };

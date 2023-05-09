@@ -11,7 +11,7 @@ const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard' },
     {
         id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters', children: [
-            { id: 'masters/law', url: '/masters/law', label: 'Law' },
+            { id: 'masters/law', url: '/masters/law', label: 'Law Category' },
             { id: 'masters/Act', url: '/masters/Act', label: 'Act' },
             { id: 'masters/activity', url: '/masters/activity', label: 'Activity' },
             { id: 'masters/rule', url: '/masters/rule', label: 'Rule' },

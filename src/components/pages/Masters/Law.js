@@ -40,6 +40,10 @@ function Law() {
                     setLaw(row);
                     setAction(ACTIONS.DELETE)
                 }} />
+                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
+                    setLaw(row);
+                    setAction(ACTIONS.VIEW)
+                }} />
             </div>
         )
     }
@@ -48,7 +52,7 @@ function Law() {
         { title: "Name", field: "name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Description", field: "description", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         {
-            title: "", hozAlign: "center", width: 140,
+            title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ]

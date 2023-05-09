@@ -54,7 +54,7 @@ function Act() {
         { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<CellTmpl />) },
         { title: "Law", field: "law.name", formatter: reactFormatter(<CellTmpl />) },
         {
-            title: "", hozAlign: "center", width: 140,
+            title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ]

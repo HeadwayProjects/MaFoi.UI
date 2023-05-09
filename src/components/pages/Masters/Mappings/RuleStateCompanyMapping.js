@@ -74,7 +74,7 @@ function RuleStateCompanyMapping() {
         { title: "State", field: "state.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Company", field: "company.name", formatter: reactFormatter(<CellTmpl />) },
         {
-            title: "", hozAlign: "center", width: 140,
+            title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ]

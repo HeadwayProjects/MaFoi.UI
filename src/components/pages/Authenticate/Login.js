@@ -120,7 +120,7 @@ function Login() {
                     <div className="col-md-4 loginSection px-5 py-3">
                         <div className="d-flex flex-column h-100 justify-content-center align-items-center">
                             <div className="navbar-brand p-0 text-center mb-4"><img src={logo} alt="Logo" width="344" /></div>
-                            <div className="col-9" style={{ minHeight: '250px' }}>
+                            <div className="col-9" style={{ minHeight: loginWithOtp ? '150px': '250px' }}>
                                 {
                                     schema &&
                                     <>

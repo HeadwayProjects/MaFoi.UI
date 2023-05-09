@@ -211,7 +211,7 @@ function CompanyDetails({ onNext, onPrevious, company }) {
                 businessType: businessType.map(x => x.value).join(','),
                 websiteUrl,
                 isActive: status.value === 'Active',
-                employees: employees.value,
+                employees: (employees || {}).value || '',
                 isParent: true
             }
             delete payload.hideButtons;

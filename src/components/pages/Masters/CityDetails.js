@@ -44,7 +44,7 @@ function CityDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: getValue(data, 'name')
+                content: getValue(city, 'name')
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -56,7 +56,7 @@ function CityDetails({ action, data, onClose, onSubmit }) {
                     { type: validatorTypes.PATTERN, pattern: /[a-zA-Z]{2}/, message: 'Should be alpha value of length 2' }
                 ],
                 styleClass: 'text-uppercase',
-                content: getValue(data, 'code')
+                content: getValue(city, 'code')
 
             },
             {
@@ -69,7 +69,7 @@ function CityDetails({ action, data, onClose, onSubmit }) {
                     { type: validatorTypes.REQUIRED }
                 ],
                 onChange: onStateChange.bind(this),
-                content: getValue(data, 'state')
+                content: getValue(city, 'state.label')
             },
         ],
     };

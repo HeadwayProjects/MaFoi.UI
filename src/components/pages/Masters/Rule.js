@@ -37,10 +37,10 @@ function Rule() {
                     setRule(row);
                     setAction(ACTIONS.DELETE)
                 }} />
-                {/* <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
+                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
                     setRule(row);
                     setAction(ACTIONS.VIEW)
-                }} /> */}
+                }} />
             </div>
         )
     }
@@ -72,7 +72,7 @@ function Rule() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "", hozAlign: "center", width: 140,
+            title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ];

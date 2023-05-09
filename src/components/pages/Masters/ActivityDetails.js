@@ -43,7 +43,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
                 content: action === ACTIONS.VIEW ? getValue(activity, 'name') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'type',
                 label: 'Activity Type',
                 options: ActivityType.map(x => {
@@ -55,7 +55,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
                 content: action === ACTIONS.VIEW ? getValue(activity, 'type') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.SELECT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'periodicity',
                 label: 'Periodicity',
                 options: Periodicity.map(x => {
@@ -67,7 +67,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
                 content: action === ACTIONS.VIEW ? getValue(activity, 'periodicity.label') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.SELECT : componentTypes.SELECT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'calendarType',
                 label: 'Calendar Type',
                 options: CalendarType.map(x => {

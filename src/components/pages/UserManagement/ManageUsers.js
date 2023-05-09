@@ -76,7 +76,7 @@ function MangeUsers() {
         { title: "Email", field: "email", formatter: reactFormatter(<CellTmpl />) },
         { title: "Status", field: "status", formatter: reactFormatter(<StatusTmpl />) },
         {
-            title: "", hozAlign: "center", width: 140,
+            title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ]

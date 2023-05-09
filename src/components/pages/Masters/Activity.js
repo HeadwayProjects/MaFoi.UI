@@ -68,7 +68,7 @@ function Activity() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "", hozAlign: "center", width: 140,
+            title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }
     ]

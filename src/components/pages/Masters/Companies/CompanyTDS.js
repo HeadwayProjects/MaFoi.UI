@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { COMPANY_REQUEST } from "./Companies.constants";
+import { PATTERNS } from "../../../common/Constants";
 
 function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
     const [form, setForm] = useState({});
@@ -19,7 +20,7 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
                 component: componentTypes.TAB_ITEM,
                 name: 'subHeader1',
                 content: 'TDS Details',
-                className: 'grid-col-100 text-lg fw-bold'
+                className: 'grid-col-100 text-lg fw-bold pb-0'
             },
             {
                 component: componentTypes.TEXT_FIELD,
@@ -27,7 +28,8 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
                 label: 'PAN No',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.PATTERN, pattern: /[A-Z]{5}[0-9]{4}[A-Z]{1}$/, message: 'Invalid PAN format' }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.PAN, message: 'Invalid PAN format' },
+                    { type: validatorTypes.MAX_LENGTH, threshold: 10 }
                 ],
                 styleClass: 'text-uppercase',
                 description: 'Example: ABCDE1234Z'
@@ -38,7 +40,8 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
                 label: 'TAN No',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.PATTERN, pattern: /[A-Z]{4}[0-9]{5}[A-Z]{1}$/, message: 'Invalid TAN format' }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.TAN, message: 'Invalid TAN format' },
+                    { type: validatorTypes.MAX_LENGTH, threshold: 10 }
                 ],
                 styleClass: 'text-uppercase',
                 description: 'Example: ABCD12345Z'
@@ -47,67 +50,59 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
                 component: componentTypes.WIZARD,
                 name: 'emptySpace1',
             },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'name',
-            //     label: 'Full Name',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'fatherName',
-            //     label: 'S/o D/o W/o ',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'designation',
-            //     label: 'Designation',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'phoneNumber',
-            //     label: 'Phone Number',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'mobilenumber',
-            //     label: 'Mobile Number',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'email',
-            //     label: 'Email',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'place',
-            //     label: 'Place',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pan_fullname',
+                label: 'Full Name',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pan_surname',
+                label: 'S/o D/o W/o ',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pan_designation',
+                label: 'Designation',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pan_mobile',
+                label: 'Phone Number',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pan_email',
+                label: 'Email',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'pan_place',
+                label: 'Place',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
             {
                 component: componentTypes.TAB_ITEM,
                 name: 'subHeader2',
                 content: 'PF Details',
-                className: 'grid-col-100 text-lg fw-bold'
+                className: 'grid-col-100 text-lg fw-bold pb-0'
             },
             {
                 component: componentTypes.TEXT_FIELD,
@@ -163,6 +158,22 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
                 component: componentTypes.CHECKBOX,
                 name: 'autoGeneratePF',
                 label: 'Auto Generate Employee PF No'
+            },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader3',
+                content: 'GSTN Details',
+                className: 'grid-col-100 text-lg fw-bold pb-0'
+            },
+            {
+                component: componentTypes.TEXT_FIELD,
+                name: 'gstn_no',
+                label: 'GSTN No.',
+                validate: [
+                    { type: validatorTypes.REQUIRED },
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.GSTN, message: 'Invalid GSTN format' },
+                    { type: validatorTypes.MAX_LENGTH, threshold: 15 }
+                ]
             }
         ]
     }
@@ -171,19 +182,27 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
         if (form.valid) {
             onNext();
             const { pan, tan,
-                pF_Ac_No, pF_Establishment_Code, pF_Deduction_Percent, pF_Base_Limit, pF_Establishment_Id
+                pF_Ac_No, pF_Establishment_Code, pF_Deduction_Percent, pF_Base_Limit, pF_Establishment_Id,
+                pan_fullname, pan_surname, pan_designation, pan_mobile, pan_email, pan_place, gstn_no
             } = form.values;
 
             const payload = {
                 ...COMPANY_REQUEST,
                 ...company,
-                pan,
-                tan,
+                pan: pan.toUpperCase(),
+                tan: tan.toUpperCase(),
                 pF_Ac_No,
                 pF_Establishment_Code,
                 pF_Deduction_Percent,
                 pF_Base_Limit,
-                pF_Establishment_Id
+                pF_Establishment_Id,
+                pan_fullname,
+                pan_surname,
+                pan_designation,
+                pan_mobile,
+                pan_email,
+                pan_place,
+                gstn_no
             }
             delete payload.hideButtons;
             onNext(payload);
