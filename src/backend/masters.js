@@ -524,3 +524,47 @@ export function useDeleteStateRuleCompanyMapping(onSuccess, onError) {
     );
     return { deleteStateRuleCompanyMapping, error, deleting };
 }
+
+export function useGetCompanyLocations(payload, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['companyLocations', payload],
+        async () => await api.get(`/api/Mappings/GetCompanyLocations`, payload || {}),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { locations: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useCreateCompanyLocation(onSuccess, onError) {
+    const { mutate: createCompanyLocation, error, isLoading: creating } = useMutation(
+        ['createCompanyLocation'],
+        async (payload) => await api.post('/api/Mappings/AddCompanyLocation', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createCompanyLocation, error, creating };
+}
+
+export function useDeleteCompanyLocation(onSuccess, onError) {
+    const { mutate: deleteCompanyLocation, error, isLoading: deleting } = useMutation(
+        ['deleteCompanyLocation'],
+        async (payload) => await api.post(`/api/Mappings/Delete`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteCompanyLocation, error, deleting };
+}

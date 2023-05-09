@@ -17,8 +17,8 @@ const SideNavMenu = [
             { id: 'masters/rule', url: '/masters/rule', label: 'Rule' },
             { id: 'masters/state', url: '/masters/state', label: 'State' },
             { id: 'masters/city', url: '/masters/city', label: 'City' },
-            { id: 'masters/location', url: '/masters/location', label: 'Location' },
-            { id: 'masters/companies', url: '/masters/companies', label: 'Companies' },
+            // { id: 'masters/location', url: '/masters/location', label: 'Location' },
+            // { id: 'masters/companies', url: '/masters/companies', label: 'Companies' },
             { id: 'masters/compliance', url: '/masters/compliance', label: 'Rule Compliance' },
             { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings' }
         ]

@@ -36,10 +36,10 @@ function CompaniesList({ changeView }) {
                     setCompany(row);
                     setAction(ACTIONS.DELETE);
                 }} />
-                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
+                {/* <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
                     setCompany(row);
                     setAction(ACTIONS.VIEW);
-                }} />
+                }} /> */}
                 <Icon className="mx-2" type="button" name={'external-link'} text={row.websiteUrl} data={row} action={(event) => {
                     window.open(row.websiteUrl)
                 }} />
@@ -98,8 +98,8 @@ function CompaniesList({ changeView }) {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Location", field: "location",
-            formatter: reactFormatter(<LocationTmpl />),
+            title: "Code", field: "code",
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {

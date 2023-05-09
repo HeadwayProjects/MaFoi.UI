@@ -21,6 +21,7 @@ import RuleStateCompanyMapping from "../components/pages/Masters/Mappings/RuleSt
 import MangeUsers from "../components/pages/UserManagement/ManageUsers";
 import AssociateCompanies from "../components/pages/Masters/Companies/AssociateCompanies";
 import Companies from "../components/pages/Masters/Companies/Companies";
+import CompanyLocationMappings from "../components/pages/Masters/Companies/CompanyLocationMappings";
 
 export const ROLE_MAPPING = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -99,6 +100,9 @@ function AuthenticatedContent() {
         ),
         '/companies/associateCompanies': () => (
             layout(<AssociateCompanies />)
+        ),
+        '/companies/locationMapping': () => (
+            layout(<CompanyLocationMappings />)
         ),
         '/userManagement/users': () => (
             layout(<MangeUsers />)

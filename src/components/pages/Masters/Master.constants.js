@@ -8,18 +8,18 @@ export function GetMastersBreadcrumb(page) {
     ]
 }
 
-export function GetActionTitle(type, action) {
+export function GetActionTitle(type, action, isMaster = true) {
     if (!type) {
         return '';
     }
     if (action === ACTIONS.ADD) {
-        return `Add ${type} Master`;
+        return `Add ${type}${isMaster ? ' Master' : ''}`;
     } else if (action === ACTIONS.EDIT) {
-        return `Edit ${type} Master`;
+        return `Edit ${type}${isMaster ? ' Master' : ''}`;
     } else if (action === ACTIONS.VIEW) {
-        return `View ${type} Master`;
+        return `View ${type}${isMaster ? ' Master' : ''}`;
     } else {
-        return `${type} Master`;
+        return `${type}${isMaster ? ' Master' : ''}`;
     }
 }
 

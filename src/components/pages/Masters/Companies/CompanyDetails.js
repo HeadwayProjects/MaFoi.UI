@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
-import { EmployeesCount, Reputation, Revenue } from "../Master.constants";
+import { EmployeesCount, FindDuplicateMasters } from "../Master.constants";
 import { BUSINESS_TYPES, COMPANY_REQUEST, COMPANY_STATUSES } from "./Companies.constants";
+import { useGetCompanies } from "../../../../backend/masters";
+import { toast } from "react-toastify";
 
 
 
 function CompanyDetails({ onNext, onPrevious, company }) {
     const [form, setForm] = useState({});
     const [companyDetails, setCompanyDetails] = useState({ hideButtons: true, isParent: true });
+    const { companies } = useGetCompanies({ isParent: true });
 
     function debugForm(_form) {
         setForm(_form);
@@ -194,6 +197,12 @@ function CompanyDetails({ onNext, onPrevious, company }) {
     function handleSubmit() {
         if (form.valid) {
             const { code, name, businessType, websiteUrl, status, employees } = form.values;
+            const existingData = Boolean(company) ? companies.filter(x => x.id !== (company || {}).id) : [...companies];
+            const duplicateCompanies = FindDuplicateMasters(existingData, { code, name });
+            if (duplicateCompanies.length) {
+                toast.error(`Few other companies matching code or name. Please update code or name`);
+                return;
+            }
             const payload = {
                 ...COMPANY_REQUEST,
                 ...company,
