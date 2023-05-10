@@ -409,6 +409,21 @@ export function useCreateCompany(onSuccess, onError) {
     return { createCompany, error, creating };
 }
 
+export function useUploadLogo(onSuccess, onError) {
+    const { mutate: uploadLogo, error, isLoading: uploading } = useMutation(
+        ['uploadLogo'],
+        async ({ id, formData }) => await api.put(`/api/Company/UploadLogo?id=${id}`, formData),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { uploadLogo, error, uploading };
+}
+
 export function useUpdateCompany(onSuccess, onError) {
     const { mutate: updateCompany, error, isLoading: updating } = useMutation(
         ['updateCompany'],
@@ -488,7 +503,7 @@ export function useDeleteRuleCompliance(onSuccess, onError) {
 export function useStateRuleCompanyMappings(payload) {
     const { data, isFetching, refetch } = useQuery(
         ['mappings', payload],
-        async () => await api.get(`/api/Mappings/GetActStateCompList`, payload || {}),
+        async () => await api.get(`/api/Mappings/GetActStateList`, payload || {}),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false
@@ -513,10 +528,10 @@ export function useCreateStateRuleCompanyMapping(onSuccess, onError) {
     return { createStateRuleCompanyMapping, error, creating };
 }
 
-export function useDeleteStateRuleCompanyMapping(onSuccess, onError) {
-    const { mutate: deleteStateRuleCompanyMapping, error, isLoading: deleting } = useMutation(
-        ['deleteStateRuleCompanyMapping'],
-        async (payload) => await api.post(`/api/Mappings/Delete`, payload),
+export function useUploadActStateMappingTemplate(onSuccess, onError) {
+    const { mutate: uploadActStateMappingTemplate, error, isLoading: uploading } = useMutation(
+        ['uploadActStateMappingTemplate'],
+        async ({ id, formData }) => await api.put(`/api/Mappings/UploadActStateMappingTemplate?id=${id}`, formData),
         {
             onError,
             onSuccess: (response) => {
@@ -525,7 +540,22 @@ export function useDeleteStateRuleCompanyMapping(onSuccess, onError) {
             }
         }
     );
-    return { deleteStateRuleCompanyMapping, error, deleting };
+    return { uploadActStateMappingTemplate, error, uploading };
+}
+
+export function useDeleteActStateMapping(onSuccess, onError) {
+    const { mutate: deleteActStateMapping, error, isLoading: deleting } = useMutation(
+        ['deleteActStateMapping'],
+        async (id) => await api.del(`/api/Mappings/DeleteActStateMapping?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteActStateMapping, error, deleting };
 }
 
 export function useGetCompanyLocations(payload, enabled = true) {

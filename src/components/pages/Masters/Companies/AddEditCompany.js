@@ -3,14 +3,15 @@ import { preventDefault } from "../../../../utils/common";
 import { VIEWS } from "./Companies";
 import { Link } from "raviger";
 import styles from "../Masters.module.css";
-import { ERROR_MESSAGES } from "../../../../utils/constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import CompanyDetails from "./CompanyDetails";
 import CompanySPOC from "./CompanySPOC";
 import CompanyTDS from "./CompanyTDS";
 import { Tab, Tabs } from "react-bootstrap";
-import { useCreateCompany, useUpdateCompany } from "../../../../backend/masters";
+import { useCreateCompany, useUpdateCompany, useUploadLogo } from "../../../../backend/masters";
 import PageLoader from "../../../shared/PageLoader";
 import { toast } from "react-toastify";
+import companyStyles from "./Companies.module.css";
 
 const STEPS = {
     DETAILS: 'STEP1',
@@ -22,29 +23,48 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
     const [isParentCompany] = useState(!Boolean(parentCompany));
     const [activeStep, setActiveStep] = useState(STEPS.DETAILS);
     const [companyDetails, setCompanyDetails] = useState(company);
-    const { createCompany, creating } = useCreateCompany((response) => {
-        if (response.id) {
-            toast.success(`Company ${response.name} created successfully.`);
-            setActiveStep(STEPS.SPOC);
+    const { uploadLogo, uploading } = useUploadLogo(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success('Logo uploaded successfully.');
+            if (!companyDetails.logo) {
+                setActiveStep(STEPS.SPOC);
+            }
+            const _company = { ...companyDetails };
+            delete _company.file;
+            setCompanyDetails({ ..._company });
         } else {
-            toast.error(response.message || ERROR_MESSAGES.ERROR);
+            toast.error(value || ERROR_MESSAGES.UPLOAD_FILE);
         }
-    }, () => {
-        toast.error(ERROR_MESSAGES.DEFAULT);
-    });
-    const { updateCompany, updating } = useUpdateCompany((response) => {
-        if (response.id) {
-            toast.success(`Company ${response.name} updated successfully.`);
+    }, errorCallback);
+    const { createCompany, creating } = useCreateCompany(({ id, name, message }) => {
+        if (id) {
+            toast.success(`Company ${name} created successfully.`);
+            setCompanyDetails({ ...companyDetails, id });
+            uploadCompanyLogo(id);
         } else {
-            toast.error(response.message || ERROR_MESSAGES.ERROR);
+            toast.error(message || ERROR_MESSAGES.ERROR);
         }
-    }, () => {
+    }, errorCallback);
+    const { updateCompany, updating } = useUpdateCompany(({ id, name, message }) => {
+        if (id) {
+            toast.success(`Company ${name} updated successfully.`);
+            if (companyDetails.file) {
+                uploadCompanyLogo(id);
+            }
+        } else {
+            toast.error(message || ERROR_MESSAGES.ERROR);
+        }
+    }, errorCallback);
+
+    function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
-    });
+    }
+
     function backToCompaniesList(e) {
         preventDefault(e);
         changeView(VIEWS.LIST);
     }
+
     function backToAssociateCompaniesList(e) {
         preventDefault(e);
         changeView(VIEWS.LIST, { parentCompany });
@@ -52,8 +72,9 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
 
     function submitDetails(_company, step) {
         if (_company) {
-            setCompanyDetails(_company);
+            setCompanyDetails({..._company});
         }
+        delete _company.file;
         if (companyDetails) {
             updateCompany(_company);
         } else {
@@ -61,9 +82,18 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
         }
     }
 
+    function uploadCompanyLogo(id) {
+        const formData = new FormData();
+        const files = [...companyDetails.file.inputFiles];
+        files.forEach(file => {
+            formData.append('file', file, file.name);
+        });
+        uploadLogo({ id, formData })
+    }
+
     return (
         <>
-            <div className="d-flex flex-column h-full">
+            <div className="d-flex flex-column h-full position-relative">
                 <nav aria-label="breadcrumb">
                     <ol className={`breadcrumb d-flex justify-content-start my-3 px-2 ${styles.breadcrumb}`}>
                         {
@@ -83,6 +113,12 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
                         </li>
                     </ol>
                 </nav>
+                {
+                    companyDetails && companyDetails.logo &&
+                    <div className={`${companyStyles.imageContainer}`}>
+                        <img src={companyDetails.logo} />
+                    </div>
+                }
                 <Tabs className="dashboardTabs mx-2"
                     activeKey={activeStep}
                     onSelect={(k) => setActiveStep(k)}>
@@ -110,6 +146,9 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
             {
                 (creating || updating) &&
                 <PageLoader>{creating ? 'Creating Company...' : 'Updating Company...'}</PageLoader>
+            }
+            {
+                uploading && <PageLoader>Uploading...</PageLoader>
             }
         </>
     )

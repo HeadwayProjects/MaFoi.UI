@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useCreateStateRuleCompanyMapping, useGetActivities, useGetActs, useGetCompanies, useGetRules, useGetStates } from "../../../../backend/masters";
+import { useCreateStateRuleCompanyMapping, useGetActivities, useGetActs, useGetCompanies, useGetRules, useGetStates, useUploadActStateMappingTemplate } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
@@ -7,7 +7,7 @@ import { getValue, preventDefault } from "../../../../utils/common";
 import { Button, Modal } from "react-bootstrap";
 import { GetActionTitle, GetRuleDesc } from "../Master.constants";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
-import { ACTIONS } from "../../../common/Constants";
+import { ACTIONS, ALLOWED_FILES_REGEX, FILE_SIZE } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
 
 function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
@@ -17,11 +17,18 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     const { rules } = useGetRules();
     const { activities } = useGetActivities();
     const { states } = useGetStates();
-    const { companies } = useGetCompanies();
+    const { uploadActStateMappingTemplate, uploading } = useUploadActStateMappingTemplate(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`Template uploaded successfully.`);
+            onSubmit();
+        } else {
+            toast.error(value || ERROR_MESSAGES.UPLOAD_FILE);
+        }
+    }, errorCallback);
     const { createStateRuleCompanyMapping, creating } = useCreateStateRuleCompanyMapping(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Mapping created successfully.`);
-            onSubmit();
+            uploadTemplate(value);
         } else {
             toast.error(value || ERROR_MESSAGES.ERROR);
         }
@@ -32,10 +39,19 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         toast.error(ERROR_MESSAGES.DEFAULT);
     }
 
+    function uploadTemplate(id) {
+        const formData = new FormData();
+        const files = [...mapping.file.inputFiles];
+        files.forEach(file => {
+            formData.append('file', file, file.name);
+        });
+        uploadActStateMappingTemplate({ id, formData })
+    }
+
     const schema = {
         fields: [
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
                 name: 'act',
                 label: 'Act Name',
                 validate: [
@@ -45,13 +61,13 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 options: acts
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
                 name: 'rule',
                 label: 'Rule',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? GetRuleDesc(getValue(mapping, 'rule') || {}) : '',
+                content: action !== ACTIONS.ADD ? GetRuleDesc(getValue(mapping, 'rule') || {}) : '',
                 options: (rules || []).map(x => {
                     return {
                         id: x.id,
@@ -60,7 +76,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 })
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
                 name: 'activity',
                 label: 'Activity',
                 validate: [
@@ -70,7 +86,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 options: activities
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
                 name: 'state',
                 label: 'State',
                 validate: [
@@ -80,15 +96,17 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 options: states
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
-                name: 'company',
-                label: 'Company',
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : 'file-upload',
+                label: action === ACTIONS.VIEW ? 'Uploaded File' : 'File upload',
+                name: 'file',
+                type: 'file',
                 validate: [
-                    { type: validatorTypes.REQUIRED }
+                    { type: validatorTypes.REQUIRED },
+                    { type: 'file-type', regex: ALLOWED_FILES_REGEX },
+                    { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
                 ],
-                content: getValue(mapping, 'company.name'),
-                options: companies
-            }
+                content: getValue(mapping, 'fileName'),
+            },
         ],
     };
 
@@ -100,16 +118,18 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     function submit(e) {
         preventDefault(e);
         if (form.valid) {
-            const { act, rule, activity, state, company } = mapping;
-            const request = {
-                actId: act.value,
-                ruleId: rule.value,
-                activityId: activity.value,
-                stateId: state.value,
-                companyId: company.value,
-            };
-
-            createStateRuleCompanyMapping(request);
+            if (action === ACTIONS.ADD) {
+                const { act, rule, activity, state } = mapping;
+                const request = {
+                    actId: act.value,
+                    ruleId: rule.value,
+                    activityId: activity.value,
+                    stateId: state.value
+                };
+                createStateRuleCompanyMapping(request);
+            } else {
+                uploadTemplate(mapping.id);
+            }
         }
     }
 
@@ -146,7 +166,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 </Modal.Footer>
             </Modal>
             {
-                creating && <PageLoader>Creating...</PageLoader>
+                (creating || uploading) && <PageLoader>{uploading ? 'Uploading...' : 'Creating...'}</PageLoader>
             }
         </>
     )

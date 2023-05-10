@@ -7,3 +7,18 @@
     height: 128px;
     resize: none;
 }
+
+.imageContainer {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    height: 80px;
+    width: 80px;
+}
+
+.imageContainer img {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: contain;
+}

@@ -6,9 +6,9 @@ import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
 import { getValue, preventDefault } from "../../../utils/common";
 import { useCreateAct, useGetLaws, useUpdateAct } from "../../../backend/masters";
-import { GetActionTitle } from "./Master.constants";
+import { EstablishmentTypes, GetActionTitle } from "./Master.constants";
 import { toast } from "react-toastify";
-import { ERROR_MESSAGES } from "../../../utils/constants";
+import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 
 function ActDetails({ action, data, onClose, onSubmit }) {
@@ -48,20 +48,17 @@ function ActDetails({ action, data, onClose, onSubmit }) {
                 content: getValue(data, 'name')
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'establishmentType',
                 label: 'Establishment Type',
-                content: (data || {}).establishmentType,
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: getValue(data, 'establishmentType')
+                content: action === ACTIONS.VIEW ? (getValue(data, 'establishmentType') || '').replaceAll(API_DELIMITER, UI_DELIMITER) : '',
+                options: EstablishmentTypes,
+                isMulti: true
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'law',
                 label: 'Law',
-                content: (data || {}).establishmentType,
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
@@ -82,8 +79,9 @@ function ActDetails({ action, data, onClose, onSubmit }) {
         if (form.valid) {
             const { name, establishmentType, law } = act;
             const request = {
-                name, establishmentType,
-                lawId: law.value
+                name,
+                lawId: law.value,
+                establishmentType: establishmentType ? establishmentType.map(x => x.value).join(API_DELIMITER) : ''
             };
 
             if (action === ACTIONS.EDIT) {
@@ -97,7 +95,17 @@ function ActDetails({ action, data, onClose, onSubmit }) {
 
     useEffect(() => {
         if (data) {
-            setAct({ ...act, ...data });
+            const { establishmentType } = data;
+            setAct({
+                ...act,
+                ...data,
+                establishmentType: establishmentType ? establishmentType.split(API_DELIMITER).map(x => {
+                    return {
+                        value: x,
+                        label: x
+                    }
+                }) : ''
+            });
         }
     }, [data]);
 

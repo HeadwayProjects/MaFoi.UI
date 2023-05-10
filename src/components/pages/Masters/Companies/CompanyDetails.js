@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
-import { EmployeesCount, FindDuplicateMasters } from "../Master.constants";
+import { EmployeesCount, EstablishmentTypes, FindDuplicateMasters } from "../Master.constants";
 import { BUSINESS_TYPES, COMPANY_REQUEST, COMPANY_STATUSES } from "./Companies.constants";
 import { useGetCompanies } from "../../../../backend/masters";
 import { toast } from "react-toastify";
+import { API_DELIMITER } from "../../../../utils/constants";
+import { ALLOWED_LOGO_REGEX, FILE_SIZE } from "../../../common/Constants";
 
 
 
@@ -71,14 +73,6 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                     { type: validatorTypes.REQUIRED }
                 ]
             },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'formalName',
-            //     label: 'Formal Name',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
             {
                 component: componentTypes.SELECT,
                 name: 'businessType',
@@ -97,88 +91,16 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                     { type: validatorTypes.REQUIRED }
                 ]
             },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'essWebsiteUrl',
-            //     label: 'ESS Website',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
-            // {
-            //     component: componentTypes.SELECT,
-            //     name: 'source',
-            //     label: 'Source',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ],
-            //     options: [{id: 'Email', name: 'Email'}]
-            // },
-            // {
-            //     component: componentTypes.SELECT,
-            //     name: 'sourcingType',
-            //     label: 'Sourcing Type',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ],
-            //     options: [{id: 'Out Sourcing', name: 'Out Sourcing'}]
-            // },
-            // {
-            //     component: componentTypes.SELECT,
-            //     name: 'clientType',
-            //     label: 'Client Type',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ],
-            //     options: [{id: 'All', name: 'All'}]
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'maxFilesAllowed',
-            //     label: 'Payroll Input Max Files allowed',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ]
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'postedBy',
-            //     label: 'Posted By'
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'department',
-            //     label: 'Department'
-            // },
-            // {
-            //     component: componentTypes.TEXT_FIELD,
-            //     name: 'designation',
-            //     label: 'Designation'
-            // },
-            // {
-            //     component: componentTypes.SELECT,
-            //     name: 'revenue',
-            //     label: 'Revenue',
-            //     options: Revenue.map(x => {
-            //         return {id: x, name: x}
-            //     })
-            // },
-            // {
-            //     component: componentTypes.SELECT,
-            //     name: 'reputation',
-            //     label: 'Reputation',
-            //     validate: [
-            //         { type: validatorTypes.REQUIRED }
-            //     ],
-            //     options: Reputation.map(x => {
-            //         return {id: x, name: x}
-            //     })
-            // },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'datePosted',
-            //     label: 'Date Posted'
-            // },
+            {
+                component: componentTypes.SELECT,
+                name: 'establishmentType',
+                label: 'Establishment Type',
+                options: EstablishmentTypes,
+                isMulti: true,
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ]
+            },
             {
                 component: componentTypes.SELECT,
                 name: 'status',
@@ -196,12 +118,28 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                     return { id: x, name: x }
                 })
             },
+            {
+                component: 'file-upload',
+                label: 'Upload Logo',
+                name: 'file',
+                type: 'file',
+                validate: Boolean(company) ? [
+                    { type: 'file-type', regex: ALLOWED_LOGO_REGEX },
+                    { type: 'file-size', maxSize: 2 * FILE_SIZE.MB }
+                ] : [
+                    { type: validatorTypes.REQUIRED },
+                    { type: 'file-type', regex: ALLOWED_LOGO_REGEX },
+                    { type: 'file-size', maxSize: 2 * FILE_SIZE.MB }
+                ]
+            },
         ]
     }
 
     function handleSubmit() {
         if (form.valid) {
-            const { code, name, businessType, websiteUrl, status, employees, isParent, parentCompany } = form.values;
+            const { code, name, businessType, websiteUrl, status,
+                employees, isParent, parentCompany, establishmentType, file,
+                isAssociateCompany } = form.values;
             if (isParent) {
                 const existingData = Boolean(company) ? companies.filter(x => x.id !== (company || {}).id) : [...companies];
                 const duplicateCompanies = FindDuplicateMasters(existingData, { code, name });
@@ -215,12 +153,14 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                 ...company,
                 code: code.toUpperCase(),
                 name,
-                businessType: businessType.map(x => x.value).join(','),
+                businessType: (businessType || []).map(x => x.label).join(API_DELIMITER),
                 websiteUrl,
                 isActive: status.value === 'Active',
                 employees: (employees || {}).value || '',
-                isParent,
-                parentCompanyId: isParent ? '' : parentCompany.value
+                isParent: !isAssociateCompany,
+                parentCompanyId: (parentCompany || {}).value || '',
+                establishmentType: (establishmentType || []).map(x => x.label).join(API_DELIMITER),
+                file
             }
             delete payload.hideButtons;
             delete payload.isAssociateCompany;
@@ -235,16 +175,19 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
 
     useEffect(() => {
         if (company) {
-            const { businessType, isActive, employees, isParent } = company || {};
+            const { businessType, isActive, employees, isParent, establishmentType } = company || {};
             setCompanyDetails({
                 hideButtons: true,
                 ...company,
-                businessType: (businessType || '').split(',').map(x => {
+                businessType: businessType ? businessType.split(API_DELIMITER).map(x => {
                     return { value: x, label: x }
-                }),
+                }) : null,
                 status: isActive ? { value: 'Active', label: 'Active' } : { value: 'Inactive', label: 'Inactive' },
                 employees: employees ? { value: employees, label: employees } : null,
-                isAssociateCompany: !isParent
+                isAssociateCompany: !isParent,
+                establishmentType: establishmentType ? establishmentType.split(API_DELIMITER).map(x => {
+                    return { value: x, label: x };
+                }) : null
             });
         }
     }, [company]);

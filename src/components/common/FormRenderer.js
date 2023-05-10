@@ -6,6 +6,23 @@ import {
 import { Button } from "react-bootstrap";
 import Select from 'react-select';
 import Icon from "./Icon";
+import { humanReadableFileSize } from "../../utils/common";
+
+function fileSizeValidator({ maxSize }) {
+    return (value) => {
+        if (value && value.inputFiles[0] && value.inputFiles[0].size > maxSize) {
+            return `Maximum allowed size is ${humanReadableFileSize(maxSize)}.`;
+        }
+    }
+}
+function fileTypeValidator({ regex }) {
+    return (value) => {
+        const file = ((value || {}).inputFiles || [])[0];
+        if (file && !regex.exec(file.name)) {
+            return `Invalid file extension.`
+        }
+    }
+}
 
 function TextField(props) {
     const { label, meta = {}, input, type = 'text', name } = useFieldApi(props);
@@ -225,6 +242,33 @@ function TabItemField(props) {
     )
 }
 
+function FileUploadField(props) {
+    const { input, meta, label, name } = useFieldApi(props);
+    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            {
+                label &&
+                <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            }
+            <div className={`input-group`}>
+                <input id={name}
+                    className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''} ${props.styleClass || ''}`}
+                    {...input} />
+            </div>
+            {
+                props.description &&
+                <span className="text-muted form-text">{props.description}</span>
+            }
+            {
+                meta.touched && meta.error && <div className="invalid-feedback d-block">
+                    {meta.error}
+                </div>
+            }
+        </div>
+    );
+};
+
 export const ComponentMapper = {
     [componentTypes.TEXT_FIELD]: TextField,
     [componentTypes.DATE_PICKER]: TextField,
@@ -235,7 +279,8 @@ export const ComponentMapper = {
     [componentTypes.WIZARD]: () => {
         return (<div></div>)
     },
-    [componentTypes.TAB_ITEM]: TabItemField
+    [componentTypes.TAB_ITEM]: TabItemField,
+    'file-upload': FileUploadField,
 };
 
 
@@ -260,9 +305,10 @@ export function FormTemplate({ formFields }) {
 }
 
 function FormRenderer(props) {
+    const validatorMapper = { 'file-size': fileSizeValidator, 'file-type': fileTypeValidator };
     return (
         <>
-            <DDFFormRenderer {...props} />
+            <DDFFormRenderer validatorMapper={validatorMapper} {...props} />
         </>
     )
 }

@@ -8,6 +8,11 @@ export const PATTERNS = {
 
 };
 
+export const FILE_SIZE = {
+    KB: 1024,
+    MB: 1048576
+}
+
 export const ACTIONS = {
     ADD: '1',
     EDIT: '2',
@@ -35,6 +40,7 @@ export const AUDIT_STATUS = {
 }
 
 export const ALLOWED_FILES_REGEX = /(\.xlsx|\.xls|\.csv|\.pdf|\.jpg|\.jpeg|\.png|\.doc|\.docx)$/i;
+export const ALLOWED_LOGO_REGEX = /(\.jpg|\.jpeg|\.png)$/i;
 
 export const STATUS_MAPPING = {
     [ACTIVITY_STATUS.PENDING]: 'Pending',

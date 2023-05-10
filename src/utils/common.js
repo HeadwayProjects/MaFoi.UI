@@ -2,52 +2,57 @@ import { ACTIVITY_STATUS, AUDIT_STATUS, STATUS_MAPPING } from "../components/com
 import dayjs from "dayjs";
 
 export function preventDefault(event) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 }
 
 export function getValue(obj, key) {
-    if (!obj || !key) {
-        return null
-    }
-    let value = { ...obj };
-    const keys = (key || '').split('.');
-    keys.forEach(_key => {
-        value = (value || {})[_key];
-    });
-    return value;
+  if (!obj || !key) {
+    return null
+  }
+  let value = { ...obj };
+  const keys = (key || '').split('.');
+  keys.forEach(_key => {
+    value = (value || {})[_key];
+  });
+  return value;
 }
 
 export function MaskEmail(email) {
-    return (email || '').replace(/^(.)(.*)(.@.*)$/,
-        (_, a, b, c) => a + b.replace(/./g, '*') + c
-    );
+  return (email || '').replace(/^(.)(.*)(.@.*)$/,
+    (_, a, b, c) => a + b.replace(/./g, '*') + c
+  );
 }
 
 export function download(fileName, filePath) {
-    if (fileName && filePath) {
-        const link = document.createElement('a');
-        link.href = filePath;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+  if (fileName && filePath) {
+    const link = document.createElement('a');
+    link.href = filePath;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}
+
+export function humanReadableFileSize(size) {
+  var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+  return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
 
 export function auditReport(summary, data, user) {
-    const { company, associateCompany, location, month, year } = summary;
-    const approved = data.filter(x => x.status === ACTIVITY_STATUS.AUDITED).length;
-    const rejected = data.filter(x => x.status === ACTIVITY_STATUS.REJECTED).length;
-    const compliance = data.filter(x => x.auditStatus === AUDIT_STATUS.COMPLIANT || x.auditStatus === AUDIT_STATUS.NOT_APPLICABLE).length;
-    const nonCompliance = data.filter(x => x.auditStatus === AUDIT_STATUS.NON_COMPLIANCE).length;
-    const total = compliance + nonCompliance;
-    const compliancePer = total > 0 ? Math.round(compliance * 100 / total) : 0;
-    const nonCompliancePer = total > 0 ? Math.round(nonCompliance * 100 / total) : 0;
+  const { company, associateCompany, location, month, year } = summary;
+  const approved = data.filter(x => x.status === ACTIVITY_STATUS.AUDITED).length;
+  const rejected = data.filter(x => x.status === ACTIVITY_STATUS.REJECTED).length;
+  const compliance = data.filter(x => x.auditStatus === AUDIT_STATUS.COMPLIANT || x.auditStatus === AUDIT_STATUS.NOT_APPLICABLE).length;
+  const nonCompliance = data.filter(x => x.auditStatus === AUDIT_STATUS.NON_COMPLIANCE).length;
+  const total = compliance + nonCompliance;
+  const compliancePer = total > 0 ? Math.round(compliance * 100 / total) : 0;
+  const nonCompliancePer = total > 0 ? Math.round(nonCompliance * 100 / total) : 0;
 
-    const html = `
+  const html = `
     <html lang="en">
     
     <head>
@@ -173,25 +178,25 @@ export function auditReport(summary, data, user) {
     </body>
     
     </html>`;
-    const win = window.open(null, '_blank', 'width=900,height=700');
-    const uri = 'data:text/html;filename=AuditReport.html;charset=utf-8,' + encodeURI(html);
-    win.document.write('<iframe src="' + uri + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+  const win = window.open(null, '_blank', 'width=900,height=700');
+  const uri = 'data:text/html;filename=AuditReport.html;charset=utf-8,' + encodeURI(html);
+  win.document.write('<iframe src="' + uri + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
 }
 
 export function checkList(summary, data) {
-    const { company, associateCompany, location, month, year } = summary;
-    const activities = data.filter(x => x.status === ACTIVITY_STATUS.AUDITED || x.status === ACTIVITY_STATUS.REJECTED);
-    const audited = data.filter(x => x.status === ACTIVITY_STATUS.AUDITED);
-    const rejected = data.filter(x => x.status === ACTIVITY_STATUS.REJECTED);
-    const compliant = activities.filter(x => x.auditStatus === AUDIT_STATUS.COMPLIANT);
-    const nonCompliance = activities.filter(x => x.auditStatus === AUDIT_STATUS.NON_COMPLIANCE);
-    const notApplicable = activities.filter(x => x.auditStatus === AUDIT_STATUS.NOT_APPLICABLE);
-    const total = compliant.length + nonCompliance.length + rejected.length;
-    const compliancePer = total > 0 ? (compliant.length * 100 / total).toFixed(1) : 0;
-    const nonCompliancePer = total > 0 ? (nonCompliance.length * 100 / total).toFixed(1) : 0;
-    const rejectedPer = total > 0 ? (rejected.length * 100 / total).toFixed(1) : 0;
+  const { company, associateCompany, location, month, year } = summary;
+  const activities = data.filter(x => x.status === ACTIVITY_STATUS.AUDITED || x.status === ACTIVITY_STATUS.REJECTED);
+  const audited = data.filter(x => x.status === ACTIVITY_STATUS.AUDITED);
+  const rejected = data.filter(x => x.status === ACTIVITY_STATUS.REJECTED);
+  const compliant = activities.filter(x => x.auditStatus === AUDIT_STATUS.COMPLIANT);
+  const nonCompliance = activities.filter(x => x.auditStatus === AUDIT_STATUS.NON_COMPLIANCE);
+  const notApplicable = activities.filter(x => x.auditStatus === AUDIT_STATUS.NOT_APPLICABLE);
+  const total = compliant.length + nonCompliance.length + rejected.length;
+  const compliancePer = total > 0 ? (compliant.length * 100 / total).toFixed(1) : 0;
+  const nonCompliancePer = total > 0 ? (nonCompliance.length * 100 / total).toFixed(1) : 0;
+  const rejectedPer = total > 0 ? (rejected.length * 100 / total).toFixed(1) : 0;
 
-    const _summary = `
+  const _summary = `
         <div class="flex" style="margin-bottom: 20px">
             <div>
                 <table class="no-border" cellspacing="0" cellpadding="8">
@@ -254,8 +259,8 @@ export function checkList(summary, data) {
         </div>
     `;
 
-    const _activities = activities.map((activity, index) => {
-        return `
+  const _activities = activities.map((activity, index) => {
+    return `
             <tr>
                 <td>${index + 1}</td>
                 <td>${activity.act.name}</td>
@@ -270,8 +275,8 @@ export function checkList(summary, data) {
                 <td>${activity.formsStatusRemarks || ''}</td>
             </tr>
         `
-    }).join('');
-    const _audited = `
+  }).join('');
+  const _audited = `
         <tr>
             <td colspan="6" style="background-color: green;">Audited</td>
             <td>${audited.length || 0}</td>
@@ -281,7 +286,7 @@ export function checkList(summary, data) {
             <td></td>
         </tr>
     `;
-    const _rejected = `
+  const _rejected = `
         <tr>
             <td colspan="6" style="background-color: red;">Rejected</td>
             <td>${rejected.length || 0}</td>
@@ -291,7 +296,7 @@ export function checkList(summary, data) {
             <td></td>
         </tr>
     `;
-    const _compliant = `
+  const _compliant = `
         <tr>
             <td colspan="6" style="background-color: lightgreen;">Compliant</td>
             <td></td>
@@ -301,7 +306,7 @@ export function checkList(summary, data) {
             <td></td>
         </tr>
     `;
-    const _nonCompliance = `
+  const _nonCompliance = `
         <tr>
             <td colspan="6" style="background-color: red;">Non-Compliance</td>
             <td></td>
@@ -311,7 +316,7 @@ export function checkList(summary, data) {
             <td></td>
         </tr>
     `;
-    const _notApplicable = `
+  const _notApplicable = `
         <tr>
             <td colspan="6" style="background-color: orange;">Not Applicable</td>
             <td></td>
@@ -322,7 +327,7 @@ export function checkList(summary, data) {
         </tr>
     `;
 
-    const _content = `
+  const _content = `
         <table cellspacing="0" cellpadding="8">
             <thead>
                 <tr>
@@ -350,7 +355,7 @@ export function checkList(summary, data) {
         </table>
     `;
 
-    const html = `<html lang="en">
+  const html = `<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -403,7 +408,7 @@ export function checkList(summary, data) {
     </body>
     </html>`;
 
-    const win = window.open(null, '_blank', 'width=1280,height=700');
-    const uri = 'data:text/html;filename=FACheckList.html;charset=utf-8,' + encodeURI(html);
-    win.document.write('<iframe src="' + uri + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+  const win = window.open(null, '_blank', 'width=1280,height=700');
+  const uri = 'data:text/html;filename=FACheckList.html;charset=utf-8,' + encodeURI(html);
+  win.document.write('<iframe src="' + uri + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
 }

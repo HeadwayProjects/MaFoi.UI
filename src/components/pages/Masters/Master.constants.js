@@ -45,7 +45,7 @@ export function FindDuplicateMasters(data, obj) {
     });
 }
 
-export function GetRuleDesc({name, sectionNo, ruleNo}) {
+export function GetRuleDesc({ name, sectionNo, ruleNo }) {
     const value = [name];
     if (sectionNo) {
         value.push(`(Section No. ${sectionNo})`);
@@ -95,4 +95,6 @@ export const CompanyStatus = ['Active', 'InActive'];
 
 export const EmployeesCount = ['1-100', '101 - 200', '201 - 500', '> 500'];
 
-export const Salutation = ['Mr.', 'Miss.', 'Mrs.']
+export const Salutation = ['Mr.', 'Miss.', 'Mrs.'];
+
+export const EstablishmentTypes = ['CLRA', 'Factory', 'Shops'];

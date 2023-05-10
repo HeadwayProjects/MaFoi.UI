@@ -9,7 +9,7 @@ import ConfirmModal from "../../common/ConfirmModal";
 import { useDeleteAct, useGetActs } from "../../../backend/masters";
 import { GetMastersBreadcrumb } from "./Master.constants";
 import { toast } from "react-toastify";
-import { ERROR_MESSAGES } from "../../../utils/constants";
+import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 
 function Act() {
@@ -27,6 +27,15 @@ function Act() {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    function TypeTmpl({ cell }) {
+        const value = (cell.getValue() || '').replaceAll(API_DELIMITER, UI_DELIMITER);
+        return (
+            <div className="d-flex align-items-center h-100 w-auto">
+                <div className="ellipse two-lines">{value}</div>
+            </div>
+        )
+    }
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
@@ -51,7 +60,7 @@ function Act() {
 
     const columns = [
         { title: "Act Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
-        { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<TypeTmpl />) },
         { title: "Law", field: "law.name", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,
