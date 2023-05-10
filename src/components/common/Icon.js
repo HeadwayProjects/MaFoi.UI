@@ -1,11 +1,11 @@
 import React from "react";
 import { preventDefault } from "../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faUpload, faInfoCircle, faSearch, faExternalLink } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle, faSearch, faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import "./Icon.css";
-import { faBuilding, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 
 function Icon({ className, name, action, data, style, disabled, text, type }) {
     function onClick(event) {
@@ -16,8 +16,9 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
     }
 
     return (
-        <OverlayTrigger overlay={<Tooltip>{text || name}</Tooltip>}
-            placement="bottom" delay={{ show: 500 }}>
+        <>
+        {/* // <OverlayTrigger overlay={<Tooltip>{text || name}</Tooltip>}
+        //     placement="bottom" delay={{ show: 500 }}> */}
             <span className={`icon ${type === 'button' ? 'btn-icon' : ''} ${className || ''}`} style={style} onClick={onClick} disabled={disabled}>
                 {{
                     th: (
@@ -122,7 +123,8 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
                     )
                 }[name]}
             </span>
-        </OverlayTrigger>
+            {/* </OverlayTrigger> */}
+        </>
     )
 }
 

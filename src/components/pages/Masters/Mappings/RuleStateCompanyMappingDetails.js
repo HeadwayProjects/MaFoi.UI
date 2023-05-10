@@ -5,7 +5,7 @@ import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue, preventDefault } from "../../../../utils/common";
 import { Button, Modal } from "react-bootstrap";
-import { GetActionTitle } from "../Master.constants";
+import { GetActionTitle, GetRuleDesc } from "../Master.constants";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { ACTIONS } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
@@ -32,22 +32,6 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         toast.error(ERROR_MESSAGES.DEFAULT);
     }
 
-    function getRule(rule) {
-        return (
-            <div className="flex flex-column">
-                <div>{rule.name}</div>
-                {
-                    rule.sectionNo &&
-                    <div className="fst-italic text-sm fw-bold">Section No. {rule.sectionNo}</div>
-                }
-                {
-                    rule.ruleNo &&
-                    <div className="fst-italic text-sm fw-bold">Rule No. {rule.ruleNo}</div>
-                }
-            </div>
-        )
-    }
-
     const schema = {
         fields: [
             {
@@ -67,11 +51,11 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? getRule(getValue(mapping, 'rule') || {}) : '',
+                content: action === ACTIONS.VIEW ? GetRuleDesc(getValue(mapping, 'rule') || {}) : '',
                 options: (rules || []).map(x => {
                     return {
                         id: x.id,
-                        name: getRule(x)
+                        name: GetRuleDesc(x)
                     }
                 })
             },

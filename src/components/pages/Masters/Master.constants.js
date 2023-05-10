@@ -45,6 +45,17 @@ export function FindDuplicateMasters(data, obj) {
     });
 }
 
+export function GetRuleDesc({name, sectionNo, ruleNo}) {
+    const value = [name];
+    if (sectionNo) {
+        value.push(`(Section No. ${sectionNo})`);
+    }
+    if (ruleNo) {
+        value.push(`(Rule No. ${ruleNo})`);
+    }
+    return value.join(' ');
+}
+
 export const RuleType = ['State', 'Central'];
 
 export const ActivityType = [

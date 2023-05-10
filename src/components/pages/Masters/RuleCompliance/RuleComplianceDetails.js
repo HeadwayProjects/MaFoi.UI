@@ -5,7 +5,7 @@ import { Button } from "react-bootstrap";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
 import { useCreateRuleCompliance, useGetRules, useGetStates, useUpdateRuleCompliance } from "../../../../backend/masters";
 import { getValue, preventDefault } from "../../../../utils/common";
-import { ActivityType, AuditType, GetActionTitle, RiskType } from "../Master.constants";
+import { ActivityType, AuditType, GetActionTitle, GetRuleDesc, RiskType } from "../Master.constants";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { ACTIONS } from "../../../common/Constants";
 import { toast } from "react-toastify";
@@ -69,7 +69,12 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'rule',
                 label: 'Rule',
-                options: rules,
+                options: rules.map(x => {
+                    return {
+                        id: x.id,
+                        name: GetRuleDesc(x)
+                    }
+                }),
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
@@ -110,7 +115,7 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.CHECKBOX,
                 name: 'impriosonment',
-                label: 'Impriosonment',
+                label: 'Imprisonment',
                 content: getValue(compliance, 'impriosonment') ? 'Yes' : 'No'
             },
             {
@@ -172,7 +177,7 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 proofOfCompliance: compliance.proofOfCompliance || '',
                 penalty: compliance.penalty,
                 risk: compliance.risk.value,
-                maximumPenaltyAmount: `${compliance.maximumPenaltyAmount || 0}`,
+                maximumPenaltyAmount: compliance.maximumPenaltyAmount ? parseFloat(compliance.maximumPenaltyAmount) : 0,
                 impriosonment: compliance.impriosonment,
                 continuingPenalty: compliance.continuingPenalty || false,
                 cancellationSuspensionOfLicense: compliance.cancellationSuspensionOfLicense,

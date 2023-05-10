@@ -4,14 +4,23 @@ import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/For
 import { Button } from "react-bootstrap";
 import styles from "./Companies.module.css"
 import { COMPANY_REQUEST } from "./Companies.constants";
+import { useGetCities, useGetStates } from "../../../../backend/masters"
 
 function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
     const [form, setForm] = useState({});
+    const [state, setState] = useState();
     const [companyDetails, setCompanyDetails] = useState({ hideButtons: true });
+    const { states, isFetching: fetchingStates } = useGetStates();
+    const { cities, isFetching: fetchingCities } = useGetCities(state ? { stateId: state.value } : undefined, Boolean(state));
 
     function debugForm(_form) {
         setForm(_form);
         setCompanyDetails(_form.values);
+    }
+
+    function onStateChange(e) {
+        setState(e);
+        setCompanyDetails({ ...companyDetails, state: e, city: null });
     }
 
     const schema = {
@@ -32,14 +41,25 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 className: styles.addressField
             },
             {
-                component: componentTypes.TEXT_FIELD,
-                name: 'city',
-                label: 'City'
+                component: componentTypes.SELECT,
+                name: 'state',
+                label: 'State',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                options: states,
+                onChange: onStateChange.bind(this)
             },
             {
-                component: componentTypes.TEXT_FIELD,
-                name: 'state',
-                label: 'State'
+                component: componentTypes.SELECT,
+                name: 'city',
+                label: 'City',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                options: cities,
+                isDisabled: !Boolean(state),
+                isLoading: fetchingStates
             },
             {
                 component: componentTypes.SELECT,
@@ -48,7 +68,8 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                options: [{ id: 'India', name: 'India' }]
+                options: [{ id: 'India', name: 'India' }],
+                isLoading: fetchingCities
             },
             {
                 component: componentTypes.TAB_ITEM,
@@ -174,8 +195,8 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 ...COMPANY_REQUEST,
                 ...company,
                 companyAddress,
-                city,
-                state,
+                city: city.label,
+                state: state.label,
                 country: country.value,
                 contactNumber,
                 email,
@@ -196,14 +217,27 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
 
     useEffect(() => {
         if (company) {
-            const { country } = company || {};
+            const { country, state, city } = company || {};
             setCompanyDetails({
                 hideButtons: true,
                 ...company,
-                country: Boolean(country) ? { value: country, label: country } : { value: 'India', label: 'India' }
+                country: Boolean(country) ? { value: country, label: country } : { value: 'India', label: 'India' },
+                state: Boolean(state) ? { value: state, label: state } : null,
+                city: Boolean(city) ? { value: city, label: city } : null,
             });
         }
     }, [company]);
+
+    useEffect(() => {
+        if (!fetchingStates && states) {
+            if (company && company.state) {
+                const _state = states.find(x => x.name === company.state);
+                if (_state) {
+                    setState({ value: _state.id, label: _state.name });
+                }
+            }
+        }
+    }, [fetchingStates])
 
     return (
         <>
