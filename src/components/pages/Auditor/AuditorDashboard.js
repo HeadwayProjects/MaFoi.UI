@@ -13,7 +13,7 @@ function AuditorDashboard() {
     const [activeTab, setActiveTab] = useState(TABS.AUDITOR);
 
     return (
-        <div>
+        <div style={{ paddingBottom: '44px' }}>
             <div className="d-flex mb-4 p-2 align-items-center pageHeading">
                 <div className="ps-4">
                     <h4 className="mb-0 ps-1">Auditor Dashboard</h4>

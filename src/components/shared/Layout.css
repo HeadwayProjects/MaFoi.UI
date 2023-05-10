@@ -35,7 +35,6 @@
     overflow: auto;
     transition: width 0.3s;
     height: calc(100vh - 84px);
-    padding-bottom: 44px;
 }
 
 .sidenav-container:hover {

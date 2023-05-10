@@ -26,7 +26,7 @@ function VendorDashboard() {
     }
 
     return (
-        <div className="d-flex flex-column">
+        <div className="d-flex flex-column" style={{paddingBottom: '44px'}}>
             <div className="d-flex  p-2 align-items-center pageHeading">
                 <div className="ps-4">
                     <h4 className="mb-0 ps-1">Vendor-Dashboard</h4>

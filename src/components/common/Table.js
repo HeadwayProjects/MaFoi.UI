@@ -69,7 +69,7 @@ function Table(props) {
         sortMode = 'local',
         paginationSize = 1000,
         rowHeight = 24,
-        bufferSpacing = 20
+        bufferSpacing = 0
     } = props.options;
 
     const [table, setTable] = useState();
@@ -79,7 +79,7 @@ function Table(props) {
     function handleResize() {
         if (divEle && divEle.current) {
             const { y } = divEle.current.getBoundingClientRect();
-            const ht = `calc(${window.innerHeight - y - 25}px - ${bufferSpacing || 0}px)`;
+            const ht = `calc(${window.innerHeight - y}px - ${bufferSpacing || 0}px)`;
             divEle.current.style.height = ht;
         }
     }
