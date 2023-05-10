@@ -3,7 +3,7 @@ import { GetMastersBreadcrumb } from "../Master.constants";
 import CompaniesList from "./CompaniesList";
 import MastersLayout from "../MastersLayout";
 import { preventDefault } from "../../../../utils/common";
-import AssociateCompanies from "./AssociateCompanies";
+import AssociateCompanies from "./AssociateCompaniesList";
 import AddEditCompany from "./AddEditCompany";
 
 export const VIEWS = {
@@ -40,7 +40,7 @@ function Companies() {
     }, [view]);
 
     return (
-        <MastersLayout title="Masters - Companies" breadcrumbs={breadcrumb}>
+        <MastersLayout title="Manage Companies" breadcrumbs={breadcrumb}>
             {
                 view === VIEWS.LIST &&
                 <CompaniesList changeView={changeView} />

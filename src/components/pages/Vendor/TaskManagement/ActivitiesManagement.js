@@ -237,7 +237,6 @@ function ActivitiesManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />),
             headerClick: (e, col) => {
                 preventDefault(e);
-                console.log(e, col);
             }
         },
         {

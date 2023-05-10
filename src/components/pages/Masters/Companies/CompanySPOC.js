@@ -185,6 +185,7 @@ function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
                 contactPersonEmail
             }
             delete payload.hideButtons;
+            delete payload.parentCompany;
             onNext(payload);
         }
     }

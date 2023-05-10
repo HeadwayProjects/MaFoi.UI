@@ -204,7 +204,8 @@ function CheckboxField(props) {
                 if (props.onChange) {
                     props.onChange(e);
                 }
-            }
+            },
+            disabled: props.disabled
         }
     }
     return (

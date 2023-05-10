@@ -151,7 +151,6 @@ export function useUpdateActivity(onSuccess, onError) {
         {
             onError,
             onSuccess: (response) => {
-                console.log(response)
                 const data = (response || {}).data || {};
                 onSuccess(data);
             }

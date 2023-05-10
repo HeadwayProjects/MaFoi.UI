@@ -25,7 +25,7 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
     const { createCompany, creating } = useCreateCompany((response) => {
         if (response.id) {
             toast.success(`Company ${response.name} created successfully.`);
-           setActiveStep(STEPS.SPOC);
+            setActiveStep(STEPS.SPOC);
         } else {
             toast.error(response.message || ERROR_MESSAGES.ERROR);
         }
@@ -47,7 +47,7 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
     }
     function backToAssociateCompaniesList(e) {
         preventDefault(e);
-        changeView(VIEWS.ASSOCIATE_COMPANIES, { company: parentCompany });
+        changeView(VIEWS.LIST, { parentCompany });
     }
 
     function submitDetails(_company, step) {
@@ -66,13 +66,16 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
             <div className="d-flex flex-column h-full">
                 <nav aria-label="breadcrumb">
                     <ol className={`breadcrumb d-flex justify-content-start my-3 px-2 ${styles.breadcrumb}`}>
-                        <li className="breadcrumb-item ">
-                            <Link href="/" onClick={backToCompaniesList} className="fw-bold">Companies</Link>
-                        </li>
+                        {
+                            isParentCompany &&
+                            <li className="breadcrumb-item ">
+                                <Link href="/" onClick={backToCompaniesList} className="fw-bold">Companies</Link>
+                            </li>
+                        }
                         {
                             !isParentCompany &&
                             <li className="breadcrumb-item ">
-                                <Link href="/" onClick={backToAssociateCompaniesList} className="fw-bold">{parentCompany.name}</Link>
+                                <Link href="/" onClick={backToAssociateCompaniesList} className="fw-bold">Associate Companies</Link>
                             </li>
                         }
                         <li className="breadcrumb-item">
@@ -86,7 +89,8 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
                     <Tab eventKey={STEPS.DETAILS} title="Company Details">
                         {
                             activeStep === STEPS.DETAILS &&
-                            <CompanyDetails company={companyDetails} onNext={submitDetails} onPrevious={parentCompany ? backToAssociateCompaniesList : backToCompaniesList} />
+                            <CompanyDetails company={companyDetails} onNext={submitDetails} parentCompany={parentCompany}
+                                onPrevious={parentCompany ? backToAssociateCompaniesList : backToCompaniesList} />
                         }
                     </Tab>
                     <Tab eventKey={STEPS.SPOC} title="SPOC Details" disabled={!Boolean(companyDetails)}>

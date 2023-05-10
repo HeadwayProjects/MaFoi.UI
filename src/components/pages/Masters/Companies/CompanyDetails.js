@@ -9,9 +9,9 @@ import { toast } from "react-toastify";
 
 
 
-function CompanyDetails({ onNext, onPrevious, company }) {
+function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
     const [form, setForm] = useState({});
-    const [companyDetails, setCompanyDetails] = useState({ hideButtons: true, isParent: true });
+    const [companyDetails, setCompanyDetails] = useState({ hideButtons: true, isAssociateCompany: Boolean(parentCompany), parentCompany });
     const { companies } = useGetCompanies({ isParent: true });
 
     function debugForm(_form) {
@@ -27,37 +27,42 @@ function CompanyDetails({ onNext, onPrevious, company }) {
                 label: 'Company Code',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.MAX_LENGTH, threshold: 4 },
-                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{3,4}/, message: 'Should be alphanumeric value of length 3 or 4' }
+                    { type: validatorTypes.MAX_LENGTH, threshold: 10 },
+                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{3,10}/, message: 'Should be alphanumeric value of length 3 or 4' }
                 ],
                 styleClass: 'text-uppercase',
                 disabled: !Boolean(company)
             },
-            // {
-            //     component: componentTypes.CHECKBOX,
-            //     name: 'isParent',
-            //     label: 'Is Associate Company'
-            // },
-            // {
-            //     component: componentTypes.SELECT,
-            //     name: 'parentCompany',
-            //     label: 'Parent Company',
-            //     condition: {
-            //         when: 'isParent',
-            //         is: false,
-            //         then: { visible: true }
-            //     },
-            //     options: companies
-            // },
-            // {
-            //     component: componentTypes.WIZARD,
-            //     name: 'emptySpace1',
-            //     condition: {
-            //         when: 'isParent',
-            //         is: true,
-            //         then: { visible: true }
-            //     },
-            // },
+            {
+                component: componentTypes.CHECKBOX,
+                name: 'isAssociateCompany',
+                label: 'Is Associate Company',
+                disabled: Boolean(company)
+            },
+            {
+                component: componentTypes.SELECT,
+                name: 'parentCompany',
+                label: 'Parent Company',
+                condition: {
+                    when: 'isAssociateCompany',
+                    is: true,
+                    then: { visible: true }
+                },
+                options: companies,
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                isDisabled: Boolean(company)
+            },
+            {
+                component: componentTypes.WIZARD,
+                name: 'emptySpace1',
+                condition: {
+                    when: 'isAssociateCompany',
+                    is: false,
+                    then: { visible: true }
+                },
+            },
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'name',
@@ -196,12 +201,14 @@ function CompanyDetails({ onNext, onPrevious, company }) {
 
     function handleSubmit() {
         if (form.valid) {
-            const { code, name, businessType, websiteUrl, status, employees } = form.values;
-            const existingData = Boolean(company) ? companies.filter(x => x.id !== (company || {}).id) : [...companies];
-            const duplicateCompanies = FindDuplicateMasters(existingData, { code, name });
-            if (duplicateCompanies.length) {
-                toast.error(`Few other companies matching code or name. Please update code or name`);
-                return;
+            const { code, name, businessType, websiteUrl, status, employees, isParent, parentCompany } = form.values;
+            if (isParent) {
+                const existingData = Boolean(company) ? companies.filter(x => x.id !== (company || {}).id) : [...companies];
+                const duplicateCompanies = FindDuplicateMasters(existingData, { code, name });
+                if (duplicateCompanies.length) {
+                    toast.error(`Few other companies matching code or name. Please update code or name`);
+                    return;
+                }
             }
             const payload = {
                 ...COMPANY_REQUEST,
@@ -212,9 +219,12 @@ function CompanyDetails({ onNext, onPrevious, company }) {
                 websiteUrl,
                 isActive: status.value === 'Active',
                 employees: (employees || {}).value || '',
-                isParent: true
+                isParent,
+                parentCompanyId: isParent ? '' : parentCompany.value
             }
             delete payload.hideButtons;
+            delete payload.isAssociateCompany;
+            delete payload.parentCompany;
             onNext(payload);
         }
     }
@@ -225,7 +235,7 @@ function CompanyDetails({ onNext, onPrevious, company }) {
 
     useEffect(() => {
         if (company) {
-            const { businessType, isActive, employees } = company || {};
+            const { businessType, isActive, employees, isParent } = company || {};
             setCompanyDetails({
                 hideButtons: true,
                 ...company,
@@ -233,7 +243,8 @@ function CompanyDetails({ onNext, onPrevious, company }) {
                     return { value: x, label: x }
                 }),
                 status: isActive ? { value: 'Active', label: 'Active' } : { value: 'Inactive', label: 'Inactive' },
-                employees: employees ? { value: employees, label: employees } : null
+                employees: employees ? { value: employees, label: employees } : null,
+                isAssociateCompany: !isParent
             });
         }
     }, [company]);

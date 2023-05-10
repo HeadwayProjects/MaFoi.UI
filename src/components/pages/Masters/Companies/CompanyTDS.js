@@ -205,6 +205,7 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
                 gstn_no
             }
             delete payload.hideButtons;
+            delete payload.parentCompany;
             onNext(payload);
         }
     }

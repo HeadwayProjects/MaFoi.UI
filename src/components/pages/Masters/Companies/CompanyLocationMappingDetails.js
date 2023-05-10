@@ -195,14 +195,12 @@ function CompanyLocationDetails({ action, parentCompany, associateCompany, data,
                 city ? (cities.find(x => x.id === city.value) || { code: '###' }).code : '###',
                 locationCode || '###'
             ];
-            console.log('Affected...');
             setLocationDetails({ ..._form.values, companyLocationAddress: codes.join('-') });
         }
     }
 
     useEffect(() => {
         if (data) {
-            console.log(data);
             setLocationDetails({
                 hideButtons: true,
                 ...data

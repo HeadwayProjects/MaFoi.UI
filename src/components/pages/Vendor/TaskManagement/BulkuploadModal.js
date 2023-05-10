@@ -143,7 +143,7 @@ function BulkUploadModal({ onClose }) {
             onClose();
             toast.success('Files saved successfully.');
         }, error => {
-            console.log(error);
+            console.error(error);
         }).finally(() => setSubmitting(false))
     }
 
