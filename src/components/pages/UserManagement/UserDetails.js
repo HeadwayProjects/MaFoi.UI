@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useCreateUser, useGetUserRoles, useUpdateUser } from "../../../backend/users";
 import { toast } from "react-toastify";
-import { ERROR_MESSAGES } from "../../../utils/constants";
+import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue, preventDefault } from "../../../utils/common";
 import { ACTIONS, PATTERNS, STATUS, USER_STATUS } from "../../common/Constants";
@@ -14,12 +14,12 @@ function UserDetails({ action, data, onClose, onSubmit }) {
     const [user, setUser] = useState({ hideButtons: true, status: { value: STATUS.ACTIVE, label: STATUS.ACTIVE } });
     const { roles } = useGetUserRoles();
     const [userPages, setUserpages] = useState('');
-    const { createUser, creating } = useCreateUser(({ key, message }) => {
+    const { createUser, creating } = useCreateUser(({ key, value }) => {
         if (key === 'SUCCESS') {
             toast.success(`${user.name} created successfully.`);
             onSubmit();
         } else {
-            toast.error(message);
+            toast.error(value);
         }
     }, errorCallback);
     const { updateUser, updating } = useUpdateUser(({ id, message }) => {
@@ -27,7 +27,7 @@ function UserDetails({ action, data, onClose, onSubmit }) {
             toast.success(`${user.name} updated successfully.`);
             onSubmit();
         } else {
-            toast.error(message);
+            toast.error(ERROR_MESSAGES.DEFAULT);
         }
     }, errorCallback);
 
@@ -37,7 +37,7 @@ function UserDetails({ action, data, onClose, onSubmit }) {
 
     function onRoleChange(e) {
         const {pages} = roles.find(x => x.id === e.value);
-        setUserpages(pages.split(';').join(', '));
+        setUserpages(pages.split(API_DELIMITER).join(UI_DELIMITER));
     }
 
     const schema = {
