@@ -187,7 +187,8 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                 isAssociateCompany: !isParent,
                 establishmentType: establishmentType ? establishmentType.split(API_DELIMITER).map(x => {
                     return { value: x, label: x };
-                }) : null
+                }) : null,
+                parentCompany
             });
         }
     }, [company]);

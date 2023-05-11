@@ -39,7 +39,7 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
     const { createCompany, creating } = useCreateCompany(({ id, name, message }) => {
         if (id) {
             toast.success(`Company ${name} created successfully.`);
-            setCompanyDetails({ ...companyDetails, id });
+            setCompanyDetails({ ...companyDetails, id, parentCompany });
             uploadCompanyLogo(id);
         } else {
             toast.error(message || ERROR_MESSAGES.ERROR);
