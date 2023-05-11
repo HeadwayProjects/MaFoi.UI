@@ -31,7 +31,7 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
             }
             const _company = { ...companyDetails };
             delete _company.file;
-            setCompanyDetails({ ..._company });
+            setCompanyDetails({ ..._company, logo: value });
         } else {
             toast.error(value || ERROR_MESSAGES.UPLOAD_FILE);
         }
@@ -72,7 +72,7 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
 
     function submitDetails(_company, step) {
         if (_company) {
-            setCompanyDetails({..._company});
+            setCompanyDetails({ ..._company });
         }
         delete _company.file;
         if (companyDetails) {
