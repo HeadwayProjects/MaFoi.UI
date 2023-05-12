@@ -60,8 +60,7 @@ function AuditSchedule() {
                 name: 'locations',
                 label: 'Locations',
                 options: (locations || []).map(x => {
-                    const { id, location } = x || {};
-                    const { name, code, cities } = location || {};
+                    const { id, name, code, cities } = x.location || {};
                     const { state } = cities || {};
                     return {
                         id,

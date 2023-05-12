@@ -634,7 +634,7 @@ export function useCreateUserLocationMapping(onSuccess, onError) {
 export function useExportAuditSchedule(onSuccess, onError) {
     const { mutate: exportAuditSchedule, error, isLoading: exporting } = useMutation(
         ['exportAuditSchedule'],
-        async (payload) => await api.get('/api/Company/ExportAuditSchedule', payload, null, {responseType: 'blob'}),
+        async (payload) => await api.get('/api/Company/ExportAuditSchedule', payload, null, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
@@ -649,7 +649,7 @@ export function useExportAuditSchedule(onSuccess, onError) {
 export function useImportAuditSchedule(onSuccess, onError) {
     const { mutate: importAuditSchedule, error, isLoading: uploading } = useMutation(
         ['importAuditSchedule'],
-        async (formData) => await api.post(`/api/Company/ImportAuditSchedule`, formData,null,{responseType: 'blob'}),
+        async (formData) => await api.post(`/api/Company/ImportAuditSchedule`, formData, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
