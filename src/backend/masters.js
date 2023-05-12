@@ -649,7 +649,7 @@ export function useExportAuditSchedule(onSuccess, onError) {
 export function useImportAuditSchedule(onSuccess, onError) {
     const { mutate: importAuditSchedule, error, isLoading: uploading } = useMutation(
         ['importAuditSchedule'],
-        async (formData) => await api.put(`/api/Company/ImportAuditSchedule`, formData),
+        async (formData) => await api.post(`/api/Company/ImportAuditSchedule`, formData,null,{responseType: 'blob'}),
         {
             onError,
             onSuccess: (response) => {
