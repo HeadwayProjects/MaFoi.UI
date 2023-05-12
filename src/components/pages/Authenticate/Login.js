@@ -4,7 +4,7 @@ import Carousel from "react-bootstrap/Carousel";
 import logo from './../../../assets/img/logo.png';
 import bannerimg1 from "./../../../assets/img/EZYCOMP.jpg";
 import bannerimg2 from "./../../../assets/img/Contact.jpg";
-// import bannerimg3 from "./../../../assets/img/banner3.jpg";
+import bannerimg3 from "./../../../assets/img/Promise.jpg";
 import { preventDefault } from "../../../utils/common";
 import { toast } from 'react-toastify';
 import "./Authenticate.css";
@@ -111,9 +111,9 @@ function Login() {
                             <Carousel.Item>
                                 <img className="d-block" src={bannerimg2} alt="Second slide" />
                             </Carousel.Item>
-                            {/* <Carousel.Item>
+                            <Carousel.Item>
                                 <img className="d-block" src={bannerimg3} alt="Third slide" />
-                            </Carousel.Item> */}
+                            </Carousel.Item>
                         </Carousel>
                     </div>
 
