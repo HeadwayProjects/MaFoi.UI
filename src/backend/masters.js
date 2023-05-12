@@ -630,3 +630,33 @@ export function useCreateUserLocationMapping(onSuccess, onError) {
     );
     return { createUserLocationMapping, error, creating };
 }
+
+export function useExportAuditSchedule(onSuccess, onError) {
+    const { mutate: exportAuditSchedule, error, isLoading: exporting } = useMutation(
+        ['exportAuditSchedule'],
+        async (payload) => await api.get('/api/Company/ExportAuditSchedule', payload, null, {responseType: 'blob'}),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportAuditSchedule, error, exporting };
+}
+
+export function useImportAuditSchedule(onSuccess, onError) {
+    const { mutate: importAuditSchedule, error, isLoading: uploading } = useMutation(
+        ['importAuditSchedule'],
+        async (formData) => await api.put(`/api/Company/ImportAuditSchedule`, formData),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importAuditSchedule, error, uploading };
+}

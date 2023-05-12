@@ -1,5 +1,5 @@
-import React from "react";
-import { useRoutes } from "raviger";
+import React, { useEffect } from "react";
+import { navigate, useQueryParams, useRoutes } from "raviger";
 import * as auth from "../backend/auth"
 import VendorDashboard from "../components/pages/Vendor/Dashboard/Dashboard";
 import ActivitiesManagement from "../components/pages/Vendor/TaskManagement/ActivitiesManagement";
@@ -23,6 +23,7 @@ import AssociateCompanies from "../components/pages/Masters/Companies/AssociateC
 import Companies from "../components/pages/Masters/Companies/Companies";
 import CompanyLocationMappings from "../components/pages/Masters/Companies/CompanyLocationMappings";
 import UserCompanies from "../components/pages/UserManagement/UserCompanies";
+import AuditSchedule from "../components/pages/Masters/Companies/AuditSchedule";
 
 export const ROLE_MAPPING = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -33,6 +34,7 @@ export const ROLE_MAPPING = {
 }
 
 function AuthenticatedContent() {
+    const [query] = useQueryParams();
     const user = auth.getUserDetails() || {};
     const hasToken = !!auth.getAuthToken();
     const isVendor = ['VendorAdmin', 'VendorUser'].includes(user.role);
@@ -105,6 +107,9 @@ function AuthenticatedContent() {
         '/companies/locationMapping': () => (
             layout(<CompanyLocationMappings />)
         ),
+        '/companies/auditSchedule': () => (
+            layout(<AuditSchedule />)
+        ),
         '/userManagement/users': () => (
             layout(<MangeUsers />)
         ),
@@ -130,6 +135,12 @@ function AuthenticatedContent() {
             <Login />
         ),
     }
+
+    useEffect(() => {
+        if (query && query.redirectUri) {
+            navigate(query.redirectUri);
+        }
+    }, [query]);
 
     const route = useRoutes(routes, { basePath: '' })
     return (

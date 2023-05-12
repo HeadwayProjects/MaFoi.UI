@@ -28,7 +28,11 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     const { createStateRuleCompanyMapping, creating } = useCreateStateRuleCompanyMapping(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Mapping created successfully.`);
-            uploadTemplate(value);
+            if (mapping.file) {
+                uploadTemplate(value);
+            } else {
+                onSubmit();
+            }
         } else {
             toast.error(value || ERROR_MESSAGES.ERROR);
         }
@@ -96,12 +100,21 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 options: states
             },
             {
+                component: action === ACTIONS.ADD ? componentTypes.TEXT_FIELD : componentTypes.PLAIN_TEXT,
+                name: 'formName',
+                label: 'Form Name',
+                content: getValue(mapping, 'formName'),
+            },
+            {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : 'file-upload',
                 label: action === ACTIONS.VIEW ? 'Uploaded File' : 'File upload',
                 name: 'file',
                 type: 'file',
-                validate: [
+                validate: Boolean((mapping || {}).formName) ? [
                     { type: validatorTypes.REQUIRED },
+                    { type: 'file-type', regex: ALLOWED_FILES_REGEX },
+                    { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
+                ] : [
                     { type: 'file-type', regex: ALLOWED_FILES_REGEX },
                     { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
                 ],
@@ -119,12 +132,13 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         preventDefault(e);
         if (form.valid) {
             if (action === ACTIONS.ADD) {
-                const { act, rule, activity, state } = mapping;
+                const { act, rule, activity, state, formData } = mapping;
                 const request = {
                     actId: act.value,
                     ruleId: rule.value,
                     activityId: activity.value,
-                    stateId: state.value
+                    stateId: state.value,
+                    formData: formData || ''
                 };
                 createStateRuleCompanyMapping(request);
             } else {

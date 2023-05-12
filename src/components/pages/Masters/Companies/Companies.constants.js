@@ -1,3 +1,12 @@
+export function GetCompaniesBreadcrumb(page) {
+    return [
+        { id: 'home', label: 'Home', path: '/' },
+        { id: 'companies', label: 'Companies', path: '/companies/list' },
+        { id: page, label: page }
+    ]
+}
+
+
 export const COMPANY_REQUEST = {
     code: '',
     datePosted: '0001-01-01T00:00:00',

@@ -92,6 +92,7 @@ function RuleStateCompanyMapping() {
         { title: "Rule", field: "rule", widthGrow: 2, formatter: reactFormatter(<RuleTmpl />) },
         { title: "Activity", field: "activity.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "State", field: "state.name", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Form Name", field: "formName", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 160,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -109,9 +110,9 @@ function RuleStateCompanyMapping() {
     function formatApiResponse(params, list, pagination = {}) {
         const total = list.length;
         list = list.map(map => {
-            const { id, state, actRuleActivityMapping, fileName, filePath } = map || {};
+            const { id, state, actRuleActivityMapping, fileName, filePath, formName } = map || {};
             const { act, rule, activity } = actRuleActivityMapping || {};
-            return { id, act, rule, activity, state, fileName, filePath }
+            return { id, act, rule, activity, state, fileName, filePath, formName }
         });
         const tdata = {
             data: list,

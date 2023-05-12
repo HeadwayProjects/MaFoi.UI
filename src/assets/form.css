@@ -45,6 +45,7 @@ input[type=number]::-webkit-outer-spin-button {
 .form-control.is-valid+.input-group-text {
     border-color: var(--emarald-green);
     background-image: none;
+    padding-right: 0.75rem;
 }
 
 .form-control.is-invalid,
@@ -52,6 +53,7 @@ input[type=number]::-webkit-outer-spin-button {
 .form-control.is-invalid+.input-group-text {
     border-color: var(--light-red);
     background-image: none;
+    padding-right: 0.75rem;
 }
 
 .form-group .invalid-feedback {
@@ -95,4 +97,16 @@ input[type=number]::-webkit-outer-spin-button {
 
 .horizontal-form .form-check {
     min-height: 42px;
+}
+
+.horizontal-form.col2 form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 30px;
+    grid-row-gap: 12px;
+}
+
+.horizontal-form.col2 .grid-col-100 {
+    grid-column-start: 1;
+    grid-column-end: 3;
 }

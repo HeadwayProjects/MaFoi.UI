@@ -41,6 +41,7 @@ export const AUDIT_STATUS = {
 
 export const ALLOWED_FILES_REGEX = /(\.xlsx|\.xls|\.csv|\.pdf|\.jpg|\.jpeg|\.png|\.doc|\.docx)$/i;
 export const ALLOWED_LOGO_REGEX = /(\.jpg|\.jpeg|\.png)$/i;
+export const EXCEL_FILE_REGEX = /(\.xlsx)$/i;
 
 export const STATUS_MAPPING = {
     [ACTIVITY_STATUS.PENDING]: 'Pending',

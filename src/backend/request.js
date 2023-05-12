@@ -34,11 +34,11 @@ function getQueryString(payload) {
     return queries.join('&');
 }
 
-export function get(url, payload, config) {
+export function get(url, payload, config, others) {
     if (Object.keys(payload || {}).length > 0) {
         url = `${url}?${getQueryString(payload)}`
     }
-    return apiInstance.get(url, { headers: getHeaders(config) });
+    return apiInstance.get(url, { headers: getHeaders(config), ...others });
 }
 
 export function post(url, payload, config, sendHeaders = true) {
