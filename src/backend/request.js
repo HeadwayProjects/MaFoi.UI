@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAuthToken } from "./auth";
 
 const apiInstance = axios.create({
-    baseURL: 'https://ezycompapi.azurewebsites.net/'
+    baseURL: 'http://ec2-13-127-248-214.ap-south-1.compute.amazonaws.com:8080/'
 });
 
 apiInstance.interceptors.response.use(
@@ -41,8 +41,8 @@ export function get(url, payload, config, others) {
     return apiInstance.get(url, { headers: getHeaders(config), ...others });
 }
 
-export function post(url, payload, config, sendHeaders = true) {
-    return apiInstance.post(url, payload, sendHeaders ? { headers: getHeaders(config) } : null);
+export function post(url, payload, config, sendHeaders = true, others) {
+    return apiInstance.post(url, payload, sendHeaders ? { headers: getHeaders(config), ...others } : null);
 }
 
 export function put(url, payload, config, sendHeaders = true) {
