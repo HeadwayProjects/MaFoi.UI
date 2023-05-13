@@ -172,7 +172,7 @@ function BulkUploadModal({ onClose }) {
         setLocation(null);
         if (associateCompany) {
             const locations = (associateCompany.locations || []).map(location => {
-                return { label: `${location.name}, ${location.cities.name}`, value: location.id, location, stateId: location.stateId };
+                return { label: `${location.name}, ${location.cities.name}`, value: location.id, location, stateId: location.cities.stateId };
             });
             const sorted = sortBy(locations, 'label');
             setLocations(sorted);

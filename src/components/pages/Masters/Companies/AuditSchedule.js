@@ -6,24 +6,36 @@ import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-re
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import AuditScheduleImportModal from "./AuditScheduleImportModal";
+import { MONTHS, MONTHS_ENUM, YEARS } from "../../../common/Constants";
+import PageLoader from "../../../shared/PageLoader";
+
+function getMonthYear() {
+    const date = new Date();
+    const month = MONTHS[date.getMonth()];
+    const year = date.getFullYear();
+    return {
+        month,
+        year: { value: `${year}`, label: year }
+    }
+}
 
 function AuditSchedule() {
     const [form, setForm] = useState({});
     const [importFile, setImportFile] = useState(false);
     const [breadcrumb] = useState(GetCompaniesBreadcrumb('Audit Schedule'));
-    const [exportData, setExportData] = useState({ hideButtons: true });
+    const [exportData, setExportData] = useState({ hideButtons: true, ...getMonthYear() });
     const [parentCompany, setParentCompany] = useState(null);
     const [associateCompany, setAssociateCompany] = useState(null);
     const { companies, isFetching: fetchingCompanies } = useGetCompanies({ isParent: true });
     const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({ isParent: false, parentCompanyId: (parentCompany || {}).value }, Boolean(parentCompany));
     const { locations, isFetching: fetchingLocations } = useGetCompanyLocations({ associateCompanyId: (associateCompany || {}).value }, Boolean(associateCompany));
-    const { exportAuditSchedule } = useExportAuditSchedule((response) => {
+    const { exportAuditSchedule, exporting } = useExportAuditSchedule((response) => {
         const blob = new Blob([response.data], { type: response.headers['content-type'] })
         const URL = window.URL || window.webkitURL;
         const downloadUrl = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = downloadUrl;
-        a.download = 'data1.xlsx';
+        a.download = getFileName();
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -64,7 +76,8 @@ function AuditSchedule() {
                     const { state } = cities || {};
                     return {
                         id,
-                        name: `${name} (${state.code}-${cities.code}-${code})`
+                        name: `${name} (${state.code}-${cities.code}-${code})`,
+                        code: `${state.code}-${cities.code}-${code}`
                     }
                 }),
                 isDisabled: !Boolean(associateCompany),
@@ -72,25 +85,42 @@ function AuditSchedule() {
                 className: 'grid-col-100'
             },
             {
-                component: componentTypes.TEXT_FIELD,
-                name: 'fromDate',
-                label: 'From Date',
-                fieldType: 'date',
+                component: componentTypes.SELECT,
+                name: 'month',
+                label: 'Month',
                 validate: [
                     { type: validatorTypes.REQUIRED }
-                ]
+                ],
+                options: MONTHS_ENUM
             },
             {
-                component: componentTypes.TEXT_FIELD,
-                name: 'toDate',
-                label: 'To Date',
-                fieldType: 'date',
+                component: componentTypes.SELECT,
+                name: 'year',
+                label: 'Year',
                 validate: [
                     { type: validatorTypes.REQUIRED }
-                ]
+                ],
+                options: YEARS
             }
         ],
     };
+
+    function getFileName() {
+        const { parentCompany, associateCompany, locations, month, year } = exportData;
+        const _d = { ...parentCompany, ...associateCompany, ...locations };
+        const result = [
+            _d.parentCompany.code
+        ];
+        if (_d.associateCompany) {
+            result.push(_d.associateCompany.code);
+        }
+        if (_d.locations) {
+            result.push(_d.locations.code);
+        }
+        result.push(month.value);
+        result.push(year.value);
+        return `${result.join('-')}.xlsx`
+    }
 
     function debugForm(_form) {
         setForm(_form);
@@ -110,20 +140,20 @@ function AuditSchedule() {
 
     function handleSubmit() {
         if (form.valid) {
-            const { parentCompany, associateCompany, locations, fromDate, toDate } = exportData;
+            const { parentCompany, associateCompany, locations, month, year } = exportData;
             const payload = {
                 company: parentCompany.value,
-                associateCompany: (associateCompany || {}).value || '',
-                location: (locations || {}).value || '',
-                fromDate: new Date(fromDate).toISOString(),
-                toDate: new Date(toDate).toISOString()
+                associateCompany: (associateCompany || {}).value || null,
+                location: (locations || {}).value || null,
+                month: month.value,
+                year: year.value
             };
             exportAuditSchedule(payload);
         }
     }
 
     function resetForm() {
-        setExportData({ hideButtons: true });
+        setExportData({ hideButtons: true, ...getMonthYear() });
     }
 
     return (
@@ -168,6 +198,9 @@ function AuditSchedule() {
             </MastersLayout>
             {
                 importFile && <AuditScheduleImportModal onClose={() => setImportFile(false)} />
+            }
+            {
+                exporting && <PageLoader>Generating Audit Schedule...</PageLoader>
             }
         </>
     )

@@ -95,7 +95,7 @@ function ActDetails({ action, data, onClose, onSubmit }) {
 
     useEffect(() => {
         if (data) {
-            const { establishmentType } = data;
+            const { establishmentType, law } = data;
             setAct({
                 ...act,
                 ...data,
@@ -104,7 +104,8 @@ function ActDetails({ action, data, onClose, onSubmit }) {
                         value: x,
                         label: x
                     }
-                }) : ''
+                }) : '',
+                law: law ? { value: law.id, label: law.name } : null
             });
         }
     }, [data]);

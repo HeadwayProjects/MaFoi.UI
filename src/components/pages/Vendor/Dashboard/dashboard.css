@@ -24,31 +24,32 @@
 .status-btn-group .btn {
     background-color: var(--white);
     border: 1px solid rgba(50, 44, 45, 0.5) !important;
-}
-
-.status-btn-group input:checked+.btn {
     color: var(--white) !important;
 }
 
+/* .status-btn-group input:checked+.btn {
+    color: var(--white) !important;
+} */
+
 .status-btn-group input[name="ActivitySaved"]+.btn {
-    color: rgba(50, 44, 45, 0.5);
+    background-color: var(--gray-500);
 }
 
 .status-btn-group input[name="Pending"]+.btn {
-    color: #FFC000;
+    background-color: var(--yellow);
 }
 
 .status-btn-group input[name="Overdue"]+.btn,
 .status-btn-group input[name="Rejected"]+.btn {
-    color: #FF0000;
+    background-color: var(--red);
 }
 
 .status-btn-group input[name="Submitted"]+.btn {
-    color: #A9D18E;
+    background-color: var(--light-green);
 }
 
 .status-btn-group input[name="Approved"]+.btn {
-    color: #548235;
+    background-color: var(--dark-green);
 }
 
 .updates li:hover {

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { navigate } from "raviger";
 import Carousel from "react-bootstrap/Carousel";
 import logo from './../../../assets/img/logo.png';
-import bannerimg1 from "./../../../assets/img/EZYCOMP.jpg";
-import bannerimg2 from "./../../../assets/img/Contact.jpg";
-import bannerimg3 from "./../../../assets/img/Promise.jpg";
-import bannerimg4 from "./../../../assets/img/Aim.jpg";
+import EZYCOMP from "./../../../assets/img/EZYCOMP.jpg";
+import Contact from "./../../../assets/img/Contact.jpg";
+import Promise from "./../../../assets/img/Promise.jpg";
+import Aim from "./../../../assets/img/Aim.jpg";
 import { preventDefault } from "../../../utils/common";
 import { toast } from 'react-toastify';
 import "./Authenticate.css";
@@ -107,16 +107,16 @@ function Login() {
                     <div className="col-md-8 p-0 bannerSlider">
                         <Carousel>
                             <Carousel.Item>
-                                <img className="d-block" src={bannerimg1} alt="First slide" />
+                                <img className="d-block" src={EZYCOMP} alt="First slide" />
                             </Carousel.Item>
                             <Carousel.Item>
-                                <img className="d-block" src={bannerimg2} alt="Second slide" />
+                                <img className="d-block" src={Promise} alt="Second slide" />
                             </Carousel.Item>
                             <Carousel.Item>
-                                <img className="d-block" src={bannerimg3} alt="Third slide" />
+                                <img className="d-block" src={Aim} alt="Third slide" />
                             </Carousel.Item>
                             <Carousel.Item>
-                                <img className="d-block" src={bannerimg4} alt="Third slide" />
+                                <img className="d-block" src={Contact} alt="Third slide" />
                             </Carousel.Item>
                         </Carousel>
                     </div>

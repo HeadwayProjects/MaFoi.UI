@@ -58,6 +58,10 @@ export const STATUS_MAPPING = {
 
 export const TOOLTIP_DELAY = 500; // Milliseconds
 
+export const MONTHS_ENUM = [
+    'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+]
+
 export const MONTHS = [
     { value: 'January', label: 'January' },
     { value: 'February', label: 'February' },

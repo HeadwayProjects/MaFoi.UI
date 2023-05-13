@@ -21,12 +21,11 @@ function AuditScheduleImportModal({ onClose }) {
             return;
         }
         const data = response.data;
-        if (!data) {
+        if (data &&  data.size === 0) {
             toast.success('ToDos generated successfully.');
             onClose();
         } else {
             setApiError(response);
-
         }
     });
 

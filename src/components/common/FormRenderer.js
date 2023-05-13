@@ -162,7 +162,7 @@ function SelectField(props) {
                 if (typeof x === 'string') {
                     return { value: x, label: x };
                 }
-                return { value: x.id, label: x.name }
+                return { value: x.value || x.id, label: x.label || x.name, [props.name]: x}
             }));
         }
     }, [props.options])
