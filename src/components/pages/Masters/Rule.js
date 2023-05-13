@@ -11,9 +11,12 @@ import { GetMastersBreadcrumb, RuleType } from "./Master.constants";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
+import { filterData } from "../../../utils/common";
+import { useRef } from "react";
 
 function Rule() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Rule'));
+    const searchRef = useRef();
     const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [rule, setRule] = useState(null);
@@ -87,6 +90,9 @@ function Rule() {
 
     function formatApiResponse(params, list, pagination = {}) {
         const total = list.length;
+        if (searchRef.current.value) {
+            list = list.filter(x => filterData(x, searchRef.current.value, ['name', 'type', 'description', 'sectionNo', 'ruleNo']));
+        }
         const tdata = {
             data: list,
             total,
@@ -101,6 +107,10 @@ function Rule() {
         setParams(params);
         setPayload(search ? { ...params, search } : { ...params });
         return Promise.resolve(formatApiResponse(params, rules));
+    }
+
+    function handleSearch() {
+        setData(formatApiResponse(params, rules));
     }
 
     function deleteRuleMaster() {
@@ -119,16 +129,18 @@ function Rule() {
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
                         <div className="col-12 px-4">
-                            <div className="d-flex">
-                                {/* <InputGroup>
-                                    <input type="text" className="form-control" placeholder="Search for Rule - Code / Name" />
-                                    <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
-                                        <div className="d-flex flex-row align-items-center text-white">
-                                            <Icon name={'search'} />
-                                            <span className="ms-2">Search</span>
-                                        </div>
-                                    </InputGroup.Text>
-                                </InputGroup> */}
+                            <div className="d-flex justify-content-between">
+                                <div className="col-6">
+                                    <InputGroup>
+                                        <input type="text" ref={searchRef} className="form-control" placeholder="Search for Rule - Code / Name" />
+                                        <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }} onClick={handleSearch}>
+                                            <div className="d-flex flex-row align-items-center text-white">
+                                                <Icon name={'search'} />
+                                                <span className="ms-2">Search</span>
+                                            </div>
+                                        </InputGroup.Text>
+                                    </InputGroup>
+                                </div>
                                 <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Rule</Button>
                             </div>
                         </div>

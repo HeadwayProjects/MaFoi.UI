@@ -11,9 +11,12 @@ import { GetMastersBreadcrumb } from "./Master.constants";
 import { toast } from "react-toastify";
 import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
+import { useRef } from "react";
+import { filterData } from "../../../utils/common";
 
 function Act() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Act'));
+    const searchRef = useRef();
     const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [act, setAct] = useState(null);
@@ -78,6 +81,9 @@ function Act() {
 
     function formatApiResponse(params, list, pagination = {}) {
         const total = list.length;
+        if (searchRef.current.value) {
+            list = list.filter(x => filterData(x, searchRef.current.value, ['name', 'establishmentType', 'law.name']));
+        }
         const tdata = {
             data: list,
             total,
@@ -100,6 +106,10 @@ function Act() {
         refetch();
     }
 
+    function handleSearch() {
+        setData(formatApiResponse(params, acts));
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
             setData(formatApiResponse(params, acts));
@@ -112,16 +122,18 @@ function Act() {
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
                         <div className="col-12 px-4">
-                            <div className="d-flex">
-                                {/* <InputGroup>
-                                    <input type="text" className="form-control" placeholder="Search for Act / Code / Name" />
-                                    <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
-                                        <div className="d-flex flex-row align-items-center text-white">
-                                            <Icon name={'search'} />
-                                            <span className="ms-2">Search</span>
-                                        </div>
-                                    </InputGroup.Text>
-                                </InputGroup> */}
+                            <div className="d-flex justify-content-between">
+                                <div className="col-6">
+                                    <InputGroup>
+                                        <input type="text" className="form-control" ref={searchRef} placeholder="Search for Act / Code / Name" />
+                                        <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }} onClick={handleSearch}>
+                                            <div className="d-flex flex-row align-items-center text-white">
+                                                <Icon name={'search'} />
+                                                <span className="ms-2">Search</span>
+                                            </div>
+                                        </InputGroup.Text>
+                                    </InputGroup>
+                                </div>
                                 <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Act</Button>
                             </div>
                         </div>

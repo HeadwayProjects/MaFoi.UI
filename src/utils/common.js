@@ -20,6 +20,13 @@ export function getValue(obj, key) {
   return value;
 }
 
+export function filterData(obj, _search, keys) {
+  _search = _search.toLowerCase();
+  return Boolean(keys.find(x => {
+    return getValue(obj, x).toLowerCase().includes(_search);
+  }));
+}
+
 export function MaskEmail(email) {
   return (email || '').replace(/^(.)(.*)(.@.*)$/,
     (_, a, b, c) => a + b.replace(/./g, '*') + c
