@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import "./Navbar.css";
 import logo from '../../assets/img/header-logo.png';
+import mofoi_logo from '../../assets/img/MOFOI_LOGO.png'
 import * as auth from '../../backend/auth';
 import { preventDefault } from '../../utils/common';
 import ChangePasswordModal from '../pages/Authenticate/ChangePasswordModal';
@@ -44,7 +45,7 @@ function Navbar({ showUser = true }) {
                         {
                             showUser &&
                             <>
-                                <div className="nav-item d-flex">
+                                <div className="nav-item d-flex align-items-center">
                                     <ul className="navbar-nav">
                                         <div className="nav-item dropdown">
                                             <div className="nav-link dropdown-toggle border rounded text-black" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -65,6 +66,7 @@ function Navbar({ showUser = true }) {
                                         <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('hh:mm A')}</span></small>
                                         <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('DD/MM/YYYY')}</span></small>
                                     </ul>
+                                    <img src={mofoi_logo} width={'50px'} height={'50px'} />
                                 </div>
                                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navTop" aria-controls="navTop" aria-expanded="false" aria-label="Toggle navigation">
                                     <span className="navbar-toggler-icon"></span>

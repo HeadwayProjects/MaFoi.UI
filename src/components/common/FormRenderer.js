@@ -162,7 +162,7 @@ function SelectField(props) {
                 if (typeof x === 'string') {
                     return { value: x, label: x };
                 }
-                return { value: x.value || x.id, label: x.label || x.name, [props.name]: x}
+                return { value: x.value || x.id, label: x.label || x.name, [props.name]: x }
             }));
         }
     }, [props.options])
@@ -180,6 +180,7 @@ function SelectField(props) {
                     menuPosition="fixed"
                     isMulti={props.isMulti || false}
                     styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                    formatOptionLabel={props.formatOptionLabel}
                     {...onInput(input)}
                 />
             </div>

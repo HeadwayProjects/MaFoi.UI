@@ -75,7 +75,7 @@ export const ActivityType = [
 ];
 
 export const Periodicity = [
-    'Annually', 'Emburance', 'Half Yealy', 'Monthly', 'One Time', 'Quarterly'
+    'Annually', 'Emburance', 'Half Yearly', 'Monthly', 'One Time', 'Quarterly'
 ];
 
 export const CalendarType = [

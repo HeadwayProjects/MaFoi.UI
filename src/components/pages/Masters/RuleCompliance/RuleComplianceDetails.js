@@ -34,6 +34,34 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
         toast.error(ERROR_MESSAGES.DEFAULT);
     }
 
+    function ruleOptionLabel({ label, rule }) {
+        return (
+            <div className="d-flex flex-column">
+                <div>{label}</div>
+                <div className="text-sm d-flex align-items-center">
+                    {
+                        rule.sectionNo &&
+                        <>
+                            <span className="fst-italic">Section No.</span>
+                            <span className="fw-bold ms-1">{rule.sectionNo}</span>
+                        </>
+                    }
+                    {
+                        rule.sectionNo && rule.ruleNo &&
+                        <span className="text-md mx-2">|</span>
+                    }
+                    {
+                        rule.sectionNo &&
+                        <>
+                            <span className="fst-italic">Rule No.</span>
+                            <span className="fw-bold ms-1">{rule.ruleNo}</span>
+                        </>
+                    }
+                </div>
+            </div>
+        )
+    }
+
     const schema = {
         fields: [
             {
@@ -69,12 +97,8 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'rule',
                 label: 'Rule',
-                options: rules.map(x => {
-                    return {
-                        id: x.id,
-                        name: GetRuleDesc(x)
-                    }
-                }),
+                options: rules,
+                formatOptionLabel: ruleOptionLabel,
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],

@@ -52,6 +52,44 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         uploadActStateMappingTemplate({ id, formData })
     }
 
+    function ruleOptionLabel({ label, rule }) {
+        return (
+            <div className="d-flex flex-column">
+                <div>{label}</div>
+                <div className="text-sm d-flex align-items-center">
+                    {
+                        rule.sectionNo &&
+                        <>
+                            <span className="fst-italic">Section No.</span>
+                            <span className="fw-bold ms-1">{rule.sectionNo}</span>
+                        </>
+                    }
+                    {
+                        rule.sectionNo && rule.ruleNo &&
+                        <span className="text-md mx-2">|</span>
+                    }
+                    {
+                        rule.sectionNo &&
+                        <>
+                            <span className="fst-italic">Rule No.</span>
+                            <span className="fw-bold ms-1">{rule.ruleNo}</span>
+                        </>
+                    }
+                </div>
+            </div>
+        )
+    }
+
+    function activityOptionLabel({ label, activity }) {
+        return (
+            <div className="d-flex flex-column">
+                <div>{label}</div>
+                <div className="text-sm fw-bold">Type: {activity.type}</div>
+                <div className="text-sm fw-bold">{activity.periodicity} | {activity.calendarType}</div>
+            </div>
+        )
+    }
+
     const schema = {
         fields: [
             {
@@ -72,12 +110,8 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                     { type: validatorTypes.REQUIRED }
                 ],
                 content: action !== ACTIONS.ADD ? GetRuleDesc(getValue(mapping, 'rule') || {}) : '',
-                options: (rules || []).map(x => {
-                    return {
-                        id: x.id,
-                        name: GetRuleDesc(x)
-                    }
-                })
+                options: rules,
+                formatOptionLabel: ruleOptionLabel
             },
             {
                 component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
@@ -87,7 +121,8 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                     { type: validatorTypes.REQUIRED }
                 ],
                 content: getValue(mapping, 'activity.name'),
-                options: activities
+                options: activities,
+                formatOptionLabel: activityOptionLabel
             },
             {
                 component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
@@ -110,16 +145,18 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 label: action === ACTIONS.VIEW ? 'Uploaded File' : 'File upload',
                 name: 'file',
                 type: 'file',
-                validate: Boolean((mapping || {}).formName) ? [
+                validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: 'file-type', regex: ALLOWED_FILES_REGEX },
                     { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
-                ] : [
-                    { type: 'file-type', regex: ALLOWED_FILES_REGEX },
-                    { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
                 ],
-                content: getValue(mapping, 'fileName'),
-            },
+                condition: {
+                    when: 'formName',
+                    pattern: /(?!^$)([^\s])/,
+                    then: { visible: true }
+                },
+                content: getValue(mapping, 'fileName')
+            }
         ],
     };
 
@@ -132,13 +169,13 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         preventDefault(e);
         if (form.valid) {
             if (action === ACTIONS.ADD) {
-                const { act, rule, activity, state, formData } = mapping;
+                const { act, rule, activity, state, formName } = mapping;
                 const request = {
                     actId: act.value,
                     ruleId: rule.value,
                     activityId: activity.value,
                     stateId: state.value,
-                    formData: formData || ''
+                    formName: formName || ''
                 };
                 createStateRuleCompanyMapping(request);
             } else {
