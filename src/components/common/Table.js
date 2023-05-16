@@ -5,6 +5,42 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import "./Table.css";
 import { TOOLTIP_DELAY } from "./Constants";
+import Icon from "./Icon";
+import Select from "react-select";
+
+const PageNav = {
+    FIRST: 'first',
+    PREVIOUS: 'previous',
+    NEXT: 'next',
+    LAST: 'last'
+}
+
+const DEFAULT_PAGE_SIZE = 50;
+const PAGE_OPTIONS = [
+    { value: 10, label: 10 },
+    { value: 25, label: 25 },
+    { value: 50, label: 50 },
+    { value: 100, label: 100 },
+]
+
+export const DEFAULT_PAYLOAD = {
+    pagination: {
+        pageSize: DEFAULT_PAGE_SIZE,
+        pageNumber: 1
+    },
+    filters: [],
+    search: ''
+}
+
+export const DEFAULT_OPTIONS_PAYLOAD = {
+    pagination: {
+        pageSize: 2000,
+        pageNumber: 1
+    },
+    filters: [],
+    search: '',
+    sort: { columnName: 'name', order: 'asc' }
+}
 
 export function reactFormatter(JSX, JSXElementConstructor) {
     return function customFormatter(cell, formatterParams, onRendered) {
@@ -38,12 +74,12 @@ export function CellTmpl({ cell }) {
         <>
             {
                 !!value &&
-                <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
-                    placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
-                    <div className="d-flex align-items-center h-100 w-auto">
+                <div className="d-flex align-items-center h-100 w-auto">
+                    <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
+                        placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
                         <div className="ellipse two-lines">{value}</div>
-                    </div>
-                </OverlayTrigger>
+                    </OverlayTrigger>
+                </div>
             }
         </>
     )
@@ -54,7 +90,7 @@ function Table(props) {
     const divEle = useRef(null);
     const {
         height = 500,
-        paginationMode,
+        paginationMode = 'remote',
         ajaxURL = '-',
         ajaxConfig,
         ajaxRequestFunc,
@@ -66,15 +102,19 @@ function Table(props) {
             return true;
         },
         resizableColumnFit = true,
-        sortMode = 'local',
-        paginationSize = 1000,
+        sortMode = 'remote',
+        paginationSize = DEFAULT_PAGE_SIZE,
         rowHeight = 24,
-        bufferSpacing = 0
+        bufferSpacing = 0,
+        paginate = false
     } = props.options;
 
     const [table, setTable] = useState();
     const [tableColumns, setTableColumns] = useState([]);
     const [pageCounter, setPageCounter] = useState('No records');
+    const [page, setPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
+    const [pageSize, setPageSize] = useState({ value: paginationSize, label: paginationSize });
 
     function handleResize() {
         if (divEle && divEle.current) {
@@ -85,7 +125,40 @@ function Table(props) {
     }
 
     function updatePageCounter(total) {
-        setPageCounter(total ? `Showing 1 - ${total} of ${total} records` : 'No records');
+        const startIndex = (page - 1) * pageSize.value + 1;
+        const lastIndex = page * pageSize.value;
+        setPageCounter(total ? `Showing ${startIndex} - ${lastIndex > total ? total : lastIndex} of ${total} records` : 'No records');
+    }
+
+    function handlePageNav(pageNav) {
+        let _page = 1;
+        switch (pageNav) {
+            case PageNav.FIRST:
+                _page = 1;
+                break;
+            case PageNav.PREVIOUS:
+                _page = page - 1;
+                break;
+            case PageNav.NEXT:
+                _page = page + 1;
+                break;
+            case PageNav.LAST:
+                _page = lastPage * 1;
+                break;
+        }
+        setPage(_page);
+        if (props.onPageNav) {
+            props.onPageNav({ pageNumber: _page, pageSize: pageSize.value });
+        }
+    }
+
+    function handlePageSizeChange(e) {
+        setPageSize(e);
+        setPage(1);
+        table.setPageSize(e.value)
+        if (props.onPageNav) {
+            props.onPageNav({ pageNumber: 1, pageSize: e.value });
+        }
     }
 
     useEffect(() => {
@@ -159,18 +232,19 @@ function Table(props) {
 
     useEffect(() => {
         if (props.data && table) {
-            // const _page = (props.data || {}).page || 1;
-            // const _lastPage = (props.data || {}).last_page || 1;
-            // const _total = (props.data || {}).total || 0;
-            // setPage(_page);
-            // setLastPage(_lastPage);
+            const _page = (props.data || {}).page || 1;
+            const _lastPage = (props.data || {}).last_page || 1;
+            const _total = (props.data || {}).total || 0;
+            setPage(_page);
+            setLastPage(_lastPage);
             if (table.replaceData && (table.rowManager || {}).renderer) {
                 try {
                     table.replaceData((props.data || {}).data || []);
-                    if (((props.data || {}).data || []).length === 0) {
+                    const length = ((props.data || {}).data || []).length
+                    if (length === 0) {
                         table.rowManager._showPlaceholder();
                     }
-                    updatePageCounter(((props.data || {}).data || []).length);
+                    updatePageCounter(_total || length);
                 } catch (e) {
                     console.error(e);
                 }
@@ -209,7 +283,29 @@ function Table(props) {
                     ref={divEle}
                     className="tabulator-sticky"></div>
                 {/* <Pagination /> */}
-                <div className="custom-tabulator-footer">{pageCounter}</div>
+                <div className="custom-tabulator-footer d-flex justify-content-between align-items-center w-100">
+                    <span>{pageCounter}</span>
+                    {
+                        paginate &&
+                        <div className="d-flex align-items-center">
+                            <Select options={PAGE_OPTIONS} value={pageSize} onChange={handlePageSizeChange}
+                                placement="top" menuPosition="fixed" className="me-3 page-changer"
+                                styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }} />
+                            <Icon name={'double-left'} className={'page-nav-btns'} type="button"
+                                action={() => handlePageNav(PageNav.FIRST)} text={'First'}
+                                disabled={page < 2} />
+                            <Icon name={'angle-left'} className={'page-nav-btns'} type="button"
+                                action={() => handlePageNav(PageNav.PREVIOUS)} text={'Previous'}
+                                disabled={page < 2} />
+                            <Icon name={'angle-right'} className={'page-nav-btns'} type="button"
+                                action={() => handlePageNav(PageNav.NEXT)} text={'Next'}
+                                disabled={page >= lastPage} />
+                            <Icon name={'double-right'} className={'page-nav-btns'} type="button"
+                                action={() => handlePageNav(PageNav.LAST)} text={'Last'}
+                                disabled={page >= lastPage} />
+                        </div>
+                    }
+                </div>
             </div>
         </>
     )

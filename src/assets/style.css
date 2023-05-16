@@ -408,3 +408,57 @@ table.table {
 .status-compliant {
   color: var(--dark-green);
 }
+
+.filters label {
+  font-size: var(--font-md);
+  max-width: 120px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.filters [class*="-menu"] {
+  min-width: 200px;
+}
+
+.filters [class*="-container"] {
+  max-width: 200px;
+}
+
+.filters [class*="-container"] [class*="-control"] {
+  font-size: var(--font-md);
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  box-shadow: none;
+  width: max-content;
+  max-width: 120px;
+}
+
+.filters [class*="-container"] [class*="-control"]:hover,
+.filters [class*="-container"] [class*="-control"]:focus,
+.filters [class*="-container"] [class*="-control"]:active {
+  border: none;
+  box-shadow: none
+}
+
+
+.filters [class*="-container"] [class*="-control"] [class*="-ValueContainer"] {
+  min-width: 50px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0;
+}
+
+.filters [class*="-container"] [class*="-control"] [class*="-indicatorSeparator"] {
+  display: none;
+}
+
+.filters [class*="-container"] [class*="-control"] [class*="-indicatorContainer"] {
+  padding: 0;
+  padding-left: 4px;
+}

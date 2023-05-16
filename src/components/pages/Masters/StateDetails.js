@@ -10,11 +10,12 @@ import { toast } from 'react-toastify';
 import { AxiosError } from "axios";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import { FindDuplicateMasters } from "./Master.constants";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function StateDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [title, setTitle] = useState();
-    const { states } = useGetStates();
+    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
 
     const { updateState } = useUpdateState(() => {
         toast.success(`${form.values.name} updated successsfully.`);

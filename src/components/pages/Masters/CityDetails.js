@@ -10,13 +10,14 @@ import { toast } from 'react-toastify';
 import { AxiosError } from "axios";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import { FindDuplicateMasters, GetActionTitle } from "./Master.constants";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function CityDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [city, setCity] = useState({ hideButtons: true });
     const [stateId, setStateId] = useState();
-    const { states, isFetching, refetch } = useGetStates();
-    const { cities } = useGetCities(stateId ? { stateId } : null, Boolean(stateId));
+    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { cities } = useGetCities(stateId ? { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'stateId', value: stateId }] } : null, Boolean(stateId));
 
     const { updateCity } = useUpdateCity(() => {
         toast.success(`${form.values.name} updated successsfully.`);

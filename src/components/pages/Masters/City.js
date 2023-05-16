@@ -1,27 +1,29 @@
 import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
-import { Button, InputGroup } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Icon from "../../common/Icon";
-import Table, { CellTmpl, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
 import CityDetails from "./CityDetails";
 import ConfirmModal from "../../common/ConfirmModal";
-import { useGetCities, useDeleteCity } from "../../../backend/masters";
+import { useGetCities, useDeleteCity, useGetStates } from "../../../backend/masters";
 import { toast } from "react-toastify";
 import { GetMastersBreadcrumb } from "./Master.constants";
 import { useRef } from "react";
-import { filterData } from "../../../utils/common";
+import TableFilters from "../../common/TableFilter";
 
 function City() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('City'));
-    const searchRef = useRef();
-    const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [city, setCity] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [payload, setPayload] = useState();
-    const { cities, isFetching, refetch } = useGetCities();
+    const [filters, setFilters] = useState();
+    const filterRef = useRef();
+    filterRef.current = filters;
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
+    const { cities, total, isFetching, refetch } = useGetCities(payload);
+    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
 
     const { deleteCity } = useDeleteCity(() => {
         toast.success(`${city.name} deleted successsfully.`);
@@ -31,6 +33,16 @@ function City() {
     }, () => {
         toast.error('Something went wrong! Please try again.');
     });
+
+    const filterConfig = [
+        {
+            label: 'State',
+            name: 'stateId',
+            options: (states || []).map(x => {
+                return { value: x.id, label: x.name };
+            })
+        }
+    ]
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
@@ -56,7 +68,7 @@ function City() {
     const columns = [
         { title: "Code", field: "code", formatter: reactFormatter(<CellTmpl />) },
         { title: "Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
-        { title: "State", field: "state.name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
+        { title: "State", field: "state.name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />), headerSort: false },
         {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -68,32 +80,39 @@ function City() {
         ajaxRequestFunc,
         columns,
         rowHeight: 54,
-        selectable: false
+        selectable: false,
+        paginate: true,
+        initialSort: [{ column: 'name', dir: 'asc' }]
     });
 
-    function formatApiResponse(params, list, pagination = {}) {
-        const total = list.length;
-        if (searchRef.current.value) {
-            list = list.filter(x => filterData(x, searchRef.current.value, ['code', 'name', 'state.name']));
-        }
+    function formatApiResponse(params, list, totalRecords) {
+        const { pagination } = params || {};
+        const { pageSize, pageNumber } = pagination || {};
         const tdata = {
             data: list,
-            total,
-            last_page: Math.ceil(total / params.size) || 1,
-            page: params.page || 1
+            total: totalRecords,
+            last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
+            page: pageNumber || 1
         };
         setData(tdata);
         return tdata;
     }
 
     function ajaxRequestFunc(url, config, params) {
-        setParams(params);
-        setPayload(search ? { ...params, search } : { ...params });
-        return Promise.resolve(formatApiResponse(params, cities));
-    }
-
-    function handleSearch() {
-        setData(formatApiResponse(params, cities));
+        const { field, dir } = (params.sort || [])[0] || {};
+        const _params = {
+            pagination: {
+                pageSize: params.size,
+                pageNumber: params.page
+            },
+            sort: {
+                columnName: field || 'name',
+                order: dir || 'asc'
+            }
+        };
+        setParams(_params);
+        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+        return Promise.resolve(formatApiResponse(params, cities, total));
     }
 
     function successCallback() {
@@ -104,6 +123,18 @@ function City() {
 
     function onDelete() {
         deleteCity(city.id);
+    }
+
+    function onFilterChange(e) {
+        setFilters(e);
+        setPayload({ ...DEFAULT_PAYLOAD, ...params, ...e });
+    }
+
+    function handlePageNav(_pagination) {
+        const _params = { ...params };
+        _params.pagination = _pagination;
+        setParams({ ..._params });
+        setPayload({ ...payload, ..._params })
     }
 
     useEffect(() => {
@@ -119,23 +150,14 @@ function City() {
                     <div className="d-flex flex-row justify-content-center mb-4">
                         <div className="col-12 px-4">
                             <div className="d-flex justify-content-between">
-                                <div className="col-6">
-                                    <InputGroup>
-                                        <input type="text" ref={searchRef} className="form-control" placeholder="Search for City / Code / Name" />
-                                        <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }} onClick={handleSearch}>
-                                            <div className="d-flex flex-row align-items-center text-white">
-                                                <Icon name={'search'} />
-                                                <span className="ms-2">Search</span>
-                                            </div>
-                                        </InputGroup.Text>
-                                    </InputGroup>
-
-                                </div>
-                                <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New City</Button>
+                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
+                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                    <Icon name={'plus'} className="me-2"></Icon>Add New
+                                </Button>
                             </div>
                         </div>
                     </div>
-                    <Table data={data} options={tableConfig} isLoading={isFetching} />
+                    <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
                 </div>
             </MastersLayout>
             {

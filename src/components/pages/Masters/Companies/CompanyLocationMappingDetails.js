@@ -11,13 +11,14 @@ import { getValue, preventDefault } from "../../../../utils/common";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { GetActionTitle } from "../Master.constants";
 import PageLoader from "../../../shared/PageLoader";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 
 function CompanyLocationDetails({ action, parentCompany, associateCompany, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [locationDetails, setLocationDetails] = useState({ hideButtons: true });
     const [stateId, setStateId] = useState(null);
-    const { states } = useGetStates();
-    const { cities } = useGetCities({ stateId }, Boolean(stateId));
+    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { cities } = useGetCities({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'stateId', value: stateId }] }, Boolean(stateId));
     const { createCompanyLocation, creating } = useCreateCompanyLocation((response) => {
         if (response.key === API_RESULT.SUCCESS) {
             toast.success(`${response.name} created successsfully.`);

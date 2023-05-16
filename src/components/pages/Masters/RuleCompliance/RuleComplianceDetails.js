@@ -11,11 +11,12 @@ import { ACTIONS } from "../../../common/Constants";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import PageLoader from "../../../shared/PageLoader";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 
 function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
-    const { states, isFetching: loadingStates } = useGetStates();
-    const { rules, isFetching: loadingRules } = useGetRules();
+    const { states, isFetching: loadingStates } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { rules, isFetching: loadingRules } = useGetRules({ ...DEFAULT_OPTIONS_PAYLOAD });
     const [compliance, setCompliance] = useState({ hideButtons: true });
     const { updateRuleCompliance, updating } = useUpdateRuleCompliance(() => {
         toast.success(`${compliance.complianceName} updated successsfully.`);
@@ -38,26 +39,29 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
         return (
             <div className="d-flex flex-column">
                 <div>{label}</div>
-                <div className="text-sm d-flex align-items-center">
-                    {
-                        rule.sectionNo &&
-                        <>
-                            <span className="fst-italic">Section No.</span>
-                            <span className="fw-bold ms-1">{rule.sectionNo}</span>
-                        </>
-                    }
-                    {
-                        rule.sectionNo && rule.ruleNo &&
-                        <span className="text-md mx-2">|</span>
-                    }
-                    {
-                        rule.sectionNo &&
-                        <>
-                            <span className="fst-italic">Rule No.</span>
-                            <span className="fw-bold ms-1">{rule.ruleNo}</span>
-                        </>
-                    }
-                </div>
+                {
+                    rule &&
+                    <div className="text-sm d-flex align-items-center">
+                        {
+                            rule.sectionNo &&
+                            <>
+                                <span className="fst-italic">Section No.</span>
+                                <span className="fw-bold ms-1">{rule.sectionNo}</span>
+                            </>
+                        }
+                        {
+                            rule.sectionNo && rule.ruleNo &&
+                            <span className="text-md mx-2">|</span>
+                        }
+                        {
+                            rule.sectionNo &&
+                            <>
+                                <span className="fst-italic">Rule No.</span>
+                                <span className="fw-bold ms-1">{rule.ruleNo}</span>
+                            </>
+                        }
+                    </div>
+                }
             </div>
         )
     }
@@ -233,7 +237,7 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 auditType: risk ? { value: auditType, label: auditType } : null,
                 complianceNature: complianceNature ? { value: complianceNature, label: complianceNature } : null,
                 state: { value: state.id, label: state.name },
-                rule: { value: rule.id, label: rule.name }
+                rule: { value: rule.id, label: rule.name, rule }
             });
         }
     }, [data])

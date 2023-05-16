@@ -9,14 +9,15 @@ import { GetActionTitle, GetRuleDesc } from "../Master.constants";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { ACTIONS, ALLOWED_FILES_REGEX, FILE_SIZE } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 
 function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [mapping, setMapping] = useState({ hideButtons: true });
-    const { acts } = useGetActs();
-    const { rules } = useGetRules();
-    const { activities } = useGetActivities();
-    const { states } = useGetStates();
+    const { acts } = useGetActs({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { rules } = useGetRules({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { activities } = useGetActivities({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { uploadActStateMappingTemplate, uploading } = useUploadActStateMappingTemplate(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Template uploaded successfully.`);

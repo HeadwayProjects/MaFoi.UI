@@ -8,13 +8,14 @@ import { useGetCompanies } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { API_DELIMITER } from "../../../../utils/constants";
 import { ALLOWED_LOGO_REGEX, FILE_SIZE } from "../../../common/Constants";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 
 
 
 function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
     const [form, setForm] = useState({});
     const [companyDetails, setCompanyDetails] = useState({ hideButtons: true, isAssociateCompany: Boolean(parentCompany), parentCompany });
-    const { companies } = useGetCompanies({ isParent: true });
+    const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
 
     function debugForm(_form) {
         setForm(_form);

@@ -2,34 +2,72 @@ import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
 import { Button, InputGroup } from "react-bootstrap";
 import Icon from "../../common/Icon";
-import Table, { CellTmpl, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
 import ActDetails from "./ActDetails";
 import ConfirmModal from "../../common/ConfirmModal";
-import { useDeleteAct, useGetActs } from "../../../backend/masters";
-import { GetMastersBreadcrumb } from "./Master.constants";
+import { useDeleteAct, useGetActs, useGetLaws } from "../../../backend/masters";
+import { EstablishmentTypes, GetMastersBreadcrumb } from "./Master.constants";
 import { toast } from "react-toastify";
 import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 import { useRef } from "react";
-import { filterData } from "../../../utils/common";
+import TableFilters from "../../common/TableFilter";
 
 function Act() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Act'));
-    const searchRef = useRef();
-    const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [act, setAct] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [payload, setPayload] = useState();
-    const { acts, isFetching, refetch } = useGetActs();
+    const [filters, setFilters] = useState();
+    const filterRef = useRef();
+    filterRef.current = filters;
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
+    const { laws } = useGetLaws({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { acts, total, isFetching, refetch } = useGetActs(payload);
     const { deleteAct, deleting } = useDeleteAct(() => {
         toast.success(`${act.name} deleted successfully.`);
         submitCallback();
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const filterConfig = [
+        {
+            label: 'Establishment Type',
+            name: 'establishmentType',
+            options: [
+                { value: "", label: 'Blank' },
+                { value: EstablishmentTypes[0], label: EstablishmentTypes[0] },
+                { value: EstablishmentTypes[1], label: EstablishmentTypes[1] },
+                { value: EstablishmentTypes[2], label: EstablishmentTypes[2] },
+                {
+                    value: `${EstablishmentTypes[0]}${API_DELIMITER}${EstablishmentTypes[1]}`,
+                    label: `${EstablishmentTypes[0]}${UI_DELIMITER}${EstablishmentTypes[1]}`
+                },
+                {
+                    value: `${EstablishmentTypes[0]}${API_DELIMITER}${EstablishmentTypes[2]}`,
+                    label: `${EstablishmentTypes[0]}${UI_DELIMITER}${EstablishmentTypes[2]}`
+                },
+                {
+                    value: `${EstablishmentTypes[1]}${API_DELIMITER}${EstablishmentTypes[2]}`,
+                    label: `${EstablishmentTypes[1]}${UI_DELIMITER}${EstablishmentTypes[2]}`
+                },
+                {
+                    value: `${EstablishmentTypes[0]}${API_DELIMITER}${EstablishmentTypes[1]}${API_DELIMITER}${EstablishmentTypes[2]}`,
+                    label: `${EstablishmentTypes[0]}${UI_DELIMITER}${EstablishmentTypes[1]}${UI_DELIMITER}${EstablishmentTypes[2]}`
+                }
+            ]
+        },
+        {
+            label: 'Law',
+            name: 'lawId',
+            options: (laws || []).map(x => {
+                return { value: x.id, label: x.name };
+            })
+        }
+    ]
 
     function TypeTmpl({ cell }) {
         const value = (cell.getValue() || '').replaceAll(API_DELIMITER, UI_DELIMITER);
@@ -64,7 +102,7 @@ function Act() {
     const columns = [
         { title: "Act Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<TypeTmpl />) },
-        { title: "Law", field: "law.name", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Law", field: "law.name", formatter: reactFormatter(<CellTmpl />), headerSort: false },
         {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -76,28 +114,39 @@ function Act() {
         ajaxRequestFunc,
         columns,
         rowHeight: 54,
-        selectable: false
+        selectable: false,
+        paginate: true,
+        initialSort: [{ column: 'name', dir: 'asc' }]
     });
 
-    function formatApiResponse(params, list, pagination = {}) {
-        const total = list.length;
-        if (searchRef.current.value) {
-            list = list.filter(x => filterData(x, searchRef.current.value, ['name', 'establishmentType', 'law.name']));
-        }
+    function formatApiResponse(params, list, totalRecords) {
+        const { pagination } = params || {};
+        const { pageSize, pageNumber } = pagination || {};
         const tdata = {
             data: list,
-            total,
-            last_page: Math.ceil(total / params.size) || 1,
-            page: params.page || 1
+            total: totalRecords,
+            last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
+            page: pageNumber || 1
         };
         setData(tdata);
         return tdata;
     }
 
     function ajaxRequestFunc(url, config, params) {
-        setParams(params);
-        setPayload(search ? { ...params, search } : { ...params });
-        return Promise.resolve(formatApiResponse(params, acts));
+        const { field, dir } = (params.sort || [])[0] || {};
+        const _params = {
+            pagination: {
+                pageSize: params.size,
+                pageNumber: params.page
+            },
+            sort: {
+                columnName: field || 'name',
+                order: dir || 'asc'
+            }
+        };
+        setParams(_params);
+        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+        return Promise.resolve(formatApiResponse(params, acts, total));
     }
 
     function submitCallback() {
@@ -106,13 +155,21 @@ function Act() {
         refetch();
     }
 
-    function handleSearch() {
-        setData(formatApiResponse(params, acts));
+    function onFilterChange(e) {
+        setFilters(e);
+        setPayload({ ...DEFAULT_PAYLOAD, ...params, ...e });
+    }
+
+    function handlePageNav(_pagination) {
+        const _params = { ...params };
+        _params.pagination = _pagination;
+        setParams({ ..._params });
+        setPayload({ ...payload, ..._params })
     }
 
     useEffect(() => {
         if (!isFetching && payload) {
-            setData(formatApiResponse(params, acts));
+            setData(formatApiResponse(params, acts, total));
         }
     }, [isFetching]);
 
@@ -123,18 +180,10 @@ function Act() {
                     <div className="d-flex flex-row justify-content-center mb-4">
                         <div className="col-12 px-4">
                             <div className="d-flex justify-content-between">
-                                <div className="col-6">
-                                    <InputGroup>
-                                        <input type="text" className="form-control" ref={searchRef} placeholder="Search for Act / Code / Name" />
-                                        <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }} onClick={handleSearch}>
-                                            <div className="d-flex flex-row align-items-center text-white">
-                                                <Icon name={'search'} />
-                                                <span className="ms-2">Search</span>
-                                            </div>
-                                        </InputGroup.Text>
-                                    </InputGroup>
-                                </div>
-                                <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Act</Button>
+                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
+                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                    <Icon name={'plus'} className="me-2"></Icon>Add New
+                                </Button>
                             </div>
                         </div>
                     </div>

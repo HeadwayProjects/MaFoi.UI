@@ -56,7 +56,7 @@ export function GetRuleDesc({ name, sectionNo, ruleNo }) {
     return value.join(' ');
 }
 
-export const RuleType = ['State', 'Central'];
+export const RuleType = ['Central', 'State'];
 
 export const ActivityType = [
     'Appointment',

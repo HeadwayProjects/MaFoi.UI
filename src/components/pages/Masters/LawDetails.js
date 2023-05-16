@@ -50,6 +50,9 @@ function LawDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
                 name: 'description',
                 label: 'Description',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
                 content: getValue(law, 'description')
             }
         ],

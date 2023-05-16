@@ -22,7 +22,6 @@ function RuleStateCompanyMapping() {
     const [payload, setPayload] = useState();
     const { mappings, isFetching, refetch } = useStateRuleCompanyMappings();
     const { deleteActStateMapping, deleting } = useDeleteActStateMapping(response => {
-        console.log(response);
         toast.success(`Mapping deleted successfully.`);
         submitCallback();
     }, () => {

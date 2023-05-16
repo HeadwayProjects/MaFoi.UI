@@ -5,22 +5,26 @@ import { ERROR_MESSAGES } from "../../../../utils/constants";
 import Icon from "../../../common/Icon";
 import { VIEWS } from "./Companies";
 import { ACTIONS, TOOLTIP_DELAY } from "../../../common/Constants";
-import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
-import { Button, InputGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
+import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import ViewCompany from "./ViewCompany";
 import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
 import { preventDefault } from "../../../../utils/common";
 import { navigate } from "raviger";
+import TableFilters from "../../../common/TableFilter";
+import { useRef } from "react";
 
 function CompaniesList({ changeView }) {
-    const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [company, setCompany] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [payload, setPayload] = useState(null);
-    const { companies, isFetching, refetch, invalidate } = useGetCompanies({ isParent: true, ...payload }, Boolean(payload));
+    const [filters, setFilters] = useState({ filters: [{ columnName: 'isParent', value: 'true' }], search: '' });
+    const filterRef = useRef();
+    filterRef.current = filters;
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' }, ...filterRef.current });
+    const { companies, total, isFetching, refetch, invalidate } = useGetCompanies(payload, Boolean(payload));
     const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
         refetch();
     }, () => toast.error(ERROR_MESSAGES.DEFAULT));
@@ -103,19 +107,20 @@ function CompaniesList({ changeView }) {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Associate Companies", field: "associateCompanies", maxWidth: 200,
-            formatter: reactFormatter(<ACTmpl />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
-        },
-        {
             title: "Contact No.", field: "contactNumber", minWidth: 140,
-            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
             title: "Email Address", field: "email", minWidth: 140,
-            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Associate Companies", field: "associateCompanies", maxWidth: 200,
+            formatter: reactFormatter(<ACTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            headerSort: false
         },
         {
             title: "Actions", hozAlign: "center", width: 160,
@@ -128,34 +133,62 @@ function CompaniesList({ changeView }) {
         ajaxRequestFunc,
         columns,
         rowHeight: 54,
-        selectable: false
+        selectable: false,
+        paginate: true,
+        initialSort: [{ column: 'name', dir: 'asc' }]
     });
 
-    function formatApiResponse(params = {}, list, pagination = {}) {
-        const total = list.length;
+    function formatApiResponse(params, list, totalRecords) {
+        const { pagination } = params || {};
+        const { pageSize, pageNumber } = pagination || {};
         const tdata = {
             data: list,
-            total,
-            last_page: Math.ceil(total / params.size) || 1,
-            page: params.page || 1
+            total: totalRecords,
+            last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
+            page: pageNumber || 1
         };
         setData(tdata);
         return tdata;
     }
 
     function ajaxRequestFunc(url, config, params) {
-        setParams(params);
-        setPayload(search ? { ...params, search } : { ...params });
-        return Promise.resolve(formatApiResponse(params, companies));
+        const { field, dir } = (params.sort || [])[0] || {};
+        const _params = {
+            pagination: {
+                pageSize: params.size,
+                pageNumber: params.page
+            },
+            sort: {
+                columnName: field || 'name',
+                order: dir || 'asc'
+            }
+        };
+        setParams(_params);
+        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+        return Promise.resolve(formatApiResponse(params, companies, total));
     }
 
     function deleteCompanyMaster() {
         deleteCompany(company.id);
     }
 
+    function onFilterChange(e) {
+        const _filters = { ...e };
+        _filters.filters.push({ columnName: 'isParent', value: 'true' });
+        setFilters(_filters);
+        setPayload({ ...DEFAULT_PAYLOAD, ...params, ..._filters });
+    }
+
+    function handlePageNav(_pagination) {
+        const _params = { ...params };
+        _params.pagination = _pagination;
+        setParams({ ..._params });
+        setPayload({ ...payload, ..._params })
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
-            setData(formatApiResponse(params, companies));
+            setData(formatApiResponse(params, companies, total));
         }
     }, [isFetching]);
 
@@ -170,21 +203,15 @@ function CompaniesList({ changeView }) {
             <div className="d-flex flex-column mx-0 mt-4">
                 <div className="d-flex flex-row justify-content-center mb-4">
                     <div className="col-12 px-4">
-                        <div className="d-flex">
-                            {/* <InputGroup>
-                                <input type="text" className="form-control" placeholder="Search for Company - Code / Name" />
-                                <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
-                                    <div className="d-flex flex-row align-items-center text-white">
-                                        <Icon name={'search'} />
-                                        <span className="ms-2">Search</span>
-                                    </div>
-                                </InputGroup.Text>
-                            </InputGroup> */}
-                            <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>Add New Company</Button>
+                        <div className="d-flex justify-content-between">
+                            <TableFilters search={true} onFilterChange={onFilterChange} />
+                            <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>
+                                <Icon name={'plus'} className="me-2"></Icon>Add New
+                            </Button>
                         </div>
                     </div>
                 </div>
-                <Table data={data} options={tableConfig} isLoading={isFetching} />
+                <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
             </div>
             {
                 action === ACTIONS.VIEW && company &&

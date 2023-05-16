@@ -1,31 +1,49 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
-import { Button, InputGroup } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Icon from "../../common/Icon";
-import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
 import ActivityDetails from "./ActivityDetails";
 import ConfirmModal from "../../common/ConfirmModal";
 import { useDeleteActivity, useGetActivities } from "../../../backend/masters";
-import { GetMastersBreadcrumb } from "./Master.constants";
+import { CalendarType, GetMastersBreadcrumb, Periodicity } from "./Master.constants";
 import PageLoader from "../../shared/PageLoader";
 import { toast } from "react-toastify";
-import { filterData } from "../../../utils/common";
+import TableFilters from "../../common/TableFilter";
+import { useRef } from "react";
 
 function Activity() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Activity'));
-    const searchRef = useRef();
-    const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [activity, setActivity] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [payload, setPayload] = useState();
-    const { activities, isFetching, refetch } = useGetActivities();
+    const [filters, setFilters] = useState();
+    const filterRef = useRef();
+    filterRef.current = filters;
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
+    const { activities, total, isFetching, refetch } = useGetActivities(payload);
     const { deleteActivity, deleting } = useDeleteActivity(({ name }) => {
         toast.success(`Activiy ${name} deleted successfully.`);
         refetch();
     });
+    const filterConfig = [
+        {
+            label: 'Periodicity',
+            name: 'Periodicity',
+            options: Periodicity.map(x => {
+                return { value: x, label: x };
+            })
+        },
+        {
+            label: 'Calendar Type',
+            name: 'calendarType',
+            options: CalendarType.map(x => {
+                return { value: x, label: x };
+            })
+        }
+    ]
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
@@ -80,34 +98,40 @@ function Activity() {
         ajaxRequestFunc,
         columns,
         rowHeight: 54,
-        selectable: false
+        selectable: false,
+        paginate: true,
+        initialSort: [{ column: 'name', dir: 'asc' }]
     });
 
-    function formatApiResponse(params, list, pagination = {}) {
-        const total = list.length;
-        if (searchRef.current.value) {
-            list = list.filter(x => filterData(x, searchRef.current.value, ['name', 'type', 'periodicity', 'calendarType']));
-        }
+    function formatApiResponse(params, list, totalRecords) {
+        const { pagination } = params || {};
+        const { pageSize, pageNumber } = pagination || {};
         const tdata = {
             data: list,
-            total,
-            last_page: Math.ceil(total / params.size) || 1,
-            page: params.page || 1
+            total: totalRecords,
+            last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
+            page: pageNumber || 1
         };
         setData(tdata);
         return tdata;
     }
 
     function ajaxRequestFunc(url, config, params) {
-        setParams(params);
-        setPayload(search ? { ...params, search } : { ...params });
-        return Promise.resolve(formatApiResponse(params, activities));
+        const { field, dir } = (params.sort || [])[0] || {};
+        const _params = {
+            pagination: {
+                pageSize: params.size,
+                pageNumber: params.page
+            },
+            sort: {
+                columnName: field || 'name',
+                order: dir || 'asc'
+            }
+        };
+        setParams(_params);
+        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+        return Promise.resolve(formatApiResponse(params, activities, total));
     }
-
-    function handleSearch() {
-        setData(formatApiResponse(params, activities));
-    }
-
 
     function successCallback() {
         setAction(ACTIONS.NONE);
@@ -124,9 +148,21 @@ function Activity() {
         deleteActivity(activity);
     }
 
+    function onFilterChange(e) {
+        setFilters(e);
+        setPayload({ ...DEFAULT_PAYLOAD, ...params, ...e });
+    }
+
+    function handlePageNav(_pagination) {
+        const _params = { ...params };
+        _params.pagination = _pagination;
+        setParams({ ..._params });
+        setPayload({ ...payload, ..._params })
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
-            setData(formatApiResponse(params, activities));
+            setData(formatApiResponse(params, activities, total));
         }
     }, [isFetching]);
 
@@ -137,22 +173,14 @@ function Activity() {
                     <div className="d-flex flex-row justify-content-center mb-4">
                         <div className="col-12 px-4">
                             <div className="d-flex justify-content-between">
-                                <div className="col-6">
-                                    <InputGroup>
-                                        <input type="text" ref={searchRef} className="form-control" placeholder="Search for Activity / Code / Name" />
-                                        <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }} onClick={handleSearch}>
-                                            <div className="d-flex flex-row align-items-center text-white">
-                                                <Icon name={'search'} />
-                                                <span className="ms-2">Search</span>
-                                            </div>
-                                        </InputGroup.Text>
-                                    </InputGroup>
-                                </div>
-                                <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Activity</Button>
+                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
+                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                    <Icon name={'plus'} className="me-2"></Icon>Add New
+                                </Button>
                             </div>
                         </div>
                     </div>
-                    <Table data={data} options={tableConfig} isLoading={isFetching} />
+                    <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
                 </div>
             </MastersLayout>
             {

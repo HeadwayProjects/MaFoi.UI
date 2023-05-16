@@ -228,7 +228,7 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
             <div className="card border-0 p-4 m-4 ">
                 <div className="d-flex flex-column h-100 justify-space-between horizontal-form p-4">
                     <FormRenderer FormTemplate={FormTemplate}
-                        initialValues={{ hideButtons: true }}
+                        initialValues={companyDetails}
                         componentMapper={ComponentMapper}
                         schema={schema}
                         debug={debugForm}

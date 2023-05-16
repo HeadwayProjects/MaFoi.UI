@@ -1,9 +1,10 @@
 import React from "react";
 import { preventDefault } from "../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle, faSearch, faExternalLink } from "@fortawesome/free-solid-svg-icons";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger"
-import Tooltip from 'react-bootstrap/Tooltip';
+import {
+    faInfoCircle, faSearch, faExternalLink,
+    faAngleDoubleLeft, faAngleDoubleRight, faAngleRight, faAngleLeft, faPlus
+} from "@fortawesome/free-solid-svg-icons";
 import "./Icon.css";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 
@@ -17,9 +18,11 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
 
     return (
         <>
-        {/* // <OverlayTrigger overlay={<Tooltip>{text || name}</Tooltip>}
+            {/* // <OverlayTrigger overlay={<Tooltip>{text || name}</Tooltip>}
         //     placement="bottom" delay={{ show: 500 }}> */}
-            <span className={`icon ${type === 'button' ? 'btn-icon' : ''} ${className || ''}`} style={style} onClick={onClick} disabled={disabled}>
+            <span className={`icon ${type === 'button' ? 'btn-icon' : ''} ${className || ''}`}
+                style={style} onClick={onClick} disabled={disabled}
+                title={text || name}>
                 {{
                     th: (
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -120,6 +123,21 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
                                 </clipPath>
                             </defs>
                         </svg>
+                    ),
+                    'angle-left': (
+                        <FontAwesomeIcon icon={faAngleLeft} />
+                    ),
+                    'angle-right': (
+                        <FontAwesomeIcon icon={faAngleRight} />
+                    ),
+                    'double-left': (
+                        <FontAwesomeIcon icon={faAngleDoubleLeft} />
+                    ),
+                    'double-right': (
+                        <FontAwesomeIcon icon={faAngleDoubleRight} />
+                    ),
+                    'plus': (
+                        <FontAwesomeIcon icon={faPlus} />
                     )
                 }[name]}
             </span>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useGetCompanies, useGetCompanyLocations } from "../../../../backend/masters";
 import Icon from "../../../common/Icon";
 import { ACTIONS } from "../../../common/Constants";
-import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import { Button } from "react-bootstrap";
 import ConfirmModal from "../../../common/ConfirmModal";
 import { useQueryParams } from "raviger";
@@ -33,8 +33,11 @@ function CompanyLocationMappings() {
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
-    const { companies: parentCompanies, isFetching: fetchingCompanies } = useGetCompanies({ isParent: true });
-    const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({ isParent: false, parentCompanyId: (parentCompany || {}).value }, Boolean((parentCompany || {}).value));
+    const { companies: parentCompanies, isFetching: fetchingCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
+    const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({
+        ...DEFAULT_OPTIONS_PAYLOAD,
+        filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (parentCompany || {}).value }]
+    }, Boolean((parentCompany || {}).value));
     const { locations, isFetching, refetch } = useGetCompanyLocations({ associateCompanyId: (associateCompany || {}).value }, Boolean(associateCompany));
     // const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
     //     refetch();

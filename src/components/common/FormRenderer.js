@@ -5,6 +5,7 @@ import {
 } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
 import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 import Icon from "./Icon";
 import { humanReadableFileSize } from "../../utils/common";
 
@@ -197,6 +198,57 @@ function SelectField(props) {
     )
 }
 
+function AsyncSelectField(props) {
+    const { label, meta = {}, input, name } = useFieldApi(props);
+    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+
+    function onInput(input) {
+        return {
+            ...input,
+            required,
+            placeholder: props.placeholder || `Select ${label}`,
+            onChange: (e) => {
+                input.onChange(e);
+                if (props.onChange) {
+                    props.onChange(e);
+                }
+            },
+            isLoading: props.isLoading,
+            isDisabled: props.isDisabled
+        };
+    }
+
+
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            <div className="input-group">
+                <AsyncSelect
+                    name={name}
+                    className={`select-control ${meta.touched && meta.error ? 'error-field' : ''}`}
+                    id={name}
+                    label="label"
+                    menuPosition="fixed"
+                    isMulti={props.isMulti || false}
+                    styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+                    formatOptionLabel={props.formatOptionLabel}
+                    loadOptions={props.loadOptions}
+                    {...onInput(input)}
+                />
+            </div>
+            {
+                props.description &&
+                <span className="text-muted form-text">{props.description}</span>
+            }
+            {
+                meta.touched && meta.error && <div className="invalid-feedback d-block">
+                    {meta.error}
+                </div>
+            }
+        </div>
+    )
+}
+
 function HtmlField(props) {
     const { label } = useFieldApi(props);
 
@@ -282,6 +334,7 @@ export const ComponentMapper = {
     },
     [componentTypes.TAB_ITEM]: TabItemField,
     'file-upload': FileUploadField,
+    'async-select': AsyncSelectField
 };
 
 

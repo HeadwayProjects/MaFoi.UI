@@ -10,11 +10,12 @@ import { EstablishmentTypes, GetActionTitle } from "./Master.constants";
 import { toast } from "react-toastify";
 import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function ActDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [act, setAct] = useState({ hideButtons: true });
-    const { laws, isFetching: loadingLaws } = useGetLaws();
+    const { laws, isFetching: loadingLaws } = useGetLaws({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { createAct, creating } = useCreateAct(({ id, message }) => {
         if (id) {
             toast.success(`${act.name} created successfully.`);
@@ -81,7 +82,7 @@ function ActDetails({ action, data, onClose, onSubmit }) {
             const request = {
                 name,
                 lawId: law.value,
-                establishmentType: establishmentType ? establishmentType.map(x => x.value).join(API_DELIMITER) : ''
+                establishmentType: establishmentType ? establishmentType.map(x => x.value).sort().join(API_DELIMITER) : ''
             };
 
             if (action === ACTIONS.EDIT) {
