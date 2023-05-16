@@ -24,9 +24,9 @@
     align-items: center;
 }
 
-.sideNav li a+.children {
+/* .sideNav li a+.children {
     display: none !important;
-}
+} */
 
 .sideNav li a+.children a {
     padding: 0px 15px 0 60px;
@@ -45,8 +45,8 @@
     color: var(--white);
 }
 
-.sidenav-container:hover .sideNav li a+.children {
-    display: flex !important;
+.sidenav-container:hover .sideNav span.icon {
+    display: inline-flex !important;
 }
 
 .sideNav li a span.sidenav-item-icon {

@@ -3,7 +3,7 @@ import { preventDefault } from "../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faInfoCircle, faSearch, faExternalLink,
-    faAngleDoubleLeft, faAngleDoubleRight, faAngleRight, faAngleLeft, faPlus
+    faAngleDoubleLeft, faAngleDoubleRight, faAngleRight, faAngleLeft, faPlus, faAngleDown, faAngleUp
 } from "@fortawesome/free-solid-svg-icons";
 import "./Icon.css";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
@@ -129,6 +129,12 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
                     ),
                     'angle-right': (
                         <FontAwesomeIcon icon={faAngleRight} />
+                    ),
+                    'angle-down': (
+                        <FontAwesomeIcon icon={faAngleDown} />
+                    ),
+                    'angle-up': (
+                        <FontAwesomeIcon icon={faAngleUp} />
                     ),
                     'double-left': (
                         <FontAwesomeIcon icon={faAngleDoubleLeft} />

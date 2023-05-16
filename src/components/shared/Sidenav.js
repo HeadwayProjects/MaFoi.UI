@@ -17,8 +17,6 @@ const SideNavMenu = [
             { id: 'masters/rule', url: '/masters/rule', label: 'Rule' },
             { id: 'masters/state', url: '/masters/state', label: 'State' },
             { id: 'masters/city', url: '/masters/city', label: 'City' },
-            // { id: 'masters/location', url: '/masters/location', label: 'Location' },
-            // { id: 'masters/companies', url: '/masters/companies', label: 'Companies' },
             { id: 'masters/compliance', url: '/masters/compliance', label: 'Rule Compliance' },
             { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings' }
         ]
@@ -45,11 +43,18 @@ const SideNavMenu = [
 function Sidenav() {
     const [user] = useState(auth.getUserDetails());
     const [sideMenu, setSideMenu] = useState([]);
+    const [toggelStatus, setToggleStatus] = useState({})
 
     useEffect(() => {
         if (user) {
             const pages = ROLE_MAPPING[user.role] || [];
-            setSideMenu(SideNavMenu.filter(x => pages.includes(x.id)));
+            const _menu = SideNavMenu.filter(x => pages.includes(x.id));
+            const _toggleStatus = {};
+            _menu.forEach(x => {
+                toggelStatus[x.id] = false
+            });
+            setToggleStatus(_toggleStatus)
+            setSideMenu(_menu);
         }
     }, [user]);
 
@@ -79,11 +84,29 @@ function Sidenav() {
         )
     }
 
+    function toggleMenu(event, data, hasChild) {
+        if (hasChild) {
+            preventDefault(event);
+            const { id } = data;
+            const _toogleStatus = { ...toggelStatus };
+            _toogleStatus[id] = !_toogleStatus[id];
+            setToggleStatus(_toogleStatus);
+        }
+    }
+
+    function resetToggle() {
+        const _toogleStatus = { ...toggelStatus };
+        Object.keys(_toogleStatus).forEach(key => {
+            _toogleStatus[key] = false;
+        });
+        setToggleStatus(_toogleStatus);
+    }
+
     return (
         <>
             {
                 user !== null ?
-                    <ul className='sideNav m-0 p-0'>
+                    <ul className='sideNav m-0 p-0' onMouseLeave={resetToggle}>
                         {
                             sideMenu.map((item, index) => {
                                 const hasChild = (item.children || []).length > 0;
@@ -91,7 +114,7 @@ function Sidenav() {
                                     <li key={item.id} >
                                         <button type="button" disabled={item.disable}>
                                             <NavItem url={item.url} name={item.id} hasChild={hasChild} parentIndex={index}>
-                                                <div className='d-flex flex-row align-items-center w-100'>
+                                                <div className='d-flex flex-row align-items-center w-100' onClick={(e) => toggleMenu(e, item, hasChild)}>
                                                     {
                                                         item.icon &&
                                                         <span className="sidenav-item-icon">
@@ -99,11 +122,16 @@ function Sidenav() {
                                                         </span>
                                                     }
                                                     <span className="sidenav-item-label">{item.label}</span>
+                                                    {
+                                                        hasChild &&
+                                                        <Icon name={toggelStatus[item.id] ? 'angle-up' : 'angle-down'}
+                                                            className={'ms-auto d-none'} />
+                                                    }
                                                 </div>
                                             </NavItem>
                                             {
                                                 item.children &&
-                                                <div className='d-flex flex-column w-100 justify-content-start children'>
+                                                <div className={`d-flex flex-column w-100 justify-content-start children ${!toggelStatus[item.id] ? 'd-none' : 'd-flex'}`}>
                                                     {
                                                         item.children.map((child, childIndex) => (
                                                             <NavItem url={child.url} key={child.id} name={child.id} index={childIndex} parentIndex={index}>
