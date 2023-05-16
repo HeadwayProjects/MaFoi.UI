@@ -49,6 +49,25 @@ export function humanReadableFileSize(size) {
   return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
 
+export function getMinMonthYear() {
+  const date = new Date();
+  date.setFullYear(date.getFullYear() - 5);
+  date.setMonth(3);
+  date.setDate(1);
+  return date;
+}
+
+export function getMaxMonthYear() {
+  const date = new Date();
+  const month = date.getMonth();
+  if (month > 2) {
+    date.setFullYear(date.getFullYear() + 1);
+  }
+  date.setMonth(2);
+  date.setDate(31);
+  return date;
+}
+
 export function auditReport(summary, data, user) {
   const { company, associateCompany, location, month, year } = summary;
   const approved = data.filter(x => x.status === ACTIVITY_STATUS.AUDITED).length;

@@ -8,6 +8,7 @@ import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import Icon from "./Icon";
 import { humanReadableFileSize } from "../../utils/common";
+import DatePicker from "react-multi-date-picker";
 
 function fileSizeValidator({ maxSize }) {
     return (value) => {
@@ -322,6 +323,50 @@ function FileUploadField(props) {
     );
 };
 
+export function MonthPickerField(props) {
+    const { input, meta, label, name } = useFieldApi(props);
+    const [value, setValue] = useState(props.initialValue);
+    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+
+    function onInput(input) {
+        return {
+            ...input,
+            onChange: (e) => {
+                setValue(e);
+                input.onChange(e);
+                if (props.onChange) {
+                    props.onChange(e);
+                }
+            },
+            disabled: props.disabled
+        }
+    }
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            {
+                label &&
+                <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            }
+            <div className={`input-group month-picker`}>
+                {/* <input id={name}
+                    className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''} ${props.styleClass || ''}`}
+                    {...input} /> */}
+                <DatePicker onlyMonthPicker={true} editable={false} range={props.range || false}
+                    minDate={props.minDate} format={'MMM, YYYY'} maxDate={props.maxDate} {...onInput(input)} value={value}/>
+            </div>
+            {
+                props.description &&
+                <span className="text-muted form-text">{props.description}</span>
+            }
+            {
+                meta.touched && meta.error && <div className="invalid-feedback d-block">
+                    {meta.error}
+                </div>
+            }
+        </div>
+    );
+}
+
 export const ComponentMapper = {
     [componentTypes.TEXT_FIELD]: TextField,
     [componentTypes.DATE_PICKER]: TextField,
@@ -334,7 +379,8 @@ export const ComponentMapper = {
     },
     [componentTypes.TAB_ITEM]: TabItemField,
     'file-upload': FileUploadField,
-    'async-select': AsyncSelectField
+    'async-select': AsyncSelectField,
+    'month-picker': MonthPickerField
 };
 
 

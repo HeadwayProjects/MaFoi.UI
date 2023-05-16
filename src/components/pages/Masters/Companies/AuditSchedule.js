@@ -8,6 +8,9 @@ import { Button } from "react-bootstrap";
 import AuditScheduleImportModal from "./AuditScheduleImportModal";
 import { MONTHS, MONTHS_ENUM, YEARS } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
+import DatePicker from "react-multi-date-picker";
+import { getMaxMonthYear, getMinMonthYear } from "../../../../utils/common";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 
 function getMonthYear() {
     const date = new Date();
@@ -19,15 +22,26 @@ function getMonthYear() {
     }
 }
 
+function getMinDate() {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() - 2);
+    date.setMonth(0);
+    date.setDate(1);
+    return date;
+}
+
 function AuditSchedule() {
     const [form, setForm] = useState({});
     const [importFile, setImportFile] = useState(false);
     const [breadcrumb] = useState(GetCompaniesBreadcrumb('Audit Schedule'));
-    const [exportData, setExportData] = useState({ hideButtons: true, ...getMonthYear() });
+    const [exportData, setExportData] = useState({ hideButtons: true, month: new Date() });
     const [parentCompany, setParentCompany] = useState(null);
     const [associateCompany, setAssociateCompany] = useState(null);
-    const { companies, isFetching: fetchingCompanies } = useGetCompanies({ isParent: true });
-    const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({ isParent: false, parentCompanyId: (parentCompany || {}).value }, Boolean(parentCompany));
+    const { companies, isFetching: fetchingCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
+    const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({
+        ...DEFAULT_OPTIONS_PAYLOAD,
+        filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (parentCompany || {}).value }]
+    }, Boolean(parentCompany));
     const { locations, isFetching: fetchingLocations } = useGetCompanyLocations({ associateCompanyId: (associateCompany || {}).value }, Boolean(associateCompany));
     const { exportAuditSchedule, exporting } = useExportAuditSchedule((response) => {
         const blob = new Blob([response.data], { type: response.headers['content-type'] })
@@ -41,7 +55,7 @@ function AuditSchedule() {
         document.body.removeChild(a);
     }, () => {
 
-    })
+    });
 
     const schema = {
         fields: [
@@ -85,29 +99,24 @@ function AuditSchedule() {
                 className: 'grid-col-100'
             },
             {
-                component: componentTypes.SELECT,
+                component: 'month-picker',
                 name: 'month',
                 label: 'Month',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                options: MONTHS_ENUM
-            },
-            {
-                component: componentTypes.SELECT,
-                name: 'year',
-                label: 'Year',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                options: YEARS
+                className: 'grid-col-100',
+                initialValue: new Date(),
+                minDate: getMinMonthYear(),
+                maxDate: getMaxMonthYear()
             }
         ],
     };
 
     function getFileName() {
-        const { parentCompany, associateCompany, locations, month, year } = exportData;
+        const { parentCompany, associateCompany, locations, month } = exportData;
         const _d = { ...parentCompany, ...associateCompany, ...locations };
+        const date = new Date(month);
         const result = [
             _d.parentCompany.code
         ];
@@ -117,8 +126,8 @@ function AuditSchedule() {
         if (_d.locations) {
             result.push(_d.locations.code);
         }
-        result.push(month.value);
-        result.push(year.value);
+        result.push(MONTHS_ENUM[date.getMonth()].substring(0, 3));
+        result.push(date.getFullYear());
         return `${result.join('-')}.xlsx`
     }
 
@@ -140,13 +149,14 @@ function AuditSchedule() {
 
     function handleSubmit() {
         if (form.valid) {
-            const { parentCompany, associateCompany, locations, month, year } = exportData;
+            const { parentCompany, associateCompany, locations, month } = exportData;
+            const date = new Date(month);
             const payload = {
                 company: parentCompany.value,
                 associateCompany: (associateCompany || {}).value || null,
                 location: (locations || {}).value || null,
-                month: month.value,
-                year: year.value
+                month: MONTHS_ENUM[date.getMonth()],
+                year: `${date.getFullYear()}`
             };
             exportAuditSchedule(payload);
         }

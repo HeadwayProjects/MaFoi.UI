@@ -110,3 +110,23 @@ input[type=number]::-webkit-outer-spin-button {
     grid-column-start: 1;
     grid-column-end: 3;
 }
+
+.month-picker [class*="-container"] {
+    height: 38px !important;
+}
+
+.month-picker [class*="-container"] input {
+    height: 100% !important;
+}
+
+.rmdp-arrow-container {
+    justify-content: center;
+    width: 38px;
+    align-items: center;
+    margin: 0;
+}
+
+.rmdp-arrow-container .rmdp-arrow {
+    margin-top: 0;
+    padding: 4px;
+}
