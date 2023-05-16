@@ -9,14 +9,18 @@ import { preventDefault } from "../../../utils/common";
 import Icon from "../../common/Icon";
 import styles from "./UserManagement.module.css";
 import PageLoader from "../../shared/PageLoader";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function UserLocationMapping({ user, data, onClose, onSubmit }) {
     const [selectedLocations, setSelectedLocations] = useState([]);
     const [parentCompany, setParentCompany] = useState();
     const [associateCompany, setAssociateCompany] = useState();
-    const { companies: parentCompanies, isFetching: fetchingCompanies } = useGetCompanies({ isParent: true });
-    const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({ isParent: false, parentCompanyId: (parentCompany || {}).value }, Boolean((parentCompany || {}).value));
-    const { locations, isFetching, refetch } = useGetCompanyLocations({ associateCompanyId: (associateCompany || {}).value }, Boolean(associateCompany));
+    const { companies: parentCompanies, isFetching: fetchingCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
+    const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({
+        ...DEFAULT_OPTIONS_PAYLOAD,
+        filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (parentCompany || {}).value }]
+    }, Boolean((parentCompany || {}).value));
+    const { locations, isFetching } = useGetCompanyLocations({ associateCompanyId: (associateCompany || {}).value }, Boolean(associateCompany));
     const { createUserLocationMapping, creating } = useCreateUserLocationMapping((response) => {
         if (response.key === API_RESULT.SUCCESS) {
             toast.success(`${selectedLocations.length} location(s) added successsfully.`);
