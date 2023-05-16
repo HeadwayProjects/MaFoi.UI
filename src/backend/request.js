@@ -2,8 +2,8 @@ import axios from "axios";
 import { getAuthToken } from "./auth";
 
 const apiInstance = axios.create({
-    // baseURL: 'http://ec2-13-127-248-214.ap-south-1.compute.amazonaws.com:8080/'
-    baseURL: 'https://ezycompapi.azurewebsites.net/'
+    baseURL: 'http://ec2-13-127-248-214.ap-south-1.compute.amazonaws.com:8080/'
+    // baseURL: 'https://ezycompapi.azurewebsites.net/'
 });
 
 apiInstance.interceptors.response.use(

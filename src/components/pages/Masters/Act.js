@@ -187,7 +187,7 @@ function Act() {
                             </div>
                         </div>
                     </div>
-                    <Table data={data} options={tableConfig} isLoading={isFetching} />
+                    <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav}/>
                 </div>
             </MastersLayout>
             {

@@ -86,10 +86,11 @@ function Sidenav() {
                     <ul className='sideNav m-0 p-0'>
                         {
                             sideMenu.map((item, index) => {
+                                const hasChild = (item.children || []).length > 0;
                                 return (
                                     <li key={item.id} >
                                         <button type="button" disabled={item.disable}>
-                                            <NavItem url={item.url} name={item.id} hasChild={(item.children || []).length > 0} parentIndex={index}>
+                                            <NavItem url={item.url} name={item.id} hasChild={hasChild} parentIndex={index}>
                                                 <div className='d-flex flex-row align-items-center w-100'>
                                                     {
                                                         item.icon &&
