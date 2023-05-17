@@ -1,32 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { GetMastersBreadcrumb } from "../Master.constants";
-import { useDeleteActStateMapping, useStateRuleCompanyMappings } from "../../../../backend/masters";
+import { useDeleteActStateMapping, useGetStates, useStateRuleCompanyMappings } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
 import Icon from "../../../common/Icon";
-import { ACTIONS } from "../../../common/Constants";
-import Table, { CellTmpl, reactFormatter } from "../../../common/Table";
+import { ACTIONS, TOOLTIP_DELAY } from "../../../common/Constants";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../../common/Table";
 import MastersLayout from "../MastersLayout";
-import { Button, InputGroup } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
 import RuleStateCompanyMappingDetails from "./RuleStateCompanyMappingDetails";
+import TableFilters from "../../../common/TableFilter";
 
 function RuleStateCompanyMapping() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Mapping'));
-    const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [mapping, setMapping] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [payload, setPayload] = useState();
-    const { mappings, isFetching, refetch } = useStateRuleCompanyMappings();
+    const [filters, setFilters] = useState();
+    const filterRef = useRef();
+    filterRef.current = filters;
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'act', order: 'asc' } });
+    const { mappings, total, isFetching, refetch } = useStateRuleCompanyMappings({ ...payload }, Boolean(payload));
+    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { deleteActStateMapping, deleting } = useDeleteActStateMapping(response => {
         toast.success(`Mapping deleted successfully.`);
         submitCallback();
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const filterConfig = [
+        {
+            label: 'State',
+            name: 'stateId',
+            options: (states || []).map(x => {
+                return { value: x.id, label: x.name };
+            })
+        }
+    ]
 
     function downloadFile(file) {
         const link = document.createElement('a');
@@ -64,6 +78,23 @@ function RuleStateCompanyMapping() {
         )
     }
 
+    function ValueTmpl({ cell }) {
+        const value = (cell.getValue() || {}).name;
+        return (
+            <>
+                {
+                    !!value &&
+                    <div className="d-flex align-items-center h-100 w-auto">
+                        <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
+                            placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
+                            <div className="ellipse two-lines">{value}</div>
+                        </OverlayTrigger>
+                    </div>
+                }
+            </>
+        )
+    }
+
     function RuleTmpl({ cell }) {
         const rule = cell.getValue();
         return (
@@ -87,10 +118,10 @@ function RuleStateCompanyMapping() {
     }
 
     const columns = [
-        { title: "Act", field: "act.name", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Act", field: "act", formatter: reactFormatter(<ValueTmpl />) },
         { title: "Rule", field: "rule", widthGrow: 2, formatter: reactFormatter(<RuleTmpl />) },
-        { title: "Activity", field: "activity.name", formatter: reactFormatter(<CellTmpl />) },
-        { title: "State", field: "state.name", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Activity", field: "activity", formatter: reactFormatter(<ValueTmpl />) },
+        { title: "State", field: "state", formatter: reactFormatter(<ValueTmpl />) },
         { title: "Form Name", field: "formName", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 160,
@@ -103,11 +134,14 @@ function RuleStateCompanyMapping() {
         ajaxRequestFunc,
         columns,
         rowHeight: 54,
-        selectable: false
+        selectable: false, paginate: true,
+        initialSort: [{ column: 'act', dir: 'asc' }]
     });
 
-    function formatApiResponse(params, list, pagination = {}) {
-        const total = list.length;
+    function formatApiResponse(params, list, totalRecords) {
+        const { pagination } = params || {};
+        const { pageSize, pageNumber } = pagination || {};
+
         list = list.map(map => {
             const { id, state, actRuleActivityMapping, fileName, filePath, formName } = map || {};
             const { act, rule, activity } = actRuleActivityMapping || {};
@@ -115,18 +149,28 @@ function RuleStateCompanyMapping() {
         });
         const tdata = {
             data: list,
-            total,
-            last_page: Math.ceil(total / params.size) || 1,
-            page: params.page || 1
+            total: totalRecords,
+            last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
+            page: pageNumber || 1
         };
         setData(tdata);
         return tdata;
     }
-
     function ajaxRequestFunc(url, config, params) {
-        setParams(params);
-        setPayload(search ? { ...params, search } : { ...params });
-        return Promise.resolve(formatApiResponse(params, mappings));
+        const { field, dir } = (params.sort || [])[0] || {};
+        const _params = {
+            pagination: {
+                pageSize: params.size,
+                pageNumber: params.page
+            },
+            sort: {
+                columnName: field || 'act',
+                order: dir || 'asc'
+            }
+        };
+        setParams(_params);
+        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+        return Promise.resolve(formatApiResponse(params, mappings, total));
     }
 
     function submitCallback() {
@@ -139,9 +183,22 @@ function RuleStateCompanyMapping() {
         deleteActStateMapping(mapping.id);
     }
 
+    function onFilterChange(e) {
+        setFilters(e);
+        setPayload({ ...DEFAULT_PAYLOAD, ...params, ...e });
+    }
+
+    function handlePageNav(_pagination) {
+        const _params = { ...params };
+        _params.pagination = _pagination;
+        setParams({ ..._params });
+        setPayload({ ...payload, ..._params })
+    }
+
+
     useEffect(() => {
         if (!isFetching && payload) {
-            setData(formatApiResponse(params, mappings));
+            setData(formatApiResponse(params, mappings, total));
         }
     }, [isFetching]);
 
@@ -150,22 +207,16 @@ function RuleStateCompanyMapping() {
             <MastersLayout title="Masters - Mapping" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
-                        <div className="col-12">
-                            <div className="d-flex">
-                                {/* <InputGroup>
-                                    <input type="text" className="form-control" placeholder="Search for Act / State / Acitivty" />
-                                    <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
-                                        <div className="d-flex flex-row align-items-center text-white">
-                                            <Icon name={'search'} />
-                                            <span className="ms-2">Search</span>
-                                        </div>
-                                    </InputGroup.Text>
-                                </InputGroup> */}
-                                <Button variant="primary" className="px-4 ms-auto me-4 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New Mapping</Button>
+                        <div className="col-12 px-4">
+                            <div className="d-flex justify-content-between">
+                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
+                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                    <Icon name={'plus'} className="me-2"></Icon>Add New
+                                </Button>
                             </div>
                         </div>
                     </div>
-                    <Table data={data} options={tableConfig} isLoading={isFetching} />
+                    <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
                 </div>
             </MastersLayout>
             {

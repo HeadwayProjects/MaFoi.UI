@@ -502,17 +502,18 @@ export function useDeleteRuleCompliance(onSuccess, onError) {
     return { deleteRuleCompliance, error, deleting };
 }
 
-export function useStateRuleCompanyMappings(payload) {
+export function useStateRuleCompanyMappings(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['mappings', payload],
-        async () => await api.get(`/api/Mappings/GetActStateList`, payload || {}),
+        async () => await api.post(`/api/Mappings/GetActStateList`, payload),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 
-    return { mappings: (data || {}).data || [], isFetching, refetch };
+    return { mappings: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
 }
 
 export function useCreateStateRuleCompanyMapping(onSuccess, onError) {
