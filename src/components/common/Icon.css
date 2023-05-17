@@ -21,3 +21,7 @@
     opacity: 1;
     cursor: pointer;
 }
+
+.icon-notification svg {
+    color: var(--white);
+}

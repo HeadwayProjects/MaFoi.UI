@@ -9,11 +9,41 @@ import ChangePasswordModal from '../pages/Authenticate/ChangePasswordModal';
 import ConfirmModal from '../common/ConfirmModal';
 import { navigate } from 'raviger';
 import { getBasePath } from '../../App';
+import Icon from '../common/Icon';
+import NotificationsModal from './NotificationsModal';
 
 function Navbar({ showUser = true }) {
     const [user] = useState(auth.getUserDetails() || {});
     const [changePwd, setChangePwd] = useState(false);
     const [newUser, setNewUser] = useState(false);
+    const [unreadNotifications, setUnreadNotifications] = useState([]);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [notifications, setNotifications] = useState([
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false, id: 1 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false, id: 2 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false , id: 3},
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 4 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 5 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 6 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 7 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 8 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 9 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 10 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 11 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 12 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 13 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 14 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 15 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 16 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 17 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 18 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 19 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 20 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 21 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 22 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 23 },
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 24 },
+    ]);
 
     function logout(event) {
         preventDefault(event)
@@ -36,6 +66,13 @@ function Navbar({ showUser = true }) {
         }
     }, [user]);
 
+    useEffect(() => {
+        if (notifications) {
+            setUnreadNotifications(notifications.filter(x => !x.isRead).length);
+        }
+
+    }, [notifications])
+
     return (
         <>
             <div className='container-full fixed-top bg-white header-navbar-container'>
@@ -46,6 +83,16 @@ function Navbar({ showUser = true }) {
                             showUser &&
                             <>
                                 <div className="nav-item d-flex align-items-center">
+                                    {
+                                        (notifications || []).length > 0 &&
+                                        <div className='p-2 mx-2 position-relative'>
+                                            <Icon name="notification" style={{ cursor: 'pointer' }} action={() => setShowNotifications(true)}/>
+                                            {
+                                                unreadNotifications &&
+                                                <span className="notification-badge">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
+                                            }
+                                        </div>
+                                    }
                                     <ul className="navbar-nav">
                                         <div className="nav-item dropdown">
                                             <div className="nav-link dropdown-toggle border rounded text-black" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -61,7 +108,7 @@ function Navbar({ showUser = true }) {
                                             </div>
                                         </div>
                                     </ul>
-                                    <ul className="d-flex row disabled mb-0 text-muted ps-2 m-0 align-items-center align-content-center">
+                                    <ul className="d-flex flex-column disabled mb-0 text-muted ps-2 m-0 align-items-center align-content-center mx-4">
                                         <span className='last-login-time'>Last Login Time</span>
                                         <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('hh:mm A')}</span></small>
                                         <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('DD/MM/YYYY')}</span></small>
@@ -81,6 +128,14 @@ function Navbar({ showUser = true }) {
                 newUser &&
                 <ConfirmModal title={`Hello ${user.name}`} message={'You are logged in with a temporary password. Would you like to change it?'}
                     onSubmit={() => { setChangePwd(true) }} onClose={() => setNewUser(false)} yesText='Sure' noText='Maybe later' />
+            }
+            {
+                showNotifications &&
+                <NotificationsModal notifications={notifications}
+                    onDismiss={() => setShowNotifications(false)} onSubmit={() => {
+                        setShowNotifications(false);
+                        // refetch();
+                    }} />
             }
         </>
     );

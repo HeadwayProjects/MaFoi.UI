@@ -34,7 +34,7 @@ export const DEFAULT_PAYLOAD = {
 
 export const DEFAULT_OPTIONS_PAYLOAD = {
     pagination: {
-        pageSize: 2000,
+        pageSize: 5000,
         pageNumber: 1
     },
     filters: [],

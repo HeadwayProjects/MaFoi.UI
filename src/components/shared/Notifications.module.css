@@ -1,0 +1,26 @@
+.notificaitonsContainer {
+    min-height: 200px;
+    height: calc(100vh - 214px);
+    margin: 0 -40px;
+    padding: 0 40px;
+    overflow: auto;
+    font-size: var(--font-md);
+}
+
+.notificaitonsContainer .accordion-button {
+    padding: 5px;
+}
+
+.notificaitonsContainer .accordion-item {
+    margin-bottom: 8px;
+}
+
+.notificaitonsDetails {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.notificaitonsDetails.unread {
+    font-weight: bold;
+}
