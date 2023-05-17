@@ -4,6 +4,7 @@
   --black-600: rgba(0, 0, 0, 0.6);
 
   --royal-blue: #2965AD;
+  --mid-royal-blue: #3C87C2;
   --blue: #3C93D8;
   --pale-blue: #DEEFF9;
 
@@ -101,6 +102,10 @@
   color: var(--black-600) !important;
 }
 
+.bg-dashboard {
+  background-color: var(--mid-royal-blue);
+}
+
 .letter-spacing-2 {
   letter-spacing: 0.5rem;
 }
@@ -135,14 +140,12 @@ body {
 }
 
 .pageHeading {
-  background-color: var(--pale-blue);
-  height: 72px;
-  padding-left: 2.25rem !important;
+  background-color: var(--royal-blue);
+  height: 64px;
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
   justify-content: space-between;
-}
-
-.pageHeading h4 {
-  color: var(--royal-blue);
+  color: var(--white);
 }
 
 .breadcrumb li {
@@ -150,34 +153,43 @@ body {
 }
 
 .breadcrumb a {
-  color: var(--royal-blue);
+  color: var(--white);
+}
+
+.breadcrumb-item.active {
+  color: var(--white);
+}
+
+.breadcrumb-item+.breadcrumb-item::before {
+  color: var(--white);
 }
 
 
 /* Dashboard-Tabs Start */
 .nav-tabs.dashboardTabs {
-  border-bottom: 3px solid var(--royal-blue);
+  border-bottom: 3px solid var(--white);
 }
 
 .nav-tabs.dashboardTabs .nav-link {
   border-radius: 25px 25px 0 0;
-  background-color: var(--medium-gray);
-  color: var(--dark-gray);
+  background-color: var(--gray);
+  color: var(--white);
   padding: 10px 35px;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .nav-tabs.dashboardTabs .nav-link.active {
   background-color: var(--royal-blue);
   color: var(--white);
-  border-color: transparent;
+  border: 3px solid var(--white);
+  border-bottom-width: 2px;
 }
 
 /* Dashboard-cards count */
 
 .cardCount {
-  border-left: 5px solid transparent;
-  height: 90px;
+  height: 60px;
+  color: var(--white);
 }
 
 .cardCount a {

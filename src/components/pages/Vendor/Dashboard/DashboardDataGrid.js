@@ -63,34 +63,31 @@ function DashboardDataGrid() {
     return (
         <div>
             <div className="my-3 row m-0">
-                <div className="row m-0 p-0">
-                    <div className="col-2 col-md-2">
-                        <label className="filter-label"><small>Company</small></label>
-                        <Select options={companies} onChange={setCompany}
-                            placeholder='Company' value={company} />
-                    </div>
-                    <div className="col-3 col-md-3">
-                        <label className="filter-label"><small>Associate Company</small></label>
-                        <Select options={associateCompanies} onChange={setAssociateCompany}
-                            placeholder='Associate Company' value={associateCompany} />
-                    </div>
-                    <div className="col-2 col-md-2">
-                        <label className="filter-label"><small>Location</small></label>
-                        <Select options={locations} onChange={setLocation}
-                            placeholder='Location' value={location} />
+                <div className="col-12">
+                    <div className="d-flex flex-row card m-0">
+                        <div className="col-2 col-md-2 p-2">
+                            <label className="filter-label"><small>Company</small></label>
+                            <Select options={companies} onChange={setCompany}
+                                placeholder='Company' value={company} />
+                        </div>
+                        <div className="col-3 col-md-3 p-2">
+                            <label className="filter-label"><small>Associate Company</small></label>
+                            <Select options={associateCompanies} onChange={setAssociateCompany}
+                                placeholder='Associate Company' value={associateCompany} />
+                        </div>
+                        <div className="col-2 col-md-2 p-2">
+                            <label className="filter-label"><small>Location</small></label>
+                            <Select options={locations} onChange={setLocation}
+                                placeholder='Location' value={location} />
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div className="row m-0">
-                <div className="col-md-6">
+                <div className="col-md-12">
                     {/* Current Performance */}
                     <ActivityPerformance current={true} selectedCompany={(company || {}).value} selectedLocation={(location || {}).value}
-                        selectedAssociateCompany={(associateCompany || {}).value} />
-                </div>
-                <div className="col-md-6">
-                    {/* Previous Performance */}
-                    <ActivityPerformance current={false} selectedCompany={(company || {}).value} selectedLocation={(location || {}).value}
                         selectedAssociateCompany={(associateCompany || {}).value} />
                 </div>
             </div>

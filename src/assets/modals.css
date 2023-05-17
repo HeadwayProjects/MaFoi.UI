@@ -64,7 +64,13 @@
     width: 100%;
     border: none;
     border-radius: 0;
-    padding: 1rem 0;
+    padding: 0;
+}
+
+.modal-dialog.drawer .modal-content .modal-header{
+    background-color: var(--royal-blue);
+    color: var(--white);
+    border-radius: 0;
 }
 
 .modal-dialog.drawer .modal-content .modal-header,
@@ -79,6 +85,7 @@
 }
 
 .modal-dialog.drawer .modal-header button.btn-close {
-    margin-top: -3rem;
+    margin-top: -2rem;
     margin-right: -2rem;
+    color: var(--white);
 }

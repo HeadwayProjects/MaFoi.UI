@@ -372,10 +372,8 @@ function TaskManagement() {
     return (
         <>
             <div className="d-flex flex-column">
-                <div className="d-flex  p-2 align-items-center pageHeading">
-                    <div className="ps-4">
-                        <h4 className="mb-0 ps-1">Auditor - Activity</h4>
-                    </div>
+                <div className="d-flex p-2 align-items-center pageHeading">
+                    <h4 className="mb-0">Auditor - Activity</h4>
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 d-flex justify-content-end">

@@ -2,44 +2,34 @@ import React, { useEffect, useState } from "react";
 import * as api from '../../../../backend/request';
 import * as dayjs from 'dayjs';
 import * as utc from "dayjs/plugin/utc";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faChevronCircleRight } from "@fortawesome/free-solid-svg-icons";
 import "./dashboard.css";
-import NavTabs from "../../../shared/NavTabs";
 import { preventDefault } from "../../../../utils/common";
 import Chart from "./Chart";
 import { navigate } from "raviger";
 import { getBasePath } from "../../../../App";
 dayjs.extend(utc);
 
-const CurrentPerformanceTabs = [
+const PerformanceTabs = [
     { value: '0', label: 'Today' },
-    { value: '7', label: 'This Week' }
-];
-const PreviousPerformanceTabs = [
+    { value: '7', label: 'This Week' },
     { value: '1', label: ['Last', 'Month'] },
-    { value: '3', label: ['Last', '3 Months'] },
-    { value: '6', label: ['Last', '6 Months'] },
-    { value: '12', label: ['Last', '12 Months'] }
+    { value: '3', label: ['3 Months'] },
+    { value: '6', label: ['6 Months'] },
+    { value: '12', label: ['12 Months'] }
 ];
 
-
-const SubmitStatus = [
-    { label: 'Activities Saved', key: 'activitiesSaved', color: 'grey', value: 'ActivitySaved' },
-    { label: 'Pending', key: 'pending', color: 'yellow', value: 'Pending' },
-    { label: 'Over Due', key: 'overDue', color: 'red', value: 'Overdue' },
-    { label: 'Submitted', key: 'submitted', color: 'green', value: 'Submitted' },
-]
-
-const AuditStatus = [
-    { label: 'Audited', key: 'approved', color: 'green', value: 'Audited' },
-    { label: 'Rejected', key: 'rejected', color: 'red', value: 'Rejected' }
+const Statuses = [
+    { label: 'Activities Saved', key: 'activitiesSaved', color: 'var(--gray-300)', value: 'ActivitySaved' },
+    { label: 'Pending', key: 'pending', color: 'var(--yellow)', value: 'Pending' },
+    { label: 'Over Due', key: 'overDue', color: 'var(--medium-red)', value: 'Overdue' },
+    { label: 'Submitted', key: 'submitted', color: 'var(--light-green)', value: 'Submitted' },
+    { label: 'Audited', key: 'approved', color: 'var(--green)', value: 'Audited' },
+    { label: 'Rejected', key: 'rejected', color: 'var(--red)', value: 'Rejected' }
 ]
 
 function ActivityPerformance({ current, selectedCompany, selectedAssociateCompany, selectedLocation }) {
-    const [title] = useState(current ? 'Current Performance' : 'Previous Performance');
-    const [tabs] = useState(current ? CurrentPerformanceTabs : PreviousPerformanceTabs);
-    const [frequency, setFrequency] = useState(current ? CurrentPerformanceTabs[0].value : PreviousPerformanceTabs[0].value);
+    const [title] = useState('Performance');
+    const [frequency, setFrequency] = useState(PerformanceTabs[0].value);
     const [performanceStatus, setPerformanceStatus] = useState({});
     const [label, setLabel] = useState('');
 
@@ -77,6 +67,10 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
         });
     }
 
+    function onFrequencyChange(e) {
+        setFrequency(e.target.value)
+    }
+
     useEffect(() => {
         if (selectedCompany && selectedAssociateCompany && selectedLocation) {
             updatePerformance();
@@ -108,91 +102,66 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                     {title}
                 </div>
             </div>
-            <div className="card-body">
-                {
-                    tabs &&
-                    <NavTabs list={tabs} onTabChange={(tab) => { setFrequency(tab) }} />
-                }
-                <div className="tab-content" id="VendorContent">
-                    <div className="tab-pane fade show active" role="tabpanel">
-                        <div className="my-3">
+            <div className="card-body pt-0">
+                <div className="d-flex justify-content-center">
+                    <div className="d-flex flex-row">
+                        {
+                            PerformanceTabs.map(tab => {
+                                return (
+                                    <div class="form-check mx-2" key={tab.value}>
+                                        <input class="form-check-input" type="radio" name="frequency" checked={frequency === tab.value}
+                                            id={'frequency' + tab.value} onChange={onFrequencyChange} value={tab.value} />
+                                        <label class="form-check-label" for={'frequency' + tab.value}>{tab.label}</label>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                </div>
+                <div className="row m-0">
+                    <div className="col-7 mt-3">
+                        <div className="d-flex flex-column justify-content-center">
                             <div className="text-center mb-3 dashboard-date-range-label">
                                 {label && <strong className="text-primary">({label})</strong>}
                             </div>
-                            <div className="row m-0 vendorPerformance-cards">
-                                <div className="col-md-4">
-                                    <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block">Submit Status</a>
-                                    {
-                                        SubmitStatus.map(status => {
-                                            return (
-                                                <div className="col-md-12 mb-3" key={status.key}>
-                                                    <div className={`card cardCount ${status.color}`}>
-                                                        <div className="card-body py-0">
-                                                            <div className="row d-flex align-items-center performance-status">
-                                                                <div className="col-6 px-0 py-0 overflow-hidden">
-                                                                    <label>{status.label}</label>
-                                                                </div>
-                                                                <div className="col-4 px-1 py-1">
-                                                                    {
-                                                                        typeof performanceStatus[status.key] !== 'undefined' &&
-                                                                        <h3 className="p-0 m-0">({performanceStatus[status.key]})</h3>
-                                                                    }
-                                                                </div>
-                                                                {/* <div className="col-1 px-0 py-0">
-                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
-                                                                        onClick={() => viewActivities(status.value)}>
-                                                                        <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
-                                                                    </span>
-                                                                </div> */}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                </div>
-
-                                <div className="col-md-4">
-                                    <a href="/" onClick={preventDefault} className="text-link text-appprimary underline text-center d-block"> Audit Status </a>
-                                    {
-                                        AuditStatus.map(status => {
-                                            return (
-                                                <div className="col-md-12 mb-3" key={status.key}>
-                                                    <div className={`card cardCount ${status.color}`}>
-                                                        <div className="card-body py-0">
-                                                            <div className="row d-flex align-items-center  performance-status">
-                                                                <div className="col-6 px-0 py-0">
-                                                                    <label>{status.label}</label>
-                                                                </div>
-                                                                <div className="col-4  px-1 py-1">
-                                                                    {
-                                                                        typeof performanceStatus[status.key] !== 'undefined' &&
-                                                                        <h3 className="p-0 m-0">({performanceStatus[status.key]})</h3>
-                                                                    }
-                                                                </div>
-                                                                {/* <div className="col-1 px-0 py-0">
-                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
-                                                                        onClick={() => viewActivities(status.value)}>
-                                                                        <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
-                                                                    </span>
-                                                                </div> */}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                </div>
+                            <div className="d-flex flex-row flex-wrap">
                                 {
-                                    (performanceStatus.approved > 0 || performanceStatus.rejected > 0) &&
-                                    <div className="col-md-4">
-                                        <Chart data={performanceStatus} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
-                                    </div>
+                                    Statuses.map(status => {
+                                        return (
+                                            <div className="w-33 mb-3 me-3" key={status.key} style={{ width: "calc(33% - 1rem)" }}>
+                                                <div className="card cardCount border-0 p-2" style={{ backgroundColor: `${status.color}` }}>
+                                                    <div className="card-body py-0">
+                                                        <div className="row d-flex align-items-center performance-status h-100">
+                                                            <div className="col-9 px-0 py-0 overflow-hidden">
+                                                                <label>{status.label}</label>
+                                                            </div>
+                                                            <div className="col-3 px-1 py-1">
+                                                                {
+                                                                    typeof performanceStatus[status.key] !== 'undefined' &&
+                                                                    <div className="p-0 m-0 text-lg">({performanceStatus[status.key]})</div>
+                                                                }
+                                                            </div>
+                                                            {/* <div className="col-1 px-0 py-0">
+                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
+                                                                        onClick={() => viewActivities(status.value)}>
+                                                                        <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
+                                                                    </span>
+                                                                </div> */}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })
                                 }
                             </div>
                         </div>
+                    </div>
+                    <div className="col-5">
+                        {
+                            // (performanceStatus.approved > 0 || performanceStatus.rejected > 0) &&
+                            <Chart data={performanceStatus} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
+                        }
                     </div>
                 </div>
             </div>

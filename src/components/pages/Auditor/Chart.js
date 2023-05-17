@@ -12,12 +12,6 @@ const defaultConfig = {
         trigger: 'item',
         formatter: "{b}"
     },
-    legend: {
-        orient: 'vertical',
-        bottom: '10',
-        left: "center",
-        data: []
-    },
     series: [
         {
             data: [],
@@ -43,6 +37,7 @@ const defaultConfig = {
 
 function Chart({ data, keys }) {
     const [config, setConfig] = useState(null);
+    const [legends, setLegends] = useState([])
 
     useEffect(() => {
         if (Object.keys(data || {}).length) {
@@ -57,28 +52,43 @@ function Chart({ data, keys }) {
                     }
                 }
             });
-            const _legentData = keys.map(key => {
+            setLegends(keys.map(key => {
                 const _chart = CHART_MAPPING.find(x => x.key === key) || {};
-                return `${data[key]} ${_chart.label}`
-            });
+                return {
+                    color: _chart.color,
+                    label: `${data[key] || 0} ${_chart.label}`
+                }
+            }));
             const total = _data.reduce((n, { value }) => n + value, 0);
             _config.series[0].label.formatter = ({ value }) => {
                 const _valueByTotal = value / total;
-                if (isNaN(_valueByTotal)) return '0 %'; 
+                if (isNaN(_valueByTotal)) return '0 %';
                 const _percentageValue = _valueByTotal * 100;
                 return `${Math.round(_percentageValue)} %`;
             };
             _config.series[0].data = _data;
-            _config.legend.data = _legentData;
             setConfig(_config);
         }
     }, [data]);
 
     return (
-        <div className="d-flex flex-column">
+        <div className="d-flex flex-row align-items-center justify-content-center">
             <div className="performance-chart">
                 {
                     config && <ReactECharts option={config} />
+                }
+            </div>
+            <div className="performance-chart d-flex flex-column justify-content-center">
+                {
+                    (legends || []).length > 0 &&
+                    legends.map(x => {
+                        return (
+                            <div className="d-flex flex-row align-items-center mb-1">
+                                <span className="legend-marker" style={{ background: x.color }}></span>
+                                <div className="ms-2 text-md">{x.label}</div>
+                            </div>
+                        )
+                    })
                 }
             </div>
         </div>

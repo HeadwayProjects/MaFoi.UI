@@ -7,58 +7,43 @@ import { useGetAuditorLimeStatus } from "../../../backend/auditor";
 import Performance from "./Performance"
 
 const StatusMapping = [
-    { label: 'Total Vendors', key: 'totalVendors', color: 'grey', value: 'ActivitySaved' },
+    { label: 'Total Vendors', key: 'totalVendors', color: 'var(--light-green)', value: 'ActivitySaved' },
     // { label: 'Audit To Be Done This Month', key: 'auditToBeDoneForThisMonth', color: 'yellow', value: 'Pending' },
-    { label: 'Audit Approval Pending', key: 'auditApprovalPending', color: 'red', value: 'Overdue' },
-    { label: 'Vendors Not Submitted', key: 'vendorsNotSubmitted', color: 'yellow', value: 'Submitted' }
+    { label: 'Audit Approval Pending', key: 'auditApprovalPending', color: 'var(--medium-red)', value: 'Overdue' },
+    { label: 'Vendors Not Submitted', key: 'vendorsNotSubmitted', color: 'var(--yellow)', value: 'Submitted' }
 ]
-
 
 function AuditorPerformance() {
     const user = auth.getUserDetails() || {};
     const { limeStatus } = useGetAuditorLimeStatus(user.userid);
 
-    // function viewActivities(status) {
-    //     console.log(status);
-    // }
     return (
         <div>
             <div className="mx-0 my-3 row">
-                {
-                    StatusMapping.map(status => {
-                        return (
-                            <div className="col-6 col-md-3 mb-3" key={status.key}>
-                                <div className={`card cardCount ${status.color} auditor-status-card`}>
-                                    <div className="card-body">
-                                        <div className="row d-flex align-items-center">
-                                            <div className="col-7 px-0 py-1">
-                                                <label>{status.label}</label>
+                <div className="col-12 ">
+                    <div className="d-flex flex-row justify-content-center card border-0 py-3">
+                        <div className="d-flex flex-row">
+                            {
+                                StatusMapping.map(status => {
+                                    return (
+                                        <div className="card cardCount auditor-status-card mx-2 h-100" style={{ backgroundColor: status.color }} key={status.key}>
+                                            <div className="card-body py-1">
+                                                <div className="row d-flex flex-column align-items-center justify-content-end">
+                                                    <label className="text-center px-3 text-md">{status.label}</label>
+                                                    <div className="text-lg text-center">({(limeStatus || {})[status.key] || 0})</div>
+                                                </div>
                                             </div>
-                                            <div className="col-3 px-0 py-1">
-                                                <h3 className="p-0 m-0">({(limeStatus || {})[status.key] || 0})</h3>
-                                            </div>
-                                            {/* <div className="col-2 px-0 py-1">
-                                                <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
-                                                    onClick={() => viewActivities(status.value)}>
-                                                    <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
-                                                </span>
-                                            </div> */}
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })
-                }
-            </div>
-
-            <div className="row m-0">
-                <div className="col-md-6">
-                    <Performance current={true} />
+                                    )
+                                })
+                            }
+                        </div>
+                    </div>
                 </div>
-
-                <div className="col-md-6">
-                    <Performance current={false} />
+            </div>
+            <div className="row m-0">
+                <div className="col-12">
+                    <Performance />
                 </div>
             </div>
         </div>

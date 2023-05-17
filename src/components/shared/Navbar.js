@@ -21,7 +21,7 @@ function Navbar({ showUser = true }) {
     const [notifications, setNotifications] = useState([
         { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false, id: 1 },
         { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false, id: 2 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false , id: 3},
+        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false, id: 3 },
         { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 4 },
         { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 5 },
         { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 6 },
@@ -85,15 +85,19 @@ function Navbar({ showUser = true }) {
                                 <div className="nav-item d-flex align-items-center">
                                     {
                                         (notifications || []).length > 0 &&
-                                        <div className='p-2 mx-2 position-relative'>
-                                            <Icon name="notification" style={{ cursor: 'pointer' }} action={() => setShowNotifications(true)}/>
+                                        <div className='p-2 position-relative'>
+                                            <Icon name="notification" style={{ cursor: 'pointer' }} action={() => setShowNotifications(true)} />
                                             {
                                                 unreadNotifications &&
                                                 <span className="notification-badge">{unreadNotifications > 9 ? '9+' : unreadNotifications}</span>
                                             }
                                         </div>
                                     }
-                                    <ul className="navbar-nav">
+                                    <ul className="d-flex flex-column disabled mb-0 text-muted m-0 align-items-center align-content-center px-2">
+                                        <span className='last-login-time'>Last Login Time</span>
+                                        <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('DD/MM/YYYY hh:mm A')}</span></small>
+                                    </ul>
+                                    <ul className="navbar-nav px-2">
                                         <div className="nav-item dropdown">
                                             <div className="nav-link dropdown-toggle border rounded text-black" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <span className='userNameL rounded-circle fw-semibold text-center text-white'>{(user.name || '').charAt(0)}</span> {user.name}
@@ -107,11 +111,6 @@ function Navbar({ showUser = true }) {
                                                 <a className="dropdown-item" href="/" onClick={logout}>Logout</a>
                                             </div>
                                         </div>
-                                    </ul>
-                                    <ul className="d-flex flex-column disabled mb-0 text-muted ps-2 m-0 align-items-center align-content-center mx-4">
-                                        <span className='last-login-time'>Last Login Time</span>
-                                        <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('hh:mm A')}</span></small>
-                                        <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('DD/MM/YYYY')}</span></small>
                                     </ul>
                                     <img src={mofoi_logo} width={'50px'} height={'50px'} />
                                 </div>

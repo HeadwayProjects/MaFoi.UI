@@ -52,8 +52,25 @@
     background-color: var(--dark-green);
 }
 
+ul.updates {
+    padding-left: 224px;
+}
+
 .updates li:hover {
     cursor: pointer;
     text-decoration: underline;
     color: var(--royal-blue);
+}
+
+.updates-header {
+    top: -8px;
+    height: 72px;
+    align-items: center;
+    left: 0;
+    background: var(--emarald-green);
+    color: var(--white);
+    padding: 0 1rem;
+    border-radius: 0 1.5rem 0.5rem 1rem;
+    clip-path: polygon(0 0, 0 100%, 100% 100%, 99% 80%, 93% 0%);
+    width: 220px;
 }
