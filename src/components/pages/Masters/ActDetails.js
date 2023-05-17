@@ -80,7 +80,7 @@ function ActDetails({ action, data, onClose, onSubmit }) {
         if (form.valid) {
             const { name, establishmentType, law } = act;
             const request = {
-                name,
+                name: name.trim(),
                 lawId: law.value,
                 establishmentType: establishmentType ? establishmentType.map(x => x.value).sort().join(API_DELIMITER) : ''
             };

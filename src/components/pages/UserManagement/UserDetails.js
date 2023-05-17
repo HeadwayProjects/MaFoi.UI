@@ -36,7 +36,7 @@ function UserDetails({ action, data, onClose, onSubmit }) {
     }
 
     function onRoleChange(e) {
-        const {pages} = roles.find(x => x.id === e.value);
+        const { pages } = roles.find(x => x.id === e.value);
         setUserpages(pages.split(API_DELIMITER).join(UI_DELIMITER));
     }
 
@@ -86,7 +86,7 @@ function UserDetails({ action, data, onClose, onSubmit }) {
                         role: x
                     }
                 }),
-                description: userPages ? `Accessible Modules: ${userPages}`: ''
+                description: userPages ? `Accessible Modules: ${userPages}` : ''
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
@@ -108,8 +108,9 @@ function UserDetails({ action, data, onClose, onSubmit }) {
         if (form.valid) {
             const { name, userName, role, email, status } = user;
             const request = {
-                name, email,
-                userName: userName.toLowerCase(),
+                name: name.trim(),
+                email: (email || '').trim(),
+                userName: (userName || '').trim().toLowerCase(),
                 roleIds: [role.value],
                 isActive: status.value === STATUS.ACTIVE,
                 mobile: '',

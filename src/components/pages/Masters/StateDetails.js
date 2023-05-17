@@ -73,7 +73,7 @@ function StateDetails({ action, data, onClose, onSubmit }) {
             }
             const payload = {
                 code: code.toUpperCase(),
-                name,
+                name: name.trim()
             };
             if (action === ACTIONS.EDIT) {
                 payload['id'] = data.id;

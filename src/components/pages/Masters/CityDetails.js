@@ -98,7 +98,7 @@ function CityDetails({ action, data, onClose, onSubmit }) {
             }
             const payload = {
                 code: code.toUpperCase(),
-                name,
+                name: name.trim(),
                 stateId: state.value,
             };
             if (action === ACTIONS.EDIT) {

@@ -198,11 +198,11 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
         preventDefault(e);
         if (form.valid) {
             const payload = {
-                complianceName: compliance.complianceName,
-                complianceDescription: compliance.complianceDescription || '',
+                complianceName: compliance.complianceName.trim(),
+                complianceDescription: (compliance.complianceDescription || '').trim(),
                 stateId: compliance.state.value,
                 ruleId: compliance.rule.value,
-                proofOfCompliance: compliance.proofOfCompliance || '',
+                proofOfCompliance: (compliance.proofOfCompliance || '').trim(),
                 penalty: compliance.penalty,
                 risk: compliance.risk.value,
                 maximumPenaltyAmount: compliance.maximumPenaltyAmount ? parseFloat(compliance.maximumPenaltyAmount) : 0,

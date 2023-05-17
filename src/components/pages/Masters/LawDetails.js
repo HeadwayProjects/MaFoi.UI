@@ -66,7 +66,7 @@ function LawDetails({ action, data, onClose, onSubmit }) {
     function handleSubmit() {
         if (form.valid) {
             const { name, description } = law;
-            const request = { name, description };
+            const request = { name: name.trim(), description: (description || '').trim() };
             if (action === ACTIONS.EDIT) {
                 request['id'] = data.id;
                 updateLaw(request);

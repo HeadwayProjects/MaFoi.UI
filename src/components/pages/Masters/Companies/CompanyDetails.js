@@ -153,7 +153,7 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                 ...COMPANY_REQUEST,
                 ...company,
                 code: code.toUpperCase(),
-                name,
+                name: name.trim(),
                 businessType: (businessType || []).map(x => x.label).join(API_DELIMITER),
                 websiteUrl,
                 isActive: status.value === 'Active',

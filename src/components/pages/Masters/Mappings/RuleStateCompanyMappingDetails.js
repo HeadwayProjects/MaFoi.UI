@@ -176,7 +176,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                     ruleId: rule.value,
                     activityId: activity.value,
                     stateId: state.value,
-                    formName: formName || ''
+                    formName: (formName || '').trim()
                 };
                 createStateRuleCompanyMapping(request);
             } else {

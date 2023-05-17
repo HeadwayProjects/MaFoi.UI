@@ -85,8 +85,8 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
         if (form.valid) {
             const { name, description, type, sectionNo, ruleNo } = form.values || {};
             const payload = {
-                name,
-                description,
+                name: name.trim(),
+                description: (description || '').trim(),
                 type: type.value,
                 sectionNo,
                 ruleNo
