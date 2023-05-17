@@ -50,7 +50,7 @@ function RuleCompliance() {
         },
         {
             label: 'Audit Type',
-            name: 'statutoryAuthority',
+            name: 'auditType',
             options: AuditType.map(x => {
                 return { value: x, label: x };
             })

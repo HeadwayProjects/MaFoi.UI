@@ -5,13 +5,17 @@ import { Button } from "react-bootstrap";
 import styles from "./Companies.module.css"
 import { COMPANY_REQUEST } from "./Companies.constants";
 import { useGetCities, useGetStates } from "../../../../backend/masters"
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 
 function CompanySPOC({ onNext, onPrevious, company, parentCompany }) {
     const [form, setForm] = useState({});
     const [state, setState] = useState();
     const [companyDetails, setCompanyDetails] = useState({ hideButtons: true });
-    const { states, isFetching: fetchingStates } = useGetStates();
-    const { cities, isFetching: fetchingCities } = useGetCities(state ? { stateId: state.value } : undefined, Boolean(state));
+    const { states, isFetching: fetchingStates } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { cities, isFetching: fetchingCities } = useGetCities({
+        ...DEFAULT_OPTIONS_PAYLOAD,
+        filters: [{ columnName: 'stateId', value: (state || {}).value }]
+    }, Boolean(state));
 
     function debugForm(_form) {
         setForm(_form);

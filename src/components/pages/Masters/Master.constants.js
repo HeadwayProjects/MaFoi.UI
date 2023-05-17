@@ -3,7 +3,7 @@ import { ACTIONS } from "../../common/Constants";
 export function GetMastersBreadcrumb(page) {
     return [
         { id: 'home', label: 'Home', path: '/' },
-        { id: 'masters', label: 'Masters', path: '/masters/act' },
+        { id: 'masters', label: 'Masters', path: '/masters/law' },
         { id: page, label: page }
     ]
 }
