@@ -191,12 +191,11 @@ function CompanyLocationMappings() {
     useEffect(() => {
         if (filters) {
             const { filters: _filters, search } = filters;
-            console.log(filters)
             const _associateCompanyId = (_filters.find(x => x.columnName === 'associateCompanyId') || {}).value;
             const _parentCompanyId = (_filters.find(x => x.columnName === 'parentCompanyId') || {}).value;
             if (_parentCompanyId) {
                 const _parentCompany = parentCompanies.find(x => x.id === _parentCompanyId);
-                setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
+                setParentCompany({ value: _parentCompany.id, label: _parentCompany.name, code: _parentCompany.code });
                 if ((parentCompany || {}).value != _parentCompanyId) {
                     setAssociateCompany(null);
                     setPayload(null);
@@ -206,11 +205,10 @@ function CompanyLocationMappings() {
             if (_associateCompanyId) {
                 const _associateCompany = associateCompanies.find(x => x.id === _associateCompanyId);
                 if (_associateCompany) {
-                    setAssociateCompany({ value: _associateCompany.id, label: _associateCompany.name });
+                    setAssociateCompany({ value: _associateCompany.id, label: _associateCompany.name, code: _associateCompany.code });
                     const _x = {
                         filters: [
-                            { columnName: 'parentCompanyId', value: _parentCompanyId },
-                            { columnName: 'associateCompanyId', value: _associateCompanyId }
+                            { columnName: 'companyId', value: _associateCompanyId }
                         ],
                         search
                     }
