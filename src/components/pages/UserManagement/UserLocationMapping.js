@@ -22,7 +22,7 @@ function UserLocationMapping({ user, data, onClose, onSubmit }) {
     }, Boolean((parentCompany || {}).value));
     const { locations, isFetching } = useGetCompanyLocations({
         ...DEFAULT_OPTIONS_PAYLOAD,
-        filters: [{ columnName: 'associateCompanyId', value: (associateCompany || {}).value }],
+        filters: [{ columnName: 'companyId', value: (associateCompany || {}).value }],
         sort: { columnName: 'locationName', order: 'asc' }
     }, Boolean(associateCompany));
     const { createUserLocationMapping, creating } = useCreateUserLocationMapping((response) => {
@@ -91,24 +91,6 @@ function UserLocationMapping({ user, data, onClose, onSubmit }) {
             setSelectedLocations(locations.map(x => x.companyLocationMappingId));
         }
     }, [data]);
-
-    useEffect(() => {
-        if (!fetchingCompanies && parentCompanies) {
-            const _parentCompany = parentCompanies[0];
-            if (!parentCompany && _parentCompany) {
-                setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
-            }
-        }
-    }, [fetchingCompanies]);
-
-    useEffect(() => {
-        if (!fetchingAssociateCompanies && associateCompanies) {
-            const _associateCompany = associateCompanies[0];
-            if (!associateCompany && _associateCompany) {
-                setAssociateCompany({ value: _associateCompany.id, label: _associateCompany.name });
-            }
-        }
-    }, [fetchingAssociateCompanies]);
 
     return (
         <>
