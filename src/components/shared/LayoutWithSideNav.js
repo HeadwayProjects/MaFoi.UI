@@ -41,12 +41,14 @@ function AuthProtector(props) {
 }
 
 function LayoutWithSideNav(props) {
+    const [open, setOpen] = useState(false);
+
     return (
         <AuthProtector>
             <Navbar />
             <div className="page-layout-container">
-                <div className="sidenav-container">
-                    <Sidenav />
+                <div className={`sidenav-container ${open ? 'open' : ''}`} >
+                    <Sidenav open={open} toggleSidenav={setOpen} />
                 </div>
                 <div className="main-container">
                     {props.children}

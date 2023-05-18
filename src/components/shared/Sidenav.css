@@ -38,14 +38,23 @@
 }
 
 .sideNav li a.active+.children {
-    background-color: var(--blue);
+    background-color: var(--blue) !important;
+}
+.sideNav li a:hover+.children {
+    background-color: var(--medium-gray);
 }
 
-.sideNav li a.active+.children a {
-    color: var(--white);
+.sideNav li button:hover a+.children {
+    background-color: var(--medium-gray);
 }
 
-.sidenav-container:hover .sideNav span.icon {
+.sideNav li a.active+.children a,
+.sideNav li a:hover+.children a,
+.sideNav li button:hover a+.children {
+    color: var(--white) !important;
+}
+
+.sidenav-container.open .sideNav span.icon {
     display: inline-flex !important;
 }
 
@@ -67,17 +76,29 @@
 }
 
 .sideNav a.active {
-    background-color: var(--royal-blue);
+    background-color: var(--royal-blue) !important;
 }
 
-.sideNav a.active * {
+.sideNav a:hover{
+    background-color: var(--gray-500);
+}
+
+.sideNav li button:hover>a {
+    background-color: var(--gray-500);
+}
+
+.sideNav a.active *,
+.sideNav a:hover *,
+.sideNav li button:hover>a {
     color: var(--white);
 }
 
-.sideNav li a.active span.sidenav-item-icon .btn-icon {
+.sideNav li a.active span.sidenav-item-icon .btn-icon,
+.sideNav li a:hover span.sidenav-item-icon .btn-icon {
     opacity: 1;
 }
 
-.sideNav li a.active span.sidenav-item-icon svg {
+.sideNav li a.active span.sidenav-item-icon svg,
+.sideNav li a:hover span.sidenav-item-icon svg {
     fill: var(--white);
 }

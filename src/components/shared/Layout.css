@@ -22,6 +22,7 @@
     align-items: center;
     justify-content: center;
     width: 64px;
+    height: 44px;
 }
 
 .sidenav-container .sidenav-item-label {
@@ -37,18 +38,18 @@
     height: calc(100vh - 84px);
 }
 
-.sidenav-container:hover {
+.sidenav-container.open {
     width: 264px;
 }
 
-.sidenav-container:hover .sidenav-item-label{
+.sidenav-container.open .sidenav-item-label{
     display: flex;
     width: calc(100% - 44px);
 }
-.sidenav-container:hover .sidenav-item-icon{
+.sidenav-container.open .sidenav-item-icon{
     width: 44px;
 }
 
-.sidenav-container:hover+.main-container {
+.sidenav-container.open+.main-container {
     width: calc(100vw - 264px);
 }

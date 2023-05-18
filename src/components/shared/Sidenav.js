@@ -40,10 +40,10 @@ const SideNavMenu = [
     { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true }
 ];
 
-function Sidenav() {
+function Sidenav({ open, toggleSidenav }) {
     const [user] = useState(auth.getUserDetails());
     const [sideMenu, setSideMenu] = useState([]);
-    const [toggelStatus, setToggleStatus] = useState({})
+    const [toggelStatus, setToggleStatus] = useState({});
 
     useEffect(() => {
         if (user) {
@@ -66,6 +66,8 @@ function Sidenav() {
             if (!hasChild) {
                 navigate(`${getBasePath()}${url}`, { replace: true, state: null });
             }
+            toggleSidenav(false);
+            resetToggle();
         }
 
         useEffect(() => {
@@ -106,7 +108,17 @@ function Sidenav() {
         <>
             {
                 user !== null ?
-                    <ul className='sideNav m-0 p-0' onMouseLeave={resetToggle}>
+                    <ul className='sideNav m-0 p-0'>
+                        <li>
+                            <div className="d-flex flex-row w-100 align-items-center justify-content-end" style={{ height: '40px' }}>
+                                <span className="sidenav-item-icon" style={{cursor: 'pointer'}}>
+                                    <Icon name={open ? 'angle-left' : 'angle-right'} action={() => {
+                                        toggleSidenav(!open);
+                                        resetToggle();
+                                    }} className={"px-3 px-2"}/>
+                                </span>
+                            </div>
+                        </li>
                         {
                             sideMenu.map((item, index) => {
                                 const hasChild = (item.children || []).length > 0;
