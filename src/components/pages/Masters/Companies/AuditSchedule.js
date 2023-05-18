@@ -42,7 +42,11 @@ function AuditSchedule() {
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (parentCompany || {}).value }]
     }, Boolean(parentCompany));
-    const { locations, isFetching: fetchingLocations } = useGetCompanyLocations({ associateCompanyId: (associateCompany || {}).value }, Boolean(associateCompany));
+    const { locations, isFetching: fetchingLocations } = useGetCompanyLocations({
+        ...DEFAULT_OPTIONS_PAYLOAD, filters: [
+            { columnName: 'associateCompanyId', value: (associateCompany || {}).value }],
+        sort: { columnName: 'locationName', order: 'asc' }
+    }, Boolean(associateCompany));
     const { exportAuditSchedule, exporting } = useExportAuditSchedule((response) => {
         const blob = new Blob([response.data], { type: response.headers['content-type'] })
         const URL = window.URL || window.webkitURL;
