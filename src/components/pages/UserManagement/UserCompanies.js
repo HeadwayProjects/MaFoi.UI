@@ -21,7 +21,7 @@ function mapData(list) {
     list.forEach(parentCompany => {
         const { companyName, companyId, associateCompanies } = parentCompany;
         associateCompanies.forEach(associateCompany => {
-            const {associateCompanyId, associateCompanyName, locations} = associateCompany;
+            const { associateCompanyId, associateCompanyName, locations } = associateCompany;
             const count = locations.length;
             result.push({
                 companyId,
@@ -42,7 +42,7 @@ function UserCompanies() {
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
-    const { users, isFetching: fetchingUsers } = useGetUsers({...DEFAULT_OPTIONS_PAYLOAD});
+    const { users, isFetching: fetchingUsers } = useGetUsers({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { userCompanies, isFetching, refetch } = useGetUserCompanies({ userId: (user || {}).value }, Boolean(user));
     const [userLocations, setUserLocations] = useState(null);
     const { createUserLocationMapping: deleteLocations, creating: deleting } = useCreateUserLocationMapping((response) => {
@@ -186,10 +186,10 @@ function UserCompanies() {
 
     return (
         <>
-            <div className="d-flex flex-column mx-0">
-                <div className="d-flex flex-row justify-content-center mb-4 mt-4">
-                    <div className="col-12 px-4">
-                        <div className="d-flex">
+            <div className="d-flex flex-column mx-0 mt-2">
+                <div className="d-flex flex-row justify-content-center mb-2">
+                    <div className="col-12 px-3">
+                        <div className="d-flex justify-content-between align-items-end">
                             <div className="col-3 px-0">
                                 <Select placeholder='Select User' options={(users || []).map(x => {
                                     return { value: x.id, label: x.name, user: x }
@@ -208,7 +208,7 @@ function UserCompanies() {
                 <UserLocationMapping user={user} data={userLocations}
                     onClose={handleCancel} onSubmit={submitCallback} />
             }
-            { 
+            {
                 action === ACTIONS.DELETE &&
                 <ConfirmModal title={'Delete User Company Mapping'} onSubmit={deleteUseCompany} onClose={() => setAction(ACTIONS.NONE)}>
                     <div className="text-center mb-4">Are you sure you want to delete the location mapping for, <strong>{(userLocations || {}).associateCompanyName}</strong> ?</div>

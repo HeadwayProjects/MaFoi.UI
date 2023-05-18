@@ -47,15 +47,21 @@ function TableFilters({ search, filterConfig, onFilterChange }) {
     }, [filters]);
 
     return (
-        <div className="d-flex align-items-center filters">
+        <div className="d-flex align-items-end filters">
             {
                 (filterConfig || []).map(filter => {
                     return (
-                        <div className="d-flex flex-row align-items-center" key={filter.name}>
-                            <label>{filter.label}</label><span className="me-2">:</span>
+                        // <div className="d-flex flex-row align-items-center" key={filter.name}>
+                        //     <label>{filter.label}</label><span className="me-2">:</span>
+                        //     <Select options={filter.hideAll ? [...filter.options] : [DEFAULT_OPTION, ...filter.options]}
+                        //         defaultValue={filter.hideAll ? filter.defaultValue : DEFAULT_OPTION} value={filter.value}
+                        //         onChange={(e) => handleFilterChange(filter, e)} className="me-3" />
+                        // </div>
+                        <div className="d-flex flex-column me-3" key={filter.name}>
+                            <label>{filter.label}</label>
                             <Select options={filter.hideAll ? [...filter.options] : [DEFAULT_OPTION, ...filter.options]}
                                 defaultValue={filter.hideAll ? filter.defaultValue : DEFAULT_OPTION} value={filter.value}
-                                onChange={(e) => handleFilterChange(filter, e)} className="me-3" />
+                                onChange={(e) => handleFilterChange(filter, e)} />
                         </div>
                     )
                 })

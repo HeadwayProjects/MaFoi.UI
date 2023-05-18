@@ -253,41 +253,16 @@ function CompanyLocationMappings() {
 
     return (
         <>
-            <div className="d-flex flex-column mx-0">
-                <div className="d-flex flex-row justify-content-center mb-4 mt-4">
-                    <div className="col-12 px-4">
-                        <div className="d-flex justify-content-between">
+            <div className="d-flex flex-column mx-0 mt-2">
+                <div className="d-flex flex-row justify-content-center mb-2">
+                    <div className="col-12 px-3">
+                        <div className="d-flex justify-content-between align-items-end">
                             <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
                             <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
                                 <Icon name={'plus'} className="me-2"></Icon>Add New
                             </Button>
                         </div>
                     </div>
-                    {/* <div className="col-12 px-4">
-                        <div className="d-flex">
-                            <div className="col-3 ps-0 pe-3">
-                                <Select placeholder='Company' options={(parentCompanies || []).map(x => {
-                                    return {
-                                        value: x.id,
-                                        label: x.name,
-                                        code: x.code
-                                    }
-                                })} onChange={onParentCompanyChange} value={parentCompany} />
-                            </div>
-                            <div className="col-3 ps-3">
-                                <Select placeholder='Associate Company' options={(associateCompanies || []).map(x => {
-                                    return {
-                                        value: x.id,
-                                        label: x.name,
-                                        code: x.code
-                                    }
-                                })} onChange={onAssociateCompanyChange} value={associateCompany} />
-                            </div>
-                            <Button variant="primary" className="px-4 ms-auto text-nowrap"
-                                onClick={() => setAction(ACTIONS.ADD)}
-                                disabled={!Boolean(associateCompany)}>Add New Location</Button>
-                        </div>
-                    </div> */}
                 </div>
                 <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
             </div>

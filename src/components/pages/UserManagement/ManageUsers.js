@@ -163,10 +163,10 @@ function MangeUsers() {
     return (
         <>
             <MastersLayout title="User Management" breadcrumbs={breadcrumb}>
-                <div className="d-flex flex-column mx-0 mt-4">
-                    <div className="d-flex flex-row justify-content-center mb-4">
-                        <div className="col-12 px-4">
-                            <div className="d-flex justify-content-between">
+                <div className="d-flex flex-column mx-0 mt-2">
+                    <div className="d-flex flex-row justify-content-center mb-2">
+                        <div className="col-12 px-3">
+                            <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
                                 <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
                                     <Icon name={'plus'} className="me-2"></Icon>Add New

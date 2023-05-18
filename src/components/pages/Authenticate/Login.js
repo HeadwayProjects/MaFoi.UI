@@ -122,35 +122,41 @@ function Login() {
                     </div>
 
                     <div className="col-md-4 loginSection px-5 py-3">
-                        <div className="d-flex flex-column h-100 justify-content-center align-items-center">
-                            <div className="navbar-brand p-0 text-center mb-4"><img src={logo} alt="Logo" width="344" /></div>
-                            <div className="col-9" style={{ minHeight: loginWithOtp ? '150px': '250px' }}>
-                                {
-                                    schema &&
-                                    <>
-                                        {
-                                            loginWithOtp ? <FormRenderer FormTemplate={FormTemplate}
-                                                initialValues={{ submitBtnText: 'Get OTP', fullWidth: false }}
-                                                componentMapper={ComponentMapper}
-                                                schema={schema}
-                                                debug={setForm}
-                                                onSubmit={getOtp}
-                                                clearOnUnmount={true}
-                                            /> :
-                                                <FormRenderer FormTemplate={FormTemplate}
-                                                    initialValues={{ submitBtnText: 'Login', fullWidth: false }}
+                        <div className="d-flex flex-column h-100 justify-content-between align-items-center mt-5">
+                            <div className="d-flex flex-column justify-content-center align-items-center">
+                                <div className="navbar-brand p-0 text-center mb-4"><img src={logo} alt="Logo" width="344" /></div>
+                                <div className="col-9" style={{ minHeight: loginWithOtp ? '150px' : '250px' }}>
+                                    {
+                                        schema &&
+                                        <>
+                                            {
+                                                loginWithOtp ? <FormRenderer FormTemplate={FormTemplate}
+                                                    initialValues={{ submitBtnText: 'Get OTP', fullWidth: false }}
                                                     componentMapper={ComponentMapper}
-                                                    debug={setForm}
                                                     schema={schema}
-                                                    onSubmit={login}
+                                                    debug={setForm}
+                                                    onSubmit={getOtp}
                                                     clearOnUnmount={true}
-                                                />
-                                        }
-                                    </>
-                                }
+                                                /> :
+                                                    <FormRenderer FormTemplate={FormTemplate}
+                                                        initialValues={{ submitBtnText: 'Login', fullWidth: false }}
+                                                        componentMapper={ComponentMapper}
+                                                        debug={setForm}
+                                                        schema={schema}
+                                                        onSubmit={login}
+                                                        clearOnUnmount={true}
+                                                    />
+                                            }
+                                        </>
+                                    }
+                                </div>
+                                <div className="text-black-600 mt-3"><small>-or-</small></div>
+                                <a href="/" onClick={toggleLoginWithOtp} className="text-appprimary">{loginWithOtp ? 'Login with Password' : 'Login with OTP'}</a>
                             </div>
-                            <div className="text-black-600 mt-3"><small>-or-</small></div>
-                            <a href="/" onClick={toggleLoginWithOtp} className="text-appprimary">{loginWithOtp ? 'Login with Password' : 'Login with OTP'}</a>
+                            <div className="">
+                                <div className="card"></div>
+
+                            </div>
                         </div>
                     </div>
                 </div>

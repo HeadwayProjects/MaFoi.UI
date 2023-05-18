@@ -3,17 +3,20 @@
 }
 
 .btn-icon {
-    opacity: 0.4;
+    opacity: 0.6;
     border: none;
     background: transparent;
     padding: 0;
 }
 
-.btn-icon:disabled {
+.btn-icon:disabled,
+.btn-icon.disabled {
     opacity: 0.2;
+    pointer-events: none;
 }
 
-.btn-icon:disabled:hover {
+.btn-icon:disabled:hover,
+.btn-icon.disabled:hover {
     cursor: not-allowed;
 }
 

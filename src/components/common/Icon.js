@@ -20,7 +20,7 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
         <>
             {/* // <OverlayTrigger overlay={<Tooltip>{text || name}</Tooltip>}
         //     placement="bottom" delay={{ show: 500 }}> */}
-            <span className={`icon icon-${name} ${type === 'button' ? 'btn-icon' : ''} ${className || ''}`}
+            <span className={`icon icon-${name} ${type === 'button' ? 'btn-icon' : ''} ${className || ''} ${disabled ? 'disabled' : ''}`}
                 style={style} onClick={onClick} disabled={disabled}
                 title={text || name}>
                 {{

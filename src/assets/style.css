@@ -423,10 +423,11 @@ table.table {
 
 .filters label {
   font-size: var(--font-md);
-  max-width: 120px;
+  padding-left: 0.25rem;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  color: var(--gray-500);
 }
 
 .filters [class*="-menu"] {
@@ -439,38 +440,23 @@ table.table {
 
 .filters [class*="-container"] [class*="-control"] {
   font-size: var(--font-md);
-  border: none;
-  background: transparent;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
   box-shadow: none;
-  width: max-content;
-  max-width: 120px;
+  width: 180px;
+  border-color: var(--gray-300);
 }
 
 .filters [class*="-container"] [class*="-control"]:hover,
 .filters [class*="-container"] [class*="-control"]:focus,
 .filters [class*="-container"] [class*="-control"]:active {
-  border: none;
-  box-shadow: none
+  border-color: var(--gray-300);
+  box-shadow: none;
 }
 
 
 .filters [class*="-container"] [class*="-control"] [class*="-ValueContainer"] {
-  min-width: 50px;
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 0;
-}
-
-.filters [class*="-container"] [class*="-control"] [class*="-indicatorSeparator"] {
-  display: none;
+  padding: 0 4px;
 }
 
 .filters [class*="-container"] [class*="-control"] [class*="-indicatorContainer"] {
-  padding: 0;
-  padding-left: 4px;
+  padding: 0 4px;
 }
