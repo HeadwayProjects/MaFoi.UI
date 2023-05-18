@@ -114,7 +114,8 @@ function UserDetails({ action, data, onClose, onSubmit }) {
                 roleIds: [role.value],
                 isActive: status.value === STATUS.ACTIVE,
                 mobile: '',
-                password: ''
+                password: '',
+                status: ''
             };
 
             if (action === ACTIONS.EDIT) {
