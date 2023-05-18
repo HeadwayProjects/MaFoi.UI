@@ -44,7 +44,7 @@ function AuditSchedule() {
     }, Boolean(parentCompany));
     const { locations, isFetching: fetchingLocations } = useGetCompanyLocations({
         ...DEFAULT_OPTIONS_PAYLOAD, filters: [
-            { columnName: 'associateCompanyId', value: (associateCompany || {}).value }],
+            { columnName: 'companyId', value: (associateCompany || {}).value }],
         sort: { columnName: 'locationName', order: 'asc' }
     }, Boolean(associateCompany));
     const { exportAuditSchedule, exporting } = useExportAuditSchedule((response) => {
