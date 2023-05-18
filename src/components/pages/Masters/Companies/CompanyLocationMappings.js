@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useGetCompanies, useGetCompanyLocations } from "../../../../backend/masters";
 import Icon from "../../../common/Icon";
 import { ACTIONS } from "../../../common/Constants";
-import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import { Button } from "react-bootstrap";
 import ConfirmModal from "../../../common/ConfirmModal";
 import { useQueryParams } from "raviger";
-import Select from 'react-select';
 import CompanyLocationDetails from "./CompanyLocationMappingDetails";
+import { useRef } from "react";
+import TableFilters from "../../../common/TableFilter";
 
 function mapLocation(x) {
     return {
@@ -32,25 +33,39 @@ function CompanyLocationMappings() {
     const [companyLocation, setCompanyLocation] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
+    const [filters, setFilters] = useState();
+    const filterRef = useRef();
+    filterRef.current = filters;
     const [payload, setPayload] = useState();
     const { companies: parentCompanies, isFetching: fetchingCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
     const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (parentCompany || {}).value }]
     }, Boolean((parentCompany || {}).value));
-    const { locations, isFetching, refetch } = useGetCompanyLocations({ associateCompanyId: (associateCompany || {}).value }, Boolean(associateCompany));
-    // const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
-    //     refetch();
-    // }, () => toast.error(ERROR_MESSAGES.DEFAULT));
+    const { locations, total, isFetching, refetch } = useGetCompanyLocations(payload, Boolean(associateCompany && payload));
 
-    function onParentCompanyChange(e) {
-        setParentCompany(e);
-        setAssociateCompany(null);
-    }
 
-    function onAssociateCompanyChange(e) {
-        setAssociateCompany(e);
-    }
+    const filterConfig = [
+        {
+            label: 'Company',
+            name: 'parentCompanyId',
+            options: (parentCompanies || []).map(x => {
+                return { value: x.id, label: x.name };
+            }),
+            hideAll: true,
+            value: parentCompany
+
+        },
+        {
+            label: 'Associate Company',
+            name: 'associateCompanyId',
+            options: (associateCompanies || []).map(x => {
+                return { value: x.id, label: x.name };
+            }),
+            hideAll: true,
+            value: associateCompany
+        }
+    ]
 
     function submitCallback() {
         setAction(ACTIONS.NONE);
@@ -96,12 +111,12 @@ function CompanyLocationMappings() {
         },
         {
             title: "Contact No.", field: "contactPersonMobile", minWidth: 140,
-            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
             title: "Email Address", field: "contactPersonEmail", minWidth: 140,
-            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
@@ -115,37 +130,97 @@ function CompanyLocationMappings() {
         ajaxRequestFunc,
         columns,
         rowHeight: 54,
-        selectable: false
+        selectable: false,
+        paginate: true,
+        initialSort: [{ column: 'locationName', dir: 'asc' }]
     });
 
-    function formatApiResponse(params, list, pagination = {}) {
-        const total = list.length;
+    function formatApiResponse(params, list, totalRecords) {
+        const { pagination } = params || {};
+        const { pageSize, pageNumber } = pagination || {};
         const tdata = {
-            data: list.map(x => mapLocation(x)),
-            total,
-            last_page: Math.ceil(total / params.size) || 1,
-            page: params.page || 1
+            data: list.map(x => {
+                return mapLocation(x)
+            }),
+            total: totalRecords,
+            last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
+            page: pageNumber || 1
         };
         setData(tdata);
         return tdata;
     }
 
     function ajaxRequestFunc(url, config, params) {
-        setParams(params);
-        setPayload({ ...params });
-        return Promise.resolve(formatApiResponse(params, locations));
+        const { field, dir } = (params.sort || [])[0] || {};
+        const _params = {
+            pagination: {
+                pageSize: params.size,
+                pageNumber: params.page
+            },
+            sort: {
+                columnName: field || 'locationName',
+                order: dir || 'asc'
+            }
+        };
+        setParams(_params);
+        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+        return Promise.resolve(formatApiResponse(params, locations, total));
     }
 
     function deleteCompanyMaster() {
         // deleteCompany(associateCompany.id);
     }
+    function onFilterChange(e) {
+        console.log(e)
+        setFilters(e);
+    }
 
+    function handlePageNav(_pagination) {
+        const _params = { ...params };
+        _params.pagination = _pagination;
+        setParams({ ..._params });
+        setPayload({ ...payload, ..._params })
+    }
     useEffect(() => {
         if (query && (query.parentCompany || query.associateCompany)) {
             setParentCompany({ value: query.parentCompany });
             setAssociateCompany({ value: query.associateCompany });
         }
     }, [query]);
+
+    useEffect(() => {
+        if (filters) {
+            const { filters: _filters, search } = filters;
+            console.log(filters)
+            const _associateCompanyId = (_filters.find(x => x.columnName === 'associateCompanyId') || {}).value;
+            const _parentCompanyId = (_filters.find(x => x.columnName === 'parentCompanyId') || {}).value;
+            if (_parentCompanyId) {
+                const _parentCompany = parentCompanies.find(x => x.id === _parentCompanyId);
+                setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
+                if ((parentCompany || {}).value != _parentCompanyId) {
+                    setAssociateCompany(null);
+                    setPayload(null);
+                    return;
+                }
+            }
+            if (_associateCompanyId) {
+                const _associateCompany = associateCompanies.find(x => x.id === _associateCompanyId);
+                if (_associateCompany) {
+                    setAssociateCompany({ value: _associateCompany.id, label: _associateCompany.name });
+                    const _x = {
+                        filters: [
+                            { columnName: 'parentCompanyId', value: _parentCompanyId },
+                            { columnName: 'associateCompanyId', value: _associateCompanyId }
+                        ],
+                        search
+                    }
+                    setPayload({ ...DEFAULT_PAYLOAD, ...params, ..._x });
+                    return;
+                }
+            }
+            setPayload({ ...payload, search });
+        }
+    }, [filters]);
 
     useEffect(() => {
         if (!isFetching && payload) {
@@ -155,26 +230,23 @@ function CompanyLocationMappings() {
 
     useEffect(() => {
         if (!fetchingCompanies && parentCompanies) {
-            if (parentCompany && parentCompany.value) {
-                const _parentCompany = parentCompanies.find(x => x.id === parentCompany.value) || {};
-                setParentCompany({ value: _parentCompany.id, label: _parentCompany.name, code: _parentCompany.code })
-            } else {
-                const _parentCompany = (parentCompanies || [])[0] || {};
-                setParentCompany({ value: _parentCompany.id, label: _parentCompany.name, code: _parentCompany.code });
-            }
+            const _parentCompany = (parentCompanies || [])[0] || {};
+            setParentCompany({ value: _parentCompany.id, label: _parentCompany.name, code: _parentCompany.code });
         }
     }, [fetchingCompanies]);
 
     useEffect(() => {
         if (!fetchingAssociateCompanies && associateCompanies) {
-            if (associateCompany && associateCompany.value) {
-                const _associateCompany = associateCompanies.find(x => x.id === associateCompany.value) || {};
-                setAssociateCompany({ value: _associateCompany.id, label: _associateCompany.name, code: _associateCompany.code })
-            } else {
-                const _associateCompany = (associateCompanies || [])[0];
-                if (_associateCompany) {
-                    setAssociateCompany({ value: _associateCompany.id, label: _associateCompany.name, code: _associateCompany.code });
-                }
+            const _associateCompany = (associateCompanies || [])[0];
+            if (_associateCompany) {
+                setAssociateCompany({ value: _associateCompany.id, label: _associateCompany.name, code: _associateCompany.code });
+                const { search } = filterRef.current || { search: '' };
+                setFilters({
+                    filters: [
+                        { columnName: 'parentCompanyId', value: (parentCompany || {}).value },
+                        { columnName: 'associateCompanyId', value: _associateCompany.id }
+                    ], search
+                });
             }
         }
     }, [fetchingAssociateCompanies]);
@@ -184,16 +256,15 @@ function CompanyLocationMappings() {
             <div className="d-flex flex-column mx-0">
                 <div className="d-flex flex-row justify-content-center mb-4 mt-4">
                     <div className="col-12 px-4">
+                        <div className="d-flex justify-content-between">
+                            <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
+                            <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
+                                <Icon name={'plus'} className="me-2"></Icon>Add New
+                            </Button>
+                        </div>
+                    </div>
+                    {/* <div className="col-12 px-4">
                         <div className="d-flex">
-                            {/* <InputGroup>
-                                <input type="text" className="form-control" placeholder="Search for Associate Company - Code / Name" />
-                                <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
-                                    <div className="d-flex flex-row align-items-center text-white">
-                                        <Icon name={'search'} />
-                                        <span className="ms-2">Search</span>
-                                    </div>
-                                </InputGroup.Text>
-                            </InputGroup> */}
                             <div className="col-3 ps-0 pe-3">
                                 <Select placeholder='Company' options={(parentCompanies || []).map(x => {
                                     return {
@@ -216,9 +287,9 @@ function CompanyLocationMappings() {
                                 onClick={() => setAction(ACTIONS.ADD)}
                                 disabled={!Boolean(associateCompany)}>Add New Location</Button>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
-                <Table data={data} options={tableConfig} isLoading={isFetching} />
+                <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
             </div>
 
             {

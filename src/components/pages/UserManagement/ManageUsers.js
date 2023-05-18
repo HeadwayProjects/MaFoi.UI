@@ -1,34 +1,49 @@
 import React, { useEffect, useState } from "react";
 import { ACTIONS, STATUS } from "../../common/Constants";
-import { useDeleteUser, useGetUsers } from "../../../backend/users";
+import { useDeleteUser, useGetUserRoles, useGetUsers } from "../../../backend/users";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import Icon from "../../common/Icon";
-import Table, { CellTmpl, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
 import MastersLayout from "../Masters/MastersLayout";
 import { Button, InputGroup } from "react-bootstrap";
 import ConfirmModal from "../../common/ConfirmModal";
 import PageLoader from "../../shared/PageLoader";
 import UserDetails from "./UserDetails";
+import { useRef } from "react";
+import TableFilters from "../../common/TableFilter";
 
 function MangeUsers() {
     const [breadcrumb] = useState([
         { id: 'home', label: 'Home', path: '/' },
         { id: 'users', label: 'Users' },
     ]);
-    const [search, setSearch] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [user, setUser] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [payload, setPayload] = useState();
-    const { users, isFetching, refetch } = useGetUsers();
+    const [filters, setFilters] = useState();
+    const filterRef = useRef();
+    filterRef.current = filters;
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
+    const { users, total, isFetching, refetch } = useGetUsers(payload, Boolean(payload));
+    const { roles } = useGetUserRoles();
     const { deleteUser, deleting } = useDeleteUser(() => {
         toast.success(`${user.name} deleted successfully.`);
         submitCallback();
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const filterConfig = [
+        {
+            label: 'Role',
+            name: 'roleId',
+            options: roles.map(x => {
+                return { value: x.id, label: x.name };
+            })
+        }
+    ]
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
@@ -86,25 +101,39 @@ function MangeUsers() {
         ajaxRequestFunc,
         columns,
         rowHeight: 54,
-        selectable: false
+        selectable: false,
+        paginate: true,
+        initialSort: [{ column: 'name', dir: 'asc' }]
     });
 
-    function formatApiResponse(params, list, pagination = {}) {
-        const total = list.length;
+    function formatApiResponse(params, list, totalRecords) {
+        const { pagination } = params || {};
+        const { pageSize, pageNumber } = pagination || {};
         const tdata = {
             data: list,
-            total,
-            last_page: Math.ceil(total / params.size) || 1,
-            page: params.page || 1
+            total: totalRecords,
+            last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
+            page: pageNumber || 1
         };
         setData(tdata);
         return tdata;
     }
 
     function ajaxRequestFunc(url, config, params) {
-        setParams(params);
-        setPayload(search ? { ...params, search } : { ...params });
-        return Promise.resolve(formatApiResponse(params, users));
+        const { field, dir } = (params.sort || [])[0] || {};
+        const _params = {
+            pagination: {
+                pageSize: params.size,
+                pageNumber: params.page
+            },
+            sort: {
+                columnName: field || 'name',
+                order: dir || 'asc'
+            }
+        };
+        setParams(_params);
+        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+        return Promise.resolve(formatApiResponse(params, users, total));
     }
 
     function submitCallback() {
@@ -113,9 +142,21 @@ function MangeUsers() {
         refetch();
     }
 
+    function onFilterChange(e) {
+        setFilters(e);
+        setPayload({ ...DEFAULT_PAYLOAD, ...params, ...e });
+    }
+
+    function handlePageNav(_pagination) {
+        const _params = { ...params };
+        _params.pagination = _pagination;
+        setParams({ ..._params });
+        setPayload({ ...payload, ..._params })
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
-            setData(formatApiResponse(params, users));
+            setData(formatApiResponse(params, users, total));
         }
     }, [isFetching]);
 
@@ -125,21 +166,15 @@ function MangeUsers() {
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
                         <div className="col-12 px-4">
-                            <div className="d-flex">
-                                {/* <InputGroup>
-                                    <input type="text" className="form-control" placeholder="Search for User / Name" />
-                                    <InputGroup.Text style={{ backgroundColor: 'var(--blue)' }}>
-                                        <div className="d-flex flex-row align-items-center text-white">
-                                            <Icon name={'search'} />
-                                            <span className="ms-2">Search</span>
-                                        </div>
-                                    </InputGroup.Text>
-                                </InputGroup> */}
-                                <Button variant="primary" className="px-4 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>Add New User</Button>
+                            <div className="d-flex justify-content-between">
+                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
+                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                    <Icon name={'plus'} className="me-2"></Icon>Add New
+                                </Button>
                             </div>
                         </div>
                     </div>
-                    <Table data={data} options={tableConfig} isLoading={isFetching} />
+                    <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
                 </div>
             </MastersLayout>
             {

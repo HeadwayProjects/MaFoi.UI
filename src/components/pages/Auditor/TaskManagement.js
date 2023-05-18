@@ -20,6 +20,9 @@ import { checkList, download, preventDefault } from "../../../utils/common";
 import PublishModal from "./PublishModal";
 import Report from "../../shared/Report";
 import ActivityModal from "./ActivityModal";
+import { getUserDetails } from "../../../backend/auth";
+import { useAuditReport } from "../../../backend/exports";
+import { ERROR_MESSAGES } from "../../../utils/constants";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
@@ -50,6 +53,19 @@ function TaskManagement() {
     const [alertMessage, setAlertMessage] = useState(null);
     const [publish, setPublish] = useState(false);
     const [report, setReport] = useState(null);
+    const { auditReport } = useAuditReport((response) => {
+        const blob = new Blob([response.data], { type: response.headers['content-type'] })
+        const URL = window.URL || window.webkitURL;
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = 'AuditReport.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT)
+    });
 
     function onLocationChange(event) {
         setFilters({ ...filterRef.current, ...event });
@@ -95,15 +111,10 @@ function TaskManagement() {
                 const list = response.data || [];
                 const _report = list.filter(x => x.published);
                 if (_report.length > 0) {
-                    const _record = _report[0];
-                    const _summary = {
-                        company: _record.company.name,
-                        associateCompany: _record.associateCompany.name,
-                        location: _record.location.name,
-                        month: _record.month,
-                        year: _record.year
-                    };
-                    checkList(_summary, _report);
+                    const user = getUserDetails();
+                    _payload['auditorId'] = user.userid;
+                    //delete _payload.statuses;
+                    auditReport(_payload);
                 } else {
                     toast.warn('There are no reports available for the selected month and year.');
                 }
@@ -449,7 +460,7 @@ function TaskManagement() {
             {submitting && <PageLoader />}
             {
                 !!report &&
-                <Report data={report} onClose={(e) => {
+                <Report data={report} payload={filters} onClose={(e) => {
                     preventDefault(e);
                     setReport(null);
                 }} />

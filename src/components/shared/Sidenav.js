@@ -110,7 +110,7 @@ function Sidenav({ open, toggleSidenav }) {
                 user !== null ?
                     <ul className='sideNav m-0 p-0'>
                         <li>
-                            <div className="d-flex flex-row w-100 align-items-center justify-content-end" style={{ height: '40px' }}>
+                            <div className="d-flex flex-row w-100 align-items-center justify-content-end border-bottom" style={{ height: '48px' }}>
                                 <span className="sidenav-item-icon" style={{cursor: 'pointer'}}>
                                     <Icon name={open ? 'angle-left' : 'angle-right'} action={() => {
                                         toggleSidenav(!open);

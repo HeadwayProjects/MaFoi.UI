@@ -3,13 +3,16 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { auditReport, checkList, preventDefault } from "../../utils/common";
 import * as auth from "../../backend/auth";
+import { useAuditReport } from "../../backend/exports";
 
-function Report({ data, onClose }) {
+function Report({ data, onClose, payload }) {
     const [summary, setSummary] = useState({});
+    const { auditReport, exporting } = useAuditReport();
 
     function downloadAuditReport(e) {
         preventDefault(e);
-        auditReport(summary, data, auth.getUserDetails().name);
+        // auditReport(summary, data, auth.getUserDetails().name);
+        console.log(payload);
     }
 
     function downloadCheckList(e) {

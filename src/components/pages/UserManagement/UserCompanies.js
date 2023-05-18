@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Select from 'react-select';
 import { useGetUsers } from "../../../backend/users";
 import { ACTIONS } from "../../common/Constants";
-import Table, { CellTmpl, TitleTmpl, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, TitleTmpl, reactFormatter } from "../../common/Table";
 import Icon from "../../common/Icon";
 import { Button } from "react-bootstrap";
 import UserLocationMapping from "./UserLocationMapping";
@@ -42,7 +42,7 @@ function UserCompanies() {
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [payload, setPayload] = useState();
-    const { users, isFetching: fetchingUsers } = useGetUsers();
+    const { users, isFetching: fetchingUsers } = useGetUsers({...DEFAULT_OPTIONS_PAYLOAD});
     const { userCompanies, isFetching, refetch } = useGetUserCompanies({ userId: (user || {}).value }, Boolean(user));
     const [userLocations, setUserLocations] = useState(null);
     const { createUserLocationMapping: deleteLocations, creating: deleting } = useCreateUserLocationMapping((response) => {

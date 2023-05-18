@@ -57,6 +57,9 @@
 .sidenav-container.open .sideNav span.icon {
     display: inline-flex !important;
 }
+.sidenav-container:not([class*="open"]) .sideNav li:not(:first-of-type) {
+    pointer-events: none;
+}
 
 .sideNav li a span.sidenav-item-icon {
     display: flex;

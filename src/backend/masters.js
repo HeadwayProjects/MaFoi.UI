@@ -564,7 +564,7 @@ export function useDeleteActStateMapping(onSuccess, onError) {
 export function useGetCompanyLocations(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['companyLocations', payload],
-        async () => await api.get(`/api/Mappings/GetCompanyLocations`, payload || {}),
+        async () => await api.post(`/api/Mappings/GetCompanyLocations`, payload || {}),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
@@ -572,7 +572,7 @@ export function useGetCompanyLocations(payload, enabled = true) {
         }
     );
 
-    return { locations: (data || {}).data || [], isFetching, refetch };
+    return { locations: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
 }
 
 export function useCreateCompanyLocation(onSuccess, onError) {

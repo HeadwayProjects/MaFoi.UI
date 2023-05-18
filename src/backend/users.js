@@ -7,14 +7,14 @@ const USERS = '/api/UserManagement';
 export function useGetUsers(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['users', payload],
-        async () => await api.get(`${USERS}/GetAllUsers`, payload),
+        async () => await api.post(`${USERS}/GetAllUsers`, payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
             enabled
         }
     );
-    return { users: (data || {}).data || [], isFetching, refetch };
+    return { users: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
 }
 export function useGetUserRoles(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
