@@ -4,7 +4,7 @@ import Select from "react-select";
 import { debounce, object } from "underscore";
 const DEFAULT_OPTION = { value: 'ALL', label: 'All' };
 
-function TableFilters({ search, filterConfig, onFilterChange }) {
+function TableFilters({ search, filterConfig, onFilterChange, placeholder }) {
     const searchRef = useRef();
     const [filters, setFilters] = useState(null);
 
@@ -62,10 +62,13 @@ function TableFilters({ search, filterConfig, onFilterChange }) {
             }
             {
                 Boolean(search) &&
-                <InputGroup>
-                    <input type="text" ref={searchRef} className="form-control" placeholder={search.placeholder || 'Search'}
-                        onKeyUp={debounce(handleKeyup, 750)} />
-                </InputGroup>
+                <div className="d-flex flex-column me-3">
+                    <label className="filter-label"><small>{placeholder || 'Search'}</small></label>
+                    <InputGroup>
+                        <input type="text" ref={searchRef} className="form-control" placeholder={search.placeholder || 'Search'}
+                            onKeyUp={debounce(handleKeyup, 750)} />
+                    </InputGroup>
+                </div>
             }
         </div>
     )

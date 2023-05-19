@@ -206,7 +206,8 @@ function CompaniesList({ changeView }) {
                 <div className="card d-flex flex-row justify-content-center m-3 p-3">
                     <div className="col-12">
                         <div className="d-flex justify-content-between align-items-end">
-                            <TableFilters search={true} onFilterChange={onFilterChange} />
+                            <TableFilters search={true} onFilterChange={onFilterChange}
+                                placeholder={"Search for Company Code/Name/Contact No./Email"} />
                             <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>
                                 <Icon name={'plus'} className="me-2"></Icon>Add New
                             </Button>

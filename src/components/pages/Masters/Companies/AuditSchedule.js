@@ -22,14 +22,6 @@ function getMonthYear() {
     }
 }
 
-function getMinDate() {
-    const date = new Date();
-    date.setFullYear(date.getFullYear() - 2);
-    date.setMonth(0);
-    date.setDate(1);
-    return date;
-}
-
 function AuditSchedule() {
     const [form, setForm] = useState({});
     const [importFile, setImportFile] = useState(false);
@@ -187,10 +179,10 @@ function AuditSchedule() {
             <MastersLayout title="Audit Schedule" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
-                        <div className="col-6 px-4 border-end">
-                            <div className="d-flex flex-column">
-                                <div className="text-lg fw-bold mb-4">Export Audit Schedule</div>
-                                <div className="d-flex flex-column h-100 justify-space-between p-4 horizontal-form col2">
+                        <div className="w-50 px-4 border-end" style={{ maxWidth: '550px' }}>
+                            <div className="d-flex flex-column card p-4">
+                                <div className="text-lg fw-bold">Export Audit Schedule</div>
+                                <div className="d-flex flex-column h-100 justify-space-between py-2 horizontal-form col2">
                                     <FormRenderer FormTemplate={FormTemplate}
                                         initialValues={exportData}
                                         componentMapper={ComponentMapper}
@@ -204,19 +196,31 @@ function AuditSchedule() {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-6 p-4">
-                            <div className="d-flex flex-column card p-4">
-                                <div className="text-lg fw-bold mb-4">Import Audit Schedule</div>
-                                <p>
-                                    Import an Audit schedule to create the ToDos for the associated company locations to be audited.
-                                </p>
-                                <p>
-                                    In order to do the same, export the Audit schedule which gives download the excel with all the associate company locations and mappings assigned.
-                                    Update the highlighted columns from the excel downloaded and import to see the ToDos generated.
-                                </p>
-                                <div>
-                                    <Button variant="primary" onClick={() => setImportFile(true)} className="ms-4 px-4">{'Import'}</Button>
+                        <div className="w-100 px-4" style={{ maxWidth: "calc(100% - 550px)", minWidth: "50%" }}>
+                            <div className="d-flex flex-column">
+                                <div className="d-flex flex-column card p-4 mb-4">
+                                    <div className="text-lg fw-bold mb-4">Instuctions for Export</div>
+                                    <ul>
+                                        <li>Select Company</li>
+                                        <li>Select Associate Company (Optional)</li>
+                                        <li>Select Location (Optional)</li>
+                                        <li>Please note that if you are not selecting the Associate Company or Location, then the application will export all data for all Associate Companies or Locations.</li>
+                                        <li>Select Month & Year. Here you can select the range of months to create the excel export</li>
+                                        <li>Click Export button to export the data into an excel sheet.</li>
+                                    </ul>
                                 </div>
+                                <div className="d-flex flex-column card p-4">
+                                    <div className="text-lg fw-bold mb-4">Import Audit Schedule</div>
+                                    <ul>
+                                        <li>Click on Import Button</li>
+                                        <li>Select the file and upload</li>
+                                        <li>If there are errors, click on the hyper link and the application will export the errors in excel file for you to edit and re-upload</li>
+                                    </ul>
+                                    <div>
+                                        <Button variant="primary" onClick={() => setImportFile(true)} className="px-4">{'Import'}</Button>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

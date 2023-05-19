@@ -15,7 +15,8 @@ import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 function StateDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [title, setTitle] = useState();
-    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const [defaultTime] = useState(new Date().getTime())
+    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD, t: defaultTime });
 
     const { updateState } = useUpdateState(() => {
         toast.success(`${form.values.name} updated successsfully.`);

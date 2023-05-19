@@ -7,7 +7,7 @@ import { ACTIONS } from "../../common/Constants";
 import ActivityDetails from "./ActivityDetails";
 import ConfirmModal from "../../common/ConfirmModal";
 import { useDeleteActivity, useGetActivities } from "../../../backend/masters";
-import { CalendarType, GetMastersBreadcrumb, Periodicity } from "./Master.constants";
+import { ActivityType, CalendarType, GetMastersBreadcrumb, Periodicity } from "./Master.constants";
 import PageLoader from "../../shared/PageLoader";
 import { toast } from "react-toastify";
 import TableFilters from "../../common/TableFilter";
@@ -30,8 +30,15 @@ function Activity() {
     });
     const filterConfig = [
         {
+            label: 'Type',
+            name: 'type',
+            options: ActivityType.map(x => {
+                return { value: x, label: x };
+            })
+        },
+        {
             label: 'Periodicity',
-            name: 'Periodicity',
+            name: 'periodicity',
             options: Periodicity.map(x => {
                 return { value: x, label: x };
             })
@@ -173,7 +180,8 @@ function Activity() {
                     <div className="card d-flex flex-row justify-content-center m-3 p-3">
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
-                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
+                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
+                                    placeholder={"Search for Activity"}/>
                                 <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
                                     <Icon name={'plus'} className="me-2"></Icon>Add New
                                 </Button>

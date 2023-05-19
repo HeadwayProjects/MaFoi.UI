@@ -182,7 +182,8 @@ function Act() {
                     <div className="card d-flex flex-row justify-content-center m-3 p-3">
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
-                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} />
+                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
+                                placeholder="Search for Act/Estblishment Type/Law"/>
                                 <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
                                     <Icon name={'plus'} className="me-2"></Icon>Add New
                                 </Button>

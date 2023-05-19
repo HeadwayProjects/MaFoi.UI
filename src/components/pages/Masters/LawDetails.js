@@ -4,16 +4,18 @@ import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-re
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
-import { useCreateLaw, useUpdateLaw } from "../../../backend/masters";
+import { useCreateLaw, useGetLaws, useUpdateLaw } from "../../../backend/masters";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 import { getValue } from "../../../utils/common";
-import { GetActionTitle } from "./Master.constants";
+import { FindDuplicateMasters, GetActionTitle } from "./Master.constants";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function LawDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [law, setLaw] = useState({ hideButtons: true });
+    const { laws } = useGetLaws({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { createLaw, creating } = useCreateLaw(({ id, message }) => {
         if (id) {
             toast.success(`${law.name} created successfully.`);
@@ -66,6 +68,12 @@ function LawDetails({ action, data, onClose, onSubmit }) {
     function handleSubmit() {
         if (form.valid) {
             const { name, description } = law;
+            const existingData = laws.filter(x => x.id !== (data || {}).id);
+            const duplicateStates = FindDuplicateMasters(existingData, { name });
+            if (duplicateStates.length) {
+                toast.error(`${duplicateStates.length} law(s) matching name. Please update name`);
+                return;
+            }
             const request = { name: name.trim(), description: (description || '').trim() };
             if (action === ACTIONS.EDIT) {
                 request['id'] = data.id;

@@ -43,7 +43,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
                 content: action === ACTIONS.VIEW ? getValue(activity, 'name') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'type',
                 label: 'Activity Type',
                 options: ActivityType.map(x => {
