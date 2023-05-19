@@ -51,17 +51,11 @@ function TableFilters({ search, filterConfig, onFilterChange }) {
             {
                 (filterConfig || []).map(filter => {
                     return (
-                        // <div className="d-flex flex-row align-items-center" key={filter.name}>
-                        //     <label>{filter.label}</label><span className="me-2">:</span>
-                        //     <Select options={filter.hideAll ? [...filter.options] : [DEFAULT_OPTION, ...filter.options]}
-                        //         defaultValue={filter.hideAll ? filter.defaultValue : DEFAULT_OPTION} value={filter.value}
-                        //         onChange={(e) => handleFilterChange(filter, e)} className="me-3" />
-                        // </div>
                         <div className="d-flex flex-column me-3" key={filter.name}>
-                            <label>{filter.label}</label>
+                            <label className="filter-label"><small>{filter.label}</small></label>
                             <Select options={filter.hideAll ? [...filter.options] : [DEFAULT_OPTION, ...filter.options]}
                                 defaultValue={filter.hideAll ? filter.defaultValue : DEFAULT_OPTION} value={filter.value}
-                                onChange={(e) => handleFilterChange(filter, e)} />
+                                onChange={(e) => handleFilterChange(filter, e)} className="select-control" />
                         </div>
                     )
                 })
@@ -71,11 +65,6 @@ function TableFilters({ search, filterConfig, onFilterChange }) {
                 <InputGroup>
                     <input type="text" ref={searchRef} className="form-control" placeholder={search.placeholder || 'Search'}
                         onKeyUp={debounce(handleKeyup, 750)} />
-                    {/* <InputGroup.Text>
-                        <div className="d-flex flex-row align-items-center text-white">
-                            <Icon name={'search'} />
-                        </div>
-                    </InputGroup.Text> */}
                 </InputGroup>
             }
         </div>

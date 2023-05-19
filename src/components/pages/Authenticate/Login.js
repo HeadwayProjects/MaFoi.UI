@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { navigate } from "raviger";
 import Carousel from "react-bootstrap/Carousel";
 import logo from './../../../assets/img/logo.png';
-import EZYCOMP from "./../../../assets/img/EZYCOMP.jpg";
-import Contact from "./../../../assets/img/Contact.jpg";
-import Promise from "./../../../assets/img/Promise.jpg";
-import Aim from "./../../../assets/img/Aim.jpg";
+import EZYCOMP from "./../../../assets/img/ezycomp.jpg";
+import Aim from "./../../../assets/img/our-aim.jpg";
+import Promise from "./../../../assets/img/our-promise.jpg";
+import Products from "./../../../assets/img/our-product.jpg";
+import Performer from "./../../../assets/img/performer.jpg";
+import Checker from "./../../../assets/img/checker.jpg";
+import Contact from "./../../../assets/img/contact.jpg";
 import { preventDefault } from "../../../utils/common";
 import { toast } from 'react-toastify';
 import "./Authenticate.css";
@@ -110,10 +113,19 @@ function Login() {
                                 <img className="d-block" src={EZYCOMP} alt="First slide" />
                             </Carousel.Item>
                             <Carousel.Item>
-                                <img className="d-block" src={Promise} alt="Second slide" />
+                                <img className="d-block" src={Aim} alt="Second slide" />
                             </Carousel.Item>
                             <Carousel.Item>
-                                <img className="d-block" src={Aim} alt="Third slide" />
+                                <img className="d-block" src={Promise} alt="Third slide" />
+                            </Carousel.Item>
+                            <Carousel.Item>
+                                <img className="d-block" src={Products} alt="Third slide" />
+                            </Carousel.Item>
+                            <Carousel.Item>
+                                <img className="d-block" src={Performer} alt="Third slide" />
+                            </Carousel.Item>
+                            <Carousel.Item>
+                                <img className="d-block" src={Checker} alt="Third slide" />
                             </Carousel.Item>
                             <Carousel.Item>
                                 <img className="d-block" src={Contact} alt="Third slide" />

@@ -389,15 +389,15 @@ function TaskManagement() {
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 d-flex justify-content-end">
                                 <li className="breadcrumb-item">Home</li>
-                                <li className="breadcrumb-item active">Activity</li>
+                                <li className="breadcrumb-item fw-bold active">Activity</li>
                             </ol>
                         </nav>
                     </div>
                 </div>
 
-                <form className="card border-0 p-0 mb-3 mx-3">
-                    <div className="card-body">
-                        <div className="row">
+                <form className="p-0 mx-3 my-2">
+                    <div className="card border-0 p-2 mt-2 mb-3 filters">
+                        <div className="d-flex flex-row m-0">
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={payload} onSubmit={search}
@@ -406,10 +406,10 @@ function TaskManagement() {
                         </div>
                     </div>
 
-                    <div className="card-footer border-0 px-2">
+                    <div className="card border-0 p-2 mb-2">
                         <div className="d-flex justify-content-between">
                             <div className="d-flex align-items-center status-btn-group">
-                                <div className="text-appprimary">Forms Status</div>
+                                <label className="filter-label"><small>Forms Status</small></label>
                                 {
                                     statusBtns.map(btn => {
                                         return (

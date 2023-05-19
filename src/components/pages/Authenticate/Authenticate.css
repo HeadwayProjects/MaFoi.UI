@@ -22,3 +22,7 @@
 .popup1 .modal-body {
     min-height: 400px;
 }
+
+.carousel-indicators [data-bs-target] {
+    background-color: var(--royal-blue) !important;
+}

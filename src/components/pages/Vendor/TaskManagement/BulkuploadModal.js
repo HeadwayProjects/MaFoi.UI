@@ -214,31 +214,37 @@ function BulkUploadModal({ onClose }) {
                     <div className="row mb-4">
                         <div className="col-3">
                             <label>Company</label>
-                            <Select options={companies} onChange={setCompany} placeholder='Company' value={company} />
+                            <Select options={companies} onChange={setCompany} placeholder='Company'
+                                value={company} className="select-control" />
                         </div>
                         <div className="col-4">
                             <label>Associate Company</label>
-                            <Select options={associateCompanies} onChange={setAssociateCompany} placeholder='Associate Company' value={associateCompany} />
+                            <Select options={associateCompanies} onChange={setAssociateCompany} placeholder='Associate Company'
+                                value={associateCompany} className="select-control" />
                         </div>
                         <div className="col-3">
                             <label>Location</label>
-                            <Select options={locations} onChange={setLocation} placeholder='Location' value={location} />
+                            <Select options={locations} onChange={setLocation} placeholder='Location'
+                                value={location} className="select-control" />
                         </div>
                     </div>
                     <div className="row mb-4">
                         <div className="col-3">
                             <label>Month</label>
-                            <Select options={months} onChange={setMonth} placeholder='Month' value={month} />
+                            <Select options={months} onChange={setMonth} placeholder='Month'
+                                value={month} className="select-control" />
                         </div>
                         <div className="col-4">
                             <label>Year</label>
-                            <Select options={years} onChange={setYear} placeholder='Year' value={year} />
+                            <Select options={years} onChange={setYear} placeholder='Year'
+                                value={year} className="select-control" />
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-7 mb-3">
                             <label>Select file to upload</label>
-                            <input type="file" className="form-control" id="inputGroupFile01" onChange={onFileChange} multiple />
+                            <input type="file" className="form-control" id="inputGroupFile01"
+                                onChange={onFileChange} multiple />
                         </div>
                         <div className="col-5"></div>
                     </div>
@@ -268,7 +274,7 @@ function BulkUploadModal({ onClose }) {
                                                     }
                                                 </td>
                                                 <td width="35%">
-                                                    <Select options={rules} className={(file.required || file.duplicate) && 'error'}
+                                                    <Select options={rules} className={`${(file.required || file.duplicate) && 'error'} select-control`}
                                                         value={file.type} menuPlacement="auto" menuPosition="fixed"
                                                         onChange={(event) => onTypeChange(event, index)}
                                                         isDisabled={file.invalidFile} />

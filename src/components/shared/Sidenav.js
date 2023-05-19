@@ -112,7 +112,7 @@ function Sidenav({ open, toggleSidenav }) {
                         <li>
                             <div className="d-flex flex-row w-100 align-items-center justify-content-end border-bottom" style={{ height: '48px' }}>
                                 <span className="sidenav-item-icon" style={{cursor: 'pointer'}}>
-                                    <Icon name={open ? 'angle-left' : 'angle-right'} action={() => {
+                                    <Icon name={open ? 'double-left' : 'double-right'} action={() => {
                                         toggleSidenav(!open);
                                         resetToggle();
                                     }} className={"px-3 px-2"}/>

@@ -39,12 +39,24 @@ function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
 
     return (
         <>
-            <div className="d-flex justify-content-end h-100 align-items-end">
+            <div className="d-flex justify-content-start h-100 align-items-end">
+                <div className="d-flex align-items-end me-3">
+                    <div className="d-flex flex-column">
+                        <button type="submit" className="btn btn-primary d-flex align-items-center"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setShowModal(true);
+                            }}>
+                            <FontAwesomeIcon icon={faSearch} />
+                            <span className="ms-2">Advance Search</span>
+                        </button>
+                    </div>
+                </div>
                 {
                     label && filter &&
-                    <div className="d-flex flex-column me-2 h-100">
+                    <div className="d-flex flex-column align-items-start">
                         <label className="filter-label"><small>{label}</small></label>
-                        <div className="d-flex h-100 align-items-center">
+                        <div className="d-flex align-items-center border px-2 rounded" style={{height: '38px'}}>
                             {
                                 filter === FILTERS.MONTH ?
                                     <OverlayTrigger overlay={<Tooltip>Click to download report</Tooltip>}
@@ -57,18 +69,7 @@ function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
                     </div>
 
                 }
-                <div className="d-flex align-items-end ms-3">
-                    <div className="d-flex flex-column">
-                        <button type="submit" className="btn btn-primary d-flex align-items-center"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                setShowModal(true);
-                            }}>
-                            <FontAwesomeIcon icon={faSearch} />
-                            <span className="ms-2">Advance Search</span>
-                        </button>
-                    </div>
-                </div>
+
             </div>
             {
                 showModal &&

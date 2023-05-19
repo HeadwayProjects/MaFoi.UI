@@ -62,23 +62,23 @@ function DashboardDataGrid() {
 
     return (
         <div>
-            <div className="my-3 row m-0">
+            <div className="my-3 row m-0 filters">
                 <div className="col-12">
                     <div className="d-flex flex-row card m-0">
-                        <div className="col-2 col-md-2 p-2">
+                        <div className="p-2">
                             <label className="filter-label"><small>Company</small></label>
                             <Select options={companies} onChange={setCompany}
-                                placeholder='Company' value={company} />
+                                placeholder='Company' value={company} className="select-control" />
                         </div>
-                        <div className="col-3 col-md-3 p-2">
+                        <div className="p-2">
                             <label className="filter-label"><small>Associate Company</small></label>
                             <Select options={associateCompanies} onChange={setAssociateCompany}
-                                placeholder='Associate Company' value={associateCompany} />
+                                placeholder='Associate Company' value={associateCompany} className="select-control" />
                         </div>
-                        <div className="col-2 col-md-2 p-2">
+                        <div className="p-2">
                             <label className="filter-label"><small>Location</small></label>
                             <Select options={locations} onChange={setLocation}
-                                placeholder='Location' value={location} />
+                                placeholder='Location' value={location} className="select-control" />
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 .btn.btn-primary {
     background-color: var(--royal-blue);
+    font-weight: 700;
 }
 
 .btn.btn-primary2 {

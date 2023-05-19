@@ -105,7 +105,7 @@ function Table(props) {
         sortMode = 'remote',
         paginationSize = DEFAULT_PAGE_SIZE,
         rowHeight = 24,
-        bufferSpacing = 5,
+        bufferSpacing = 1,
         paginate = false
     } = props.options;
 

@@ -13,7 +13,7 @@ function MastersLayout({ title, breadcrumbs, children }) {
                             {
                                 (breadcrumbs || []).map((breadcrumb, index) => (
 
-                                    <li className="breadcrumb-item" key={index}>
+                                    <li className={`breadcrumb-item ${index > 0 ? 'fw-bold' : ''}`} key={index}>
                                         {
                                             (breadcrumb.path || breadcrumb.action) ?
                                                 <Link href={breadcrumb.path} onClick={breadcrumb.action}>{breadcrumb.label}</Link> :

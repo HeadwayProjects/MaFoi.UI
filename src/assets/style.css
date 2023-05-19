@@ -27,7 +27,9 @@
   --green: #4EC343;
   --light-green: #A9D18E;
 
-  --page-bg: #F3F9FD;
+  --orange: #fc8403;
+
+  --page-bg: #a1cbe7;
 
   /* Fonts */
   /* 10px */
@@ -141,7 +143,7 @@ body {
 
 .pageHeading {
   background-color: var(--royal-blue);
-  height: 64px;
+  height: 52px;
   padding-left: 1.5rem !important;
   padding-right: 1.5rem !important;
   justify-content: space-between;
@@ -422,12 +424,10 @@ table.table {
 }
 
 .filters label {
-  font-size: var(--font-md);
   padding-left: 0.25rem;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: var(--gray-500);
 }
 
 .filters [class*="-menu"] {
@@ -442,13 +442,13 @@ table.table {
   font-size: var(--font-md);
   box-shadow: none;
   width: 180px;
-  border-color: var(--gray-300);
+  border-color: var(--page-bg);
 }
 
 .filters [class*="-container"] [class*="-control"]:hover,
 .filters [class*="-container"] [class*="-control"]:focus,
 .filters [class*="-container"] [class*="-control"]:active {
-  border-color: var(--gray-300);
+  border-color: var(--page-bg);
   box-shadow: none;
 }
 

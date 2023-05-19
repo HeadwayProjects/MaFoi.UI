@@ -74,17 +74,17 @@ function Location({ onChange }) {
 
     return (
         <>
-            <div className="col-2 col-md-2">
+            <div className="px-2">
                 <label className="filter-label"><small>Company</small></label>
-                <Select placeholder='Company' options={companies} onChange={setCompany} value={company} />
+                <Select placeholder='Company' options={companies} onChange={setCompany} value={company} className="select-control" />
             </div>
-            <div className="col-3 col-md-3">
+            <div className="px-2">
                 <label className="filter-label"><small>Associate Company</small></label>
-                <Select placeholder='Associate Company' options={associateCompanies} onChange={setAssociateCompany} value={associateCompany} />
+                <Select placeholder='Associate Company' options={associateCompanies} onChange={setAssociateCompany} value={associateCompany} className="select-control" />
             </div>
-            <div className="col-2 col-md-2">
+            <div className="px-2">
                 <label className="filter-label"><small>Location</small></label>
-                <Select placeholder='Location' options={locations} onChange={setLocation} value={location} />
+                <Select placeholder='Location' options={locations} onChange={setLocation} value={location} className="select-control" />
             </div>
         </>
     )

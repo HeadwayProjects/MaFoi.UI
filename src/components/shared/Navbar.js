@@ -94,7 +94,7 @@ function Navbar({ showUser = true }) {
                                         </div>
                                     }
                                     <ul className="d-flex flex-column disabled mb-0 text-muted m-0 align-items-center align-content-center px-2">
-                                        <span className='last-login-time'>Last Login Time</span>
+                                        <span className='last-login-time filter-label'>Last Login Time</span>
                                         <small className='p-0 m-0 text-center'><span>{dayjs(new Date(user.lastlogindate)).format('DD/MM/YYYY hh:mm A')}</span></small>
                                     </ul>
                                     <ul className="navbar-nav px-2">

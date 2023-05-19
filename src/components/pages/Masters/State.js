@@ -137,9 +137,9 @@ function State() {
     return (
         <>
             <MastersLayout title="Masters - State" breadcrumbs={breadcrumb}>
-                <div className="d-flex flex-column mx-0 mt-2">
-                    <div className="d-flex flex-row justify-content-center mb-2">
-                        <div className="col-12 px-3">
+                <div className="d-flex flex-column mx-0">
+                    <div className="card d-flex flex-row justify-content-center m-3 p-3">
+                        <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters search={true} onFilterChange={onFilterChange} />
                                 <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
