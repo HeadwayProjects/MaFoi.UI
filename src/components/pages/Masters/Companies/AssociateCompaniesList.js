@@ -247,6 +247,24 @@ function AssociateCompaniesList({ changeView, parent }) {
         }
     }, [fetching]);
 
+    useEffect(() => {
+        if (parent) {
+            const _parentId = (parent || {}).value;
+            if (_parentId) {
+                setParentCompanyId(_parentId);
+                setParentCompany(parent);
+                const _filterRef = {
+                    ...filterRef.current, filters: [
+                        { columnName: 'isParent', value: 'false' },
+                        { columnName: 'parentCompanyId', value: _parentId }
+                    ]
+                };
+                setFilters(_filterRef);
+                setPayload({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' }, ...params, ..._filterRef });
+            }
+        }
+    }, [parent])
+
     return (
         <>
             <div className="d-flex flex-column mx-0">

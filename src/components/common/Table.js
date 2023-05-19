@@ -290,7 +290,7 @@ function Table(props) {
                         <div className="d-flex align-items-center">
                             <Select options={PAGE_OPTIONS} value={pageSize} onChange={handlePageSizeChange}
                                 placement="top" menuPosition="fixed" className="me-3 page-changer"
-                                styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }} />
+                                styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999, color: "var(--black-600)" }) }} />
                             <Icon name={'double-left'} className={'page-nav-btns'} type="button"
                                 action={() => handlePageNav(PageNav.FIRST)} text={'First'}
                                 disabled={page < 2} />
