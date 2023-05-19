@@ -159,7 +159,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                     </div>
                     <div className="col-5">
                         {
-                            // (performanceStatus.approved > 0 || performanceStatus.rejected > 0) &&
+                            (performanceStatus.approved > 0 || performanceStatus.rejected > 0) &&
                             <Chart data={performanceStatus} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
                         }
                     </div>

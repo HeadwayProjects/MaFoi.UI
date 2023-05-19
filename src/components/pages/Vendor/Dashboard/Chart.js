@@ -55,6 +55,7 @@ function Chart({ data, keys }) {
             setLegends(keys.map(key => {
                 const _chart = CHART_MAPPING.find(x => x.key === key) || {};
                 return {
+                    key,
                     color: _chart.color,
                     label: `${data[key] || 0} ${_chart.label}`
                 }
@@ -83,7 +84,7 @@ function Chart({ data, keys }) {
                     (legends || []).length > 0 &&
                     legends.map(x => {
                         return (
-                            <div className="d-flex flex-row align-items-center mb-1">
+                            <div className="d-flex flex-row align-items-center mb-1" key={x.key}>
                                 <span className="legend-marker" style={{ background: x.color }}></span>
                                 <div className="ms-2 text-md">{x.label}</div>
                             </div>

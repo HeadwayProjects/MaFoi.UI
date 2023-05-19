@@ -66,8 +66,6 @@ function Sidenav({ open, toggleSidenav }) {
             if (!hasChild) {
                 navigate(`${getBasePath()}${url}`, { replace: true, state: null });
             }
-            toggleSidenav(false);
-            resetToggle();
         }
 
         useEffect(() => {
