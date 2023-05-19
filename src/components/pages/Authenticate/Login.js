@@ -8,7 +8,7 @@ import Promise from "./../../../assets/img/our-promise.jpg";
 import Products from "./../../../assets/img/our-product.jpg";
 import Performer from "./../../../assets/img/performer.jpg";
 import Checker from "./../../../assets/img/checker.jpg";
-import Contact from "./../../../assets/img/Contact.jpg";
+import Contact from "./../../../assets/img/contact.jpg";
 import { preventDefault } from "../../../utils/common";
 import { toast } from 'react-toastify';
 import "./Authenticate.css";
