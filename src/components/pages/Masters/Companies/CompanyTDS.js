@@ -180,7 +180,6 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
 
     function handleSubmit() {
         if (form.valid) {
-            onNext();
             const { pan, tan,
                 pF_Ac_No, pF_Establishment_Code, pF_Deduction_Percent, pF_Base_Limit, pF_Establishment_Id,
                 pan_fullname, pan_surname, pan_designation, pan_mobile, pan_email, pan_place, gstn_no

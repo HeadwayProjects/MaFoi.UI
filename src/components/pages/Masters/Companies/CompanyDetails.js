@@ -205,8 +205,8 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                         debug={debugForm}
                     />
                     <div className="d-flex justify-content-between mt-4">
-                        <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={handleCancel}>{'Cancel'}</Button>
-                        <Button variant="primary" onClick={handleSubmit} className="px-4" disabled={!form.valid}>{company ? 'Save' : 'Next'}</Button>
+                        <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={handleCancel}>{'Back to List'}</Button>
+                        <Button variant="primary" onClick={handleSubmit} className="px-4" disabled={!form.valid}>{company ? 'Save' : 'Create'}</Button>
                     </div>
                 </div>
             </div>
