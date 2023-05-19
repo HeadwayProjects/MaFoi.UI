@@ -58,13 +58,14 @@ export function useDeleteLaw(onSuccess, onError) {
     return { deleteLaw, error, deleting };
 }
 
-export function useGetActs(payload) {
+export function useGetActs(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['acts', payload],
         async () => await api.post(`/api/Act/GetAll`, payload),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 
@@ -116,13 +117,14 @@ export function useDeleteAct(onSuccess, onError) {
     return { deleteAct, error, deleting };
 }
 
-export function useGetActivities(payload) {
+export function useGetActivities(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['activities', payload],
         async () => await api.post(`/api/Activity/GetAll`, payload),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 
@@ -174,13 +176,14 @@ export function useDeleteActivity(onSuccess, onError) {
     return { deleteActivity, error, deleting };
 }
 
-export function useGetRules(payload) {
+export function useGetRules(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['rules', payload],
         async () => await api.post(`/api/Rule/GetAll`, payload),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 
@@ -223,13 +226,14 @@ export function useDeleteRule(onSuccess, onError) {
     return { deleteRule, error, isLoading };
 }
 
-export function useGetStates(payload) {
+export function useGetStates(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['states', payload],
         async () => await api.post(`/api/State/GetAll`, payload),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 

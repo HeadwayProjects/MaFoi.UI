@@ -14,10 +14,11 @@ import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [mapping, setMapping] = useState({ hideButtons: true });
-    const { acts } = useGetActs({ ...DEFAULT_OPTIONS_PAYLOAD });
-    const { rules } = useGetRules({ ...DEFAULT_OPTIONS_PAYLOAD });
-    const { activities } = useGetActivities({ ...DEFAULT_OPTIONS_PAYLOAD });
-    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const [defaultPayload] = useState({ ...DEFAULT_OPTIONS_PAYLOAD, t: new Date().getTime() });
+    const { acts } = useGetActs({ ...defaultPayload }, Boolean(defaultPayload));
+    const { rules } = useGetRules({ ...defaultPayload }, Boolean(defaultPayload));
+    const { activities } = useGetActivities({ ...defaultPayload }, Boolean(defaultPayload));
+    const { states } = useGetStates({ ...defaultPayload }, Boolean(defaultPayload));
     const { uploadActStateMappingTemplate, uploading } = useUploadActStateMappingTemplate(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Template uploaded successfully.`);
