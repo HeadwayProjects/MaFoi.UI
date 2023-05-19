@@ -13,9 +13,10 @@ import PageLoader from "../../shared/PageLoader";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function ActDetails({ action, data, onClose, onSubmit }) {
+    const [t]  = useState(new Date().getTime());
     const [form, setForm] = useState({});
     const [act, setAct] = useState({ hideButtons: true });
-    const { laws, isFetching: loadingLaws } = useGetLaws({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { laws, isFetching: loadingLaws } = useGetLaws({ ...DEFAULT_OPTIONS_PAYLOAD, t });
     const { createAct, creating } = useCreateAct(({ id, message }) => {
         if (id) {
             toast.success(`${act.name} created successfully.`);

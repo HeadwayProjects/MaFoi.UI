@@ -1233,6 +1233,9 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen) {
 .custom-tabulator-footer .page-changer [class*="-singleValue"] {
     color: var(--white);
 }
+.custom-tabulator-footer .page-changer [class*="-indicatorContainer"]:hover {
+    color: var(--white);
+}
 
 .tabulator-cell .icon.icon-pencil {
     color: var(--blue);

@@ -10,6 +10,8 @@ import PageLoader from "../../shared/PageLoader";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
+import { navigate } from "raviger";
+import { getBasePath } from "../../../App";
 
 function ChangePassword({ token }) {
     const [changePwdSuccess, setChangePwdSuccess] = useState(false);
@@ -32,7 +34,8 @@ function ChangePassword({ token }) {
 
     function signIn(event) {
         preventDefault(event);
-        window.location.replace('/login');
+        navigate(`${getBasePath()}/`);
+        window.location.reload();
     }
 
     const schema = {

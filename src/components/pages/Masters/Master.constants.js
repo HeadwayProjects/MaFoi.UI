@@ -93,7 +93,7 @@ export const Reputation = ['Good', 'Moderate', 'Bad'];
 
 export const CompanyStatus = ['Active', 'InActive'];
 
-export const EmployeesCount = ['1-100', '101 - 200', '201 - 500', '> 500'];
+export const EmployeesCount = ['1-100', '101 - 200', '201 - 500', '501 - 1000','1001 - 2000', '2001 - 5000', '> 5000'];
 
 export const Salutation = ['Mr.', 'Miss.', 'Mrs.'];
 

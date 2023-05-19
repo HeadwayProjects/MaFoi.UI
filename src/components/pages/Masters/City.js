@@ -139,7 +139,7 @@ function City() {
 
     useEffect(() => {
         if (!isFetching && payload) {
-            setData(formatApiResponse(params, cities));
+            setData(formatApiResponse(params, cities, total));
         }
     }, [isFetching]);
 
