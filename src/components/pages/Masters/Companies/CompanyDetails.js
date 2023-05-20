@@ -10,12 +10,11 @@ import { API_DELIMITER } from "../../../../utils/constants";
 import { ALLOWED_LOGO_REGEX, FILE_SIZE } from "../../../common/Constants";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 
-
-
-function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
+function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany }) {
+    const [t] = useState(new Date().getTime());
     const [form, setForm] = useState({});
     const [companyDetails, setCompanyDetails] = useState({ hideButtons: true, isAssociateCompany: Boolean(parentCompany), parentCompany });
-    const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
+    const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t }, Boolean(!company));
 
     function debugForm(_form) {
         setForm(_form);
@@ -136,7 +135,7 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
         ]
     }
 
-    function handleSubmit() {
+    function handleSubmit(next) {
         if (form.valid) {
             const { code, name, businessType, websiteUrl, status,
                 employees, isParent, parentCompany, establishmentType, file,
@@ -166,12 +165,8 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
             delete payload.hideButtons;
             delete payload.isAssociateCompany;
             delete payload.parentCompany;
-            onNext(payload);
+            onSubmit(payload, next);
         }
-    }
-
-    function handleCancel() {
-        onPrevious();
     }
 
     useEffect(() => {
@@ -205,8 +200,20 @@ function CompanyDetails({ onNext, onPrevious, company, parentCompany }) {
                         debug={debugForm}
                     />
                     <div className="d-flex justify-content-between mt-4">
-                        <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={handleCancel}>{'Back to List'}</Button>
-                        <Button variant="primary" onClick={handleSubmit} className="px-4" disabled={!form.valid}>{company ? 'Save' : 'Create'}</Button>
+                        <div>
+                            <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onPrevious}>{'Back to List'}</Button>
+                            {
+                                Boolean(company) &&
+                                <Button variant="outline-secondary" className="btn btn-outline-secondary px-4 ms-3" onClick={onNext}>{'Next'}</Button>
+                            }
+                        </div>
+                        <div className="d-flex align-items-center">
+                            {
+                                Boolean(company) &&
+                                <Button variant="primary" onClick={() => handleSubmit(false)} className="px-4" disabled={!form.valid}>{'Save'}</Button>
+                            }
+                            <Button variant="primary" onClick={() => handleSubmit(Boolean(company) ? true : false)} className="px-4 ms-3" disabled={!form.valid}>{company ? 'Save & Next' : 'Create'}</Button>
+                        </div>
                     </div>
                 </div>
             </div>

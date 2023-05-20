@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useCreateStateRuleCompanyMapping, useGetActivities, useGetActs, useGetCompanies, useGetRules, useGetStates, useUploadActStateMappingTemplate } from "../../../../backend/masters";
+import { useCreateStateRuleCompanyMapping, useGetActivities, useGetActs, useGetCompanies, useGetRules, useGetStates, useUpdateStateRuleMapping, useUploadActStateMappingTemplate } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
@@ -39,6 +39,18 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
             toast.error(value || ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
+    const { updateStateRuleMapping, updating } = useUpdateStateRuleMapping(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`Mapping updated successfully.`);
+            if (mapping.file) {
+                uploadTemplate(value);
+            } else {
+                onSubmit();
+            }
+        } else {
+            toast.error(value || ERROR_MESSAGES.ERROR);
+        }
+    }, errorCallback);
 
 
     function errorCallback() {
@@ -49,7 +61,8 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         const formData = new FormData();
         const files = [...mapping.file.inputFiles];
         files.forEach(file => {
-            formData.append('file', file, file.name);
+            const ext = file.name.split('.').pop();
+            formData.append('file', file, `${mapping.formName}.${ext}`);
         });
         uploadActStateMappingTemplate({ id, formData })
     }
@@ -86,8 +99,13 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         return (
             <div className="d-flex flex-column">
                 <div>{label}</div>
-                <div className="text-sm fw-bold">Type: {activity.type}</div>
-                <div className="text-sm fw-bold">{activity.periodicity} | {activity.calendarType}</div>
+                {
+                    Boolean(activity) &&
+                    <>
+                        <div className="text-sm fw-bold">Type: {activity.type}</div>
+                        <div className="text-sm fw-bold">{activity.periodicity} | {activity.calendarType}</div>
+                    </>
+                }
             </div>
         )
     }
@@ -95,7 +113,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     const schema = {
         fields: [
             {
-                component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'act',
                 label: 'Act Name',
                 validate: [
@@ -105,7 +123,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 options: acts
             },
             {
-                component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'rule',
                 label: 'Rule',
                 validate: [
@@ -116,7 +134,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 formatOptionLabel: ruleOptionLabel
             },
             {
-                component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'activity',
                 label: 'Activity',
                 validate: [
@@ -127,7 +145,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 formatOptionLabel: activityOptionLabel
             },
             {
-                component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'state',
                 label: 'State',
                 validate: [
@@ -137,7 +155,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 options: states
             },
             {
-                component: action === ACTIONS.ADD ? componentTypes.TEXT_FIELD : componentTypes.PLAIN_TEXT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'formName',
                 label: 'Form Name',
                 content: getValue(mapping, 'formName'),
@@ -170,25 +188,42 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     function submit(e) {
         preventDefault(e);
         if (form.valid) {
+            const { act, rule, activity, state, formName } = mapping;
+            const request = {
+                actId: act.value,
+                ruleId: rule.value,
+                activityId: activity.value,
+                stateId: state.value,
+                formName: (formName || '').trim()
+            };
             if (action === ACTIONS.ADD) {
-                const { act, rule, activity, state, formName } = mapping;
-                const request = {
-                    actId: act.value,
-                    ruleId: rule.value,
-                    activityId: activity.value,
-                    stateId: state.value,
-                    formName: (formName || '').trim()
-                };
                 createStateRuleCompanyMapping(request);
             } else {
-                uploadTemplate(mapping.id);
+                request['id'] = data.id
+                if (request.actId === data.act.id &&
+                    request.ruleId === data.rule.id &&
+                    request.activityId === data.activity.id &&
+                    request.stateId === data.state.id) {
+                    delete request.actId;
+                    delete request.ruleId;
+                    delete request.activityId;
+                    delete request.stateId;
+                }
+                updateStateRuleMapping(request);
             }
         }
     }
 
     useEffect(() => {
         if (data) {
-            setMapping({ ...mapping, ...data });
+            const { act, rule, activity, state } = data;
+            setMapping({
+                ...mapping, ...data,
+                act: { value: act.id, label: act.name, act },
+                rule: { value: rule.id, label: rule.name, rule },
+                activity: { value: activity.id, label: activity.name, activity },
+                state: { value: state.id, label: state.name, state }
+            });
         }
     }, [data]);
 

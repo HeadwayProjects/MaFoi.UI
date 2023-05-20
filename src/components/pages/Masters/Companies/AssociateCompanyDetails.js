@@ -1,160 +1,273 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
+import { componentTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
-
-import { toast } from 'react-toastify';
-import { useCreateCompany, useUpdateCompany } from "../../../../backend/masters";
-import { ERROR_MESSAGES } from "../../../../utils/constants";
-import { ACTIONS } from "../../../common/Constants";
-import { getValue, preventDefault } from "../../../../utils/common";
+import { API_DELIMITER, UI_DELIMITER } from "../../../../utils/constants";
+import { getValue } from "../../../../utils/common";
 import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
 import { GetActionTitle } from "../Master.constants";
-import { BUSINESS_TYPES, COMPANY_REQUEST, COMPANY_STATUS, COMPANY_STATUSES } from "./Companies.constants";
-import PageLoader from "../../../shared/PageLoader";
+import { COMPANY_STATUS } from "./Companies.constants";
+import styles from "./Companies.module.css";
 
 function AssociateCompanyDetails({ action, parentCompany, data, onClose, onSubmit }) {
-    const [form, setForm] = useState({});
-    const [associateCompany, setAssociateCompany] = useState({ hideButtons: true, status: { value: COMPANY_STATUS.ACTIVE, label: COMPANY_STATUS.ACTIVE } });
-    const { createCompany, creating } = useCreateCompany((response) => {
-        if (response.id) {
-            toast.success(`${response.name} created successsfully.`);
-            onSubmit();
-        } else {
-            toast.error(response.message || ERROR_MESSAGES.ERROR);
-        }
-    }, errorCallback);
-    const { updateCompany, updating } = useUpdateCompany((response) => {
-        if (response.id) {
-            toast.success(`${response.name} updated successsfully.`);
-            onSubmit();
-        } else {
-            toast.error(response.message || ERROR_MESSAGES.ERROR);
-        }
-    }, errorCallback);
-
-    function errorCallback() {
-        toast.error(ERROR_MESSAGES.DEFAULT);
-    }
+    const [associateCompany, setAssociateCompany] = useState({ hideButtons: true });
 
     const schema = {
         fields: [
             {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader1',
+                content: 'Company Details',
+                className: 'text-lg fw-bold pb-0'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'code',
+                label: 'Short Code',
+                content: getValue(associateCompany, 'code') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'name',
+                label: 'Name',
+                content: getValue(associateCompany, 'name') || '-NA-'
+            },
+            {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'parentCompanyId',
                 label: 'Parent Company',
-                content: (parentCompany || {}).label
+                content: getValue(parentCompany, 'label') || '-NA-'
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'code',
-                label: 'Short Code',
-                validate: [
-                    { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.MAX_LENGTH, threshold: 4 },
-                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{3,4}/, message: 'Should be alphanumeric value of length 3 or 4' }
-                ],
-                styleClass: 'text-uppercase',
-                content: getValue(associateCompany, 'code')
-            },
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'name',
-                label: 'Name',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: getValue(associateCompany, 'name')
-            },
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: componentTypes.PLAIN_TEXT,
                 name: 'businessType',
                 label: 'Business Type',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                isMulti: true,
-                options: BUSINESS_TYPES,
-                content: getValue(data, 'businessType')
+                content: (getValue(associateCompany, 'businessType') || '').replaceAll(API_DELIMITER, UI_DELIMITER) || '-NA-'
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: componentTypes.PLAIN_TEXT,
                 name: 'websiteUrl',
-                label: 'Website',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: getValue(associateCompany, 'websiteUrl')
+                label: 'Website Url',
+                content: getValue(associateCompany, 'websiteUrl') || '-NA-'
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: componentTypes.PLAIN_TEXT,
+                name: 'establishmentType',
+                label: 'Estabishment Type',
+                content: (getValue(associateCompany, 'establishmentType') || '').replaceAll(API_DELIMITER, UI_DELIMITER) || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'employees',
+                label: 'Employees',
+                content: getValue(associateCompany, 'employees') || '-NA-'
+            },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader2',
+                content: 'Corporate Register Office Address',
+                className: 'text-lg fw-bold pb-0'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'companyAddress',
+                label: 'Address',
+                content: getValue(associateCompany, 'companyAddress') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'address2',
+                label: 'City/State/Country',
+                content: [getValue(associateCompany, 'city'), getValue(associateCompany, 'state'), getValue(associateCompany, 'country')].join('/') || '-NA-'
+            },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader3',
+                content: 'Company Phone',
+                className: 'text-lg fw-bold pb-0'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
                 name: 'contactNumber',
-                label: 'Mobile',
-                validate: [
-                    { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.MAX_LENGTH, threshold: 10 },
-                    { type: validatorTypes.PATTERN, pattern: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, message: 'Should be numeric value of length 10' }
-                ],
-                content: getValue(associateCompany, 'contactNumber')
+                label: 'Phone',
+                content: getValue(associateCompany, 'contactNumber') || '-NA-'
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: componentTypes.PLAIN_TEXT,
                 name: 'email',
                 label: 'Email',
-                validate: [
-                    { type: validatorTypes.PATTERN, pattern: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, message: 'Invalid email format.' }
-                ],
-                content: getValue(associateCompany, 'email')
+                content: getValue(associateCompany, 'email') || '-NA-'
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
-                name: 'status',
-                label: 'Status',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                options: COMPANY_STATUSES,
-                content: getValue(associateCompany, 'isActive') ? COMPANY_STATUS.ACTIVE : COMPANY_STATUS.INACTIVE
-            }
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader4',
+                content: 'Contact Person',
+                className: 'text-lg fw-bold pb-0'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'contactPersonName',
+                label: 'Name',
+                content: getValue(associateCompany, 'contactPersonName') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'contactPersonDesignation',
+                label: 'Designation',
+                content: getValue(associateCompany, 'contactPersonDesignation') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'contactPersonDepartment',
+                label: 'Depatment',
+                content: getValue(associateCompany, 'contactPersonDepartment') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'contactPersonMobile',
+                label: 'Phone',
+                content: getValue(associateCompany, 'contactPersonMobile') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'contactPersonEmail',
+                label: 'Business Email',
+                content: getValue(associateCompany, 'contactPersonEmail') || '-NA-'
+            },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader5',
+                content: 'TDS Details',
+                className: 'text-lg fw-bold pb-0'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pan',
+                label: 'PAN',
+                content: getValue(associateCompany, 'pan') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'tan',
+                label: 'TAN',
+                content: getValue(associateCompany, 'tan') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pan_fullname',
+                label: 'Full Name',
+                content: getValue(associateCompany, 'pan_fullname') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pan_surname',
+                label: 'S/o D/o W/o',
+                content: getValue(associateCompany, 'pan_surname') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pan_designation',
+                label: 'Designation',
+                content: getValue(associateCompany, 'pan_designation') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pan_mobile',
+                label: 'Phone Number',
+                content: getValue(associateCompany, 'pan_mobile') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pan_email',
+                label: 'Email',
+                content: getValue(associateCompany, 'pan_email') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pan_place',
+                label: 'Place',
+                content: getValue(associateCompany, 'pan_place') || '-NA-'
+            },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader6',
+                content: 'TPF Details',
+                className: 'text-lg fw-bold pb-0'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pF_Ac_No',
+                label: 'PF Account No.',
+                content: getValue(associateCompany, 'pF_Ac_No') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pF_Base_Limit',
+                label: 'PF Base Limit',
+                content: getValue(associateCompany, 'pF_Base_Limit') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pF_Deduction_Percent',
+                label: 'PF % Deduction',
+                content: getValue(associateCompany, 'pF_Deduction_Percent') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pF_Establishment_Code',
+                label: 'PF Establishment Code',
+                content: getValue(associateCompany, 'pF_Establishment_Code') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'pF_Establishment_Id',
+                label: 'PF Establishment Id',
+                content: getValue(associateCompany, 'pF_Establishment_Id') || '-NA-'
+            },
+            // {
+            //     component: componentTypes.PLAIN_TEXT,
+            //     name: 'pan_place',
+            //     label: 'Place',
+            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
+            // },
+            // {
+            //     component: componentTypes.PLAIN_TEXT,
+            //     name: 'pan_place',
+            //     label: 'Place',
+            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
+            // },
+            // {
+            //     component: componentTypes.PLAIN_TEXT,
+            //     name: 'pan_place',
+            //     label: 'Place',
+            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
+            // },
+            // {
+            //     component: componentTypes.PLAIN_TEXT,
+            //     name: 'pan_place',
+            //     label: 'Place',
+            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
+            // },
+            // {
+            //     component: componentTypes.PLAIN_TEXT,
+            //     name: 'pan_place',
+            //     label: 'Place',
+            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
+            // },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader7',
+                content: 'GSTN Details',
+                className: 'text-lg fw-bold pb-0'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'gstn_no',
+                label: 'GSTN No.',
+                content: getValue(associateCompany, 'gstn_no') || '-NA-'
+            },
         ],
     };
-
-    function submit(e) {
-        preventDefault(e);
-        if (form.valid) {
-            const { name, code, businessType, status, websiteUrl, contactNumber, email } = associateCompany;
-            // const existingData = action === ACTIONS.EDIT ? locations.filter(x => x.id !== (data || {}).id) : [...locations];
-            // const duplicateLocations = FindDuplicateMasters(existingData, { code, name });
-            // if (duplicateLocations.length) {
-            //     toast.error(`${duplicateLocations.length} location(s) matching code or name. Please update code or name`);
-            //     return;
-            // }
-            const payload = {
-                ...COMPANY_REQUEST,
-                ...data,
-                parentCompanyId: parentCompany.value,
-                name,
-                isParent: false,
-                code: code.toUpperCase(),
-                businessType: businessType.map(x => x.value).join(','),
-                isActive: status.value === COMPANY_STATUS.ACTIVE,
-                websiteUrl,
-                contactNumber,
-                email
-            };
-            if (action === ACTIONS.EDIT) {
-                payload['id'] = data.id;
-                updateCompany(payload)
-            } else if (action === ACTIONS.ADD) {
-                createCompany(payload);
-            }
-        }
-    }
-
-    function debugForm(_form) {
-        setForm(_form);
-        setAssociateCompany(_form.values);
-    }
 
     useEffect(() => {
         if (data) {
@@ -162,45 +275,35 @@ function AssociateCompanyDetails({ action, parentCompany, data, onClose, onSubmi
             setAssociateCompany({
                 hideButtons: true,
                 ...data,
-                businessType: businessType ? businessType.split(',').map(x => {
-                    return { value: x, label: x }
-                }): null,
                 status: isActive ? { value: COMPANY_STATUS.ACTIVE, label: COMPANY_STATUS.ACTIVE } : { value: COMPANY_STATUS.INACTIVE, label: COMPANY_STATUS.INACTIVE }
             });
         }
     }, [data])
 
     return (
-        <>
-            <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
-                <Modal.Header closeButton={true} onHide={onClose}>
-                    <Modal.Title className="bg">{GetActionTitle('Associate Company', action)}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <FormRenderer FormTemplate={FormTemplate}
-                        initialValues={associateCompany}
-                        componentMapper={ComponentMapper}
-                        schema={schema}
-                        debug={debugForm}
-                    />
-                </Modal.Body>
-                <Modal.Footer className="d-flex justify-content-between">
-                    {
-                        action !== ACTIONS.VIEW ?
-                            <>
-                                <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onClose}>{'Cancel'}</Button>
-                                <Button variant="primary" onClick={submit} className="px-4" disabled={!form.valid}>{'Submit'}</Button>
-                            </> :
-                            <Button variant="primary" onClick={onClose} className="px-4 ms-auto">{'Close'}</Button>
-
-                    }
-                </Modal.Footer>
-            </Modal>
-            {
-                (creating || updating) &&
-                <PageLoader>{creating ? 'Creating...' : 'Updating...'}</PageLoader>
-            }
-        </>
+        <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
+            <Modal.Header closeButton={true} onHide={onClose}>
+                <Modal.Title className="bg">{GetActionTitle('Associate Company', action)}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {
+                    Boolean((associateCompany || {}).logo) &&
+                    <div className="position-relative">
+                        <div className={styles.imageContainer}>
+                            <img src={associateCompany.logo} />
+                        </div>
+                    </div>
+                }
+                <FormRenderer FormTemplate={FormTemplate}
+                    initialValues={associateCompany}
+                    componentMapper={ComponentMapper}
+                    schema={schema}
+                />
+            </Modal.Body>
+            <Modal.Footer className="d-flex justify-content-between">
+                <Button variant="primary" onClick={onClose} className="px-4 ms-auto">{'Close'}</Button>
+            </Modal.Footer>
+        </Modal>
     )
 }
 

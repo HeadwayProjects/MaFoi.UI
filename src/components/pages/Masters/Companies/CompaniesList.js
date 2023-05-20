@@ -16,6 +16,7 @@ import TableFilters from "../../../common/TableFilter";
 import { useRef } from "react";
 
 function CompaniesList({ changeView }) {
+    const [t] = useState(new Date().getTime());
     const [action, setAction] = useState(ACTIONS.NONE);
     const [company, setCompany] = useState(null);
     const [data, setData] = useState();
@@ -23,7 +24,7 @@ function CompaniesList({ changeView }) {
     const [filters, setFilters] = useState({ filters: [{ columnName: 'isParent', value: 'true' }], search: '' });
     const filterRef = useRef();
     filterRef.current = filters;
-    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' }, ...filterRef.current });
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' }, ...filterRef.current, t });
     const { companies, total, isFetching, refetch, invalidate } = useGetCompanies(payload, Boolean(payload));
     const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
         refetch();
@@ -40,10 +41,10 @@ function CompaniesList({ changeView }) {
                     setCompany(row);
                     setAction(ACTIONS.DELETE);
                 }} />
-                {/* <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
+                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
                     setCompany(row);
                     setAction(ACTIONS.VIEW);
-                }} /> */}
+                }} />
                 <Icon className="mx-2" type="button" name={'external-link'} text={row.websiteUrl} data={row} action={(event) => {
                     window.open(row.websiteUrl)
                 }} />
@@ -164,7 +165,7 @@ function CompaniesList({ changeView }) {
             }
         };
         setParams(_params);
-        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params, t });
         return Promise.resolve(formatApiResponse(params, companies, total));
     }
 
@@ -176,14 +177,14 @@ function CompaniesList({ changeView }) {
         const _filters = { ...e };
         _filters.filters.push({ columnName: 'isParent', value: 'true' });
         setFilters(_filters);
-        setPayload({ ...DEFAULT_PAYLOAD, ...params, ..._filters });
+        setPayload({ ...DEFAULT_PAYLOAD, ...params, ..._filters, t });
     }
 
     function handlePageNav(_pagination) {
         const _params = { ...params };
         _params.pagination = _pagination;
         setParams({ ..._params });
-        setPayload({ ...payload, ..._params })
+        setPayload({ ...payload, ..._params, t })
     }
 
     useEffect(() => {

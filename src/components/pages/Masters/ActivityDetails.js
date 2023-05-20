@@ -95,7 +95,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
             const { name, type, periodicity, calendarType } = form.values;
             const payload = {
                 name: name.trim(),
-                type,
+                type: type.value,
                 periodicity: periodicity.value,
                 calendarType: calendarType.value,
             };

@@ -11,6 +11,7 @@ import { useCreateUserLocationMapping, useGetUserCompanies } from "../../../back
 import ConfirmModal from "../../common/ConfirmModal";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
+import MastersLayout from "../Masters/MastersLayout";
 
 function mapData(list) {
     if ((list || []).length === 0) {
@@ -37,6 +38,11 @@ function mapData(list) {
 };
 
 function UserCompanies() {
+    const [breadcrumb] = useState([
+        { id: 'home', label: 'Home', path: '/' },
+        { id: 'users', label: 'User Management', path: '/userManagement/users' },
+        { id: 'companyMapping', label: 'Company Mapping' },
+    ]);
     const [user, setUser] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState();
@@ -186,22 +192,33 @@ function UserCompanies() {
 
     return (
         <>
-            <div className="d-flex flex-column mx-0">
-                <div className="card d-flex flex-row justify-content-center m-3 p-3">
-                    <div className="col-12">
-                        <div className="d-flex justify-content-between align-items-end">
-                            <div className="col-3 px-0">
-                                <Select placeholder='Select User' options={(users || []).map(x => {
-                                    return { value: x.id, label: x.name, user: x }
-                                })} onChange={onUserChange} value={user} />
+            <MastersLayout title="Company Mapping" breadcrumbs={breadcrumb}>
+                <div className="d-flex flex-column mx-0">
+                    <div className="card d-flex flex-row justify-content-center m-3 p-3">
+                        <div className="col-12">
+                            <div className="d-flex justify-content-between align-items-end">
+                                <div className="col-3 px-0">
+                                    <Select placeholder='Select User' options={(users || []).map(x => {
+                                        return { value: x.id, label: x.name, user: x }
+                                    })} onChange={onUserChange} value={user} formatOptionLabel={
+                                        ({ label, user }) => {
+                                            return (
+                                                <div className="d-flex flex-column">
+                                                    <span>{label}</span>
+                                                    <span className="text-sm fst-italic fw-medium">Role: {(((user || {}).userRoles || [])[0] || {}).name || '-NA-'}</span>
+                                                </div>
+                                            )
+                                        }
+                                    } />
+                                </div>
+                                <Button variant="primary" className="px-4 ms-auto text-nowrap" disabled={!Boolean(user)}
+                                    onClick={() => setAction(ACTIONS.ADD)}>Add User Location</Button>
                             </div>
-                            <Button variant="primary" className="px-4 ms-auto text-nowrap" disabled={!Boolean(user)}
-                                onClick={() => setAction(ACTIONS.ADD)}>Add User Location</Button>
                         </div>
                     </div>
+                    <Table data={data} options={tableConfig} isLoading={isFetching} />
                 </div>
-                <Table data={data} options={tableConfig} isLoading={isFetching} />
-            </div>
+            </MastersLayout>
 
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&

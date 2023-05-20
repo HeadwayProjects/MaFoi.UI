@@ -16,7 +16,8 @@ import TableFilters from "../../common/TableFilter";
 function MangeUsers() {
     const [breadcrumb] = useState([
         { id: 'home', label: 'Home', path: '/' },
-        { id: 'users', label: 'Users' },
+        { id: 'users', label: 'User Management', path: '/userManagement/users' },
+        { id: 'users', label: 'Manage Users' },
     ]);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [user, setUser] = useState(null);
@@ -162,13 +163,13 @@ function MangeUsers() {
 
     return (
         <>
-            <MastersLayout title="User Management" breadcrumbs={breadcrumb}>
+            <MastersLayout title="Manage Users" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0">
                     <div className="card d-flex flex-row justify-content-center m-3 p-3">
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
-                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange} 
-                                placeholder={"Search for Name/Username/Email"}/>
+                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
+                                    placeholder={"Search for Name/Username/Email"} />
                                 <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
                                     <Icon name={'plus'} className="me-2"></Icon>Add New
                                 </Button>

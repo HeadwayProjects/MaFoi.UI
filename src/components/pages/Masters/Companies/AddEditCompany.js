@@ -20,18 +20,19 @@ const STEPS = {
 };
 
 function AddEditCompany({ action, company, parentCompany, changeView }) {
+    const [payload, setPayload] = useState();
+    const [doNext, setDoNext] = useState();
     const [isParentCompany] = useState(!Boolean(parentCompany));
     const [activeStep, setActiveStep] = useState(STEPS.DETAILS);
     const [companyDetails, setCompanyDetails] = useState(company);
     const { uploadLogo, uploading } = useUploadLogo(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success('Logo uploaded successfully.');
-            if (!companyDetails.logo) {
-                setActiveStep(STEPS.SPOC);
-            }
-            const _company = { ...companyDetails };
+            const _company = { ...payload, id: companyDetails.id };
             delete _company.file;
             setCompanyDetails({ ..._company, logo: value });
+            setPayload(null);
+            handleNext();
         } else {
             toast.error(value || ERROR_MESSAGES.UPLOAD_FILE);
         }
@@ -39,7 +40,7 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
     const { createCompany, creating } = useCreateCompany(({ id, name, message }) => {
         if (id) {
             toast.success(`Company ${name} created successfully.`);
-            setCompanyDetails({ ...companyDetails, id, parentCompany });
+            setCompanyDetails({ ...payload, id, parentCompany });
             uploadCompanyLogo(id);
         } else {
             toast.error(message || ERROR_MESSAGES.ERROR);
@@ -48,8 +49,12 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
     const { updateCompany, updating } = useUpdateCompany(({ id, name, message }) => {
         if (id) {
             toast.success(`Company ${name} updated successfully.`);
-            if (companyDetails.file) {
+            if (payload.file) {
                 uploadCompanyLogo(id);
+            } else {
+                setCompanyDetails(payload);
+                setPayload(null);
+                handleNext();
             }
         } else {
             toast.error(message || ERROR_MESSAGES.ERROR);
@@ -70,21 +75,42 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
         changeView(VIEWS.LIST, { parentCompany });
     }
 
-    function submitDetails(_company, step) {
+    function submitDetails(_company, next) {
         if (_company) {
-            setCompanyDetails({ ..._company });
+            setPayload(_company);
+            setDoNext(next);
+            const _x = { ..._company };
+            delete _x.file;
+            if (companyDetails) {
+                updateCompany(_x);
+            } else {
+                createCompany(_x);
+            }
         }
-        delete _company.file;
-        if (companyDetails) {
-            updateCompany(_company);
-        } else {
-            createCompany(_company);
+    }
+
+    function handleNext() {
+        if (doNext) {
+            setDoNext(false);
+            switch (activeStep) {
+                case STEPS.DETAILS:
+                    setActiveStep(STEPS.SPOC);
+                    break;
+                case STEPS.SPOC:
+                    setActiveStep(STEPS.TDS_PF);
+                    break;
+                case STEPS.TDS_PF:
+                    parentCompany ? backToAssociateCompaniesList() : backToCompaniesList();
+                    break;
+                default:
+                // Do nothing
+            }
         }
     }
 
     function uploadCompanyLogo(id) {
         const formData = new FormData();
-        const files = [...companyDetails.file.inputFiles];
+        const files = [...payload.file.inputFiles];
         files.forEach(file => {
             formData.append('file', file, file.name);
         });
@@ -125,20 +151,28 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
                     <Tab eventKey={STEPS.DETAILS} title="Company Details">
                         {
                             activeStep === STEPS.DETAILS &&
-                            <CompanyDetails company={companyDetails} onNext={submitDetails} parentCompany={parentCompany}
-                                onPrevious={parentCompany ? backToAssociateCompaniesList : backToCompaniesList} />
+                            <CompanyDetails company={companyDetails} parentCompany={parentCompany}
+                                onPrevious={parentCompany ? backToAssociateCompaniesList : backToCompaniesList}
+                                onNext={() => setActiveStep(STEPS.SPOC)}
+                                onSubmit={submitDetails} />
                         }
                     </Tab>
                     <Tab eventKey={STEPS.SPOC} title="SPOC Details" disabled={!Boolean(companyDetails)}>
                         {
                             activeStep === STEPS.SPOC &&
-                            <CompanySPOC company={companyDetails} onNext={submitDetails} onSTEPSPrevious={() => { }} />
+                            <CompanySPOC company={companyDetails} parentCompany={parentCompany}
+                                onPrevious={() => setActiveStep(STEPS.DETAILS)}
+                                onNext={() => setActiveStep(STEPS.TDS_PF)}
+                                onSubmit={submitDetails} />
                         }
                     </Tab>
                     <Tab eventKey={STEPS.TDS_PF} title="Statutory Details" disabled={!Boolean(companyDetails)}>
                         {
                             activeStep === STEPS.TDS_PF &&
-                            <CompanyTDS company={companyDetails} onNext={submitDetails} onPrevious={() => { }} />
+                            <CompanyTDS company={companyDetails} parentCompany={parentCompany}
+                                onPrevious={() => setActiveStep(STEPS.SPOC)}
+                                onNext={parentCompany ? backToAssociateCompaniesList : backToCompaniesList}
+                                onSubmit={submitDetails} />
                         }
                     </Tab>
                 </Tabs>

@@ -32,8 +32,8 @@ const SideNavMenu = [
     },
     {
         id: 'userManagement', url: '/userManagement/users', icon: 'users', label: 'User Management', children: [
-            { id: 'userManagement/users', url: '/userManagement/users', label: 'Users' },
-            { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Mapping' },
+            { id: 'userManagement/users', url: '/userManagement/users', label: 'Manage Users' },
+            { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Company Mapping' },
         ]
     },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities' },

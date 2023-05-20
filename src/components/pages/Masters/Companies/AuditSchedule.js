@@ -151,7 +151,7 @@ function AuditSchedule() {
             if (Array.isArray(month)) {
                 fromDate = new Date(month[0]);
                 fromDate.setDate(1);
-                toDate = new Date(month[1]);
+                toDate = new Date(month[1] || month[0]);
                 toDate.setDate(1);
             } else {
                 fromDate = new Date(month);

@@ -16,6 +16,7 @@ import { useRef } from "react";
 import TableFilters from "../../../common/TableFilter";
 
 function AssociateCompaniesList({ changeView, parent }) {
+    const [t] = useState(new Date().getTime());
     const [query] = useQueryParams();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [parentCompanyId, setParentCompanyId] = useState(null);
@@ -27,8 +28,8 @@ function AssociateCompaniesList({ changeView, parent }) {
     const filterRef = useRef();
     filterRef.current = filters;
     const [payload, setPayload] = useState();
-    const { companies: parentCompanies, isFetching: fetching } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
-    const { companies, total, isFetching, refetch } = useGetCompanies({ ...payload }, Boolean(parentCompany && payload));
+    const { companies: parentCompanies, isFetching: fetching } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t });
+    const { companies, total, isFetching, refetch } = useGetCompanies({ ...payload, t }, Boolean(parentCompany && payload));
     const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
         refetch();
     }, () => toast.error(ERROR_MESSAGES.DEFAULT));
@@ -41,10 +42,7 @@ function AssociateCompaniesList({ changeView, parent }) {
                 return { value: x.id, label: x.name };
             }),
             hideAll: true,
-            value: parentCompany,
-            // onChange: (e) => {
-            //     setParentCompany(e);
-            // }
+            value: parentCompany
         }
     ]
 
@@ -178,7 +176,7 @@ function AssociateCompaniesList({ changeView, parent }) {
             }
         };
         setParams(_params);
-        setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+        setPayload({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' }, ...filterRef.current, ..._params });
         return Promise.resolve(formatApiResponse(params, companies, total));
     }
 
@@ -209,7 +207,9 @@ function AssociateCompaniesList({ changeView, parent }) {
             const _parentCompanyId = (_filters.find(x => x.columnName === 'parentCompanyId') || {}).value;
             if (_parentCompanyId || parentCompanyId) {
                 const _parentCompany = parentCompanies.find(x => x.id === (_parentCompanyId || parentCompanyId));
-                setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
+                if (_parentCompany) {
+                    setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
+                }
                 const _x = {
                     filters: [
                         { columnName: 'isParent', value: 'false' },
@@ -217,7 +217,7 @@ function AssociateCompaniesList({ changeView, parent }) {
                     ],
                     search
                 }
-                setPayload({ ...DEFAULT_PAYLOAD, ...params, ..._x });
+                setPayload({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' }, ...params, ..._x });
             }
         }
     }, [filters]);
@@ -260,7 +260,6 @@ function AssociateCompaniesList({ changeView, parent }) {
                     ]
                 };
                 setFilters(_filterRef);
-                setPayload({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' }, ...params, ..._filterRef });
             }
         }
     }, [parent])

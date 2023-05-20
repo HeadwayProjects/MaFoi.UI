@@ -12,6 +12,7 @@ import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
 import RuleStateCompanyMappingDetails from "./RuleStateCompanyMappingDetails";
 import TableFilters from "../../../common/TableFilter";
+import { download, preventDefault } from "../../../../utils/common";
 
 function RuleStateCompanyMapping() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Mapping'));
@@ -42,15 +43,6 @@ function RuleStateCompanyMapping() {
         }
     ]
 
-    function downloadFile(file) {
-        const link = document.createElement('a');
-        link.href = file.filePath;
-        link.download = file.fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
 
@@ -70,8 +62,8 @@ function RuleStateCompanyMapping() {
                 }} />
                 {
                     row.fileName && row.filePath &&
-                    <Icon className="mx-2" type="button" name={'download'} text={'View'} data={row} action={(event) => {
-                        downloadFile({ fileName: row.fileName, filePath: row.filePath })
+                    <Icon className="mx-2" type="button" name={'download'} text={'View'} data={row} action={() => {
+                        download(row.fileName, row.filePath)
                     }} />
                 }
             </div>

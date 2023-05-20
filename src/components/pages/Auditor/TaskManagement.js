@@ -53,7 +53,7 @@ function TaskManagement() {
     const [alertMessage, setAlertMessage] = useState(null);
     const [publish, setPublish] = useState(false);
     const [report, setReport] = useState(null);
-    const { auditReport } = useAuditReport((response) => {
+    const { auditReport, exporting } = useAuditReport((response) => {
         const blob = new Blob([response.data], { type: response.headers['content-type'] })
         const URL = window.URL || window.webkitURL;
         const downloadUrl = URL.createObjectURL(blob);
@@ -457,7 +457,7 @@ function TaskManagement() {
                     onSubmit={onPublish}
                     selectedRows={selectedRows} />
             }
-            {submitting && <PageLoader />}
+            {(submitting || exporting) && <PageLoader />}
             {
                 !!report &&
                 <Report data={report} payload={filters} onClose={(e) => {

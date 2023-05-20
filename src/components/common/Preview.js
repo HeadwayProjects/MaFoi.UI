@@ -2,6 +2,7 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
 import "./Preview.css";
+import { Button } from "react-bootstrap";
 
 const DocType = {
     PDF: 'application/pdf'
@@ -27,7 +28,7 @@ function Preview({ documentUrl, documentType = DocType.PDF, onClose }) {
 
     return (
         <div className="previewOverlay 2">
-            <FontAwesomeIcon icon={faClose} className="closeBtn" onClick={onClose} />
+            <Button className="btn btn-outline-secondary closeBtn" onClick={onClose}>Close Or Esc</Button>
             <iframe src={`https://docs.google.com/gview?url=${documentUrl}&embedded=true`} />
         </div>
     )

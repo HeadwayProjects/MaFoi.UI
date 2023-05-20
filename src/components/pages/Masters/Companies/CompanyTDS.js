@@ -5,7 +5,7 @@ import { Button } from "react-bootstrap";
 import { COMPANY_REQUEST } from "./Companies.constants";
 import { PATTERNS } from "../../../common/Constants";
 
-function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
+function CompanyTDS({ onNext, onPrevious, onSubmit, company }) {
     const [form, setForm] = useState({});
     const [companyDetails, setCompanyDetails] = useState({ hideButtons: true });
 
@@ -178,7 +178,7 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
         ]
     }
 
-    function handleSubmit() {
+    function handleSubmit(next) {
         if (form.valid) {
             const { pan, tan,
                 pF_Ac_No, pF_Establishment_Code, pF_Deduction_Percent, pF_Base_Limit, pF_Establishment_Id,
@@ -205,12 +205,8 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
             }
             delete payload.hideButtons;
             delete payload.parentCompany;
-            onNext(payload);
+            onSubmit(payload, next);
         }
-    }
-
-    function handleCancel() {
-        onPrevious();
     }
 
     useEffect(() => {
@@ -233,8 +229,14 @@ function CompanyTDS({ onNext, onPrevious, company, parentCompany }) {
                         debug={debugForm}
                     />
                     <div className="d-flex justify-content-between mt-4">
-                        <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={handleCancel}>{'Previous'}</Button>
-                        <Button variant="primary" onClick={handleSubmit} className="px-4" disabled={!form.valid}>{'Save'}</Button>
+                        <div>
+                            <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onPrevious}>{'Previous'}</Button>
+                            <Button variant="outline-secondary" className="btn btn-outline-secondary px-4 ms-3" onClick={onNext}>{'Cancel'}</Button>
+                        </div>
+                        <div>
+                            <Button variant="primary" onClick={() => handleSubmit(false)} className="px-4" disabled={!form.valid}>{'Save'}</Button>
+                            <Button variant="primary" onClick={() => handleSubmit(true)} className="px-4 ms-3" disabled={!form.valid}>{'Save & Close'}</Button>
+                        </div>
                     </div>
                 </div>
             </div>

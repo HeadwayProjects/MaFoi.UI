@@ -7,6 +7,8 @@ import "./Table.css";
 import { TOOLTIP_DELAY } from "./Constants";
 import Icon from "./Icon";
 import Select from "react-select";
+import '../shared/PageLoader.css';
+import PageLoader from "../shared/PageLoader";
 
 const PageNav = {
     FIRST: 'first',
@@ -186,7 +188,6 @@ function Table(props) {
                 sortMode,
                 selectable,
                 selectableCheck,
-                // dataLoaderLoading
                 placeholder: 'No Data Available',
                 ajaxResponse: (url, params, response) => {
                     return response;
@@ -195,7 +196,8 @@ function Table(props) {
                 layout,
                 columns: tableColumns,
                 resizableColumnFit,
-                rowHeight
+                rowHeight,
+                dataLoader: false
             });
             setTable(_table);
 
@@ -261,7 +263,6 @@ function Table(props) {
             setTimeout(() => {
                 if (props.isLoading) {
                     table.rowManager._clearPlaceholder();
-                    table.alertManager.alert(table.options.dataLoaderLoading);
                 } else {
                     try {
                         const _alert = table.element.querySelector('.tabulator-alert');
@@ -307,6 +308,9 @@ function Table(props) {
                     }
                 </div>
             </div>
+            {
+                props.isLoading && <PageLoader message={'Loading...'}/>
+            }
         </>
     )
 }

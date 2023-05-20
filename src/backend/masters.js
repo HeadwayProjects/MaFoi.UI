@@ -534,6 +534,20 @@ export function useCreateStateRuleCompanyMapping(onSuccess, onError) {
     );
     return { createStateRuleCompanyMapping, error, creating };
 }
+export function useUpdateStateRuleMapping(onSuccess, onError) {
+    const { mutate: updateStateRuleMapping, error, isLoading: updating } = useMutation(
+        ['updateStateRuleMapping'],
+        async (payload) => await api.post('/api/Mappings/UpdateActStateMapping', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateStateRuleMapping, error, updating };
+}
 
 export function useUploadActStateMappingTemplate(onSuccess, onError) {
     const { mutate: uploadActStateMappingTemplate, error, isLoading: uploading } = useMutation(
