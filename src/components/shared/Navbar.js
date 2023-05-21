@@ -104,7 +104,7 @@ function Navbar({ showUser = true }) {
                                             </div>
                                             <div className="dropdown-menu">
                                                 <div className="dropdown-item"><span className="fw-bold">Role: </span>{user.role}</div>
-                                                <div className="dropdown-item" to="">Settings</div>
+                                                {/* <div className="dropdown-item" to="">Settings</div> */}
                                                 <a className="dropdown-item" href="/" onClick={changePassword}>Change Password</a>
                                                 <hr className="dropdown-divider" />
                                                 <a className="dropdown-item" href="/" onClick={logout}>Logout</a>
