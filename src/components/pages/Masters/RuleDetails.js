@@ -8,18 +8,28 @@ import { getValue } from "../../../utils/common";
 import { GetActionTitle, RuleType } from "./Master.constants";
 import { useCreateRule, useUpdateRule } from "../../../backend/masters";
 import { toast } from "react-toastify";
-import { ERROR_MESSAGES } from "../../../utils/constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 
 function RuleDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [ruleDetails, setRuleDetails] = useState({ hideButtons: true });
-    const { createRule, isLoading: creatingRule } = useCreateRule((response) => {
-        onSubmit();
+    const { createRule, isLoading: creatingRule } = useCreateRule(({key, value}) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`${ruleDetails.name} created successfully.`);
+            onSubmit();
+        } else {
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Rule combination already exists.': ERROR_MESSAGES.ERROR);
+        }
     }, errorCallback);
 
-    const { updateRule, isLoading: updatingRule } = useUpdateRule((response) => {
-        onSubmit();
+    const { updateRule, isLoading: updatingRule } = useUpdateRule(({key, value}) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`${ruleDetails.name} upated successfully.`);
+            onSubmit();
+        } else {
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Rule combination already exists.': ERROR_MESSAGES.ERROR);
+        }
     }, errorCallback);
 
     function errorCallback() {

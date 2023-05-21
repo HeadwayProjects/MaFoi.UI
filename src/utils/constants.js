@@ -1,7 +1,8 @@
 export const ERROR_MESSAGES = {
     DEFAULT: 'Something went wrong! Please try again.',
     ERROR: 'Error!!!',
-    UPLOAD_FILE: 'Error in uploading'
+    UPLOAD_FILE: 'Error in uploading',
+    DUPLICATE: 'DUPLICATE'
 };
 
 export const API_RESULT = {

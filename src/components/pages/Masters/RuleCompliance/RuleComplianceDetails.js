@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
-import { ERROR_MESSAGES } from "../../../../utils/constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { useCreateRuleCompliance, useGetRules, useGetStates, useUpdateRuleCompliance } from "../../../../backend/masters";
 import { getValue, preventDefault } from "../../../../utils/common";
 import { ActivityType, AuditType, GetActionTitle, GetRuleDesc, RiskType } from "../Master.constants";
@@ -18,16 +18,20 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
     const { states, isFetching: loadingStates } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { rules, isFetching: loadingRules } = useGetRules({ ...DEFAULT_OPTIONS_PAYLOAD });
     const [compliance, setCompliance] = useState({ hideButtons: true });
-    const { updateRuleCompliance, updating } = useUpdateRuleCompliance(() => {
-        toast.success(`${compliance.complianceName} updated successsfully.`);
-        onSubmit();
-    }, errorCallback);
-    const { createRuleCompliance, creating } = useCreateRuleCompliance((response) => {
-        if (response instanceof AxiosError) {
-            errorCallback();
+    const { updateRuleCompliance, updating } = useUpdateRuleCompliance(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`${compliance.complianceName} updated successsfully.`);
+            onSubmit();
         } else {
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Compliance name, state and rule combination already exists.' : ERROR_MESSAGES.ERROR);
+        }
+    }, errorCallback);
+    const { createRuleCompliance, creating } = useCreateRuleCompliance(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
             toast.success(`${compliance.complianceName} created successsfully.`);
             onSubmit();
+        } else {
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Compliance name, state and rule combination already exists.' : ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
 
@@ -203,7 +207,7 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 stateId: compliance.state.value,
                 ruleId: compliance.rule.value,
                 proofOfCompliance: (compliance.proofOfCompliance || '').trim(),
-                penalty: compliance.penalty,
+                penalty: `${compliance.penalty || 0}`,
                 risk: compliance.risk.value,
                 maximumPenaltyAmount: compliance.maximumPenaltyAmount ? parseFloat(compliance.maximumPenaltyAmount) : 0,
                 impriosonment: compliance.impriosonment,

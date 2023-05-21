@@ -8,29 +8,29 @@ import { getValue, preventDefault } from "../../../utils/common";
 import { useCreateAct, useGetLaws, useUpdateAct } from "../../../backend/masters";
 import { EstablishmentTypes, GetActionTitle } from "./Master.constants";
 import { toast } from "react-toastify";
-import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
+import { API_DELIMITER, API_RESULT, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function ActDetails({ action, data, onClose, onSubmit }) {
-    const [t]  = useState(new Date().getTime());
+    const [t] = useState(new Date().getTime());
     const [form, setForm] = useState({});
     const [act, setAct] = useState({ hideButtons: true });
     const { laws, isFetching: loadingLaws } = useGetLaws({ ...DEFAULT_OPTIONS_PAYLOAD, t });
-    const { createAct, creating } = useCreateAct(({ id, message }) => {
-        if (id) {
+    const { createAct, creating } = useCreateAct(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
             toast.success(`${act.name} created successfully.`);
             onSubmit();
         } else {
-            toast.error(message);
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Act, Establishment Type and Law combination already exists.' : ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
-    const { updateAct, updating } = useUpdateAct(({ id, message }) => {
-        if (id) {
+    const { updateAct, updating } = useUpdateAct(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
             toast.success(`${act.name} updated successfully.`);
             onSubmit();
         } else {
-            toast.error(message);
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Act, Establishment Type and Law combination already exists.' : ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
 
@@ -55,6 +55,9 @@ function ActDetails({ action, data, onClose, onSubmit }) {
                 label: 'Establishment Type',
                 content: action === ACTIONS.VIEW ? (getValue(data, 'establishmentType') || '').replaceAll(API_DELIMITER, UI_DELIMITER) : '',
                 options: EstablishmentTypes,
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
                 isMulti: true
             },
             {

@@ -87,6 +87,23 @@ export function CellTmpl({ cell }) {
     )
 }
 
+export function NameTmpl({ cell }) {
+    const value = (cell.getValue() || {}).name;
+    return (
+        <>
+            {
+                !!value &&
+                <div className="d-flex align-items-center h-100 w-auto">
+                    <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
+                        placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
+                        <div className="ellipse two-lines">{value}</div>
+                    </OverlayTrigger>
+                </div>
+            }
+        </>
+    )
+}
+
 function Table(props) {
     const id = `table_${new Date().getTime()}`;
     const divEle = useRef(null);

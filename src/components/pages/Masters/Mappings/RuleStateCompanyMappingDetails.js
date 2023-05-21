@@ -15,10 +15,10 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [mapping, setMapping] = useState({ hideButtons: true });
     const [defaultPayload] = useState({ ...DEFAULT_OPTIONS_PAYLOAD, t: new Date().getTime() });
-    const { acts } = useGetActs({ ...defaultPayload }, Boolean(defaultPayload));
-    const { rules } = useGetRules({ ...defaultPayload }, Boolean(defaultPayload));
-    const { activities } = useGetActivities({ ...defaultPayload }, Boolean(defaultPayload));
-    const { states } = useGetStates({ ...defaultPayload }, Boolean(defaultPayload));
+    const { acts } = useGetActs({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
+    const { rules } = useGetRules({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
+    const { activities } = useGetActivities({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
+    const { states } = useGetStates({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
     const { uploadActStateMappingTemplate, uploading } = useUploadActStateMappingTemplate(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Template uploaded successfully.`);
@@ -119,7 +119,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: getValue(mapping, 'act.name'),
+                content: getValue(mapping, 'act.label'),
                 options: acts
             },
             {
@@ -129,7 +129,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action !== ACTIONS.ADD ? GetRuleDesc(getValue(mapping, 'rule') || {}) : '',
+                content: action !== ACTIONS.ADD ? GetRuleDesc(getValue(mapping, 'rule.rule') || {}) : '',
                 options: rules,
                 formatOptionLabel: ruleOptionLabel
             },
@@ -140,7 +140,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: getValue(mapping, 'activity.name'),
+                content: getValue(mapping, 'activity.label'),
                 options: activities,
                 formatOptionLabel: activityOptionLabel
             },
@@ -151,7 +151,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: getValue(mapping, 'state.name'),
+                content: getValue(mapping, 'state.label'),
                 options: states
             },
             {

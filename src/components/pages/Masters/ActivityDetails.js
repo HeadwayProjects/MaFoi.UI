@@ -8,26 +8,26 @@ import { getValue } from "../../../utils/common";
 import { ActivityType, CalendarType, GetActionTitle, Periodicity } from "./Master.constants";
 import { useCreateActivity, useUpdateActivity } from "../../../backend/masters";
 import { toast } from "react-toastify";
-import { ERROR_MESSAGES } from "../../../utils/constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader"
 
 function ActivityDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [activity, setActivity] = useState({ hideButtons: true })
-    const { createActivity, creating } = useCreateActivity(({ id, name, message }) => {
-        if (id) {
-            toast.success(`${name} created successfully.`);
+    const { createActivity, creating } = useCreateActivity(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`${activity.name} created successfully.`);
             onSubmit();
         } else {
-            toast.error(message);
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'A similar combination of activity already exists.' : ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
-    const { updateActivity, updating } = useUpdateActivity(({ id, name,  message }) => {
-        if (id) {
-            toast.success(`${name} updated successfully.`);
+    const { updateActivity, updating } = useUpdateActivity(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`${activity.name} updated successfully.`);
             onSubmit();
         } else {
-            toast.error(message);
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'A similar combination of activity already exists.' : ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
 

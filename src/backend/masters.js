@@ -196,7 +196,10 @@ export function useCreateRule(onSuccess, onError) {
         async (payload) => await api.post('/api/Rule/Add', payload),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { createRule, error, isLoading };
@@ -208,7 +211,10 @@ export function useUpdateRule(onSuccess, onError) {
         async (payload) => await api.put('/api/Rule/Update', payload),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { updateRule, error, isLoading };
@@ -476,7 +482,10 @@ export function useCreateRuleCompliance(onSuccess, onError) {
         async (payload) => await api.post('/api/RuleComplianceDetail/Add', payload),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { createRuleCompliance, error, creating };
@@ -488,7 +497,10 @@ export function useUpdateRuleCompliance(onSuccess, onError) {
         async (payload) => await api.put('/api/RuleComplianceDetail/Update', payload),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { updateRuleCompliance, error, updating };

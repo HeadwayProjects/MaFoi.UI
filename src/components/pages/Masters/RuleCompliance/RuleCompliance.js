@@ -5,7 +5,7 @@ import { ActivityType, AuditType, GetMastersBreadcrumb } from "./../Master.const
 import { ACTIONS } from "../../../common/Constants";
 import { useDeleteRuleCompliance, useGetRuleCompliances, useGetStates } from "../../../../backend/masters";
 import Icon from "../../../common/Icon";
-import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, NameTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
 import ConfirmModal from "../../../common/ConfirmModal";
 import RuleComplianceDetails from "./RuleComplianceDetails";
 import { toast } from "react-toastify";
@@ -13,6 +13,13 @@ import { ERROR_MESSAGES } from "../../../../utils/constants";
 import PageLoader from "../../../shared/PageLoader";
 import { useRef } from "react";
 import TableFilters from "../../../common/TableFilter";
+
+const SortFields = {
+    'state.name': 'state',
+    'rule.name': 'rule',
+    'rule.sectionNo': 'sectionNo',
+    'rule.ruleNo': 'ruleNo'
+};
 
 function RuleCompliance() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Rule Compliance'));
@@ -89,22 +96,22 @@ function RuleCompliance() {
             formatter: reactFormatter(<CellTmpl />), titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "State", field: "state.name", headerSort: false,
+            title: "State", field: "state.name",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Rule", field: "rule.name", headerSort: false,
+            title: "Rule", field: "rule.name",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Section", field: "rule.sectionNo", headerSort: false,
+            title: "Section", field: "rule.sectionNo",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Rule No", field: "rule.ruleNo", headerSort: false,
+            title: "Rule No", field: "rule.ruleNo",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
@@ -155,7 +162,7 @@ function RuleCompliance() {
                 pageNumber: params.page
             },
             sort: {
-                columnName: field || 'complianceName',
+                columnName: SortFields[field] || field || 'complianceName',
                 order: dir || 'asc'
             }
         };

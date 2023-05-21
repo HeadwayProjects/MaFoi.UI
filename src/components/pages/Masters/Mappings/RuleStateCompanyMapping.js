@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
 import Icon from "../../../common/Icon";
 import { ACTIONS, TOOLTIP_DELAY } from "../../../common/Constants";
-import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, NameTmpl, reactFormatter } from "../../../common/Table";
 import MastersLayout from "../MastersLayout";
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import ConfirmModal from "../../../common/ConfirmModal";
@@ -77,23 +77,6 @@ function RuleStateCompanyMapping() {
         )
     }
 
-    function ValueTmpl({ cell }) {
-        const value = (cell.getValue() || {}).name;
-        return (
-            <>
-                {
-                    !!value &&
-                    <div className="d-flex align-items-center h-100 w-auto">
-                        <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
-                            placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
-                            <div className="ellipse two-lines">{value}</div>
-                        </OverlayTrigger>
-                    </div>
-                }
-            </>
-        )
-    }
-
     function TypeTmpl({ cell }) {
         const value = ((cell.getData() || {}).activity || {}).type;
         return (
@@ -134,10 +117,10 @@ function RuleStateCompanyMapping() {
     }
 
     const columns = [
-        { title: "Act", field: "act", formatter: reactFormatter(<ValueTmpl />) },
+        { title: "Act", field: "act", formatter: reactFormatter(<NameTmpl />) },
         { title: "Rule", field: "rule", widthGrow: 2, formatter: reactFormatter(<RuleTmpl />) },
-        { title: "Activity", field: "activity", formatter: reactFormatter(<ValueTmpl />) },
-        { title: "State", field: "state", formatter: reactFormatter(<ValueTmpl />) },
+        { title: "Activity", field: "activity", formatter: reactFormatter(<NameTmpl />) },
+        { title: "State", field: "state", formatter: reactFormatter(<NameTmpl />), headerSort: true  },
         { title: "Type", field: "type", formatter: reactFormatter(<TypeTmpl />) },
         { title: "Form Name", field: "formName", formatter: reactFormatter(<CellTmpl />) },
         {

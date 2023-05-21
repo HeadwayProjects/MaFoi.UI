@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
-import { Button } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import Icon from "../../common/Icon";
-import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
-import { ACTIONS } from "../../common/Constants";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter, NameTmpl } from "../../common/Table";
+import { ACTIONS, TOOLTIP_DELAY } from "../../common/Constants";
 import CityDetails from "./CityDetails";
 import ConfirmModal from "../../common/ConfirmModal";
 import { useGetCities, useDeleteCity, useGetStates } from "../../../backend/masters";
@@ -42,7 +42,7 @@ function City() {
                 return { value: x.id, label: x.name };
             })
         }
-    ]
+    ];
 
     function ActionColumnElements({ cell }) {
         const row = cell.getData();
@@ -68,7 +68,7 @@ function City() {
     const columns = [
         { title: "Code", field: "code", formatter: reactFormatter(<CellTmpl />) },
         { title: "Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
-        { title: "State", field: "state.name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />), headerSort: false },
+        { title: "State", field: "state", widthGrow: 2, formatter: reactFormatter(<NameTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)

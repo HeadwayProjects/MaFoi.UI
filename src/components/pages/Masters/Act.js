@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
 import { Button, InputGroup } from "react-bootstrap";
 import Icon from "../../common/Icon";
-import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, NameTmpl, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
 import ActDetails from "./ActDetails";
 import ConfirmModal from "../../common/ConfirmModal";
@@ -102,7 +102,7 @@ function Act() {
     const columns = [
         { title: "Act Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<TypeTmpl />) },
-        { title: "Law", field: "law.name", formatter: reactFormatter(<CellTmpl />), headerSort: false },
+        { title: "Law", field: "law", formatter: reactFormatter(<CellTmpl />), formatter: reactFormatter(<NameTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -183,7 +183,7 @@ function Act() {
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
-                                placeholder="Search for Act/Estblishment Type/Law"/>
+                                    placeholder="Search for Act/Estblishment Type/Law" />
                                 <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
                                     <Icon name={'plus'} className="me-2"></Icon>Add New
                                 </Button>
