@@ -13,6 +13,10 @@ import UserDetails from "./UserDetails";
 import { useRef } from "react";
 import TableFilters from "../../common/TableFilter";
 
+const SortFields = {
+    'userRoles': 'role'
+};
+
 function MangeUsers() {
     const [breadcrumb] = useState([
         { id: 'home', label: 'Home', path: '/' },
@@ -88,7 +92,7 @@ function MangeUsers() {
     const columns = [
         { title: "Name", field: "name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Username", field: "userName", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Role", field: "userRoles", formatter: reactFormatter(<RoleTmpl />), headerSort: false },
+        { title: "Role", field: "userRoles", formatter: reactFormatter(<RoleTmpl />) },
         { title: "Email", field: "email", formatter: reactFormatter(<CellTmpl />) },
         { title: "Status", field: "status", formatter: reactFormatter(<StatusTmpl />) },
         {
@@ -128,7 +132,7 @@ function MangeUsers() {
                 pageNumber: params.page
             },
             sort: {
-                columnName: field || 'name',
+                columnName: SortFields[field] || field || 'name',
                 order: dir || 'asc'
             }
         };

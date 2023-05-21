@@ -18,7 +18,10 @@ export const LOGIN_FIELDS = {
         label: 'Password',
         fieldType: 'password',
         validate: [
-            { type: validatorTypes.REQUIRED }
+            { type: validatorTypes.REQUIRED },
+            { type: validatorTypes.MIN_LENGTH, threshold: 7 },
+            { type: validatorTypes.MAX_LENGTH, threshold: 16 }
+            
         ]
     },
     OTP: {

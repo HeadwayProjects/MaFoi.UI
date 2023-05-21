@@ -6,31 +6,29 @@ import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
 import { useCreateLaw, useGetLaws, useUpdateLaw } from "../../../backend/masters";
 import { toast } from "react-toastify";
-import { ERROR_MESSAGES } from "../../../utils/constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 import { getValue } from "../../../utils/common";
 import { FindDuplicateMasters, GetActionTitle } from "./Master.constants";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function LawDetails({ action, data, onClose, onSubmit }) {
-    const [t] = useState(new Date().getTime());
     const [form, setForm] = useState({});
     const [law, setLaw] = useState({ hideButtons: true });
-    const { laws } = useGetLaws({ ...DEFAULT_OPTIONS_PAYLOAD, t });
-    const { createLaw, creating } = useCreateLaw(({ id, message }) => {
-        if (id) {
+    const { createLaw, creating } = useCreateLaw(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
             toast.success(`${law.name} created successfully.`);
             onSubmit();
         } else {
-            toast.error(message || ERROR_MESSAGES.ERROR);
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Law name already exists.' : ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
-    const { updateLaw, updating } = useUpdateLaw(({ id, message }) => {
-        if (id) {
+    const { updateLaw, updating } = useUpdateLaw(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
             toast.success(`${law.name} updated successfully.`);
             onSubmit();
         } else {
-            toast.error(message || ERROR_MESSAGES.ERROR);
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Law name already exists.' : ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
 
@@ -69,12 +67,6 @@ function LawDetails({ action, data, onClose, onSubmit }) {
     function handleSubmit() {
         if (form.valid) {
             const { name, description } = law;
-            const existingData = laws.filter(x => x.id !== (data || {}).id);
-            const duplicateStates = FindDuplicateMasters(existingData, { name });
-            if (duplicateStates.length) {
-                toast.error(`Law with simliar name already exists. Please update name`);
-                return;
-            }
             const request = { name: name.trim(), description: (description || '').trim() };
             if (action === ACTIONS.EDIT) {
                 request['id'] = data.id;
