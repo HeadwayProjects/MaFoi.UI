@@ -205,7 +205,7 @@ function UserCompanies() {
                                             return (
                                                 <div className="d-flex flex-column">
                                                     <span>{label}</span>
-                                                    <span className="text-sm fst-italic fw-medium">Role: {(((user || {}).userRoles || [])[0] || {}).name || '-NA-'}</span>
+                                                    <span className="text-sm fst-italic fw-bold">Role: {(((user || {}).userRoles || [])[0] || {}).name || '-NA-'}</span>
                                                 </div>
                                             )
                                         }

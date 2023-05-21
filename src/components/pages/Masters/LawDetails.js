@@ -13,9 +13,10 @@ import { FindDuplicateMasters, GetActionTitle } from "./Master.constants";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function LawDetails({ action, data, onClose, onSubmit }) {
+    const [t] = useState(new Date().getTime());
     const [form, setForm] = useState({});
     const [law, setLaw] = useState({ hideButtons: true });
-    const { laws } = useGetLaws({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { laws } = useGetLaws({ ...DEFAULT_OPTIONS_PAYLOAD, t });
     const { createLaw, creating } = useCreateLaw(({ id, message }) => {
         if (id) {
             toast.success(`${law.name} created successfully.`);
@@ -71,7 +72,7 @@ function LawDetails({ action, data, onClose, onSubmit }) {
             const existingData = laws.filter(x => x.id !== (data || {}).id);
             const duplicateStates = FindDuplicateMasters(existingData, { name });
             if (duplicateStates.length) {
-                toast.error(`${duplicateStates.length} law(s) matching name. Please update name`);
+                toast.error(`Law with simliar name already exists. Please update name`);
                 return;
             }
             const request = { name: name.trim(), description: (description || '').trim() };

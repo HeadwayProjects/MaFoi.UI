@@ -199,17 +199,6 @@ function AuditSchedule() {
                         <div className="w-100 px-4" style={{ maxWidth: "calc(100% - 550px)", minWidth: "50%" }}>
                             <div className="d-flex flex-column">
                                 <div className="d-flex flex-column card p-4 mb-4">
-                                    <div className="text-lg fw-bold mb-4">Instuctions for Export</div>
-                                    <ul>
-                                        <li>Select Company</li>
-                                        <li>Select Associate Company (Optional)</li>
-                                        <li>Select Location (Optional)</li>
-                                        <li>Please note that if you are not selecting the Associate Company or Location, then the application will export all data for all Associate Companies or Locations.</li>
-                                        <li>Select Month & Year. Here you can select the range of months to create the excel export</li>
-                                        <li>Click Export button to export the data into an excel sheet.</li>
-                                    </ul>
-                                </div>
-                                <div className="d-flex flex-column card p-4">
                                     <div className="text-lg fw-bold mb-4">Import Audit Schedule</div>
                                     <ul>
                                         <li>Click on Import Button</li>
@@ -219,6 +208,17 @@ function AuditSchedule() {
                                     <div>
                                         <Button variant="primary" onClick={() => setImportFile(true)} className="px-4">{'Import'}</Button>
                                     </div>
+                                </div>
+                                <div className="d-flex flex-column card p-4">
+                                    <div className="text-lg fw-bold mb-4">Instructions for Export</div>
+                                    <ul>
+                                        <li>Select Company</li>
+                                        <li>Select Associate Company (Optional)</li>
+                                        <li>Select Location (Optional)</li>
+                                        <li>Please note that if you are not selecting the Associate Company or Location, then the application will export all data for all Associate Companies or Locations.</li>
+                                        <li>Select Month & Year. Here you can select the range of months to create the excel export</li>
+                                        <li>Click Export button to export the data into an excel sheet.</li>
+                                    </ul>
                                 </div>
 
                             </div>

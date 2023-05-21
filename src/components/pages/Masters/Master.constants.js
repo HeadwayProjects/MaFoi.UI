@@ -39,7 +39,7 @@ export function FindDuplicateMasters(data, obj) {
         const duplicateKey = keys.find(key => {
             const value = (x[key] || '').toUpperCase();
             const parsedValue = value.replace(/[^A-Z0-9]/ig, '');
-            return value && value === parsedObj[key];
+            return value && parsedValue === parsedObj[key];
         });
         return Boolean(duplicateKey);
     });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { GetMastersBreadcrumb } from "../Master.constants";
+import { ActivityType, GetMastersBreadcrumb } from "../Master.constants";
 import { useDeleteActStateMapping, useGetStates, useStateRuleCompanyMappings } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
@@ -39,6 +39,13 @@ function RuleStateCompanyMapping() {
             name: 'stateId',
             options: (states || []).map(x => {
                 return { value: x.id, label: x.name };
+            })
+        },
+        {
+            label: 'Type',
+            name: 'type',
+            options: (ActivityType || []).map(x => {
+                return { value: x, label: x };
             })
         }
     ]
@@ -87,6 +94,23 @@ function RuleStateCompanyMapping() {
         )
     }
 
+    function TypeTmpl({ cell }) {
+        const value = ((cell.getData() || {}).activity || {}).type;
+        return (
+            <>
+                {
+                    !!value &&
+                    <div className="d-flex align-items-center h-100 w-auto">
+                        <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
+                            placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
+                            <div className="ellipse two-lines">{value}</div>
+                        </OverlayTrigger>
+                    </div>
+                }
+            </>
+        )
+    }
+
     function RuleTmpl({ cell }) {
         const rule = cell.getValue();
         return (
@@ -114,6 +138,7 @@ function RuleStateCompanyMapping() {
         { title: "Rule", field: "rule", widthGrow: 2, formatter: reactFormatter(<RuleTmpl />) },
         { title: "Activity", field: "activity", formatter: reactFormatter(<ValueTmpl />) },
         { title: "State", field: "state", formatter: reactFormatter(<ValueTmpl />) },
+        { title: "Type", field: "type", formatter: reactFormatter(<TypeTmpl />) },
         { title: "Form Name", field: "formName", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 160,
