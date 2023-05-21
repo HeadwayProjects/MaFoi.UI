@@ -122,23 +122,23 @@ function ActivityModal({ activity = {}, onClose, onSubmit }) {
                             <div className="d-flex justify-content-center px-4 py-2">
                                 <div className="col-12">
                                     <div className="row mb-2">
-                                        <div className="col-4 fw-bold">Act</div>
+                                        <div className="col-4 filter-label">Act</div>
                                         <div className="col">{(activity.act || {}).name}</div>
                                     </div>
                                     <div className="row mb-2">
-                                        <div className="col-4 fw-bold">Rule</div>
+                                        <div className="col-4 filter-label">Rule</div>
                                         <div className="col">{(activity.rule || {}).name}</div>
                                     </div>
                                     <div className="row mb-2">
-                                        <div className="col-4 fw-bold">Forms/Registers & Returns</div>
+                                        <div className="col-4 filter-label">Forms/Registers & Returns</div>
                                         <div className="col">{(activity.activity || {}).name}</div>
                                     </div>
                                     <div className="row mb-2">
-                                        <div className="col-4 fw-bold">Month(Year)</div>
+                                        <div className="col-4 filter-label">Month(Year)</div>
                                         <div className="col">{activity.month} ({activity.year})</div>
                                     </div>
                                     <div className="row mb-2">
-                                        <div className="col-4 fw-bold">Forms Status</div>
+                                        <div className="col-4 filter-label">Forms Status</div>
                                         <div className="col">{activity.status && <StatusTmp status={activity.status} />}</div>
                                     </div>
                                 </div>
@@ -151,18 +151,18 @@ function ActivityModal({ activity = {}, onClose, onSubmit }) {
                                         <div className="row mt-3">
                                             <div className="col-5">
                                                 <div className="col-12 mb-4">
-                                                    <label><small>Form Status</small><span className="required">*</span></label>
+                                                    <label className="filter-label">Form Status<span className="required">*</span></label>
                                                     <Select placeholder='Form Status' options={FORM_STATUSES} onChange={setStatus} value={status} />
                                                 </div>
                                                 <div className="col-12 mb-4">
-                                                    <label><small>Form Status Remarks</small>{(status || {}).value === ACTIVITY_STATUS.REJECT && <span className="required">*</span>}</label>
+                                                    <label className="filter-label">Form Status Remarks{(status || {}).value === ACTIVITY_STATUS.REJECT && <span className="required">*</span>}</label>
                                                     <textarea className="form-control" value={formsStatusRemarks}
                                                         onChange={(e) => setFormsStatusRemarks(e.target.value)} />
                                                 </div>
                                                 {
                                                     (status || {}).value === ACTIVITY_STATUS.REJECT &&
                                                     <div className="col-8 mb-4">
-                                                        <label><small>Vendor Due Date</small><span className="required">*</span></label>
+                                                        <label className="filter-label">Vendor Due Date<span className="required">*</span></label>
                                                         <DatePicker className="form-control" selected={dueDate} dateFormat="dd-MM-yyyy"
                                                             onChange={setDueDate} placeholderText="dd-mm-yyyy"
                                                             showMonthDropdown
@@ -176,12 +176,12 @@ function ActivityModal({ activity = {}, onClose, onSubmit }) {
                                                 <>
                                                     <div className="col-5">
                                                         <div className="col-12 mb-4">
-                                                            <label><small>Audit Status</small><span className="required">*</span></label>
+                                                            <label className="filter-label">Audit Status<span className="required">*</span></label>
                                                             <Select placeholder='Audit Status' options={AUDIT_STATUSES} onChange={setAuditStatus} value={auditStatus} />
                                                         </div>
                                                         <div className="col-12 mb-4">
-                                                            <label>
-                                                                <small>Audit Remarks</small>
+                                                            <label className="filter-label">
+                                                                Audit Remarks
                                                                 {[AUDIT_STATUS.NON_COMPLIANCE, AUDIT_STATUS.NOT_APPLICABLE].includes((auditStatus || {}).value) && <span className="required">*</span>}
                                                             </label>
                                                             <textarea className="form-control" value={auditRemarks}

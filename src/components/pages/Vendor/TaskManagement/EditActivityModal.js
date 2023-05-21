@@ -80,23 +80,23 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }) {
                     <div className="d-flex justify-content-center">
                         <div className="col-8">
                             <div className="row mb-2">
-                                <div className="col-4 fw-bold">Act</div>
+                                <div className="col-4 filter-label">Act</div>
                                 <div className="col">{(activity.act || {}).name}</div>
                             </div>
                             <div className="row mb-2">
-                                <div className="col-4 fw-bold">Rule</div>
+                                <div className="col-4 filter-label">Rule</div>
                                 <div className="col">{(activity.rule || {}).name}</div>
                             </div>
                             <div className="row mb-2">
-                                <div className="col-4 fw-bold">Forms/Registers & Returns</div>
+                                <div className="col-4 filter-label">Forms/Registers & Returns</div>
                                 <div className="col">{(activity.activity || {}).name}</div>
                             </div>
                             <div className="row mb-2">
-                                <div className="col-4 fw-bold">Month(Year)</div>
+                                <div className="col-4 filter-label">Month(Year)</div>
                                 <div className="col">{activity.month} ({activity.year})</div>
                             </div>
                             <div className="row mb-4">
-                                <div className="col-4 fw-bold">Forms Status</div>
+                                <div className="col-4 filter-label">Forms Status</div>
                                 <div className="col">{activity.status && <StatusTmp status={activity.status} />}</div>
                             </div>
                             {
