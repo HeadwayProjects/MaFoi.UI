@@ -153,7 +153,7 @@ function CompanySPOC({ onNext, onPrevious, onSubmit, company, parentCompany }) {
             },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'department',
+                name: 'contactPersonDepartment',
                 label: 'Department'
             },
             {
@@ -193,7 +193,8 @@ function CompanySPOC({ onNext, onPrevious, onSubmit, company, parentCompany }) {
         if (form.valid) {
             const {
                 companyAddress, city, state, country, contactNumber, email,
-                contactPersonName, contactPersonDesignation, contactPersonMobile, contactPersonEmail
+                contactPersonName, contactPersonDesignation, contactPersonMobile,
+                contactPersonEmail, contactPersonDepartment
             } = form.values
             const payload = {
                 ...COMPANY_REQUEST,
@@ -207,7 +208,8 @@ function CompanySPOC({ onNext, onPrevious, onSubmit, company, parentCompany }) {
                 contactPersonName,
                 contactPersonDesignation,
                 contactPersonMobile,
-                contactPersonEmail
+                contactPersonEmail,
+                contactPersonDepartment
             }
             delete payload.hideButtons;
             delete payload.parentCompany;

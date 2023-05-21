@@ -136,22 +136,22 @@ function CompanyTDS({ onNext, onPrevious, onSubmit, company }) {
             },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'pfAdminPercentage',
+                name: 'pF_Admin_Percentage',
                 label: 'PF Admin %'
             },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'pf',
+                name: 'pF',
                 label: 'PF'
             },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'edliAdminPercentage',
+                name: 'edli_Admin_Percentage',
                 label: 'EDLI Admin %'
             },
             {
                 component: componentTypes.TEXT_FIELD,
-                name: 'edliPercentage',
+                name: 'edli_Percentage',
                 label: '% of EDLI'
             },
             {
@@ -182,7 +182,8 @@ function CompanyTDS({ onNext, onPrevious, onSubmit, company }) {
         if (form.valid) {
             const { pan, tan,
                 pF_Ac_No, pF_Establishment_Code, pF_Deduction_Percent, pF_Base_Limit, pF_Establishment_Id,
-                pan_fullname, pan_surname, pan_designation, pan_mobile, pan_email, pan_place, gstn_no
+                pan_fullname, pan_surname, pan_designation, pan_mobile, pan_email, pan_place, gstn_no,
+                eps, pF_Admin_Percentage, pF, edli_Admin_Percentage, edli_Percentage
             } = form.values;
 
             const payload = {
@@ -201,7 +202,12 @@ function CompanyTDS({ onNext, onPrevious, onSubmit, company }) {
                 pan_mobile,
                 pan_email,
                 pan_place,
-                gstn_no
+                gstn_no,
+                eps,
+                pF_Admin_Percentage,
+                pF,
+                edli_Admin_Percentage,
+                edli_Percentage
             }
             delete payload.hideButtons;
             delete payload.parentCompany;
