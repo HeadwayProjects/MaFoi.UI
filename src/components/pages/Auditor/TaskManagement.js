@@ -172,7 +172,7 @@ function TaskManagement() {
         }
     }
 
-    function onPublish(e, recommondations) {
+    function onPublish(e, recommendations) {
         preventDefault(e);
         setSubmitting(true);
         const _payload = {
@@ -181,7 +181,7 @@ function TaskManagement() {
             locationId: payload.location,
             month: payload.month,
             year: payload.year,
-            recommondations
+            recommendations: recommendations || ''
         };
         api.post('/api/Auditor/UpdatePublishStatus', _payload).then(response => {
             refetch();
