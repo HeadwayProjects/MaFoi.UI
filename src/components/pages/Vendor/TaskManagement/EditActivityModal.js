@@ -78,7 +78,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }) {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="d-flex justify-content-center">
-                        <div className="col-8">
+                        <div className="col-11">
                             <div className="row mb-2">
                                 <div className="col-4 filter-label">Act</div>
                                 <div className="col">{(activity.act || {}).name}</div>
