@@ -120,7 +120,7 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
                                 <div className="col-8">
                                     <div className="row">
                                         <div className="col-12 mb-4">
-                                            <label><small>Filter By</small></label>
+                                            <label className="filter-label">Filter By</label>
                                             <Select placeholder='Select Filter' options={options} onChange={onFilterChange} value={filter} />
                                         </div>
                                     </div>
@@ -128,11 +128,11 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
                                         filter && filter.value === FILTERS.MONTH &&
                                         <div className="row">
                                             <div className="col-6 mb-4">
-                                                <label><small>Month</small></label>
+                                                <label className="filter-label">Month</label>
                                                 <Select placeholder='Select Month' options={MONTHS} onChange={onMonthChange} value={payload.month} />
                                             </div>
                                             <div className="col-6 mb-4">
-                                                <label><small>Year</small></label>
+                                                <label className="filter-label">Year</label>
                                                 <Select placeholder='Select Year' options={YEARS} onChange={onYearChange} value={payload.year} />
                                             </div>
                                         </div>
@@ -141,7 +141,7 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
                                         filter && [FILTERS.DUE_DATE, FILTERS.SUBMITTED_DATE].includes(filter.value) &&
                                         <div className="row">
                                             <div className="col-6 mb-4">
-                                                <label><small>From</small></label>
+                                                <label className="filter-label">From</label>
                                                 <DatePicker className="form-control" selected={payload.fromDate} dateFormat="dd-MM-yyyy"
                                                     onChange={fromDateChange} placeholderText="dd-mm-yyyy"
                                                     showMonthDropdown
@@ -149,7 +149,7 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
                                                     dropdownMode="select" />
                                             </div>
                                             <div className="col-6 mb-4">
-                                                <label><small>To</small></label>
+                                                <label className="filter-label">To</label>
                                                 <DatePicker className="form-control" selected={payload.toDate} dateFormat="dd-MM-yyyy"
                                                     onChange={toDateChange} placeholderText="dd-mm-yyyy"
                                                     showMonthDropdown

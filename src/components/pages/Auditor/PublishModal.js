@@ -2,9 +2,16 @@ import React, { useState, useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { STATUS_MAPPING } from "../../common/Constants";
+import { Editor, EditorState } from "react-draft-wysiwyg";
+import draftToHtml from "draftjs-to-html";
 
 function PublishModal({ onClose, onSubmit, selectedRows }) {
   const [counts, setCounts] = useState([]);
+  const [recommondations, setRecommondations] = useState();
+
+  function onEditorTextChange(e) {
+    setRecommondations(e.target.value);
+  }
 
   useEffect(() => {
     if (selectedRows) {
@@ -29,7 +36,7 @@ function PublishModal({ onClose, onSubmit, selectedRows }) {
 
   return (
     <>
-      <Modal show={true} backdrop="static" animation={false} size="md">
+      <Modal show={true} backdrop="static" animation={false} size="lg">
         <Modal.Header closeButton={true} onHide={onClose}>
           <Modal.Title className="bg">Publish</Modal.Title>
         </Modal.Header>
@@ -54,6 +61,10 @@ function PublishModal({ onClose, onSubmit, selectedRows }) {
               <p>Upon publishing, you will not be able to edit them further.</p>
               <p>Do you want to submit ? click "Yes"</p>
               <p>To cancel, click "No"</p>
+              <label className="filter-label">Recommondations</label>
+              <textarea className={'form-control'}
+                maxLength={5000} rows={5} onChange={onEditorTextChange} />
+              {/* <Editor onEditorStateChange={onEditorTextChange} /> */}
             </div>
           </div>
         </Modal.Body>
@@ -62,7 +73,7 @@ function PublishModal({ onClose, onSubmit, selectedRows }) {
             No
           </Button>
           <div>
-            <Button variant="primary" onClick={onSubmit}>
+            <Button variant="primary" onClick={(e) => onSubmit(e, recommondations)}>
               Yes
             </Button>
           </div>
