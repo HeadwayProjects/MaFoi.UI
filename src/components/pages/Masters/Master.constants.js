@@ -71,7 +71,7 @@ export const ActivityType = [
     'Policy',
     'Register',
     'Registration',
-    'Return'
+    'Returns'
 ];
 
 export const Periodicity = [
