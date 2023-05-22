@@ -65,6 +65,19 @@ export function useValidateToken(token) {
     return { status: (data || {}).data || {}, isFetching };
 }
 
+export function useValidateUrl(token) {
+    const { data, isFetching } = useQuery(
+        ['validateUrl', token],
+        async () => await get(`/api/Auth/IsLinkExpired?token=${token}`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: !!token
+        }
+    );
+    return { status: (data || {}).data || {}, isFetching };
+}
+
 export function useChangePassword(onSuccess, onError) {
     const { mutate: changePassword, error } = useMutation(
         ['changePassword'],

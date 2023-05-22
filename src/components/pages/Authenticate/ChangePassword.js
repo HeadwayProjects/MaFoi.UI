@@ -5,7 +5,7 @@ import { preventDefault } from "../../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 import { Button } from "react-bootstrap";
-import { clearAuthToken, getUserDetails, useChangePassword, useValidateToken } from "../../../backend/auth";
+import { clearAuthToken, getUserDetails, useChangePassword, useValidateUrl } from "../../../backend/auth";
 import PageLoader from "../../shared/PageLoader";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
@@ -16,7 +16,7 @@ import { getBasePath } from "../../../App";
 function ChangePassword({ token }) {
     const [changePwdSuccess, setChangePwdSuccess] = useState(false);
     const [user] = useState(getUserDetails(token));
-    const { status, isFetching } = useValidateToken(token);
+    const { status, isFetching } = useValidateUrl(token);
     const [submitting, setSubmitting] = useState(false);
     const [form, setForm] = useState({});
     const { changePassword } = useChangePassword(({ result, message }) => {
