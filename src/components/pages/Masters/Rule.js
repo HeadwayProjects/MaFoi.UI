@@ -77,12 +77,12 @@ function Rule() {
         },
         {
             title: "Section No.", field: "sectionNo", minWidth: 140,
-            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
             title: "Rule No.", field: "ruleNo", minWidth: 140,
-            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
