@@ -47,7 +47,7 @@ export function useCreateUser(onSuccess, onError) {
 export function useUpdateUser(onSuccess, onError) {
     const { mutate: updateUser, error, isLoading: updating } = useMutation(
         ['updateUser'],
-        async (payload) => await api.put(`${USERS}/Update`, payload),
+        async (payload) => await api.put(`${USERS}/EditUser`, payload),
         {
             onError,
             onSuccess: (response) => {
@@ -62,7 +62,7 @@ export function useUpdateUser(onSuccess, onError) {
 export function useDeleteUser(onSuccess, onError) {
     const { mutate: deleteUser, error, isLoading: deleting } = useMutation(
         ['deleteUser'],
-        async (id) => await api.del(`${USERS}/Delete?Id=${id}`),
+        async (id) => await api.del(`${USERS}/DeleteUser?id=${id}`),
         {
             onError,
             onSuccess: (response) => {

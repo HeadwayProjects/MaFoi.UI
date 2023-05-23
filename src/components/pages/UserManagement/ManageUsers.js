@@ -33,7 +33,7 @@ function MangeUsers() {
     const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
     const { users, total, isFetching, refetch } = useGetUsers(payload, Boolean(payload));
     const { roles } = useGetUserRoles();
-    const { deleteUser, deleting } = useDeleteUser(() => {
+    const { deleteUser, deleting } = useDeleteUser((response) => {
         toast.success(`${user.name} deleted successfully.`);
         submitCallback();
     }, () => {
@@ -94,7 +94,7 @@ function MangeUsers() {
         { title: "Username", field: "userName", formatter: reactFormatter(<CellTmpl />) },
         { title: "Role", field: "userRoles", formatter: reactFormatter(<RoleTmpl />) },
         { title: "Email", field: "email", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Status", field: "status", formatter: reactFormatter(<StatusTmpl />) },
+        // { title: "Status", field: "status", formatter: reactFormatter(<StatusTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)

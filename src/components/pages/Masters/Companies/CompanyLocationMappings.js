@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useGetCompanies, useGetCompanyLocations } from "../../../../backend/masters";
+import { useDeleteCompanyLocation, useGetCompanies, useGetCompanyLocations } from "../../../../backend/masters";
 import Icon from "../../../common/Icon";
 import { ACTIONS } from "../../../common/Constants";
 import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
@@ -9,10 +9,14 @@ import { useQueryParams } from "raviger";
 import CompanyLocationDetails from "./CompanyLocationMappingDetails";
 import { useRef } from "react";
 import TableFilters from "../../../common/TableFilter";
+import { toast } from "react-toastify";
+import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
+import PageLoader from "../../../shared/PageLoader";
 
 function mapLocation(x) {
     return {
         id: x.id,
+        locationId: x.locationId,
         companyLocationAddress: x.companyLocationAddress,
         locationCode: x.location.code,
         locationName: x.location.name,
@@ -43,6 +47,14 @@ function CompanyLocationMappings() {
         filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (parentCompany || {}).value }]
     }, Boolean((parentCompany || {}).value));
     const { locations, total, isFetching, refetch } = useGetCompanyLocations(payload, Boolean(associateCompany && payload));
+    const { deleteCompanyLocation, deleting } = useDeleteCompanyLocation(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`Location ${companyLocation.locationName} deleted successfully.`);
+            submitCallback();
+        } else {
+            toast.error(value || ERROR_MESSAGES.ERROR);
+        }
+    });
 
 
     const filterConfig = [
@@ -77,14 +89,14 @@ function CompanyLocationMappings() {
         const row = cell.getData();
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                {/* <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event) => {
+                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event) => {
                     setCompanyLocation(row);
                     setAction(ACTIONS.EDIT);
-                }} /> */}
-                {/* <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event) => {
+                }} />
+                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event) => {
                     setCompanyLocation(row);
                     setAction(ACTIONS.DELETE);
-                }} /> */}
+                }} />
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
                     setCompanyLocation(row);
                     setAction(ACTIONS.VIEW);
@@ -168,7 +180,7 @@ function CompanyLocationMappings() {
     }
 
     function deleteCompanyMaster() {
-        // deleteCompany(associateCompany.id);
+        deleteCompanyLocation(companyLocation.locationId);
     }
     function onFilterChange(e) {
         console.log(e)
@@ -256,7 +268,7 @@ function CompanyLocationMappings() {
                     <div className="col-12">
                         <div className="d-flex justify-content-between align-items-end">
                             <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
-                                placeholder={"Search for Location Code/Name/Contact"}/>
+                                placeholder={"Search for Location Code/Name/Contact"} />
                             <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
                                 <Icon name={'plus'} className="me-2"></Icon>Add New
                             </Button>
@@ -269,7 +281,7 @@ function CompanyLocationMappings() {
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <CompanyLocationDetails action={action} parentCompany={parentCompany} associateCompany={associateCompany}
-                    data={action !== ACTIONS.ADD ? companyLocation : null}
+                    data={companyLocation}
                     onClose={() => setAction(ACTIONS.NONE)} onSubmit={submitCallback} />
             }
             {
@@ -278,7 +290,7 @@ function CompanyLocationMappings() {
                     <div className="text-center mb-4">Are you sure you want to delete the Company Location, <strong>{(companyLocation || {}).locationName}</strong> ?</div>
                 </ConfirmModal>
             }
-            {/* {deletingCompany && <PageLoader message={'Deleting Company...'} />} */}
+            {deleting && <PageLoader message={'Deleting Location...'} />}
         </>
     )
 }

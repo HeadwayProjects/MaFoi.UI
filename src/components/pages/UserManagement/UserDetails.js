@@ -22,12 +22,12 @@ function UserDetails({ action, data, onClose, onSubmit }) {
             toast.error(value);
         }
     }, errorCallback);
-    const { updateUser, updating } = useUpdateUser(({ id, message }) => {
-        if (id) {
+    const { updateUser, updating } = useUpdateUser(({ key, value }) => {
+        if (key === 'SUCCESS') {
             toast.success(`${user.name} updated successfully.`);
             onSubmit();
         } else {
-            toast.error(ERROR_MESSAGES.DEFAULT);
+            toast.error(value);
         }
     }, errorCallback);
 
@@ -87,14 +87,7 @@ function UserDetails({ action, data, onClose, onSubmit }) {
                     }
                 }),
                 description: userPages ? `Accessible Modules: ${userPages}` : ''
-            },
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
-                name: 'status',
-                label: 'Status',
-                content: getValue(user, 'status.label'),
-                options: USER_STATUS
-            },
+            }
         ],
     };
 
@@ -112,7 +105,7 @@ function UserDetails({ action, data, onClose, onSubmit }) {
                 email: (email || '').trim(),
                 userName: (userName || '').trim().toLowerCase(),
                 roleIds: [role.value],
-                isActive: status.value === STATUS.ACTIVE,
+                isActive: true,
                 mobile: '',
                 password: '',
                 status: ''

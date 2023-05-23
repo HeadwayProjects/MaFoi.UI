@@ -30,18 +30,18 @@
     padding: 2rem var(--bs-modal-padding);
 }
 
-.modal-dialog.confirm-modal .modal-content {
+/* .modal-dialog.confirm-modal .modal-content {
     padding: 2rem;
-}
+} */
 
 .modal-dialog.confirm-modal .modal-header {
     border-bottom: none;
 }
 
-.modal-dialog.confirm-modal .modal-header button.btn-close {
+/* .modal-dialog.confirm-modal .modal-header button.btn-close {
     margin-top: -4rem;
     margin-right: -1rem;
-}
+} */
 
 .modal-dialog.confirm-modal .modal-footer {
     border-top: none;

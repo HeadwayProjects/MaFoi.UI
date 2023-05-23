@@ -620,10 +620,25 @@ export function useCreateCompanyLocation(onSuccess, onError) {
     return { createCompanyLocation, error, creating };
 }
 
+export function useUpdateCompanyLocation(onSuccess, onError) {
+    const { mutate: updateCompanyLocation, error, isLoading: creating } = useMutation(
+        ['updateCompanyLocation'],
+        async (payload) => await api.put('/api/Mappings/EditCompanyLocations', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateCompanyLocation, error, creating };
+}
+
 export function useDeleteCompanyLocation(onSuccess, onError) {
     const { mutate: deleteCompanyLocation, error, isLoading: deleting } = useMutation(
         ['deleteCompanyLocation'],
-        async (payload) => await api.post(`/api/Mappings/Delete`, payload),
+        async (id) => await api.del(`/api/Mappings/DeleteCompanyLocations?id=${id}`),
         {
             onError,
             onSuccess: (response) => {
