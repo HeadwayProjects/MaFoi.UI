@@ -1,9 +1,15 @@
 import axios from "axios";
 import { getAuthToken } from "./auth";
 
+function getBaseURL() {
+    const protocol = window.location.protocol;
+    const api_url = 'ec2-13-127-248-214.ap-south-1.compute.amazonaws.com:8080/';
+    // const api_url = 'ezycompapi.azurewebsites.net/'
+    return `${protocol}//${api_url}`;
+}
+
 const apiInstance = axios.create({
-    baseURL: 'http://ec2-13-127-248-214.ap-south-1.compute.amazonaws.com:8080/'
-    // baseURL: 'https://ezycompapi.azurewebsites.net/'
+    baseURL: getBaseURL()
 });
 
 apiInstance.interceptors.response.use(
