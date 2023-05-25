@@ -12,28 +12,36 @@ import * as api from "../../../backend/request";
 import { toast } from 'react-toastify';
 import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../common/Constants";
 import Icon from "../../common/Icon";
-import Table, { reactFormatter, CellTmpl, TitleTmpl } from "../../common/Table";
+import Table, { reactFormatter, CellTmpl, TitleTmpl, DEFAULT_PAYLOAD } from "../../common/Table";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
 import AdvanceSearch from "../../common/AdvanceSearch";
 import AlertModal from "../../common/AlertModal";
-import { checkList, download, preventDefault } from "../../../utils/common";
+import { checkList, download, preventDefault, reduceArraytoObj } from "../../../utils/common";
 import PublishModal from "./PublishModal";
 import Report from "../../shared/Report";
 import ActivityModal from "./ActivityModal";
 import { getUserDetails } from "../../../backend/auth";
 import { useAuditReport } from "../../../backend/exports";
-import { ERROR_MESSAGES } from "../../../utils/constants";
+import { API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
+import { useGetAllActivities } from "../../../backend/query";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
     { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'success' },
-    { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' },
-    // { name: ACTIVITY_STATUS.PUBLISHED, label: STATUS_MAPPING[ACTIVITY_STATUS.PUBLISHED], style: 'danger' }
+    { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' }
 ];
 
 const ACTIONS = {
     EDIT: 1,
     VIEW: 2
+};
+
+const SortFields = {
+    'act.name': 'actname',
+    'rule.name': 'rulename',
+    'activity.name': 'activityname',
+    'associateCompany.name': 'associatecompanyname',
+    'location.name': 'locationname'
 };
 
 function TaskManagement() {
@@ -44,11 +52,19 @@ function TaskManagement() {
     const [action, setAction] = useState(null);
     const [data, setData] = useState();
     const [params, setParams] = useState();
-    const [filters, setFilters] = useState();
-    const filterRef = useRef();
-    filterRef.current = filters;
+    const [locationFilters, setLocationFilter] = useState();
+    const lfRef = useRef();
+    lfRef.current = locationFilters;
+    const [advaceSearchFilters, setAdvanceSearchFilters] = useState();
+    const afRef = useRef();
+    afRef.current = advaceSearchFilters;
+    const [statusFilters, setStatusFilters] = useState([{ columnName: 'status', value: STATUS_BTNS.map(x => x.name).join(API_DELIMITER) }]);
+    const sfRef = useRef();
+    sfRef.current = statusFilters;
     const [payload, setPayload] = useState();
-    const { activities, isFetching, refetch } = useGetAuditorActivites(payload);
+    const payloadRef = useRef();
+    payloadRef.current = payload;
+    const { activities, total, isFetching, refetch } = useGetAllActivities(payload, Boolean(hasFilters(null, 'companyId')));
     const [selectedRows, setSelectedRows] = useState([]);
     const [alertMessage, setAlertMessage] = useState(null);
     const [publish, setPublish] = useState(false);
@@ -67,8 +83,28 @@ function TaskManagement() {
         toast.error(ERROR_MESSAGES.DEFAULT)
     });
 
+    function hasFilters(ref, field = 'companyId') {
+        const _filters = (ref ? ref.current : { ...(payloadRef || {}).current }.filters) || [];
+        const company = _filters.find(x => x.columnName === field);
+        return (company || {}).value;
+    }
+
     function onLocationChange(event) {
-        setFilters({ ...filterRef.current, ...event });
+        const { company, associateCompany, location } = event;
+        setLocationFilter([
+            {
+                columnName: 'companyId',
+                value: company
+            },
+            {
+                columnName: 'associateCompanyId',
+                value: associateCompany
+            },
+            {
+                columnName: 'locationId',
+                value: location
+            }
+        ]);
     }
 
     function downloadForm(activity) {
@@ -83,10 +119,17 @@ function TaskManagement() {
     }
 
     function search(event) {
-        setFilters({
-            ...filterRef.current,
-            ...event
-        });
+        const _filters = [];
+        const keys = Object.keys(event || {});
+        if (keys.length > 0) {
+            keys.forEach(key => {
+                _filters.push({
+                    columnName: key,
+                    value: event[key]
+                })
+            });
+        }
+        setAdvanceSearchFilters(_filters);
     }
 
     function editActivity(activity) {
@@ -97,13 +140,14 @@ function TaskManagement() {
     function downloadReport(event) {
         preventDefault(event);
         setSubmitting(true);
+        const _request = { ...reduceArraytoObj(lfRef.current), ...reduceArraytoObj(afRef.current) };
         const _payload = {
-            company: payload.company,
-            associateCompany: payload.associateCompany,
-            location: payload.location,
-            month: payload.month,
-            year: payload.year,
-            statuses: STATUS_BTNS.map(x => x.name)
+            company: _request.companyId,
+            associateCompany: _request.associateCompanyId,
+            location: _request.locationId,
+            month: _request.month,
+            year: _request.year,
+            statuses: ['']
         };
 
         api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
@@ -129,20 +173,21 @@ function TaskManagement() {
 
     function publishActivity(e) {
         preventDefault(e);
-        const _filter = filterRef.current;
-        if (!_filter.month) {
+        const _filter = hasFilters(afRef, 'month');
+        if (!Boolean(_filter)) {
             setAlertMessage(`
                 <div class="mb-2">Publish activities can be performed on a specfic month only. Please refine your search to specific month and year.</div>
                 <p class="mt-3"><strong>Advance Search &gt; Filter By Month & Year &gt; Select Specific Month and Year</strong</p>
             `);
         } else {
             setSubmitting(true);
+            const _request = { ...reduceArraytoObj(lfRef.current), ...reduceArraytoObj(afRef.current) };
             const _payload = {
-                company: payload.company,
-                associateCompany: payload.associateCompany,
-                location: payload.location,
-                month: payload.month,
-                year: payload.year,
+                company: _request.companyId,
+                associateCompany: _request.associateCompanyId,
+                location: _request.locationId,
+                month: _request.month,
+                year: _request.year,
                 statuses: STATUS_BTNS.map(x => x.name)
             };
             api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
@@ -175,12 +220,13 @@ function TaskManagement() {
     function onPublish(e, recommendations) {
         preventDefault(e);
         setSubmitting(true);
+        const _request = { ...reduceArraytoObj(lfRef.current), ...reduceArraytoObj(afRef.current) };
         const _payload = {
-            companyId: payload.company,
-            associateCompanyId: payload.associateCompany,
-            locationId: payload.location,
-            month: payload.month,
-            year: payload.year,
+            company: _request.companyId,
+            associateCompany: _request.associateCompanyId,
+            location: _request.locationId,
+            month: _request.month,
+            year: _request.year,
             recommendations: recommendations || ''
         };
         api.post('/api/Auditor/UpdatePublishStatus', _payload).then(response => {
@@ -320,7 +366,7 @@ function TaskManagement() {
         },
         {
             title: "Actions", hozAlign: "center", width: 120,
-            sortable: false,
+            headerSort: false,
             formatter: reactFormatter(<ActionColumnElements />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         }
@@ -331,55 +377,151 @@ function TaskManagement() {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
-        selectable: false
+        selectable: false,
+        paginate: true,
+        initialSort: [{ column: 'month', dir: 'desc' }]
     });
 
-    function formatApiResponse(params, list, pagination = {}) {
-        const total = list.length;
+    function formatApiResponse(params, list, totalRecords) {
+        const { pagination } = params || {};
+        const { pageSize, pageNumber } = pagination || {};
         const tdata = {
             data: list,
-            total,
-            last_page: Math.ceil(total / params.size) || 1,
-            page: params.page || 1
+            total: totalRecords,
+            last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
+            page: pageNumber || 1
         };
         setData(tdata);
         return tdata;
     }
 
     function ajaxRequestFunc(url, config, params) {
-        setParams(params);
-        setPayload((filterRef.current || {}).company ? { ...filterRef.current, ...params, dateFilter: 'submittedDate' } : null);
-        return Promise.resolve(formatApiResponse(params, activities));
+        const { field, dir } = (params.sort || [])[0] || {};
+        const _params = {
+            pagination: {
+                pageSize: params.size,
+                pageNumber: params.page
+            },
+            sort: {
+                columnName: SortFields[field] || field || 'month',
+                order: dir || 'desc'
+            }
+        };
+        setParams(_params);
+        setPayload({
+            ...DEFAULT_PAYLOAD,
+            sort: {
+                columnName: 'month',
+                order: 'desc'
+            },
+            ..._params,
+            filters: [
+                ...(lfRef.current || []),
+                ...(afRef.current || []),
+                ...(sfRef.current || [])
+            ]
+        });
+        return Promise.resolve(formatApiResponse(params, activities, total));
+    }
+
+    function handlePageNav(_pagination) {
+        const _params = { ...params };
+        _params.pagination = _pagination;
+        setParams({ ..._params });
+        setPayload({ ...payload, ..._params })
+    }
+
+    function getAdvanceSearchPayload() {
+        const _filters = [...(afRef.current || [])];
+        const _payload = {};
+        _filters.forEach(x => {
+            _payload[x.columnName] = x.value;
+        });
+        return _payload;
     }
 
     useEffect(() => {
-        if (filters) {
+        if (locationFilters) {
+            console.log('location change', sfRef.current)
             setPayload({
-                fromDate: null,
-                toDate: null,
-                month: '',
-                year: null,
-                ...filterRef.current,
+                ...DEFAULT_PAYLOAD,
+                sort: {
+                    columnName: 'month',
+                    order: 'desc'
+                },
                 ...params,
-                dateFilter: 'submittedDate'
+                filters: [
+                    ...locationFilters,
+                    ...(afRef.current || []),
+                    ...(sfRef.current || [])
+                ]
             });
         }
-    }, [filters]);
+    }, [locationFilters]);
+
+    useEffect(() => {
+        if (advaceSearchFilters) {
+            setPayload({
+                ...DEFAULT_PAYLOAD,
+                sort: {
+                    columnName: 'month',
+                    order: 'desc'
+                },
+                ...params,
+                filters: [
+                    ...(lfRef.current || []),
+                    ...advaceSearchFilters,
+                    ...(sfRef.current || [])
+                ]
+            });
+        }
+    }, [advaceSearchFilters]);
+
+    useEffect(() => {
+        if (statusFilters) {
+            console.log('Status change', statusFilters)
+            setPayload({
+                ...DEFAULT_PAYLOAD,
+                sort: {
+                    columnName: 'month',
+                    order: 'desc'
+                },
+                ...params,
+                filters: [
+                    ...(lfRef.current || []),
+                    ...(afRef.current || []),
+                    ...statusFilters
+                ]
+            });
+        }
+    }, [statusFilters]);
 
     useEffect(() => {
         if (checkedStatuses) {
             const keys = Object.keys(checkedStatuses);
             const result = keys.filter(key => !!checkedStatuses[key]);
-            setFilters({ ...filterRef.current, statuses: result.length ? result : STATUS_BTNS.map(x => x.name) });
+            const _result = [];
+            if (result.length > 0) {
+                _result.push({
+                    columnName: 'status',
+                    value: result.join(API_DELIMITER)
+                });
+            } else {
+                _result.push({
+                    columnName: 'status',
+                    value: STATUS_BTNS.map(x => x.name).join(API_DELIMITER)
+                });
+            }
+            setStatusFilters(_result)
         }
     }, [checkedStatuses]);
 
     useEffect(() => {
         if (!isFetching && payload) {
             setSelectedRows([]);
-            setData(formatApiResponse(params, activities));
+            setData(formatApiResponse(params, activities, total));
         }
-    }, [isFetching]);
+    }, [isFetching])
 
     return (
         <>
@@ -401,7 +543,7 @@ function TaskManagement() {
                         <div className="d-flex flex-row m-0">
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
-                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={payload} onSubmit={search}
+                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search}
                                     downloadReport={downloadReport} />
                             </div>
                         </div>
@@ -437,7 +579,7 @@ function TaskManagement() {
                     </div>
                 </form>
 
-                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} />
+                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
             </div>
 
             {
@@ -459,13 +601,13 @@ function TaskManagement() {
                     selectedRows={selectedRows} />
             }
             {(submitting || exporting) && <PageLoader />}
-            {
+            {/* {
                 !!report &&
                 <Report data={report} payload={filters} onClose={(e) => {
                     preventDefault(e);
                     setReport(null);
                 }} />
-            }
+            } */}
         </>
     );
 }

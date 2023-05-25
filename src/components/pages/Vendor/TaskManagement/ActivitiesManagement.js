@@ -16,7 +16,7 @@ import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY }
 import Location from "../../../common/Location";
 import { useGetAllActivities, useGetVendorActivites } from "../../../../backend/query";
 import Icon from "../../../common/Icon";
-import { checkList, download, preventDefault } from "../../../../utils/common";
+import { checkList, download, preventDefault, reduceArraytoObj } from "../../../../utils/common";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import AdvanceSearch from "../../../common/AdvanceSearch";
@@ -84,7 +84,7 @@ function ActivitiesManagement() {
     });
 
     function onLocationChange(event) {
-        const { company, associateCompany, location, stateId } = event;
+        const { company, associateCompany, location } = event;
         setLocationFilter([
             {
                 columnName: 'companyId',
@@ -116,18 +116,10 @@ function ActivitiesManagement() {
         }).finally(() => setSubmitting(false));
     }
 
-    function reduceToObj(arr, key = 'columnName', value = 'value') {
-        const _obj = {};
-        (arr || []).forEach(obj => {
-            _obj[obj[key]] = obj[value];
-        });
-        return _obj;
-    }
-
     function downloadReport(event) {
         preventDefault(event);
         setSubmitting(true);
-        const _request = { ...reduceToObj(lfRef.current), ...reduceToObj(afRef.current) };
+        const _request = { ...reduceArraytoObj(lfRef.current), ...reduceArraytoObj(afRef.current) };
         const _payload = {
             company: _request.companyId,
             associateCompany: _request.associateCompanyId,
@@ -163,7 +155,7 @@ function ActivitiesManagement() {
             `);
         } else {
             setSubmitting(true);
-            const _request = { ...reduceToObj(lfRef.current), ...reduceToObj(afRef.current) };
+            const _request = { ...reduceArraytoObj(lfRef.current), ...reduceArraytoObj(afRef.current) };
             const _payload = {
                 company: _request.companyId,
                 associateCompany: _request.associateCompanyId,
@@ -376,7 +368,6 @@ function ActivitiesManagement() {
     }
 
     function ajaxRequestFunc(url, config, params) {
-        console.log(lfRef.current, params.sort);
         const { field, dir } = (params.sort || [])[0] || {};
         const _params = {
             pagination: {

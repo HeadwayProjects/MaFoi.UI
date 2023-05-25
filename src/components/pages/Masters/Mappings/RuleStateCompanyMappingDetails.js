@@ -43,7 +43,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Mapping updated successfully.`);
             if (mapping.file) {
-                uploadTemplate(value);
+                uploadTemplate(data.id);
             } else {
                 onSubmit();
             }
