@@ -44,3 +44,17 @@ export function useGetVendorActivites(payload) {
 
     return { activities: (data || {}).data || [], isFetching, refetch };
 }
+
+export function useGetAllActivities(payload, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['auditorActivities', payload],
+        async () => await api.post('/api/ToDo/GetAll', payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { activities: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
+}

@@ -69,7 +69,7 @@ export const ActivityType = [
     'Intimation',
     'Meeting',
     'Policy',
-    'Register',
+    'Registers',
     'Registration',
     'Returns'
 ];

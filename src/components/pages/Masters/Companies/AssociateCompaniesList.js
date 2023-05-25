@@ -68,7 +68,10 @@ function AssociateCompaniesList({ changeView, parent }) {
                     setAction(ACTIONS.VIEW);
                 }} />
                 <Icon className="mx-2" type="button" name={'external-link'} text={row.websiteUrl} data={row} action={(event) => {
-                    window.open(row.websiteUrl)
+                    if (row.websiteUrl) {
+                        const url = row.websiteUrl.match(/^https?:/) ? row.websiteUrl : '//' + row.websiteUrl;
+                        window.open(url)
+                    }
                 }} />
             </div>
         )

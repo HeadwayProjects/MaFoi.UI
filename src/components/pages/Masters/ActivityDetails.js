@@ -114,7 +114,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
             setActivity({
                 ...activity,
                 name,
-                type,
+                type: type ? { value: type, label: type } : null,
                 periodicity: periodicity ? { value: periodicity, label: periodicity } : null,
                 calendarType: calendarType ? { value: calendarType, label: calendarType } : null
             });

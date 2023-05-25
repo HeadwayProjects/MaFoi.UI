@@ -65,7 +65,7 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
     }
 
     function search(event) {
-        const _payload = { month: null, year: null, fromDate: null, toDate: null };
+        const _payload = {};
         if (event && filter) {
             switch (filter.value) {
                 case FILTERS.MONTH:
