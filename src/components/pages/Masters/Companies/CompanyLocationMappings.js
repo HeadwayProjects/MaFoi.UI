@@ -180,7 +180,7 @@ function CompanyLocationMappings() {
     }
 
     function deleteCompanyMaster() {
-        deleteCompanyLocation(companyLocation.locationId);
+        deleteCompanyLocation(companyLocation.id);
     }
     function onFilterChange(e) {
         console.log(e)

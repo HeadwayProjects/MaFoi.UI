@@ -213,36 +213,36 @@ function BulkUploadModal({ onClose }) {
                 <Modal.Body>
                     <div className="row mb-4">
                         <div className="col-3">
-                            <label class="filter-label">Company</label>
+                            <label className="filter-label">Company</label>
                             <Select options={companies} onChange={setCompany} placeholder='Company'
                                 value={company} className="select-control" />
                         </div>
                         <div className="col-4">
-                            <label class="filter-label">Associate Company</label>
+                            <label className="filter-label">Associate Company</label>
                             <Select options={associateCompanies} onChange={setAssociateCompany} placeholder='Associate Company'
                                 value={associateCompany} className="select-control" />
                         </div>
                         <div className="col-3">
-                            <label class="filter-label">Location</label>
+                            <label className="filter-label">Location</label>
                             <Select options={locations} onChange={setLocation} placeholder='Location'
                                 value={location} className="select-control" />
                         </div>
                     </div>
                     <div className="row mb-4">
                         <div className="col-3">
-                            <label class="filter-label">Month</label>
+                            <label className="filter-label">Month</label>
                             <Select options={months} onChange={setMonth} placeholder='Month'
                                 value={month} className="select-control" />
                         </div>
                         <div className="col-4">
-                            <label class="filter-label">Year</label>
+                            <label className="filter-label">Year</label>
                             <Select options={years} onChange={setYear} placeholder='Year'
                                 value={year} className="select-control" />
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-7 mb-3">
-                            <label class="filter-label">Select file to upload</label>
+                            <label className="filter-label">Select file to upload</label>
                             <input type="file" className="form-control" id="inputGroupFile01"
                                 onChange={onFileChange} multiple />
                         </div>

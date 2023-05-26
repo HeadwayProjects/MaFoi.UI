@@ -49,6 +49,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }) {
         link.href = file.filePath;
         link.download = file.fileName;
         document.body.appendChild(link);
+        link.target = '_blank';
         link.click();
         document.body.removeChild(link);
     }

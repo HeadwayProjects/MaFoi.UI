@@ -280,7 +280,7 @@ function ActivitiesManagement() {
 
     const columns = [
         {
-            title: "Month (year)", field: "month", width: 140,
+            title: "Month & Year", field: "month", width: 140,
             formatter: reactFormatter(<MonthTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />),
             headerClick: (e, col) => {
@@ -362,7 +362,7 @@ function ActivitiesManagement() {
     }
 
     function hasFilters(ref, field = 'companyId') {
-        const _filters = { ...(ref || payloadRef).current }.filters || [];
+        const _filters = (ref ? ref.current : {...(payloadRef.current || {})}.filters) || [];
         const company = _filters.find(x => x.columnName === field);
         return (company || {}).value;
     }

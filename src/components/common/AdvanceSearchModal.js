@@ -121,7 +121,8 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
                                     <div className="row">
                                         <div className="col-12 mb-4">
                                             <label className="filter-label">Filter By</label>
-                                            <Select placeholder='Select Filter' options={options} onChange={onFilterChange} value={filter} />
+                                            <Select placeholder='Select Filter' options={options} onChange={onFilterChange} value={filter}
+                                                menuPosition="fixed" />
                                         </div>
                                     </div>
                                     {
@@ -129,11 +130,13 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
                                         <div className="row">
                                             <div className="col-6 mb-4">
                                                 <label className="filter-label">Month</label>
-                                                <Select placeholder='Select Month' options={MONTHS} onChange={onMonthChange} value={payload.month} />
+                                                <Select placeholder='Select Month' options={MONTHS} onChange={onMonthChange} value={payload.month}
+                                                    menuPosition="fixed" />
                                             </div>
                                             <div className="col-6 mb-4">
                                                 <label className="filter-label">Year</label>
-                                                <Select placeholder='Select Year' options={YEARS} onChange={onYearChange} value={payload.year} />
+                                                <Select placeholder='Select Year' options={YEARS} onChange={onYearChange} value={payload.year}
+                                                    menuPosition="fixed" />
                                             </div>
                                         </div>
                                     }
