@@ -8,7 +8,7 @@ import { useGetAuditorPerformance } from "../../../backend/auditor";
 const PerformanceTabs = [
     { value: 'Today', label: 'Today' },
     { value: 'ThisWeek', label: 'This Week' },
-    { value: 'ThisMonth', label: 'This Month' },
+    // { value: 'ThisMonth', label: 'This Month' },
     { value: 'LastMonth', label: ['Last Month'] },
     { value: 'Last3Months', label: ['3 Months'] },
     { value: 'Last6Months', label: ['6 Months'] },
@@ -43,27 +43,33 @@ function Performance() {
                 <div className="mx-2">Performance</div>
             </div>
             <div className="card-body pt-0">
-                <div className="d-flex justify-content-center">
-                    <div className="d-flex flex-row">
-                        {
-                            PerformanceTabs.map(tab => {
-                                return (
-                                    <div className="form-check mx-2" key={tab.value}>
-                                        <input className="form-check-input" type="radio" name="frequency" checked={frequency === tab.value}
-                                            id={'frequency' + tab.value} onChange={onFrequencyChange} value={tab.value} />
-                                        <label className="form-check-label" for={'frequency' + tab.value}>{tab.label}</label>
-                                    </div>
-                                )
-                            })
-                        }
-                    </div>
-                </div>
-                <div className="my-3">
-                    <div className="text-center mb-3 dashboard-date-range-label">
-                        {label && <strong className="text-primary">({label})</strong>}
-                    </div>
-                    <div className="row m-0">
-                        {!isFetching && auditorPerformance && <Chart data={auditorPerformance} keys={['audited', 'notAudited']} />}
+                <div className="d-flex flex-row">
+                    <div className="col-11 mx-auto mt-3">
+                        <div className="d-flex flex-row">
+                            <div className="col-3 py-2 ps-3">
+                                {
+                                    PerformanceTabs.map(tab => {
+                                        return (
+                                            <div className="form-check mb-3" key={tab.value}>
+                                                <input className="form-check-input" type="radio" name="frequency" checked={frequency === tab.value}
+                                                    id={'frequency' + tab.value} onChange={onFrequencyChange} value={tab.value} />
+                                                <label className="form-check-label" htmlFor={'frequency' + tab.value}>{tab.label}</label>
+                                            </div>
+                                        )
+                                    })
+                                }
+
+                            </div>
+                            <div className="col-1"></div>
+                            <div className="col-8">
+                                <div className="text-center mt-3 dashboard-date-range-label">
+                                    {label && <strong className="text-primary">({label})</strong>}
+                                </div>
+                                <div className="row m-0">
+                                    {!isFetching && auditorPerformance && <Chart data={auditorPerformance} keys={['audited', 'notAudited']} />}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
