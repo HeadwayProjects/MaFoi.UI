@@ -1,34 +1,39 @@
 import React, { useState, useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { STATUS_MAPPING } from "../../common/Constants";
-import ReactQuill from "react-quill";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
+import { preventDefault } from "../../../utils/common";
 
 function PublishModal({ onClose, onSubmit, selectedRows }) {
   const [counts, setCounts] = useState([]);
-  const [recommondations, setRecommondations] = useState();
-  const [config] = useState({
-    modules: {
-      toolbar: [
-        [{ 'header': '1' }, { 'header': '2' }],
-        [{ size: [] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
-        [{ 'color': [] }, { 'background': [] }],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        ['link']
-      ],
-      clipboard: {
-        // toggle to add extra line breaks when pasting HTML:
-        matchVisual: false,
+  const [form, setForm] = useState({});
+  const [details, setDetails] = useState({ hideButtons: true })
+
+  const schema = {
+    fields: [
+      {
+        component: componentTypes.TEXT_EDITOR,
+        name: 'recommendations',
+        label: 'Recommendations',
+        placeholder: 'Enter Recommendations...'
       }
-    },
-    formats: [
-      'header', 'font', 'size',
-      'bold', 'italic', 'underline', 'strike', 'blockquote',
-      'list', 'bullet', 'indent',
-      'link', 'image', 'video'
     ]
-  })
+  };
+
+  function debugForm(_form) {
+    setForm(_form);
+    setDetails(_form.values);
+  }
+
+  function handleSubmit(e) {
+    preventDefault(e);
+    if (form.valid) {
+      const { recommendations } = details;
+      onSubmit(e, recommendations);
+    }
+  }
 
   useEffect(() => {
     if (selectedRows) {
@@ -78,9 +83,12 @@ function PublishModal({ onClose, onSubmit, selectedRows }) {
               <p>Upon publishing, you will not be able to edit them further.</p>
               <p>Do you want to submit ? click "Yes"</p>
               <p>To cancel, click "No"</p>
-              <label className="filter-label">Recommondations</label>
-              <ReactQuill theme="snow" value={recommondations} onChange={setRecommondations}
-                modules={config.modules} formats={config.formats} />
+              <FormRenderer FormTemplate={FormTemplate}
+                initialValues={details}
+                componentMapper={ComponentMapper}
+                schema={schema}
+                debug={debugForm}
+              />
             </div>
           </div>
         </Modal.Body>
@@ -88,11 +96,9 @@ function PublishModal({ onClose, onSubmit, selectedRows }) {
           <Button variant="outline-secondary" onClick={onClose} className="btn btn-outline-secondary">
             No
           </Button>
-          <div>
-            <Button variant="primary" onClick={(e) => onSubmit(e, recommondations)}>
-              Yes
-            </Button>
-          </div>
+          <Button variant="primary" onClick={handleSubmit}>
+            Yes
+          </Button>
         </Modal.Footer>
       </Modal>
     </>

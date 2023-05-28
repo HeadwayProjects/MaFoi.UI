@@ -9,6 +9,7 @@ import AsyncSelect from 'react-select/async';
 import Icon from "./Icon";
 import { humanReadableFileSize } from "../../utils/common";
 import DatePicker from "react-multi-date-picker";
+import ReactQuill from "react-quill";
 
 export const componentTypes = {
     TEXT_FIELD: iComponentTypes.TEXT_FIELD,
@@ -22,8 +23,32 @@ export const componentTypes = {
     FILE_UPLOAD: 'file-upload',
     ASYNC_SELECT: 'async-select',
     MONTH_PICKER: 'month-picker',
-    INPUT_AS_TEXT: 'input-as-text'
+    INPUT_AS_TEXT: 'input-as-text',
+    TEXT_EDITOR: 'text-editor'
 }
+
+const editorConfig = {
+    modules: {
+        toolbar: [
+            [{ 'header': '1' }, { 'header': '2' }],
+            [{ size: [] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['link']
+        ],
+        clipboard: {
+            // toggle to add extra line breaks when pasting HTML:
+            matchVisual: false,
+        }
+    },
+    formats: [
+        'header', 'font', 'size',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent',
+        'link', 'image', 'video'
+    ]
+};
 
 function fileSizeValidator({ maxSize }) {
     return (value) => {
@@ -405,11 +430,49 @@ export function MonthPickerField(props) {
                 <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
             }
             <div className={`input-group month-picker`}>
-                {/* <input id={name}
-                    className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''} ${props.styleClass || ''}`}
-                    {...input} /> */}
                 <DatePicker onlyMonthPicker={true} editable={false} range={props.range || false}
                     minDate={props.minDate} format={'MMM, YYYY'} maxDate={props.maxDate} {...onInput(input)} value={value} />
+            </div>
+            {
+                props.description &&
+                <span className="text-muted form-text">{props.description}</span>
+            }
+            {
+                meta.touched && meta.error && <div className="invalid-feedback d-block">
+                    {meta.error}
+                </div>
+            }
+        </div>
+    );
+}
+
+function TextEditorField(props) {
+    const { input, meta, label, name } = useFieldApi(props);
+    const [value, setValue] = useState(props.initialValue);
+    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    function onInput(input) {
+        return {
+            ...input,
+            onChange: (e) => {
+                setValue(e);
+                input.onChange(e);
+                if (props.onChange) {
+                    props.onChange(e);
+                }
+            },
+            disabled: props.disabled
+        }
+    }
+
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            {
+                label &&
+                <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            }
+            <div className={`input-group`}>
+                <ReactQuill theme="snow" className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''}`}
+                    modules={editorConfig.modules} formats={editorConfig.formats} {...onInput(input)} value={value} />
             </div>
             {
                 props.description &&
@@ -438,7 +501,8 @@ export const ComponentMapper = {
     [componentTypes.FILE_UPLOAD]: FileUploadField,
     [componentTypes.ASYNC_SELECT]: AsyncSelectField,
     [componentTypes.MONTH_PICKER]: MonthPickerField,
-    [componentTypes.INPUT_AS_TEXT]: InputasTextAreaField
+    [componentTypes.INPUT_AS_TEXT]: InputasTextAreaField,
+    [componentTypes.TEXT_EDITOR]: TextEditorField
 };
 
 
