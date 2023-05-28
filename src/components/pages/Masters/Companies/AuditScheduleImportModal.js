@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { EXCEL_FILE_REGEX, FILE_SIZE } from "../../../common/Constants";
 import { useImportAuditSchedule } from "../../../../backend/masters";
@@ -46,7 +46,7 @@ function AuditScheduleImportModal({ onClose }) {
     const schema = {
         fields: [
             {
-                component: 'file-upload',
+                component: componentTypes.FILE_UPLOAD,
                 label: 'Upload File',
                 name: 'file',
                 type: 'file',

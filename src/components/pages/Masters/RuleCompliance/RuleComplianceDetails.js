@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { useCreateRuleCompliance, useGetRules, useGetStates, useUpdateRuleCompliance } from "../../../../backend/masters";
 import { getValue, preventDefault } from "../../../../utils/common";
 import { ActivityType, AuditType, GetActionTitle, GetRuleDesc, RiskType } from "../Master.constants";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { ACTIONS } from "../../../common/Constants";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
@@ -73,7 +73,7 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
     const schema = {
         fields: [
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.INPUT_AS_TEXT,
                 name: 'complianceName',
                 label: 'Compliance Name',
                 validate: [

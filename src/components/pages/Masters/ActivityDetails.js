@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
 import { getValue } from "../../../utils/common";
@@ -34,7 +34,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
     const schema = {
         fields: [
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.INPUT_AS_TEXT,
                 name: 'name',
                 label: 'Activity',
                 validate: [

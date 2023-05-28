@@ -111,7 +111,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                     <div className="form-check mx-2" key={tab.value}>
                                         <input className="form-check-input" type="radio" name="frequency" checked={frequency === tab.value}
                                             id={'frequency' + tab.value} onChange={onFrequencyChange} value={tab.value} />
-                                        <label className="form-check-label" for={'frequency' + tab.value}>{tab.label}</label>
+                                        <label className="form-check-label" htmlFor={'frequency' + tab.value}>{tab.label}</label>
                                     </div>
                                 )
                             })

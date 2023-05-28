@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
 import { EmployeesCount, EstablishmentTypes, FindDuplicateMasters } from "../Master.constants";
 import { BUSINESS_TYPES, COMPANY_REQUEST, COMPANY_STATUSES } from "./Companies.constants";
@@ -119,7 +119,7 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany }
                 })
             },
             {
-                component: 'file-upload',
+                component: componentTypes.FILE_UPLOAD,
                 label: 'Upload Logo',
                 name: 'file',
                 type: 'file',

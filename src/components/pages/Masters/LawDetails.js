@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRenderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
 import { useCreateLaw, useGetLaws, useUpdateLaw } from "../../../backend/masters";
@@ -9,8 +9,7 @@ import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 import { getValue } from "../../../utils/common";
-import { FindDuplicateMasters, GetActionTitle } from "./Master.constants";
-import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
+import { GetActionTitle } from "./Master.constants";
 
 function LawDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});

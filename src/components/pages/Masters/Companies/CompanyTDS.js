@@ -1,6 +1,6 @@
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import React, { useEffect, useState } from "react";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { COMPANY_REQUEST } from "./Companies.constants";
 import { PATTERNS } from "../../../common/Constants";

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useCreateStateRuleCompanyMapping, useGetActivities, useGetActs, useGetCompanies, useGetRules, useGetStates, useUpdateStateRuleMapping, useUploadActStateMappingTemplate } from "../../../../backend/masters";
+import {
+    useCreateStateRuleCompanyMapping, useGetActivities, useGetActs,
+    useGetRules, useGetStates,
+    useUpdateStateRuleMapping, useUploadActStateMappingTemplate
+} from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue, preventDefault } from "../../../../utils/common";
 import { Button, Modal } from "react-bootstrap";
 import { GetActionTitle, GetRuleDesc } from "../Master.constants";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { ACTIONS, ALLOWED_FILES_REGEX, FILE_SIZE } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
@@ -161,7 +165,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 content: getValue(mapping, 'formName'),
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : 'file-upload',
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.FILE_UPLOAD,
                 label: action === ACTIONS.VIEW ? 'Uploaded File' : 'File upload',
                 name: 'file',
                 type: 'file',

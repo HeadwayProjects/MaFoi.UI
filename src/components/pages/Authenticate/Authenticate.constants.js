@@ -1,5 +1,6 @@
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { PATTERNS } from "../../common/Constants";
+import { componentTypes } from "../../common/FormRenderer"
 import { preventDefault } from "../../../utils/common";
 
 export const LOGIN_FIELDS = {
@@ -21,7 +22,7 @@ export const LOGIN_FIELDS = {
             { type: validatorTypes.REQUIRED },
             { type: validatorTypes.MIN_LENGTH, threshold: 7 },
             { type: validatorTypes.MAX_LENGTH, threshold: 16 }
-            
+
         ]
     },
     OTP: {

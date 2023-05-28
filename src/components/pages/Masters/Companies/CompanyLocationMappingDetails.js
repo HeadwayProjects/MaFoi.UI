@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
-
 import { toast } from 'react-toastify';
 import { useCreateCompanyLocation, useGetCities, useGetStates, useUpdateCompanyLocation } from "../../../../backend/masters";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { ACTIONS } from "../../../common/Constants";
 import { getValue, preventDefault } from "../../../../utils/common";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { GetActionTitle } from "../Master.constants";
 import PageLoader from "../../../shared/PageLoader";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";

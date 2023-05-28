@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-    FormRenderer as DDFFormRenderer, componentTypes,
+    FormRenderer as DDFFormRenderer, componentTypes as iComponentTypes,
     useFieldApi, useFormApi, validatorTypes
 } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
@@ -9,6 +9,21 @@ import AsyncSelect from 'react-select/async';
 import Icon from "./Icon";
 import { humanReadableFileSize } from "../../utils/common";
 import DatePicker from "react-multi-date-picker";
+
+export const componentTypes = {
+    TEXT_FIELD: iComponentTypes.TEXT_FIELD,
+    DATE_PICKER: iComponentTypes.DATE_PICKER,
+    TEXTAREA: iComponentTypes.TEXTAREA,
+    SELECT: iComponentTypes.SELECT,
+    PLAIN_TEXT: iComponentTypes.PLAIN_TEXT,
+    CHECKBOX: iComponentTypes.CHECKBOX,
+    WIZARD: iComponentTypes.WIZARD,
+    TAB_ITEM: iComponentTypes.TAB_ITEM,
+    FILE_UPLOAD: 'file-upload',
+    ASYNC_SELECT: 'async-select',
+    MONTH_PICKER: 'month-picker',
+    INPUT_AS_TEXT: 'input-as-text'
+}
 
 function fileSizeValidator({ maxSize }) {
     return (value) => {
@@ -123,6 +138,48 @@ function TextAreaField(props) {
             <div className="input-group">
                 <textarea id={name} className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''}`}
                     maxLength={maxLength} {...onInput(input)} rows={3} />
+            </div>
+            {
+                props.description &&
+                <span className="text-muted form-text">{props.description}</span>
+            }
+            {
+                meta.touched && meta.error && <div className="invalid-feedback d-block">
+                    {meta.error}
+                </div>
+            }
+        </div>
+    )
+}
+
+function InputasTextAreaField(props) {
+    const { label, meta = {}, input, name } = useFieldApi(props);
+    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    const maxLength = ((props.validate || []).find(x => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
+
+    function onInput(input) {
+        return {
+            ...input,
+            required,
+            placeholder: props.placeholder || `Enter ${label}`,
+            onChange: (e) => {
+                const oldVal = e.target.value;
+                const value = (oldVal || '').replace(/[\r\n\t]/g, ' ');
+                const newEvent = { ...e, target: { ...e.target, value } };
+                input.onChange(newEvent);
+                if (props.onChange) {
+                    props.onChange(newEvent);
+                }
+            }
+        }
+    }
+
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            <div className="input-group">
+                <textarea id={name} className={`form-control input-as-textarea ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''}`}
+                    maxLength={maxLength} {...onInput(input)} rows={4} />
             </div>
             {
                 props.description &&
@@ -352,7 +409,7 @@ export function MonthPickerField(props) {
                     className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''} ${props.styleClass || ''}`}
                     {...input} /> */}
                 <DatePicker onlyMonthPicker={true} editable={false} range={props.range || false}
-                    minDate={props.minDate} format={'MMM, YYYY'} maxDate={props.maxDate} {...onInput(input)} value={value}/>
+                    minDate={props.minDate} format={'MMM, YYYY'} maxDate={props.maxDate} {...onInput(input)} value={value} />
             </div>
             {
                 props.description &&
@@ -378,9 +435,10 @@ export const ComponentMapper = {
         return (<div></div>)
     },
     [componentTypes.TAB_ITEM]: TabItemField,
-    'file-upload': FileUploadField,
-    'async-select': AsyncSelectField,
-    'month-picker': MonthPickerField
+    [componentTypes.FILE_UPLOAD]: FileUploadField,
+    [componentTypes.ASYNC_SELECT]: AsyncSelectField,
+    [componentTypes.MONTH_PICKER]: MonthPickerField,
+    [componentTypes.INPUT_AS_TEXT]: InputasTextAreaField
 };
 
 

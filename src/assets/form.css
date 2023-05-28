@@ -93,6 +93,9 @@ input.form-check-input{
     border-color: var(--light-red);
 }
 
+.input-as-textarea {
+    resize: none;
+}
 
 .horizontal-form form {
     display: grid;

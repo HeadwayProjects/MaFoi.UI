@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { componentTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
 import { API_DELIMITER, UI_DELIMITER } from "../../../../utils/constants";
 import { getValue } from "../../../../utils/common";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { GetActionTitle } from "../Master.constants";
 import { COMPANY_STATUS } from "./Companies.constants";
 import styles from "./Companies.module.css";

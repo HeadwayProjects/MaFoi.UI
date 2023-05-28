@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { componentTypes } from "@data-driven-forms/react-form-renderer";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { getValue } from "../../../../utils/common"
 import { API_DELIMITER, UI_DELIMITER } from "../../../../utils/constants";

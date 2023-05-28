@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import MastersLayout from "../MastersLayout";
 import { GetCompaniesBreadcrumb } from "./Companies.constants";
 import { useExportAuditSchedule, useGetCompanies, useGetCompanyLocations } from "../../../../backend/masters";
-import { componentTypes, validatorTypes } from "@data-driven-forms/react-form-renderer";
-import FormRenderer, { ComponentMapper, FormTemplate } from "../../../common/FormRenderer";
+import { validatorTypes } from "@data-driven-forms/react-form-renderer";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import AuditScheduleImportModal from "./AuditScheduleImportModal";
 import { MONTHS } from "../../../common/Constants";
@@ -95,7 +95,7 @@ function AuditSchedule() {
                 className: 'grid-col-100'
             },
             {
-                component: 'month-picker',
+                component: componentTypes.MONTH_PICKER,
                 name: 'month',
                 label: 'Month',
                 validate: [
