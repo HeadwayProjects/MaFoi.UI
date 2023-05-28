@@ -1,0 +1,8 @@
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+    border-color: var(--page-bg);
+}
+
+.ql-editor {
+    height: 220px;
+}

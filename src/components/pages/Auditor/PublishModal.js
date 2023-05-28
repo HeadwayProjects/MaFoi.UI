@@ -2,16 +2,33 @@ import React, { useState, useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { STATUS_MAPPING } from "../../common/Constants";
-import { Editor, EditorState } from "react-draft-wysiwyg";
-import draftToHtml from "draftjs-to-html";
+import ReactQuill from "react-quill";
 
 function PublishModal({ onClose, onSubmit, selectedRows }) {
   const [counts, setCounts] = useState([]);
   const [recommondations, setRecommondations] = useState();
-
-  function onEditorTextChange(e) {
-    setRecommondations(e.target.value);
-  }
+  const [config] = useState({
+    modules: {
+      toolbar: [
+        [{ 'header': '1' }, { 'header': '2' }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        ['link']
+      ],
+      clipboard: {
+        // toggle to add extra line breaks when pasting HTML:
+        matchVisual: false,
+      }
+    },
+    formats: [
+      'header', 'font', 'size',
+      'bold', 'italic', 'underline', 'strike', 'blockquote',
+      'list', 'bullet', 'indent',
+      'link', 'image', 'video'
+    ]
+  })
 
   useEffect(() => {
     if (selectedRows) {
@@ -62,9 +79,8 @@ function PublishModal({ onClose, onSubmit, selectedRows }) {
               <p>Do you want to submit ? click "Yes"</p>
               <p>To cancel, click "No"</p>
               <label className="filter-label">Recommondations</label>
-              <textarea className={'form-control'}
-                maxLength={5000} rows={5} onChange={onEditorTextChange} />
-              {/* <Editor onEditorStateChange={onEditorTextChange} /> */}
+              <ReactQuill theme="snow" value={recommondations} onChange={setRecommondations}
+                modules={config.modules} formats={config.formats} />
             </div>
           </div>
         </Modal.Body>

@@ -1,8 +1,9 @@
-@import url('../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
+@import url('../node_modules/react-quill/dist/quill.snow.css');
 @import url('./assets/style.css');
 @import url('./assets/buttons.css');
 @import url('./assets/form.css');
 @import url('./assets/modals.css');
+@import url('./assets/editor.css');
 
 
 body {
