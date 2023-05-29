@@ -17,7 +17,7 @@ function Report({ data, onClose, payload }) {
 
     function downloadCheckList(e) {
         preventDefault(e);
-        checkList(summary, data);
+        // checkList(summary, data);
     }
     useEffect(() => {
         if ((data || []).length > 0) {

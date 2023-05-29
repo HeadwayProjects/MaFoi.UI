@@ -3,7 +3,6 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { FILTERS, MONTHS, SEARCH_FIELDS, YEARS } from "./Constants";
 import * as dayjs from "dayjs";
 import * as utc from "dayjs/plugin/utc";

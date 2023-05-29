@@ -10,7 +10,6 @@ import * as api from "../../../backend/request";
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import NavTabs from "../../shared/NavTabs";
 import PageLoader from "../../shared/PageLoader";
 

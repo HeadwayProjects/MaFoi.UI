@@ -2,11 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import "react-datepicker/dist/react-datepicker.css";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import Location from "../../common/Location";
-import { useGetAuditorActivites } from "../../../backend/auditor";
 import PageLoader from "../../shared/PageLoader";
 import * as api from "../../../backend/request";
 import { toast } from 'react-toastify';
@@ -16,9 +14,8 @@ import Table, { reactFormatter, CellTmpl, TitleTmpl, DEFAULT_PAYLOAD } from "../
 import { faSave } from "@fortawesome/free-regular-svg-icons";
 import AdvanceSearch from "../../common/AdvanceSearch";
 import AlertModal from "../../common/AlertModal";
-import { checkList, download, preventDefault, reduceArraytoObj } from "../../../utils/common";
+import { download, preventDefault, reduceArraytoObj } from "../../../utils/common";
 import PublishModal from "./PublishModal";
-import Report from "../../shared/Report";
 import ActivityModal from "./ActivityModal";
 import { getUserDetails } from "../../../backend/auth";
 import { useAuditReport } from "../../../backend/exports";
@@ -155,7 +152,7 @@ function TaskManagement() {
                 const list = response.data || [];
                 const _report = list.filter(x => x.published);
                 if (_report.length > 0) {
-                    const user = getUserDetails();
+                    const user = getUserDetails();  
                     _payload['auditorId'] = user.userid;
                     //delete _payload.statuses;
                     auditReport(_payload);
@@ -194,7 +191,7 @@ function TaskManagement() {
                 if (response && response.data) {
                     const _rows = response.data || [];
                     const submittedRows = _rows.filter(x => x.status === ACTIVITY_STATUS.SUBMITTED);
-                    const published = _rows.filter(x => x.published);
+                    const published = _rows.filter(x => x.published);  
                     if (_rows.length === 0) {
                         setAlertMessage(
                             `<p class="my-3">There are no Audited / Rejected activities available to publish for the selected month and year</p>`
@@ -601,13 +598,6 @@ function TaskManagement() {
                     selectedRows={selectedRows} />
             }
             {(submitting || exporting) && <PageLoader />}
-            {/* {
-                !!report &&
-                <Report data={report} payload={filters} onClose={(e) => {
-                    preventDefault(e);
-                    setReport(null);
-                }} />
-            } */}
         </>
     );
 }

@@ -1,4 +1,5 @@
 @import url('../node_modules/react-quill/dist/quill.snow.css');
+@import url('../node_modules/react-datepicker/dist/react-datepicker.min.css');
 @import url('./assets/style.css');
 @import url('./assets/buttons.css');
 @import url('./assets/form.css');

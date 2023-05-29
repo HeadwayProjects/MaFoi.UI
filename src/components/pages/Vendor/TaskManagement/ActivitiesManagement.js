@@ -10,13 +10,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave, faUpload, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import BulkUploadModal from "./BulkuploadModal";
 import { Link, usePath, useHistory } from "raviger";
-import "react-datepicker/dist/react-datepicker.css";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../../common/Constants";
 import Location from "../../../common/Location";
 import { useGetAllActivities, useGetVendorActivites } from "../../../../backend/query";
 import Icon from "../../../common/Icon";
-import { checkList, download, preventDefault, reduceArraytoObj } from "../../../../utils/common";
+import { download, downloadFileContent, preventDefault, reduceArraytoObj } from "../../../../utils/common";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import AdvanceSearch from "../../../common/AdvanceSearch";
@@ -70,15 +69,11 @@ function ActivitiesManagement() {
     const [selectedRows, setSelectedRows] = useState([]);
     const [alertMessage, setAlertMessage] = useState(null);
     const { auditReport, exporting } = useAuditReport((response) => {
-        const blob = new Blob([response.data], { type: response.headers['content-type'] })
-        const URL = window.URL || window.webkitURL;
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = 'AuditReport.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        downloadFileContent({
+            name: 'AuditReport.pdf',
+            type: response.headers['content-type'],
+            content: response.data
+        });
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
     });
@@ -86,24 +81,17 @@ function ActivitiesManagement() {
     function onLocationChange(event) {
         const { company, associateCompany, location } = event;
         setLocationFilter([
-            {
-                columnName: 'companyId',
-                value: company
-            },
-            {
-                columnName: 'associateCompanyId',
-                value: associateCompany
-            },
-            {
-                columnName: 'locationId',
-                value: location
-            }
+            { columnName: 'companyId', value: company },
+            { columnName: 'associateCompanyId', value: associateCompany },
+            { columnName: 'locationId', value: location }
         ]);
     }
 
     function editActivity(activity) {
         setActivity(activity);
     }
+
+
 
     function downloadForm(activity) {
         setSubmitting(true);
@@ -136,7 +124,6 @@ function ActivitiesManagement() {
                 if (_report.length > 0) {
                     const user = auth.getUserDetails();
                     _payload['auditorId'] = user.userid;
-                    //delete _payload.statuses;
                     auditReport(_payload);
                 } else {
                     toast.warn('There are no reports available for the selected month and year.');
@@ -268,11 +255,8 @@ function ActivitiesManagement() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                {
-                    (readOnly || [ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED, ACTIVITY_STATUS.SUBMITTED].includes(row.status)) ?
-                        <Icon className="mx-2" type="button" name="eye" text="View" data={row} action={editActivity} />
-                        : <Icon className="mx-2" type="button" name="pencil" text="Edit" data={row} action={editActivity} />
-                }
+                <Icon className="mx-2" type="button" name={readOnly ? 'eye' : 'pencil'}
+                    text={readOnly ? 'View' : 'Edit'} data={row} action={editActivity} />
                 <Icon className="ms-1" type="button" name="download" text="Download" data={row} action={downloadForm} />
             </div>
         )
@@ -362,7 +346,7 @@ function ActivitiesManagement() {
     }
 
     function hasFilters(ref, field = 'companyId') {
-        const _filters = (ref ? ref.current : {...(payloadRef.current || {})}.filters) || [];
+        const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
         const company = _filters.find(x => x.columnName === field);
         return (company || {}).value;
     }
