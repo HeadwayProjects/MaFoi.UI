@@ -56,7 +56,8 @@ function ActivitiesManagement() {
     const [locationFilters, setLocationFilter] = useState();
     const lfRef = useRef();
     lfRef.current = locationFilters;
-    const [advaceSearchFilters, setAdvanceSearchFilters] = useState();
+    const [advaceSearchFilters, setAdvanceSearchFilters] = useState((state || {}).fromDate ? 
+    [{columnName: 'fromDate', value: state.fromDate}, {columnName: 'toDate', value: state.toDate}]: undefined);
     const afRef = useRef();
     afRef.current = advaceSearchFilters;
     const [statusFilters, setStatusFilters] = useState();
