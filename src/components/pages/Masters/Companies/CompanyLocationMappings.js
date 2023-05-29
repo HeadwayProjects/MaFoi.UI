@@ -12,6 +12,8 @@ import TableFilters from "../../../common/TableFilter";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import PageLoader from "../../../shared/PageLoader";
+import MastersLayout from "../MastersLayout";
+import { GetMastersBreadcrumb } from "../Master.constants";
 
 function mapLocation(x) {
     return {
@@ -30,6 +32,7 @@ function mapLocation(x) {
 };
 
 function CompanyLocationMappings() {
+    const [breadcrumb] = useState(GetMastersBreadcrumb('Location Mapping'));
     const [query] = useQueryParams();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [parentCompany, setParentCompany] = useState(null);
@@ -263,20 +266,22 @@ function CompanyLocationMappings() {
 
     return (
         <>
-            <div className="d-flex flex-column mx-0">
-                <div className="card d-flex flex-row justify-content-center m-3 p-3">
-                    <div className="col-12">
-                        <div className="d-flex justify-content-between align-items-end">
-                            <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
-                                placeholder={"Search for Location Code/Name/Contact"} />
-                            <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
-                                <Icon name={'plus'} className="me-2"></Icon>Add New
-                            </Button>
+            <MastersLayout title="Location Mapping" breadcrumbs={breadcrumb}>
+                <div className="d-flex flex-column mx-0">
+                    <div className="card d-flex flex-row justify-content-center m-3 p-3">
+                        <div className="col-12">
+                            <div className="d-flex justify-content-between align-items-end">
+                                <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
+                                    placeholder={"Search for Location Code/Name/Contact"} />
+                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
+                                    <Icon name={'plus'} className="me-2"></Icon>Add New
+                                </Button>
+                            </div>
                         </div>
                     </div>
+                    <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
                 </div>
-                <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
-            </div>
+            </MastersLayout>
 
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
