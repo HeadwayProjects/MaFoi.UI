@@ -13,6 +13,8 @@ import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/cons
 import PageLoader from "../../shared/PageLoader";
 import { useRef } from "react";
 import TableFilters from "../../common/TableFilter";
+import { downloadFileContent } from "../../../utils/common";
+import { useExportAct } from "../../../backend/exports";
 
 function Act() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Act'));
@@ -29,6 +31,15 @@ function Act() {
     const { deleteAct, deleting } = useDeleteAct(() => {
         toast.success(`${act.name} deleted successfully.`);
         submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+    const { exportAct, exporting } = useExportAct((response) => {
+        downloadFileContent({
+            name: 'Acts.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
@@ -167,6 +178,10 @@ function Act() {
         setPayload({ ...payload, ..._params })
     }
 
+    function handleExport() {
+        exportAct({ ...payload, pagination: null });
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
             setTimeout(() => {
@@ -184,9 +199,15 @@ function Act() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder="Search for Act/Estblishment Type/Law" />
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                <div className="d-flex">
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
+
+                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -206,6 +227,9 @@ function Act() {
             }
             {
                 deleting && <PageLoader>Deleting Act...</PageLoader>
+            }
+            {
+                exporting && <PageLoader>Preparing Data...</PageLoader>
             }
         </>
     )

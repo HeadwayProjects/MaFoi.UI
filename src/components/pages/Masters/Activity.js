@@ -12,6 +12,9 @@ import PageLoader from "../../shared/PageLoader";
 import { toast } from "react-toastify";
 import TableFilters from "../../common/TableFilter";
 import { useRef } from "react";
+import { ERROR_MESSAGES } from "../../../utils/constants";
+import { downloadFileContent } from "../../../utils/common";
+import { useExportActivities } from "../../../backend/exports";
 
 function Activity() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Activity'));
@@ -27,6 +30,15 @@ function Activity() {
     const { deleteActivity, deleting } = useDeleteActivity(({ name }) => {
         toast.success(`Activiy ${name} deleted successfully.`);
         refetch();
+    });
+    const { exportActivity, exporting } = useExportActivities((response) => {
+        downloadFileContent({
+            name: 'Activities.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
     });
     const filterConfig = [
         {
@@ -167,6 +179,10 @@ function Activity() {
         setPayload({ ...payload, ..._params })
     }
 
+    function handleExport() {
+        exportActivity({ ...payload, pagination: null });
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
             setData(formatApiResponse(params, activities, total));
@@ -181,10 +197,15 @@ function Activity() {
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
-                                    placeholder={"Search for Activity"}/>
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                    placeholder={"Search for Activity"} />
+                                <div className="d-flex">
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
+                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -204,6 +225,9 @@ function Activity() {
             }
             {
                 deleting && <PageLoader>Deleting...</PageLoader>
+            }
+            {
+                exporting && <PageLoader>Preparing Data...</PageLoader>
             }
 
         </>

@@ -13,6 +13,8 @@ import { ERROR_MESSAGES } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 import { useRef } from "react";
 import TableFilters from "../../common/TableFilter";
+import { downloadFileContent } from "../../../utils/common";
+import { useExportRules } from "../../../backend/exports";
 
 function Rule() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Rule'));
@@ -28,6 +30,15 @@ function Rule() {
     const { deleteRule, isLoading: deletingRule } = useDeleteRule(() => {
         refetch();
     }, () => toast.error(ERROR_MESSAGES.DEFAULT));
+    const { exportRules, exporting } = useExportRules((response) => {
+        downloadFileContent({
+            name: 'Rules.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
 
     const filterConfig = [
         {
@@ -147,6 +158,10 @@ function Rule() {
         setPayload({ ...payload, ..._params })
     }
 
+    function handleExport() {
+        exportRules({ ...payload, pagination: null });
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
             setData(formatApiResponse(params, rules, total));
@@ -161,10 +176,15 @@ function Rule() {
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
-                                placeholder={"Search for Rule/Description"}/>
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                    placeholder={"Search for Rule/Description"} />
+                                <div className="d-flex">
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
+                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -186,6 +206,9 @@ function Rule() {
                 </ConfirmModal>
             }
             {deletingRule && <PageLoader message={'Deleting Rule. Please wait...'} />}
+            {
+                exporting && <PageLoader>Preparing Data...</PageLoader>
+            }
         </>
     )
 }

@@ -12,7 +12,8 @@ import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
 import RuleStateCompanyMappingDetails from "./RuleStateCompanyMappingDetails";
 import TableFilters from "../../../common/TableFilter";
-import { download, preventDefault } from "../../../../utils/common";
+import { download, downloadFileContent, preventDefault } from "../../../../utils/common";
+import { useExportActStateMappings } from "../../../../backend/exports";
 
 function RuleStateCompanyMapping() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Mapping'));
@@ -29,6 +30,15 @@ function RuleStateCompanyMapping() {
     const { deleteActStateMapping, deleting } = useDeleteActStateMapping(response => {
         toast.success(`Mapping deleted successfully.`);
         submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+    const { exportActStateMappings, exporting } = useExportActStateMappings((response) => {
+        downloadFileContent({
+            name: 'Act-Rule-Activity-State-Mapping.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
@@ -120,7 +130,7 @@ function RuleStateCompanyMapping() {
         { title: "Act", field: "act", formatter: reactFormatter(<NameTmpl />) },
         { title: "Rule", field: "rule", widthGrow: 2, formatter: reactFormatter(<RuleTmpl />) },
         { title: "Activity", field: "activity", formatter: reactFormatter(<NameTmpl />) },
-        { title: "State", field: "state", formatter: reactFormatter(<NameTmpl />), headerSort: true  },
+        { title: "State", field: "state", formatter: reactFormatter(<NameTmpl />), headerSort: true },
         { title: "Type", field: "type", formatter: reactFormatter(<TypeTmpl />) },
         { title: "Form Name", field: "formName", formatter: reactFormatter(<CellTmpl />) },
         {
@@ -195,6 +205,13 @@ function RuleStateCompanyMapping() {
         setPayload({ ...payload, ..._params })
     }
 
+    function handleExport() {
+        exportActStateMappings({
+            ...payload,
+            pagination: null
+        });
+    }
+
 
     useEffect(() => {
         if (!isFetching && payload) {
@@ -213,9 +230,14 @@ function RuleStateCompanyMapping() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Act/Rule/Activity"} />
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                <div className="d-flex">
+                                     <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
+                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -10,6 +10,9 @@ import { useGetStates, useDeleteState } from "../../../backend/masters";
 import { toast } from "react-toastify";
 import TableFilters from "../../common/TableFilter";
 import { useRef } from "react";
+import { downloadFileContent } from "../../../utils/common";
+import { ERROR_MESSAGES } from "../../../utils/constants";
+import { useExportStates } from "../../../backend/exports";
 
 function State() {
     const [breadcrumb] = useState([
@@ -33,7 +36,16 @@ function State() {
         setState(null);
         refetch();
     }, () => {
-        toast.error('Something went wrong! Please try again.');
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+    const { exportStates, exporting } = useExportStates((response) => {
+        downloadFileContent({
+            name: 'States.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
     });
 
     function ActionColumnElements({ cell }) {
@@ -128,6 +140,10 @@ function State() {
         setPayload({ ...payload, ..._params })
     }
 
+    function handleExport() {
+        exportStates({ ...payload, pagination: null });
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
             setData(formatApiResponse(params, states, total));
@@ -141,10 +157,16 @@ function State() {
                     <div className="card d-flex flex-row justify-content-center m-3 p-3">
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
-                                <TableFilters search={true} onFilterChange={onFilterChange} placeholder={"Search for State Code/Name"}/>
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                <TableFilters search={true} onFilterChange={onFilterChange} placeholder={"Search for State Code/Name"} />
+                                <div className="d-flex">
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
+                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+
+                                </div>
                             </div>
                         </div>
                     </div>
