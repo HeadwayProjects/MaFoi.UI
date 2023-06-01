@@ -108,7 +108,7 @@ export function useExportCities(onSuccess, onError) {
 export function useExportActStateMappings(onSuccess, onError) {
     const { mutate: exportActStateMappings, error, isLoading: exporting } = useMutation(
         ['exportActStateMappings'],
-        async (payload) => await post('/api/Mappings/ExportActStateList', payload, null, true, { responseType: 'blob' }),
+        async (payload) => await post('/api/Mappings/ExportActStateMapping', payload, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {

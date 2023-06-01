@@ -52,7 +52,7 @@ function ActivityDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? getValue(activity, 'type') : ''
+                content: action === ACTIONS.VIEW ? getValue(activity, 'type.label') : ''
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,

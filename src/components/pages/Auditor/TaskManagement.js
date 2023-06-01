@@ -23,6 +23,7 @@ import { API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
 import { useGetAllActivities } from "../../../backend/query";
 
 const STATUS_BTNS = [
+    // { name: ACTIVITY_STATUS.PENDING, label: STATUS_MAPPING[ACTIVITY_STATUS.PENDING], style: 'warning' },
     { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
     { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'success' },
     { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' }
@@ -157,7 +158,7 @@ function TaskManagement() {
                     //delete _payload.statuses;
                     auditReport(_payload);
                 } else {
-                    toast.warn('There are no reports available for the selected month and year.');
+                    toast.warn('One or more forms are not published for the selected month and year.');
                 }
             }
         }).finally(() => setSubmitting(false));
@@ -362,12 +363,25 @@ function TaskManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
+            title: "Audit Type", field: "auditType", maxWidth: 100,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
             title: "Actions", hozAlign: "center", width: 120,
             headerSort: false,
             formatter: reactFormatter(<ActionColumnElements />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         }
     ]
+
+    function rowFormatter(row) {
+        const data = row.getData();
+        const element = row.getElement();
+        if (data.published) {
+            element.classList.add('activity-published');
+        }
+    }
 
     const [tableConfig] = useState({
         paginationMode: 'remote',
@@ -376,7 +390,8 @@ function TaskManagement() {
         rowHeight: 'auto',
         selectable: false,
         paginate: true,
-        initialSort: [{ column: 'month', dir: 'desc' }]
+        initialSort: [{ column: 'month', dir: 'desc' }],
+        rowFormatter
     });
 
     function formatApiResponse(params, list, totalRecords) {
@@ -439,7 +454,6 @@ function TaskManagement() {
 
     useEffect(() => {
         if (locationFilters) {
-            console.log('location change', sfRef.current)
             setPayload({
                 ...DEFAULT_PAYLOAD,
                 sort: {
@@ -476,7 +490,6 @@ function TaskManagement() {
 
     useEffect(() => {
         if (statusFilters) {
-            console.log('Status change', statusFilters)
             setPayload({
                 ...DEFAULT_PAYLOAD,
                 sort: {

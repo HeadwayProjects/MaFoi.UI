@@ -15,5 +15,11 @@ export const STEPPER_CONFIG = {
     activeColor: 'var(--royal-blue)'
 }
 
+export const ACTIVITY_TYPE = {
+    AUDIT: 'Audited',
+    NO_AUDIT: 'Not To be Audited',
+    PHYSICAL_AUDIT: 'Physical Audit'
+}
+
 export const UI_DELIMITER = ', ';
 export const API_DELIMITER = ';';

@@ -20,7 +20,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import AdvanceSearch from "../../../common/AdvanceSearch";
 import AlertModal from "../../../common/AlertModal";
-import { API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
+import { ACTIVITY_TYPE, API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
 import { useAuditReport } from "../../../../backend/exports";
 
 const STATUS_BTNS = [
@@ -39,6 +39,9 @@ const SortFields = {
     'associateCompany.name': 'associatecompanyname',
     'location.name': 'locationname'
 };
+
+// const AuditTypeFilter = [{columnName: 'auditType', value: ACTIVITY_TYPE.AUDIT}];
+const AuditTypeFilter = [];
 
 function ActivitiesManagement() {
     const [readOnly] = useState(!auth.isVendor());
@@ -330,8 +333,17 @@ function ActivitiesManagement() {
         rowHeight: 'auto',
         selectable: false,
         paginate: true,
-        initialSort: [{ column: 'month', dir: 'desc' }]
+        initialSort: [{ column: 'month', dir: 'desc' }],
+        rowFormatter
     });
+
+    function rowFormatter(row) {
+        const data = row.getData();
+        const element = row.getElement();
+        if (data.published) {
+            element.classList.add('activity-published');
+        }
+    }
 
     function formatApiResponse(params, list, totalRecords) {
         const { pagination } = params || {};
@@ -375,7 +387,8 @@ function ActivitiesManagement() {
             filters: [
                 ...(lfRef.current || []),
                 ...(afRef.current || []),
-                ...(sfRef.current || [])
+                ...(sfRef.current || []),
+                ...AuditTypeFilter
             ]
         });
         return Promise.resolve(formatApiResponse(params, activities, total));
@@ -385,7 +398,7 @@ function ActivitiesManagement() {
         const _params = { ...params };
         _params.pagination = _pagination;
         setParams({ ..._params });
-        setPayload({ ...payload, ..._params })
+        setPayload({ ...payload, ..._params });
     }
 
     function getAdvanceSearchPayload() {
@@ -409,7 +422,8 @@ function ActivitiesManagement() {
                 filters: [
                     ...locationFilters,
                     ...(afRef.current || []),
-                    ...(sfRef.current || [])
+                    ...(sfRef.current || []),
+                    ...AuditTypeFilter
                 ]
             });
         }
@@ -427,7 +441,8 @@ function ActivitiesManagement() {
                 filters: [
                     ...(lfRef.current || []),
                     ...advaceSearchFilters,
-                    ...(sfRef.current || [])
+                    ...(sfRef.current || []),
+                    ...AuditTypeFilter
                 ]
             });
         }
@@ -445,7 +460,8 @@ function ActivitiesManagement() {
                 filters: [
                     ...(lfRef.current || []),
                     ...(afRef.current || []),
-                    ...statusFilters
+                    ...statusFilters,
+                    ...AuditTypeFilter
                 ]
             });
         }

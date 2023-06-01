@@ -125,7 +125,8 @@ function Table(props) {
         paginationSize = DEFAULT_PAGE_SIZE,
         rowHeight = 24,
         bufferSpacing = 1,
-        paginate = false
+        paginate = false,
+        rowFormatter
     } = props.options;
 
     const [table, setTable] = useState();
@@ -214,6 +215,7 @@ function Table(props) {
                 columns: tableColumns,
                 resizableColumnFit,
                 rowHeight,
+                rowFormatter,
                 dataLoader: false
             });
             setTable(_table);

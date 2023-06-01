@@ -1204,6 +1204,7 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen) {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 .custom-tabulator-footer {
@@ -1248,4 +1249,9 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen) {
 }
 .tabulator-cell .icon.icon-download {
     color: var(--orange);
+}
+
+.tabulator-row.activity-published {
+    opacity: 0.5;
+    font-style: italic;
 }
