@@ -18,7 +18,7 @@ import PageLoader from "../../shared/PageLoader";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
 import VerifyOTP from "./VerifyOTP";
 import { clearAuthToken, getAuthToken, setAuthToken, useGenerateOTP, useUserLogin } from "../../../backend/auth";
-import { ERROR_MESSAGES } from "../../../utils/constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { getBasePath } from "../../../App";
 
 function Login() {
@@ -36,12 +36,12 @@ function Login() {
             toast.error('Email/Phone No. or password is incorrect.');
         }
     }, errorCallback);
-    const { generateOTP, isLoading: generatingOTP } = useGenerateOTP(({ result, message, token }) => {
-        if (result === 'SUCCESS') {
-            setPayload({ ...payload, token });
+    const { generateOTP, isLoading: generatingOTP } = useGenerateOTP(({ result, message }) => {
+        if (result === API_RESULT.SUCCESS) {
+            setPayload({ ...payload, token: message });
             setVerifyOTP(true);
         } else {
-            toast.error(message || 'Error');
+            toast.error(message || ERROR_MESSAGES.ERROR);
         }
     }, errorCallback)
 
