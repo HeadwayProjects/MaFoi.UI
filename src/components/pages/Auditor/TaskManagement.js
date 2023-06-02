@@ -220,9 +220,9 @@ function TaskManagement() {
         setSubmitting(true);
         const _request = { ...reduceArraytoObj(lfRef.current), ...reduceArraytoObj(afRef.current) };
         const _payload = {
-            company: _request.companyId,
-            associateCompany: _request.associateCompanyId,
-            location: _request.locationId,
+            companyId: _request.companyId,
+            associateCompanyId: _request.associateCompanyId,
+            locationId: _request.locationId,
             month: _request.month,
             year: _request.year,
             recommendations: recommendations || ''
