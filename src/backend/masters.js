@@ -708,3 +708,34 @@ export function useImportAuditSchedule(onSuccess, onError) {
     );
     return { importAuditSchedule, error, uploading };
 }
+
+export function useDeleteAuditSchedule(onSuccess, onError) {
+    const { mutate: deleteAuditSchedule, error, isLoading: deleting } = useMutation(
+        ['deleteAuditSchedule'],
+        async (payload) => await api.post(`/api/ToDo/Delete`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteAuditSchedule, error, deleting };
+}
+
+export function useUpdateAuditSchedule(onSuccess, onError) {
+    const { mutate: updateAuditSchedule, error, isLoading: updating } = useMutation(
+        ['updateAuditSchedule'],
+        async (payload) => await api.put(`/api/ToDo/Update`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateAuditSchedule, error, updating };
+}
+

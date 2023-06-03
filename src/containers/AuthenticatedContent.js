@@ -24,6 +24,8 @@ import Companies from "../components/pages/Masters/Companies/Companies";
 import CompanyLocationMappings from "../components/pages/Masters/Companies/CompanyLocationMappings";
 import UserCompanies from "../components/pages/UserManagement/UserCompanies";
 import AuditSchedule from "../components/pages/Masters/Companies/AuditSchedule";
+import AuditScheduleDetails from "../components/pages/Masters/Companies/AuditScheduleDetails";
+import LockUnLock from "../components/pages/Masters/Companies/LockUnLock";
 
 export const ROLE_MAPPING = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -109,6 +111,12 @@ function AuthenticatedContent() {
         ),
         '/companies/auditSchedule': () => (
             layout(<AuditSchedule />)
+        ),
+        '/companies/audit-schedule-details': () => (
+            layout(<AuditScheduleDetails />)
+        ),
+        '/companies/blockUnblock': () => (
+            layout(<LockUnLock />)
         ),
         '/userManagement/users': () => (
             layout(<MangeUsers />)

@@ -27,7 +27,8 @@ const SideNavMenu = [
             { id: 'companies/associateCompanies', url: '/companies/associateCompanies', label: 'Associate Companies' },
             { id: 'companies/locationMapping', url: '/companies/locationMapping', label: 'Location Mapping' },
             { id: 'companies/auditSchedule', url: '/companies/auditSchedule', label: 'Audit Schedule' },
-            // { id: 'companies/blockUnblock', url: '/companies/blockUnblock', label: 'Block Un-Block' }
+            { id: 'companies/audit-schedule-details', url: '/companies/audit-schedule-details', label: 'Audit Schedule Details' },
+            { id: 'companies/blockUnblock', url: '/companies/blockUnblock', label: 'Block Un-Block' }
         ]
     },
     {
