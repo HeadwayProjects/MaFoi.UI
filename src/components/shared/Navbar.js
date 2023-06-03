@@ -18,32 +18,7 @@ function Navbar({ showUser = true }) {
     const [newUser, setNewUser] = useState(false);
     const [unreadNotifications, setUnreadNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
-    const [notifications, setNotifications] = useState([
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false, id: 1 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false, id: 2 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: false, id: 3 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 4 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 5 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 6 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 7 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 8 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 9 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 10 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 11 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 12 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 13 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 14 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 15 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 16 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 17 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 18 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 19 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 20 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 21 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 22 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 23 },
-        { from: 'superadminuser@ezycomp.com', subject: 'User Location Access', isRead: true, id: 24 },
-    ]);
+    const [notifications, setNotifications] = useState([]);
 
     function logout(event) {
         preventDefault(event)

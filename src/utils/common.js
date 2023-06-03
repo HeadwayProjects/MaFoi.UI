@@ -1,4 +1,5 @@
 import { ACTIVITY_STATUS } from "../components/common/Constants";
+import { ACTIVITY_TYPE } from "./constants";
 
 export function preventDefault(event) {
   if (event) {
@@ -161,4 +162,64 @@ export function checkVendorActivityStatus(activity) {
     }
   }
   return { editable: false }
+}
+
+export function checkAuditorActivityStatus(activity) {
+  const { auditted: auditType, status, published } = activity || {};
+  if (published) {
+    return {
+      editable: false,
+      message: 'This activity is publised. No modifications allowed. Download audit report for more details.',
+      type: 'info'
+    }
+  }
+  if (auditType === ACTIVITY_TYPE.NO_AUDIT) {
+    return {
+      editable: false,
+      type: 'info',
+      message: `This activity doesn't required any action.`
+    };
+  } else if (auditType === ACTIVITY_TYPE.AUDIT) {
+    if (status === ACTIVITY_STATUS.AUDITED) {
+      return {
+        editable: false,
+        type: 'success',
+        message: 'This activity is approved. No modifications allowed.'
+      }
+    } else if (status === ACTIVITY_STATUS.REJECTED) {
+      return {
+        editable: true,
+        message: 'This activity is rejected and waiting for user confirmation',
+        type: 'warning'
+      }
+    } else if (status === ACTIVITY_STATUS.SUBMITTED) {
+      return {
+        editable: true
+      }
+    }
+  } else if (auditType === ACTIVITY_TYPE.PHYSICAL_AUDIT) {
+    // if (status === ACTIVITY_STATUS.AUDITED) {
+    //   return {
+    //     editable: false,
+    //     type: 'success',
+    //     message: 'This activity is approved. No modifications allowed.'
+    //   }
+    // } else if (status === ACTIVITY_STATUS.REJECTED) {
+    //   return {
+    //     editable: false,
+    //     type: 'danger',
+    //     message: 'This activity is rejected. No modifications allowed.'
+    //   }
+    // } else if (status === ACTIVITY_STATUS.SUBMITTED || status === ACTIVITY_STATUS.OVERDUE) {
+    //   return {
+    //     editable: true
+    //   }
+    // }
+    return {
+      editable: true
+    }
+  }
+  return {
+    editable: false
+  }
 }

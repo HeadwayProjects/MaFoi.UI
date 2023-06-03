@@ -16,9 +16,15 @@ export const STEPPER_CONFIG = {
 }
 
 export const ACTIVITY_TYPE = {
-    AUDIT: 'Audited',
-    NO_AUDIT: 'Not To be Audited',
+    AUDIT: 'Audit',
+    NO_AUDIT: 'No Audit',
     PHYSICAL_AUDIT: 'Physical Audit'
+}
+
+export const ACTIVITY_TYPE_ICONS = {
+    [ACTIVITY_TYPE.AUDIT]: 'audit',
+    [ACTIVITY_TYPE.PHYSICAL_AUDIT]: 'physical-audit',
+    [ACTIVITY_TYPE.NO_AUDIT]: 'no-audit'
 }
 
 export const UI_DELIMITER = ', ';

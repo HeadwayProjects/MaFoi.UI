@@ -1254,4 +1254,5 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen) {
 .tabulator-row.activity-published {
     opacity: 0.5;
     font-style: italic;
+    font-weight: bold;
 }

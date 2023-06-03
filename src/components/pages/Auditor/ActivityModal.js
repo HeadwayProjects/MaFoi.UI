@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { ACTIVITY_STATUS, AUDIT_STATUS, STATUS_MAPPING } from "../../common/Constants";
+import { ACTIVITY_STATUS, ALLOWED_FILES_REGEX, AUDIT_STATUS, STATUS, STATUS_MAPPING } from "../../common/Constants";
 import { useGetActivityDocuments } from "../../../backend/query";
 import Icon from "../../common/Icon";
-import { download } from "../../../utils/common";
+import { checkAuditorActivityStatus, download } from "../../../utils/common";
 import "./ActivityModal.css";
 import * as api from "../../../backend/request";
 import { toast } from 'react-toastify';
@@ -12,6 +12,10 @@ import Select from 'react-select';
 import DatePicker from "react-datepicker";
 import NavTabs from "../../shared/NavTabs";
 import PageLoader from "../../shared/PageLoader";
+import { Alert } from "react-bootstrap";
+import { ACTIVITY_TYPE } from "../../../utils/constants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUpload } from "@fortawesome/free-solid-svg-icons";
 
 const TABS = {
     DETAILS: 'details',
@@ -41,23 +45,25 @@ function StatusTmp({ status }) {
 }
 
 function ActivityModal({ activity = {}, onClose, onSubmit }) {
-    const [editable] = useState(activity.status === ACTIVITY_STATUS.SUBMITTED);
+    const [formStatus] = useState(checkAuditorActivityStatus(activity));
     const [activeTab, setActiveTab] = useState(TABS.DETAILS);
     const [submitting, setSubmitting] = useState(false);
     const [auditStatus, setAuditStatus] = useState();
-    const [status, setStatus] = useState();
+    const [status, setStatus] = useState(FORM_STATUSES.find(x => x.value === activity.status));
     const [auditRemarks, setAuditRemarks] = useState();
-    const [formsStatusRemarks, setFormsStatusRemarks] = useState();
+    const [formsStatusRemarks, setFormsStatusRemarks] = useState(activity.formsStatusRemarks);
     const [dueDate, setDueDate] = useState(new Date(activity.dueDate));
-    const { documents } = useGetActivityDocuments(activity.id);
+    const { documents, invalidate } = useGetActivityDocuments(activity.id);
+    const [file, setFile] = useState(null);
+    const [invalidFile, setInvalidFile] = useState(false);
 
     function onTabChange(event) {
         setActiveTab(event);
         if (event === TABS.DETAILS) {
             setAuditStatus(undefined);
-            setStatus(undefined);
+            setStatus(FORM_STATUSES.find(x => x.value === activity.status));
             setAuditRemarks(undefined);
-            setFormsStatusRemarks(undefined);
+            setFormsStatusRemarks(activity.formsStatusRemarks);
         }
     }
 
@@ -91,6 +97,25 @@ function ActivityModal({ activity = {}, onClose, onSubmit }) {
 
     }
 
+    function onFileChange(event) {
+        const file = event.target.files[0];
+        const invalidFile = !ALLOWED_FILES_REGEX.exec(file.name);
+        setFile(file);
+        setInvalidFile(invalidFile);
+    }
+
+    function uploadFile() {
+        setSubmitting(true);
+        const formData = new FormData();
+        formData.append('file', file, file.name);
+        api.post(`/api/FileUpload/UploadSingleFile?toDoId=${activity.id}`, formData).then(() => {
+            setFile(null);
+            setInvalidFile(false);
+            invalidate();
+            toast.success('File uploaded successfully.');
+        }).finally(() => setSubmitting(false));
+    }
+
     useEffect(() => {
         if (status) {
             setDueDate(new Date(activity.dueDate));
@@ -114,6 +139,10 @@ function ActivityModal({ activity = {}, onClose, onSubmit }) {
                     <Modal.Title className="bg">Activity</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    {
+                        (formStatus || {}).message &&
+                        <Alert variant={formStatus.type}>{formStatus.message}</Alert>
+                    }
                     <NavTabs list={TABS_LIST} onTabChange={onTabChange} />
                     {
                         activeTab === TABS.DETAILS &&
@@ -140,11 +169,15 @@ function ActivityModal({ activity = {}, onClose, onSubmit }) {
                                         <div className="col-4 filter-label">Forms Status</div>
                                         <div className="col">{activity.status && <StatusTmp status={activity.status} />}</div>
                                     </div>
+                                    <div className="row mb-2">
+                                        <div className="col-4 filter-label">Audit Type</div>
+                                        <div className="col">{activity.auditted || ACTIVITY_TYPE.AUDIT}</div>
+                                    </div>
                                 </div>
                             </div>
 
                             {
-                                editable &&
+                                (formStatus || {}).editable &&
                                 <div className="px-4">
                                     <form>
                                         <div className="row mt-3">
@@ -159,11 +192,11 @@ function ActivityModal({ activity = {}, onClose, onSubmit }) {
                                                         onChange={(e) => setFormsStatusRemarks(e.target.value)} />
                                                 </div>
                                                 {
-                                                    (status || {}).value === ACTIVITY_STATUS.REJECT &&
+                                                    (status || {}).value === ACTIVITY_STATUS.REJECT && activity.auditted !== ACTIVITY_TYPE.PHYSICAL_AUDIT &&
                                                     <div className="col-8 mb-4">
                                                         <label className="filter-label">Vendor Due Date<span className="required">*</span></label>
                                                         <DatePicker className="form-control" selected={dueDate} dateFormat="dd-MM-yyyy"
-                                                            onChange={setDueDate} placeholderText="dd-mm-yyyy"
+                                                            onChange={setDueDate} placeholderText="dd-mm-yyyy" minDate={new Date()}
                                                             showMonthDropdown
                                                             showYearDropdown
                                                             dropdownMode="select" />
@@ -199,6 +232,32 @@ function ActivityModal({ activity = {}, onClose, onSubmit }) {
                         activeTab === TABS.FILES &&
                         <div className="d-flex justify-content-center">
                             <div className="col-10">
+                                {
+                                    (formStatus || {}).editable && activity.auditted === ACTIVITY_TYPE.PHYSICAL_AUDIT &&
+                                    <>
+                                        <div className="row my-4">
+                                            <div className="col w-100">
+                                                <input type="file" className="form-control" onChange={onFileChange} />
+                                                {
+                                                    invalidFile &&
+                                                    <div className="text-danger"> <small>Invalid file format.</small></div>
+                                                }
+
+                                            </div>
+                                        </div>
+                                        <div className="row justify-content-center">
+                                            <div className="col-2">
+                                                <Button variant="outline-primary" disabled={!file || invalidFile}
+                                                    onClick={uploadFile}>
+                                                    <div className="d-flex align-items-center justify-content-center w-100">
+                                                        <FontAwesomeIcon icon={faUpload} />
+                                                        <span className="ms-2">Upload</span>
+                                                    </div>
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </>
+                                }
                                 <table className="table modalTable fixed_header">
                                     <thead>
                                         <tr>
@@ -239,7 +298,7 @@ function ActivityModal({ activity = {}, onClose, onSubmit }) {
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-end">
                     {
-                        editable && activeTab === TABS.DETAILS ?
+                        ((formStatus || {}).editable && activeTab === TABS.DETAILS) ?
                             <div className="d-flex flex-row justify-content-between w-100">
                                 <Button variant="secondary" onClick={onClose} >Back</Button>
                                 <Button variant="primary" onClick={submit} disabled={isInvalid()}>Submit</Button>

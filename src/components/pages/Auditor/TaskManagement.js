@@ -19,14 +19,16 @@ import PublishModal from "./PublishModal";
 import ActivityModal from "./ActivityModal";
 import { getUserDetails } from "../../../backend/auth";
 import { useAuditReport } from "../../../backend/exports";
-import { API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
+import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
 import { useGetAllActivities } from "../../../backend/query";
 
 const STATUS_BTNS = [
-    // { name: ACTIVITY_STATUS.PENDING, label: STATUS_MAPPING[ACTIVITY_STATUS.PENDING], style: 'warning' },
+    { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
+    { name: ACTIVITY_STATUS.PENDING, label: STATUS_MAPPING[ACTIVITY_STATUS.PENDING], style: 'warning' },
+    { name: ACTIVITY_STATUS.OVERDUE, label: STATUS_MAPPING[ACTIVITY_STATUS.OVERDUE], style: 'danger' },
     { name: ACTIVITY_STATUS.SUBMITTED, label: STATUS_MAPPING[ACTIVITY_STATUS.SUBMITTED], style: 'danger' },
-    { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'success' },
-    { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' }
+    { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' },
+    { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'danger' }
 ];
 
 const ACTIONS = {
@@ -66,7 +68,6 @@ function TaskManagement() {
     const [selectedRows, setSelectedRows] = useState([]);
     const [alertMessage, setAlertMessage] = useState(null);
     const [publish, setPublish] = useState(false);
-    const [report, setReport] = useState(null);
     const { auditReport, exporting } = useAuditReport((response) => {
         const blob = new Blob([response.data], { type: response.headers['content-type'] })
         const URL = window.URL || window.webkitURL;
@@ -82,7 +83,7 @@ function TaskManagement() {
     });
 
     function hasFilters(ref, field = 'companyId') {
-        const _filters = (ref ? ref.current : {...(payloadRef.current || {})}.filters) || [];
+        const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
         const company = _filters.find(x => x.columnName === field);
         return (company || {}).value;
     }
@@ -153,7 +154,7 @@ function TaskManagement() {
                 const list = response.data || [];
                 const _report = list.filter(x => x.published);
                 if (_report.length > 0) {
-                    const user = getUserDetails();  
+                    const user = getUserDetails();
                     _payload['auditorId'] = user.userid;
                     //delete _payload.statuses;
                     auditReport(_payload);
@@ -191,20 +192,21 @@ function TaskManagement() {
             api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
                 if (response && response.data) {
                     const _rows = response.data || [];
-                    const submittedRows = _rows.filter(x => x.status === ACTIVITY_STATUS.SUBMITTED);
-                    const published = _rows.filter(x => x.published);  
+                    const auditableRows = _rows.filter(x => [ACTIVITY_TYPE.AUDIT, ACTIVITY_TYPE.PHYSICAL_AUDIT].includes(x.auditted));
+                    const submittedRows = auditableRows.filter(x => [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.PENDING].includes(x.status));
+                    const published = _rows.filter(x => x.published);
                     if (_rows.length === 0) {
                         setAlertMessage(
-                            `<p class="my-3">There are no Audited / Rejected activities available to publish for the selected month and year</p>`
+                            `<p class="my-3">There are no activties available for the selected month and year.</p>`
                         );
                     } else if (published.length > 0) {
                         setAlertMessage(
-                            `<p class="my-3">There are no pending activities available to publish for the selected month and year</p>`
+                            `<p class="my-3">All activites are published of the selected month and year. View Audit report for more details.</p>`
                         );
                     } else if (submittedRows.length > 0) {
                         setAlertMessage(
-                            `<p class="my-3">There are ${submittedRows.length} submitted activities available for the selected month and year. You cannot publish submitted activies.</p>
-                            <p>Please Approve / Reject them before publishing.</p>`
+                            `<p class="my-3">There are ${submittedRows.length} activities not reviewed for the selected month and year.</p>
+                            <p>Review them before publishing.</p>`
                         );
                     } else if (_rows.length > 0) {
                         setSelectedRows(_rows);
@@ -250,31 +252,40 @@ function TaskManagement() {
 
     function DueDateTmpl({ cell }) {
         const value = cell.getValue();
+        const { auditted = ACTIVITY_TYPE.AUDIT } = cell.getData();
         return (
-            <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+            <>
+                {
+                    auditted !== ACTIVITY_TYPE.NO_AUDIT &&
+                    <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+                }
+            </>
         )
     }
 
     function FormStatusTmpl({ cell }) {
         const status = cell.getValue();
-        const row = cell.getData();
+        const { formsStatusRemarks, published, auditted = ACTIVITY_TYPE.AUDIT } = cell.getData() || {};
         return (
             <div className="d-flex align-items-center position-relative">
                 {
-                    !!row.formsStatusRemarks &&
-                    <OverlayTrigger overlay={<Tooltip>{row.formsStatusRemarks}</Tooltip>}
+                    !!formsStatusRemarks &&
+                    <OverlayTrigger overlay={<Tooltip>{formsStatusRemarks}</Tooltip>}
                         placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
                         <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
                     </OverlayTrigger>
                 }
-                <span className={`status-${status} ellipse`}>{STATUS_MAPPING[status] || status}</span>
+                {
+                    (auditted !== ACTIVITY_TYPE.NO_AUDIT || published) &&
+                    <span className={`status-${status} ellipse`}>{STATUS_MAPPING[status] || status}</span>
+                }
             </div>
         )
     }
 
     function AuditStatusTmpl({ cell }) {
         const status = cell.getValue();
-        const row = cell.getData();
+        const { auditRemarks, published, auditted = ACTIVITY_TYPE.AUDIT } = cell.getData() || {};
         const color = {
             [AUDIT_STATUS.COMPLIANT]: 'status-compliant',
             [AUDIT_STATUS.NON_COMPLIANCE]: 'status-non-compliance',
@@ -283,14 +294,14 @@ function TaskManagement() {
         return (
             <div className="d-flex align-items-center position-relative">
                 {
-                    !!row.auditRemarks &&
-                    <OverlayTrigger overlay={<Tooltip>{row.auditRemarks}</Tooltip>}
+                    !!auditRemarks &&
+                    <OverlayTrigger overlay={<Tooltip>{auditRemarks}</Tooltip>}
                         placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
                         <FontAwesomeIcon icon={faInfoCircle} className="me-2" />
                     </OverlayTrigger>
                 }
                 {
-                    status &&
+                    (auditted !== ACTIVITY_TYPE.NO_AUDIT || published) && status &&
                     <span className={`${color[status]} ellipse`}>{STATUS_MAPPING[status] || status}</span>
                 }
             </div>
@@ -301,14 +312,38 @@ function TaskManagement() {
         const row = cell.getData();
 
         return (
-            <div className="d-flex flex-row align-items-center position-relative">
-                <Icon className="mx-1" type="button" name="download" text="Download" data={row} action={downloadForm} />
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={editActivity} />
+            <>
+                {
+                    row.auditted !== ACTIVITY_TYPE.NO_AUDIT &&
+                    <div className="d-flex flex-row align-items-center position-relative">
+                        <Icon className="mx-1" type="button" name="download" text="Download" data={row} action={downloadForm} />
+                        {
+                            (row.auditted === ACTIVITY_TYPE.AUDIT
+                                && [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED].includes(row.status)
+                                || row.auditted === ACTIVITY_TYPE.PHYSICAL_AUDIT) &&
+                            <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={editActivity} />
+                        }
+                    </div>
+                }
+            </>
+        )
+    }
+
+    function ActivityTypeTmpl({ cell }) {
+        const value = cell.getValue() || ACTIVITY_TYPE.AUDIT;
+        return (
+            <div className="d-flex flex-row align-items-center justify-content-center position-relative">
+                <Icon name={ACTIVITY_TYPE_ICONS[value]} text={value} />
             </div>
         )
     }
 
     const columns = [
+        {
+            title: "", field: "auditted", width: 40,
+            formatter: reactFormatter(<ActivityTypeTmpl />),
+            // headerSort: false
+        },
         {
             title: "Month & Year", field: "month", width: 140,
             formatter: reactFormatter(<MonthTmpl />),
@@ -358,13 +393,8 @@ function TaskManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Forms Status", field: "status", maxWidth: 160,
+            title: "Forms Status", field: "status", width: 160,
             formatter: reactFormatter(<FormStatusTmpl />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
-        },
-        {
-            title: "Audit Type", field: "auditType", maxWidth: 100,
-            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
@@ -380,6 +410,9 @@ function TaskManagement() {
         const element = row.getElement();
         if (data.published) {
             element.classList.add('activity-published');
+        }
+        if (data.auditted === ACTIVITY_TYPE.NO_AUDIT) {
+            element.classList.add('activity-no-audit');
         }
     }
 
@@ -403,6 +436,18 @@ function TaskManagement() {
             last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
             page: pageNumber || 1
         };
+        // list.forEach(x => {
+        //     const { id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
+        //         submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId, auditted } = x;
+        //     if (auditted !== ACTIVITY_TYPE.NO_AUDIT) {
+        //         console.log(JSON.stringify({
+        //             id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
+        //             submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId,
+        //             status: ACTIVITY_STATUS.OVERDUE
+        //         }));
+        //     }
+        // });
+        // list.forEach(x => console.log(x.id))
         setData(tdata);
         return tdata;
     }
@@ -593,7 +638,7 @@ function TaskManagement() {
             </div>
 
             {
-                action === ACTIONS.EDIT &&
+                action === ACTIONS.EDIT && Boolean(activity) &&
                 <ActivityModal activity={activity} onClose={dismissAction} onSubmit={refetch} />
             }
             {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
-import { STATUS_MAPPING } from "../../common/Constants";
+import { ACTIVITY_STATUS, STATUS_MAPPING } from "../../common/Constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import { preventDefault } from "../../../utils/common";
 
@@ -48,12 +48,11 @@ function PublishModal({ onClose, onSubmit, selectedRows }) {
       setCounts(Object.keys(_counts).map(key => {
         return {
           key,
-          label: STATUS_MAPPING[key],
+          label: key === ACTIVITY_STATUS.PENDING ? `${STATUS_MAPPING[key]} (No Audit Activities)` :  STATUS_MAPPING[key],
           count: _counts[key]
         }
       }));
     }
-
   }, [selectedRows]);
 
   return (

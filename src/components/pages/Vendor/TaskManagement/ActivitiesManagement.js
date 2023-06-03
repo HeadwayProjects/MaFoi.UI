@@ -13,7 +13,7 @@ import { Link, usePath, useHistory } from "raviger";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../../common/Constants";
 import Location from "../../../common/Location";
-import { useGetAllActivities, useGetVendorActivites } from "../../../../backend/query";
+import { useGetAllActivities } from "../../../../backend/query";
 import Icon from "../../../common/Icon";
 import { download, downloadFileContent, preventDefault, reduceArraytoObj } from "../../../../utils/common";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
@@ -40,8 +40,7 @@ const SortFields = {
     'location.name': 'locationname'
 };
 
-// const AuditTypeFilter = [{columnName: 'auditType', value: ACTIVITY_TYPE.AUDIT}];
-const AuditTypeFilter = [];
+const AuditTypeFilter = [{columnName: 'auditted', value: ACTIVITY_TYPE.AUDIT}];
 
 function ActivitiesManagement() {
     const [readOnly] = useState(!auth.isVendor());
@@ -158,8 +157,9 @@ function ActivitiesManagement() {
             api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
                 if (response && response.data) {
                     const _rows = response.data || [];
-                    if (_rows.length) {
-                        setSelectedRows(_rows);
+                    const _applicableRows = _rows.filter(x => x.auditted === ACTIVITY_TYPE.AUDIT);
+                    if (_applicableRows.length) {
+                        setSelectedRows(_applicableRows);
                         setSubmitToAuditor(true);
                     }
                 }
