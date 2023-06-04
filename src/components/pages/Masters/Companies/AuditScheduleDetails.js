@@ -45,7 +45,7 @@ function AuditScheduleDetails() {
     const { activities, total, isFetching, refetch } = useGetAllActivities(payload, Boolean(hasFilters(null, 'companyId')));
     const [selectedRows, setSelectedRows] = useState([]);
     const [alertMessage, setAlertMessage] = useState(null);
-    const { deleteAuditSchedule, deleting } = useDeleteAuditSchedule((key, value) => {
+    const { deleteAuditSchedule, deleting } = useDeleteAuditSchedule(({key, value}) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success('Activity deleted successfully.');
             dismissAction();

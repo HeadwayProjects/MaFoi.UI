@@ -256,7 +256,7 @@ function TaskManagement() {
         return (
             <>
                 {
-                    auditted !== ACTIVITY_TYPE.NO_AUDIT &&
+                    auditted !== ACTIVITY_TYPE.NO_AUDIT && value != '0001-01-01T00:00:00' &&
                     <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
                 }
             </>
