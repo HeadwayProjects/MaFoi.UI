@@ -19,7 +19,7 @@ const STEPS = {
     TDS_PF: 'STEP3'
 };
 
-function AddEditCompany({ action, company, parentCompany, changeView }) {
+function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
     const [payload, setPayload] = useState();
     const [doNext, setDoNext] = useState();
     const [isParentCompany] = useState(!Boolean(parentCompany));
@@ -151,7 +151,7 @@ function AddEditCompany({ action, company, parentCompany, changeView }) {
                     <Tab eventKey={STEPS.DETAILS} title="Company Details">
                         {
                             activeStep === STEPS.DETAILS &&
-                            <CompanyDetails company={companyDetails} parentCompany={parentCompany}
+                            <CompanyDetails company={companyDetails} parentCompany={parentCompany} _t={_t}
                                 onPrevious={parentCompany ? backToAssociateCompaniesList : backToCompaniesList}
                                 onNext={() => setActiveStep(STEPS.SPOC)}
                                 onSubmit={submitDetails} />

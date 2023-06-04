@@ -275,7 +275,7 @@ function AssociateCompaniesList({ changeView, parent }) {
                         <div className="d-flex justify-content-between align-items-end">
                             <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                 placeholder={"Search for Company Code/Name/Contact No./Email"} />
-                            <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD, { parentCompany })}>
+                            <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD, { parentCompany, _t: t })}>
                                 <Icon name={'plus'} className="me-2"></Icon>Add New
                             </Button>
                         </div>

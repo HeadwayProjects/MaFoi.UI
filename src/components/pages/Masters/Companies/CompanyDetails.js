@@ -10,8 +10,8 @@ import { API_DELIMITER } from "../../../../utils/constants";
 import { ALLOWED_LOGO_REGEX, FILE_SIZE } from "../../../common/Constants";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 
-function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany }) {
-    const [t] = useState(new Date().getTime());
+function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, _t }) {
+    const [t] = useState(_t || new Date().getTime());
     const [form, setForm] = useState({});
     const [companyDetails, setCompanyDetails] = useState({ hideButtons: true, isAssociateCompany: Boolean(parentCompany), parentCompany });
     const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t }, Boolean(!company));
