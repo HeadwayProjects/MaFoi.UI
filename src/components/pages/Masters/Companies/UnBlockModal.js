@@ -16,7 +16,7 @@ function StatusTmp({ status }) {
 }
 
 function UnBlockModal({ activity = {}, onClose, onSubmit }) {
-    const [dueDate, setDueDate] = useState(new Date(activity.dueDate));
+    const [newDueDate, setNewDueDate] = useState(new Date(activity.dueDate));
     const { updateAuditSchedule, updating } = useUpdateAuditSchedule(() => {
         toast.success('Activity unblocked successfully.');
         onClose();
@@ -25,12 +25,14 @@ function UnBlockModal({ activity = {}, onClose, onSubmit }) {
 
     function submit() {
         const { id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-            submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId, auditted } = activity;
+            submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId,
+            actStateMappingId, formsStatusRemarks, published, auditted } = activity;
 
         const payload = {
             id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-            submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId, auditted,
-            dueDate: new Date(dueDate).toISOString(),
+            submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId,
+            actStateMappingId, formsStatusRemarks, published, auditted,
+            dueDate: new Date(newDueDate).toISOString(),
             status: ACTIVITY_STATUS.PENDING
         }
         updateAuditSchedule(payload)
@@ -73,8 +75,8 @@ function UnBlockModal({ activity = {}, onClose, onSubmit }) {
                                 <div className="row mb-4">
                                     <div className="col-4 filter-label">Due Date</div>
                                     <div className="col-3">
-                                        <DatePicker className="form-control" selected={dueDate} dateFormat="dd-MM-yyyy"
-                                            onChange={setDueDate} placeholderText="dd-mm-yyyy" minDate={new Date()}
+                                        <DatePicker className="form-control" selected={newDueDate} dateFormat="dd-MM-yyyy"
+                                            onChange={setNewDueDate} placeholderText="dd-mm-yyyy" minDate={new Date()}
                                             showMonthDropdown
                                             showYearDropdown
                                             dropdownMode="select" />

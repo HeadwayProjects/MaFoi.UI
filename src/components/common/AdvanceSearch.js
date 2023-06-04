@@ -58,7 +58,7 @@ function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
                         <label className="filter-label"><small>{label}</small></label>
                         <div className="d-flex align-items-center border px-2 rounded" style={{height: '38px'}}>
                             {
-                                filter === FILTERS.MONTH ?
+                                filter === FILTERS.MONTH && Boolean(downloadReport) ?
                                     <OverlayTrigger overlay={<Tooltip>Click to download report</Tooltip>}
                                         placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
                                         <a href="#" onClick={downloadReport}>{value}</a>

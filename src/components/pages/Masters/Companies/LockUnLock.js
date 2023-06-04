@@ -33,9 +33,9 @@ function getDefaultPayload() {
     toDate.setMilliseconds(999);
     toDate.setDate(toDate.getDate() - 1);
     return [
-        { columnName: 'published', value: 'true' },
+        { columnName: 'published', value: 'false' },
         { columnName: 'fromDate', value: dayjs(new Date(fromDate)).local().format() },
-        { columnName: 'toDate', value: dayjs(new Date(fromDate)).local().format() },
+        { columnName: 'toDate', value: dayjs(new Date(toDate)).local().format() },
     ]
 }
 
