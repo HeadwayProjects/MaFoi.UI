@@ -739,3 +739,18 @@ export function useUpdateAuditSchedule(onSuccess, onError) {
     return { updateAuditSchedule, error, updating };
 }
 
+export function useBulkUpdateAuditSchedule(onSuccess, onError) {
+    const { mutate: updateBulkAuditSchedule, error, isLoading: updating } = useMutation(
+        ['updateBulkAuditSchedule'],
+        async (payload) => await api.put(`/api/ToDo/BulkUpdate`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateBulkAuditSchedule, error, updating };
+}
+

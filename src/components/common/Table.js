@@ -121,7 +121,7 @@ function Table(props) {
         layout = 'fitColumns',
         selectable = true,
         selectableCheck = () => {
-            return false;
+            return true;
         },
         resizableColumnFit = true,
         sortMode = 'remote',
@@ -220,10 +220,8 @@ function Table(props) {
             if (selectable) {
                 _columns = [
                     {
-                        title: "", field: "selection", width: 40,
-                        formatter: reactFormatter(<SelectionTmpl />),
-                        titleFormatter: reactFormatter(<HeaderSelectionTmpl />),
-                        headerSort: false
+                        formatter: "rowSelection", titleFormatter: "rowSelection",
+                        hozAlign: "center", headerSort: false, width: 40
                     },
                     ..._columns
                 ]
@@ -272,29 +270,7 @@ function Table(props) {
                     }
                 }, 100);
             });
-            _table.on("rowClick", function (e, row) {
-                if (props.onSelectionChange) {
-                    const selectedData = _table.getSelectedData();
-                    props.onSelectionChange(selectedData);
-                }
-            });
-            _table.on("cellClick", function (e, cell) {
-                const field = cell.getField();
-                const { id } = cell.getData();
-                if (field === 'selection') {
-                    const _selectedRows = [...selectedRows];
-                    const index = _selectedRows.indexOf(id);
-                    if (index > -1) {
-                        _selectedRows.splice(index, 1);
-                    } else {
-                        _selectedRows.push(id);
-                    }
-                    setSelectedRows([..._selectedRows]);
-                    console.log(_table.getRows())
-                    _table.updateRow((_table.getRows() || []).findIndex(x => (x.getData() || {}).id === id),
-                        { selection: _selectedRows.includes(id) });
-                }
-            });
+            _table.on("rowSelectionChanged", props.onSelectionChange)
 
         }
 

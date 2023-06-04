@@ -27,7 +27,7 @@ const SortFields = {
 
 function AuditScheduleDetails() {
     const [activity, setActivity] = useState();
-    const [action, setAction] = useState(null);
+    const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [locationFilters, setLocationFilter] = useState();
@@ -45,7 +45,7 @@ function AuditScheduleDetails() {
     const { activities, total, isFetching, refetch } = useGetAllActivities(payload, Boolean(hasFilters(null, 'companyId')));
     const [selectedRows, setSelectedRows] = useState([]);
     const [alertMessage, setAlertMessage] = useState(null);
-    const { deleteAuditSchedule, deleting } = useDeleteAuditSchedule(({key, value}) => {
+    const { deleteAuditSchedule, deleting } = useDeleteAuditSchedule(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success('Activity deleted successfully.');
             dismissAction();
@@ -108,7 +108,6 @@ function AuditScheduleDetails() {
 
     function DueDateTmpl({ cell }) {
         const value = cell.getValue();
-        const { auditted = ACTIVITY_TYPE.AUDIT } = cell.getData();
         return (
             <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
         )
@@ -116,7 +115,6 @@ function AuditScheduleDetails() {
 
     function FormStatusTmpl({ cell }) {
         const status = cell.getValue();
-        const { formsStatusRemarks, published, auditted = ACTIVITY_TYPE.AUDIT } = cell.getData() || {};
         return (
             <div className="d-flex align-items-center position-relative">
                 <span className={`status-${status} ellipse`}>{STATUS_MAPPING[status] || status}</span>
@@ -204,7 +202,7 @@ function AuditScheduleDetails() {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
-        selectable: false,
+        selectable: true,
         paginate: true,
         initialSort: [{ column: 'month', dir: 'desc' }]
     });
@@ -275,9 +273,19 @@ function AuditScheduleDetails() {
     function performDelete() {
         deleteAuditSchedule([activity.id]);
     }
+    function performBulkDelete() {
+        deleteAuditSchedule(selectedRows.map(x => x.id));
+    }
 
     function handleBulkDelete(e) {
         preventDefault(e);
+        if ((selectedRows || []).length > 0) {
+            setAction(ACTIONS.BULK_DELETE);
+        }
+    }
+
+    function onSelectionChange(_selectedRows) {
+        setSelectedRows(_selectedRows);
     }
 
     useEffect(() => {
@@ -345,18 +353,18 @@ function AuditScheduleDetails() {
                             <div >
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search} />
                             </div>
-                            {/* <div className="ms-auto">
-                                <button className="btn btn-primary" onClick={handleBulkDelete}>
+                            <div className="ms-auto">
+                                <button className="btn btn-danger" onClick={handleBulkDelete} disabled={!(selectedRows || []).length}>
                                     <div className="d-flex align-items-center">
                                         <FontAwesomeIcon icon={faTrash} />
                                         <span className="ms-2 text-nowrap">Bulk Delete</span>
                                     </div>
                                 </button>
-                            </div> */}
+                            </div>
                         </div>
                     </div>
                 </form>
-                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={onSelectionChange.bind(this)} onPageNav={handlePageNav} />
             </div>
             {
                 !!alertMessage &&
@@ -369,6 +377,13 @@ function AuditScheduleDetails() {
                 action === ACTIONS.DELETE &&
                 <ConfirmModal title={'Delete Activity'} onSubmit={performDelete} onClose={() => setAction(ACTIONS.NONE)}>
                     <div className="text-center mb-4">Are you sure you want to delete the activity ?</div>
+                </ConfirmModal>
+            }
+            {
+                action === ACTIONS.BULK_DELETE &&
+                <ConfirmModal title={'Delete Activities'} onSubmit={performBulkDelete} onClose={() => setAction(ACTIONS.NONE)}>
+                    <p className="text-center mb-4">There are {selectedRows.length} record(s) selected for deleting.</p>
+                    <div className="text-center mb-4">Are you sure you want to delete all of them ?</div>
                 </ConfirmModal>
             }
             {deleting && <PageLoader message={'Deleting...'} />}

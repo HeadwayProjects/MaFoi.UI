@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 import DatePicker from "react-datepicker";
-import { ACTIVITY_TYPE } from "../../../../utils/constants";
+import { ACTIVITY_TYPE, API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { useUpdateAuditSchedule } from "../../../../backend/masters";
 import { ACTIVITY_STATUS, STATUS_MAPPING } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
@@ -17,11 +17,15 @@ function StatusTmp({ status }) {
 
 function UnBlockModal({ activity = {}, onClose, onSubmit }) {
     const [newDueDate, setNewDueDate] = useState(new Date(activity.dueDate));
-    const { updateAuditSchedule, updating } = useUpdateAuditSchedule(() => {
-        toast.success('Activity unblocked successfully.');
-        onClose();
-        onSubmit();
-    })
+    const { updateAuditSchedule, updating } = useUpdateAuditSchedule(({ key, value }) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success('Activity unblocked successfully.');
+            onClose();
+            onSubmit();
+        } else {
+            toast.error(value || ERROR_MESSAGES.DEFAULT);
+        }
+    });
 
     function submit() {
         const { id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,

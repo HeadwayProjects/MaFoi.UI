@@ -14,6 +14,7 @@ import ConfirmModal from "../../../common/ConfirmModal";
 import { useDeleteAuditSchedule } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import UnBlockModal from "./UnBlockModal";
+import BulkUnBlockModal from "./BulkUnBlockModal";
 
 const SortFields = {
     'act.name': 'actname',
@@ -41,7 +42,7 @@ function getDefaultPayload() {
 
 function LockUnLock() {
     const [activity, setActivity] = useState();
-    const [action, setAction] = useState(null);
+    const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState();
     const [params, setParams] = useState();
     const [locationFilters, setLocationFilter] = useState();
@@ -217,7 +218,7 @@ function LockUnLock() {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
-        selectable: false,
+        selectable: true,
         paginate: true,
         initialSort: [{ column: 'month', dir: 'desc' }]
     });
@@ -285,12 +286,13 @@ function LockUnLock() {
         setAction(ACTIONS.EDIT);
     }
 
-    function performDelete() {
-        deleteAuditSchedule([activity.id]);
+    function handleBulkUpdate(e) {
+        preventDefault(e);
+        setAction(ACTIONS.BULK_EDIT);
     }
 
-    function handleBulkDelete(e) {
-        preventDefault(e);
+    function onSelectionChange(_selectedRows) {
+        setSelectedRows(_selectedRows);
     }
 
     useEffect(() => {
@@ -358,18 +360,18 @@ function LockUnLock() {
                             <div >
                                 <AdvanceSearch fields={[FILTERS.MONTH]} payload={getAdvanceSearchPayload()} onSubmit={search} />
                             </div>
-                            {/* <div className="ms-auto">
-                                <button className="btn btn-primary" onClick={handleBulkDelete}>
+                            <div className="ms-auto">
+                                <button className="btn btn-success" onClick={handleBulkUpdate} disabled={(selectedRows || []).length === 0}>
                                     <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon={faTrash} />
-                                        <span className="ms-2 text-nowrap">Bulk Delete</span>
+                                        <Icon name={'lock-open'} />
+                                        <span className="ms-2 text-nowrap">Un-Block</span>
                                     </div>
                                 </button>
-                            </div> */}
+                            </div>
                         </div>
                     </div>
                 </form>
-                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={onSelectionChange} onPageNav={handlePageNav} />
             </div>
             {
                 !!alertMessage &&
@@ -379,14 +381,12 @@ function LockUnLock() {
                 }} />
             }
             {
-                action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Activity'} onSubmit={performDelete} onClose={() => setAction(ACTIONS.NONE)}>
-                    <div className="text-center mb-4">Are you sure you want to delete the activity ?</div>
-                </ConfirmModal>
-            }
-            {
                 action === ACTIONS.EDIT && activity &&
                 <UnBlockModal activity={activity} onSubmit={refetch} onClose={dismissAction} />
+            }
+            {
+                action === ACTIONS.BULK_EDIT && (selectedRows || []).length > 0 &&
+                <BulkUnBlockModal selected={selectedRows} onSubmit={refetch} onClose={dismissAction} />
             }
             {deleting && <PageLoader message={'Deleting...'} />}
         </>

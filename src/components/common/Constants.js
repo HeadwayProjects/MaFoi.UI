@@ -14,11 +14,13 @@ export const FILE_SIZE = {
 }
 
 export const ACTIONS = {
+    NONE: '0',
     ADD: '1',
     EDIT: '2',
     DELETE: '3',
     VIEW: '4',
-    NONE: '0'
+    BULK_DELETE: '5',
+    BULK_EDIT: '6'
 }
 
 export const ACTIVITY_STATUS = {
