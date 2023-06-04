@@ -86,10 +86,7 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, 
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'websiteUrl',
-                label: 'Website',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ]
+                label: 'Website'
             },
             {
                 component: componentTypes.SELECT,

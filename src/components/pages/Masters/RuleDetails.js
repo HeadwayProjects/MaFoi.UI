@@ -71,7 +71,7 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'sectionNo',
-                label: 'Section',
+                label: 'Section No.',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 255 }
@@ -81,7 +81,7 @@ function RuleDetails({ action, data, onClose, onSubmit }) {
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'ruleNo',
-                label: 'Rule',
+                label: 'Rule No.',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 255 }
