@@ -17,13 +17,13 @@ function StatusTmp({ status }) {
 
 function UnBlockModal({ activity = {}, onClose, onSubmit }) {
     const [newDueDate, setNewDueDate] = useState(new Date(activity.dueDate));
-    const { updateAuditSchedule, updating } = useUpdateAuditSchedule(({ key, value }) => {
-        if (key === API_RESULT.SUCCESS) {
+    const { updateAuditSchedule, updating } = useUpdateAuditSchedule(({ status, message }) => {
+        if (status === ACTIVITY_STATUS.PENDING) {
             toast.success('Activity unblocked successfully.');
             onClose();
             onSubmit();
         } else {
-            toast.error(value || ERROR_MESSAGES.DEFAULT);
+            toast.error(message || ERROR_MESSAGES.DEFAULT);
         }
     });
 

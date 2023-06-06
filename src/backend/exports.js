@@ -119,3 +119,17 @@ export function useExportActStateMappings(onSuccess, onError) {
     );
     return { exportActStateMappings, error, exporting };
 }
+export function useExportRuleCompliance(onSuccess, onError) {
+    const { mutate: exportRuleCompliance, error, isLoading: exporting } = useMutation(
+        ['exportRuleCompliance'],
+        async (payload) => await post('/api/RuleComplianceDetail/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportRuleCompliance, error, exporting };
+}

@@ -13,6 +13,8 @@ import { ERROR_MESSAGES } from "../../../../utils/constants";
 import PageLoader from "../../../shared/PageLoader";
 import { useRef } from "react";
 import TableFilters from "../../../common/TableFilter";
+import { useExportRuleCompliance } from "../../../../backend/exports";
+import { downloadFileContent } from "../../../../utils/common";
 
 const SortFields = {
     'state.name': 'state',
@@ -36,6 +38,15 @@ function RuleCompliance() {
     const { deleteRuleCompliance, deleting } = useDeleteRuleCompliance(() => {
         toast.success(`${compliance.complianceName} deleted successfully.`);
         submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+    const { exportRuleCompliance, exporting } = useExportRuleCompliance((response) => {
+        downloadFileContent({
+            name: 'Rule_Compliance.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
@@ -181,6 +192,10 @@ function RuleCompliance() {
         deleteRuleCompliance(compliance.id);
     }
 
+    function handleExport() {
+        exportRuleCompliance({ ...payload, pagination: null });
+    }
+
     function onFilterChange(e) {
         setFilters(e);
         setPayload({ ...DEFAULT_PAYLOAD, ...params, ...e });
@@ -210,9 +225,14 @@ function RuleCompliance() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Name/Description/Rule"} />
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                <div className="d-flex">
+                                    <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
+                                    <Button variant="primary" className="text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
