@@ -37,6 +37,11 @@ const SideNavMenu = [
             { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Company Mapping' },
         ]
     },
+    {
+        id: 'email', url: '/email/templates', icon: 'envelopes-bulk', label: 'Email', children: [
+            { id: 'email/templates', url: '/email/templates', label: 'Manage Templates' }
+        ]
+    },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities' },
     { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true }
 ];

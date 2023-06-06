@@ -26,13 +26,14 @@ import UserCompanies from "../components/pages/UserManagement/UserCompanies";
 import AuditSchedule from "../components/pages/Masters/Companies/AuditSchedule";
 import AuditScheduleDetails from "../components/pages/Masters/Companies/AuditScheduleDetails";
 import LockUnLock from "../components/pages/Masters/Companies/LockUnLock";
+import EmailTemplates from "../components/pages/Email/EmailTemplates";
 
 export const ROLE_MAPPING = {
     AuditorAdmin: ['dashboard', 'activities'],
     AuditorUser: ['dashboard', 'activities'],
     VendorAdmin: ['dashboard', 'activities'],
     VendorUser: ['dashboard', 'activities'],
-    SuperAdmin: ['masters', 'companies', 'userManagement']
+    SuperAdmin: ['masters', 'companies', 'userManagement', 'email']
 }
 
 function AuthenticatedContent() {
@@ -123,6 +124,9 @@ function AuthenticatedContent() {
         ),
         '/userManagement/mapping': () => (
             layout(<UserCompanies />)
+        ),
+        '/email/templates': () => (
+            layout(<EmailTemplates />)
         ),
         '/changePassword/:token': ({ token }) => (
             <>

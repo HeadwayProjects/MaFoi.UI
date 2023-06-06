@@ -24,7 +24,8 @@ export const componentTypes = {
     ASYNC_SELECT: 'async-select',
     MONTH_PICKER: 'month-picker',
     INPUT_AS_TEXT: 'input-as-text',
-    TEXT_EDITOR: 'text-editor'
+    TEXT_EDITOR: 'text-editor',
+    HTML: 'html'
 }
 
 const editorConfig = {
@@ -344,6 +345,16 @@ function HtmlField(props) {
         </div>
     )
 }
+function HtmlContentField(props) {
+    const { label } = useFieldApi(props);
+
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            <label className="form-label text-sm">{label}</label>
+            <div className="input-group" dangerouslySetInnerHTML={{ __html: props.content || '--NA--' }}></div>
+        </div>
+    )
+}
 
 function CheckboxField(props) {
     const { label, input } = useFieldApi(props);
@@ -453,6 +464,7 @@ function TextEditorField(props) {
     function onInput(input) {
         return {
             ...input,
+            placeholder: props.placeholder || `Enter ${label}`,
             onChange: (e) => {
                 setValue(e);
                 input.onChange(e);
@@ -493,6 +505,7 @@ export const ComponentMapper = {
     [componentTypes.TEXTAREA]: TextAreaField,
     [componentTypes.SELECT]: SelectField,
     [componentTypes.PLAIN_TEXT]: HtmlField,
+    [componentTypes.HTML]: HtmlContentField,
     [componentTypes.CHECKBOX]: CheckboxField,
     [componentTypes.WIZARD]: () => {
         return (<div></div>)
