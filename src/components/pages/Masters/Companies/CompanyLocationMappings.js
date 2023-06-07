@@ -14,6 +14,8 @@ import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import PageLoader from "../../../shared/PageLoader";
 import MastersLayout from "../MastersLayout";
 import { GetMastersBreadcrumb } from "../Master.constants";
+import styles from "./Companies.module.css"
+import CompanyLocationsImportModal from "./CompanyLocationsImportModal";
 
 function mapLocation(x) {
     return {
@@ -273,9 +275,14 @@ function CompanyLocationMappings() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Location Code/Name/Contact"} />
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                <div className="d-flex">
+                                    <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)} disabled={!Boolean(associateCompany)}>
+                                        <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
+                                    </Button>
+                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -294,6 +301,12 @@ function CompanyLocationMappings() {
                 <ConfirmModal title={'Delete Company Location'} onSubmit={deleteCompanyMaster} onClose={() => setAction(ACTIONS.NONE)}>
                     <div className="text-center mb-4">Are you sure you want to delete the Company Location, <strong>{(companyLocation || {}).locationName}</strong> ?</div>
                 </ConfirmModal>
+            }
+            {
+                action === ACTIONS.IMPORT &&
+                <CompanyLocationsImportModal company={parentCompany} associateCompany={associateCompany}
+                    onSubmit={refetch}
+                    onClose={() => setAction(ACTIONS.NONE)} />
             }
             {deleting && <PageLoader message={'Deleting Location...'} />}
         </>

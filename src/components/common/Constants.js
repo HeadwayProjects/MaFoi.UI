@@ -20,7 +20,8 @@ export const ACTIONS = {
     DELETE: '3',
     VIEW: '4',
     BULK_DELETE: '5',
-    BULK_EDIT: '6'
+    BULK_EDIT: '6',
+    IMPORT: '7'
 }
 
 export const ACTIVITY_STATUS = {

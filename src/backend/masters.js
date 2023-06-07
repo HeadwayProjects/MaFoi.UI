@@ -388,6 +388,21 @@ export function useDeleteLocation(onSuccess, onError) {
     return { deleteLocation, error };
 }
 
+export function useImportLocations(onSuccess, onError) {
+    const { mutate: importLocations, error, isLoading: uploading } = useMutation(
+        ['importLocations'],
+        async ({CID, ACID, formData}) => await api.post(`/api/Mappings/BulkImportCompanyLocations?companyId=${CID}&associateCompanyId=${ACID}`, formData, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importLocations, error, uploading };
+}
+
 export function useGetCompanies(payload, enabled = true) {
     const queryClient = useQueryClient();
     function invalidate() {

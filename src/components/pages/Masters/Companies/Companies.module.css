@@ -22,3 +22,7 @@
     margin: 0;
     object-fit: contain;
 }
+
+.importBtn svg path {
+    fill: var(--white);
+}
