@@ -175,7 +175,12 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
                         />
                         <div className="d-flex justify-content-between mt-4">
                             <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={backToList}>{'Back to List'}</Button>
-                            <Button variant="primary" onClick={handleSubmit} className="px-4 ms-3" disabled={!form.valid}>{Boolean(emailTemplate) ? 'Save' : 'Create'}</Button>
+                            {
+                                view !== VIEWS.VIEW &&
+                                <Button variant="primary" onClick={handleSubmit} className="px-4 ms-3" disabled={!form.valid}>
+                                    {Boolean(emailTemplate) ? 'Save' : 'Create'}
+                                </Button>
+                            }
                         </div>
                     </div>
                 </div>

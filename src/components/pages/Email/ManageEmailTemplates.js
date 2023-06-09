@@ -18,6 +18,7 @@ const SortFields = {
 };
 
 function ManageEmailTemplates({ changeView }) {
+    const [t] = useState(new Date().getTime())
     const [action, setAction] = useState(ACTIONS.NONE);
     const [template, setTemplate] = useState(null);
     const [data, setData] = useState();
@@ -25,13 +26,14 @@ function ManageEmailTemplates({ changeView }) {
     const [filters, setFilters] = useState();
     const filterRef = useRef();
     filterRef.current = filters;
-    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'templateType', order: 'asc' } });
-    const { templates, total, isFetching, refetch } = useGetAllTemplates(payload, Boolean(payload));
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'templateType', order: 'asc' }, ...filterRef.current, t});
+    const { templates, total, isFetching, refetch=['']} = useGetAllTemplates(payload, Boolean(payload));
     const { deleteEmailTemplate, deleting } = useDeleteEmailTemplate(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success('Email Template deleted successfully.');
             setAction(ACTIONS.NONE);
             setTemplate(null);
+            refetch();
         } else {
             toast.error(value || ERROR_MESSAGES.DEFAULT);
         }
