@@ -84,7 +84,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
     }, [frequency]);
 
     return (
-        <div className="card">
+        <div className="card shadow">
             <div className="card-header bg-white border-0 underline text-appprimary fw-semibold fs-5 d-flex align-items-center">
                 <div>
                     {
@@ -129,7 +129,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                     Statuses.map(status => {
                                         return (
                                             <div className="w-33 mb-3 me-3" key={status.key} style={{ width: "calc(33% - 1rem)" }}>
-                                                <div className="card cardCount border-0 p-2" style={{ backgroundColor: `${status.color}` }}>
+                                                <div className="card shadow cardCount border-0 p-2" style={{ backgroundColor: `${status.color}` }}>
                                                     <div className="card-body py-0">
                                                         <div className="row d-flex align-items-center performance-status h-100">
                                                             <div className="col-9 px-0 py-0 overflow-hidden">

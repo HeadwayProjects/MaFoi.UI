@@ -5,7 +5,7 @@ function MastersLayout({ title, breadcrumbs, children }) {
 
     return (
         <div className="d-flex flex-column">
-            <div className="d-flex  p-2 align-items-center pageHeading">
+            <div className="d-flex  p-2 align-items-center pageHeading shadow">
                 <h4 className="mb-0">{title}</h4>
                 <div className="d-flex align-items-end h-100">
                     <nav aria-label="breadcrumb">

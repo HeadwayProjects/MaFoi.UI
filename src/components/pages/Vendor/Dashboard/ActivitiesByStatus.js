@@ -69,7 +69,7 @@ function ActivitiesByStatus({ tabs, selectedCompany, selectedAssociateCompany, s
 
     return (
         <>
-            <div className="card todo-card">
+            <div className="card todo-card shadow">
                 <div className="card-body">
                     {
                         statuses &&

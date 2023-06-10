@@ -334,7 +334,7 @@ function AuditScheduleDetails() {
     return (
         <>
             <div className="d-flex flex-column">
-                <div className="d-flex p-2 align-items-center pageHeading">
+                <div className="d-flex p-2 align-items-center pageHeading shadow">
                     <h4 className="mb-0">Audit Schedule Details</h4>
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
@@ -347,7 +347,7 @@ function AuditScheduleDetails() {
                 </div>
 
                 <form className="p-0 mx-3 my-2">
-                    <div className="card border-0 p-2 mt-2 mb-3 filters">
+                    <div className="card shadow border-0 p-2 mt-2 mb-3 filters">
                         <div className="d-flex flex-row m-0 align-items-end">
                             <AdminLocations onChange={onLocationChange} />
                             <div >

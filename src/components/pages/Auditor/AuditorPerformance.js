@@ -26,7 +26,7 @@ function AuditorPerformance() {
                         {
                             StatusMapping.map(status => {
                                 return (
-                                    <div className="card cardCount auditor-status-card" style={{ backgroundColor: status.color }} key={status.key}>
+                                    <div className="card shadow cardCount auditor-status-card" style={{ backgroundColor: status.color }} key={status.key}>
                                         <div className="card-body py-1">
                                             <div className="row d-flex flex-column align-items-center justify-content-between h-100 fw-bold">
                                                 <label className="text-center px-3 text-md">{status.label}</label>

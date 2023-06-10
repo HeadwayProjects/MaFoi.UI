@@ -581,7 +581,7 @@ function TaskManagement() {
     return (
         <>
             <div className="d-flex flex-column">
-                <div className="d-flex p-2 align-items-center pageHeading">
+                <div className="d-flex p-2 align-items-center pageHeading shadow">
                     <h4 className="mb-0">Auditor - Activity</h4>
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
@@ -594,7 +594,7 @@ function TaskManagement() {
                 </div>
 
                 <form className="p-0 mx-3 my-2">
-                    <div className="card border-0 p-2 mt-2 mb-3 filters">
+                    <div className="card shadow border-0 p-2 mt-2 mb-3 filters">
                         <div className="d-flex flex-row m-0">
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
@@ -604,7 +604,7 @@ function TaskManagement() {
                         </div>
                     </div>
 
-                    <div className="card border-0 p-2 mb-2">
+                    <div className="card shadow border-0 p-2 mb-2">
                         <div className="d-flex justify-content-between">
                             <div className="d-flex align-items-center status-btn-group">
                                 <label className="filter-label"><small>Forms Status</small></label>
@@ -615,7 +615,7 @@ function TaskManagement() {
                                                 <input name={btn.name} type="checkbox" className="btn-check" id={btn.name} autoComplete="off"
                                                     onChange={onFormStatusChangeHandler}
                                                     checked={checkedStatuses[btn.name]} />
-                                                <label className={`btn btn-outline-${btn.style}`} htmlFor={btn.name}>{btn.label}</label>
+                                                <label className={`btn`} htmlFor={btn.name}>{btn.label}</label>
                                             </div>
                                         )
                                     })

@@ -180,7 +180,7 @@ function AuditSchedule() {
                 <div className="d-flex flex-column mx-0 mt-4">
                     <div className="d-flex flex-row justify-content-center mb-4">
                         <div className="w-50 px-4 border-end" style={{ maxWidth: '550px' }}>
-                            <div className="d-flex flex-column card p-4">
+                            <div className="d-flex flex-column card shadow p-4">
                                 <div className="text-lg fw-bold">Export Audit Schedule</div>
                                 <div className="d-flex flex-column h-100 justify-space-between py-2 horizontal-form col2">
                                     <FormRenderer FormTemplate={FormTemplate}
@@ -198,7 +198,7 @@ function AuditSchedule() {
                         </div>
                         <div className="w-100 px-4" style={{ maxWidth: "calc(100% - 550px)", minWidth: "50%" }}>
                             <div className="d-flex flex-column">
-                                <div className="d-flex flex-column card p-4 mb-4">
+                                <div className="d-flex flex-column card shadow p-4 mb-4">
                                     <div className="text-lg fw-bold mb-4">Import Audit Schedule</div>
                                     <ul>
                                         <li>Click on Import Button</li>
@@ -209,7 +209,7 @@ function AuditSchedule() {
                                         <Button variant="primary" onClick={() => setImportFile(true)} className="px-4">{'Import'}</Button>
                                     </div>
                                 </div>
-                                <div className="d-flex flex-column card p-4">
+                                <div className="d-flex flex-column card shadow p-4">
                                     <div className="text-lg fw-bold mb-4">Instructions for Export</div>
                                     <ul>
                                         <li>Select Company</li>

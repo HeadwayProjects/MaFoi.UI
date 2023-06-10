@@ -14,7 +14,7 @@ function AuditorDashboard() {
 
     return (
         <div style={{ paddingBottom: '44px', minHeight: '100%' }} className="d-flex flex-column bg-dashboard">
-            <div className="d-flex mb-4 p-2 align-items-center pageHeading">
+            <div className="d-flex mb-4 p-2 align-items-center pageHeading shadow">
                 <h4 className="mb-0">Auditor Dashboard</h4>
                 <div className="d-flex align-items-end h-100">
                     <nav aria-label="breadcrumb">

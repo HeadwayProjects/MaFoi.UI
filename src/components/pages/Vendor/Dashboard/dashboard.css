@@ -23,7 +23,8 @@
 
 .status-btn-group .btn {
     background-color: var(--white);
-    border: 1px solid rgba(50, 44, 45, 0.5) !important;
+    border: 1px solid;
+    /* border: 1px solid rgba(50, 44, 45, 0.5) !important; */
     color: var(--white) !important;
     font-weight: 700;
 }
@@ -34,23 +35,33 @@
 
 .status-btn-group input[name="ActivitySaved"]+.btn {
     background-color: var(--gray-500);
+    box-shadow: inset 3px 4px 5px #b0b0b1, inset -2px -12px 3px -10px #484848d4;
+    border-color: var(--gray-500);
 }
 
 .status-btn-group input[name="Pending"]+.btn {
     background-color: var(--yellow);
+    box-shadow: inset 3px 4px 5px #fbe93c, inset -2px -12px 3px -10px #6e5a14;
+    border-color: #ffbb1c;
 }
 
 .status-btn-group input[name="Overdue"]+.btn,
 .status-btn-group input[name="Rejected"]+.btn {
     background-color: var(--red);
+    box-shadow: inset 3px 4px 5px #ffa0a0, inset -2px -12px 3px -10px #852a2a;
+    border-color: #d30000;
 }
 
 .status-btn-group input[name="Submitted"]+.btn {
     background-color: var(--light-green);
+    box-shadow: inset 3px 4px 5px #d3fbb7, inset -2px -12px 3px -10px #264a0fc4;
+    border-color: #37a32c;
 }
 
 .status-btn-group input[name="Approved"]+.btn {
     background-color: var(--dark-green);
+    box-shadow: inset 3px 4px 5px #86df4bd6, inset -2px -12px 3px -10px #2d441d;
+    border-color: #5d9b34;
 }
 
 ul.updates {

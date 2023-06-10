@@ -492,7 +492,7 @@ function ActivitiesManagement() {
     return (
         <>
             <div className="d-flex flex-column">
-                <div className="d-flex  p-2 align-items-center pageHeading">
+                <div className="d-flex  p-2 align-items-center pageHeading shadow">
                     <h4 className="mb-0">Vendor - Activity</h4>
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
@@ -509,7 +509,7 @@ function ActivitiesManagement() {
                 </div>
 
                 <form className="p-0 mx-3 my-2">
-                    <div className="card border-0 p-2 mt-2 mb-3">
+                    <div className="card shadow border-0 p-2 mt-2 mb-3">
                         <div className="d-flex flex-row filters">
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
@@ -518,7 +518,7 @@ function ActivitiesManagement() {
                             </div>
                         </div>
                     </div>
-                    <div className="card border-0 p-2 mb-2">
+                    <div className="card shadow border-0 p-2 mb-2">
                         <div className="d-flex justify-content-between">
                             <div className="d-flex align-items-center status-btn-group">
                                 <label className="filter-label"><small>Forms Status</small></label>

@@ -35,14 +35,14 @@ function Performance() {
     }, [isFetching])
 
     return (
-        <div className="card">
+        <div className="card shadow">
             <div className="card-header bg-white border-0 underline text-appprimary fw-semibold fs-5 d-flex align-items-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M3 22V8H7V22H3ZM10 22V2H14V22H10ZM17 22V14H21V22H17Z" fill="#2965AD" />
                 </svg>
                 <div className="mx-2">Performance</div>
             </div>
-            <div className="card-body pt-0">
+            <div className="card-body pt-0 shadow">
                 <div className="d-flex flex-row">
                     <div className="col-11 mx-auto mt-3">
                         <div className="d-flex flex-row">

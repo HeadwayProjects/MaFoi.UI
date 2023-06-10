@@ -127,6 +127,8 @@ body {
 
 .btn-check:checked+.btn {
   background-color: var(--royal-blue) !important;
+  box-shadow: inset 3px 4px 5px #6e9fc7, inset -2px -12px 3px -10px #3fa2f1 !important;
+  border-color: var(--royal-blue) !important;
 }
 
 
@@ -185,9 +187,14 @@ body {
   color: var(--white);
   border: 3px solid var(--white);
   border-bottom-width: 2px;
+  box-shadow: -1px 13px 10px -5px rgba(38, 57, 77, 0.6), inset 5px 6px 10px rgba(252, 252, 252, 0.3);
 }
 
 /* Dashboard-cards count */
+
+.shadow {
+  box-shadow: -4px 8px 8px rgba(0, 0, 0, 0.2) !important;
+}
 
 .cardCount {
   height: 60px;
@@ -272,6 +279,8 @@ body {
   background-color: var(--blue);
   color: var(--white);
   border-color: transparent;
+  box-shadow: inset 3px 4px 5px #6DBDFC, inset -2px -12px 3px -10px #44ACFF
+  /* box-shadow:  0px 6px 10px -10px rgba(38, 57, 77, 0.6), inset 3px 4px 5px rgba(252, 252, 252, 0.21); */
 }
 
 

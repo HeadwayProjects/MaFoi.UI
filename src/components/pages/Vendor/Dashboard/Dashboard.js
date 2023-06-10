@@ -28,7 +28,7 @@ function VendorDashboard() {
 
     return (
         <div className="d-flex flex-column bg-dashboard" style={{ paddingBottom: '44px' }}>
-            <div className="d-flex  p-2 align-items-center pageHeading">
+            <div className="d-flex  p-2 align-items-center pageHeading shadow">
                 <h4 className="mb-0 ps-1">Vendor-Dashboard</h4>
                 <div className="d-flex align-items-end h-100">
                     <nav aria-label="breadcrumb">
@@ -41,7 +41,7 @@ function VendorDashboard() {
             </div>
             <div className="row m-0 mt-2">
                 <div className="col-12">
-                    <div className="card border-0 p-0 updates-card mt-2 shadow-lg">
+                    <div className="card shadow border-0 p-0 updates-card mt-2 shadow-lg">
                         <div className="card-body">
                             <div className="d-flex position-absolute updates-header">
                                 <Icon name="update-flag" />

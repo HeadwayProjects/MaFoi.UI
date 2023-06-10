@@ -81,7 +81,7 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
 
     return (
         <>
-            <div className="card todo-card">
+            <div className="card todo-card shadow">
                 <div className="card-header bg-white border-0 underline text-appprimary fw-semibold fs-5 d-flex align-items-center">
                     <div>
                         {

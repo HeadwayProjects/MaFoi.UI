@@ -72,6 +72,9 @@
     color: var(--white);
     border-radius: 0;
 }
+.modal-dialog.drawer .modal-content .modal-header {
+    box-shadow: -4px 8px 8px rgba(0, 0, 0, 0.2) !important;
+}
 
 .modal-dialog.drawer .modal-content .modal-header,
 .modal-dialog.drawer .modal-content .modal-body,

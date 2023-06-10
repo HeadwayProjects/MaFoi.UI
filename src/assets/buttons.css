@@ -1,6 +1,7 @@
 .btn.btn-primary {
     background-color: var(--royal-blue);
     font-weight: 700;
+    box-shadow: inset 3px 4px 5px #6e9fc7, inset -2px -12px 3px -10px #3fa2f1;
 }
 
 .btn.btn-primary2 {
@@ -11,4 +12,9 @@
     background-color: var(--white);
     border-color: var(--red);
     color: var(--red);
+}
+
+.btn.btn-success {
+    box-shadow: inset 3px 4px 5px #85b167, inset -2px -12px 3px -10px #264a0f;
+    border-color: #3fdd2f !important;
 }

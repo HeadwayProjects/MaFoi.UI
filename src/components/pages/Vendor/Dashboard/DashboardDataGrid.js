@@ -64,7 +64,7 @@ function DashboardDataGrid() {
         <div>
             <div className="my-3 row m-0 filters">
                 <div className="col-12">
-                    <div className="d-flex flex-row card m-0">
+                    <div className="d-flex flex-row card shadow m-0">
                         <div className="p-2">
                             <label className="filter-label"><small>Company</small></label>
                             <Select options={companies} onChange={setCompany}

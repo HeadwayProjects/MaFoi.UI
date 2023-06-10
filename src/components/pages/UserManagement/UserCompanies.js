@@ -194,7 +194,7 @@ function UserCompanies() {
         <>
             <MastersLayout title="Company Mapping" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0">
-                    <div className="card d-flex flex-row justify-content-center m-3 p-3">
+                    <div className="card shadow d-flex flex-row justify-content-center m-3 p-3">
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
                                 <div className="col-3 px-0">

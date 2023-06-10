@@ -50,7 +50,7 @@ function Navbar({ showUser = true }) {
 
     return (
         <>
-            <div className='container-full fixed-top bg-white header-navbar-container'>
+            <div className='container-full fixed-top bg-white header-navbar-container shadow'>
                 <nav className="navbar navbar-expand-lg border-bottom py-1">
                     <div className="container-fluid">
                         <div className="navbar-brand p-0"><img src={logo} alt="Logo" width="140" /></div>
