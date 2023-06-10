@@ -64,7 +64,6 @@ function CityDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'state',
                 label: 'State',
-                content: (data || {}).description,
                 options: states,
                 validate: [
                     { type: validatorTypes.REQUIRED }

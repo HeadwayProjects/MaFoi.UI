@@ -5,11 +5,10 @@ import { Button } from "react-bootstrap";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { useCreateRuleCompliance, useGetRules, useGetStates, useUpdateRuleCompliance } from "../../../../backend/masters";
 import { getValue, preventDefault } from "../../../../utils/common";
-import { ActivityType, AuditType, GetActionTitle, GetRuleDesc, RiskType } from "../Master.constants";
+import { ActivityType, AuditType, GetActionTitle, RiskType } from "../Master.constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { ACTIONS } from "../../../common/Constants";
 import { toast } from "react-toastify";
-import { AxiosError } from "axios";
 import PageLoader from "../../../shared/PageLoader";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 

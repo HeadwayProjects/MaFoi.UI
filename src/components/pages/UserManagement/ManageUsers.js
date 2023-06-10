@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { ACTIONS, STATUS } from "../../common/Constants";
+import { ACTIONS } from "../../common/Constants";
 import { useDeleteUser, useGetUserRoles, useGetUsers } from "../../../backend/users";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import Icon from "../../common/Icon";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
 import MastersLayout from "../Masters/MastersLayout";
-import { Button, InputGroup } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import ConfirmModal from "../../common/ConfirmModal";
 import PageLoader from "../../shared/PageLoader";
 import UserDetails from "./UserDetails";
@@ -76,15 +76,6 @@ function MangeUsers() {
         return (
             <div className="d-flex flex-row align-items-center h-100">
                 {roles}
-            </div>
-        )
-    }
-
-    function StatusTmpl({ cell }) {
-        const value = cell.getValue();
-        return (
-            <div className="d-flex flex-row align-items-center h-100">
-                {value ? STATUS.ACTIVE : STATUS.INACTIVE}
             </div>
         )
     }

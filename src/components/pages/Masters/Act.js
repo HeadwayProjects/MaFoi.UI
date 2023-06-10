@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
-import { Button, InputGroup } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Icon from "../../common/Icon";
 import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, NameTmpl, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
@@ -113,7 +113,7 @@ function Act() {
     const columns = [
         { title: "Act Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<TypeTmpl />) },
-        { title: "Law", field: "law", formatter: reactFormatter(<CellTmpl />), formatter: reactFormatter(<NameTmpl />) },
+        { title: "Law", field: "law", formatter: reactFormatter(<NameTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)

@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { useDeleteEmailTemplate, useGetAllEmailTemplateTypes, useGetAllTemplates } from "../../../backend/email";
-import MastersLayout from "../Masters/MastersLayout";
 import TableFilters from "../../common/TableFilter";
 import { ACTIONS } from "../../common/Constants";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
@@ -12,6 +11,7 @@ import ConfirmModal from "../../common/ConfirmModal";
 import { getValue } from "../../../utils/common";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { toast } from "react-toastify";
+import PageLoader from "../../shared/PageLoader";
 
 const SortFields = {
     'templateType.description': 'templateType'
@@ -26,8 +26,8 @@ function ManageEmailTemplates({ changeView }) {
     const [filters, setFilters] = useState();
     const filterRef = useRef();
     filterRef.current = filters;
-    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'templateType', order: 'asc' }, ...filterRef.current, t});
-    const { templates, total, isFetching, refetch=['']} = useGetAllTemplates(payload, Boolean(payload));
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'templateType', order: 'asc' }, ...filterRef.current, t });
+    const { templates, total, isFetching, refetch = [''] } = useGetAllTemplates(payload, Boolean(payload));
     const { deleteEmailTemplate, deleting } = useDeleteEmailTemplate(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success('Email Template deleted successfully.');
@@ -166,6 +166,7 @@ function ManageEmailTemplates({ changeView }) {
                     <div className="text-center mb-4">Are you sure you want to delete the email template for , <strong>{getValue(template, 'templateType.description')}</strong> ?</div>
                 </ConfirmModal>
             }
+            {deleting && <PageLoader />}
         </>
     )
 }

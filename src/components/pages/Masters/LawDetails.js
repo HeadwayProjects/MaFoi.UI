@@ -4,7 +4,7 @@ import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../common/Constants";
-import { useCreateLaw, useGetLaws, useUpdateLaw } from "../../../backend/masters";
+import { useCreateLaw, useUpdateLaw } from "../../../backend/masters";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";

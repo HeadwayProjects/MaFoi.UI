@@ -5,7 +5,7 @@ import { ActivityType, AuditType, GetMastersBreadcrumb } from "./../Master.const
 import { ACTIONS } from "../../../common/Constants";
 import { useDeleteRuleCompliance, useGetRuleCompliances, useGetStates } from "../../../../backend/masters";
 import Icon from "../../../common/Icon";
-import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, NameTmpl, TitleTmpl, reactFormatter } from "../../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import ConfirmModal from "../../../common/ConfirmModal";
 import RuleComplianceDetails from "./RuleComplianceDetails";
 import { toast } from "react-toastify";
@@ -41,7 +41,7 @@ function RuleCompliance() {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
-    const { exportRuleCompliance, exporting } = useExportRuleCompliance((response) => {
+    const { exportRuleCompliance } = useExportRuleCompliance((response) => {
         downloadFileContent({
             name: 'Rule_Compliance.xlsx',
             type: response.headers['content-type'],

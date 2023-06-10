@@ -8,11 +8,9 @@ import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { useGetActivityDocuments } from "../../../../backend/query";
 import PageLoader from "../../../shared/PageLoader";
-import { ACTIVITY_STATUS, ALLOWED_FILES_REGEX, STATUS_MAPPING } from "../../../common/Constants";
+import { ALLOWED_FILES_REGEX, STATUS_MAPPING } from "../../../common/Constants";
 import { checkVendorActivityStatus } from "../../../../utils/common";
 import { Alert } from "react-bootstrap";
-
-const SUBMITED_STATUSES = [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED];
 
 function StatusTmp({ status }) {
     return (

@@ -3,7 +3,6 @@ import * as api from '../../../../backend/request';
 import * as dayjs from 'dayjs';
 import * as utc from "dayjs/plugin/utc";
 import "./dashboard.css";
-import { preventDefault } from "../../../../utils/common";
 import Chart from "./Chart";
 import { navigate } from "raviger";
 import { getBasePath } from "../../../../App";

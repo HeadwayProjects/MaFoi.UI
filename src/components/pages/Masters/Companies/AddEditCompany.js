@@ -142,7 +142,7 @@ function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
                 {
                     companyDetails && companyDetails.logo &&
                     <div className={`${companyStyles.imageContainer}`}>
-                        <img src={companyDetails.logo} />
+                        <img src={companyDetails.logo} alt="Logo Not Available"/>
                     </div>
                 }
                 <Tabs className="dashboardTabs mx-2"

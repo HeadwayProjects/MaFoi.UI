@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { ACTIVITY_STATUS, STATUS_MAPPING } from "../../common/Constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import { preventDefault } from "../../../utils/common";

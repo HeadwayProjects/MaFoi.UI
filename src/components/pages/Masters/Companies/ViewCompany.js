@@ -281,7 +281,7 @@ function ViewCompany({ company, onClose }) {
                     Boolean((companyDetails || {}).logo) &&
                     <div className="position-relative">
                         <div className={styles.imageContainer}>
-                            <img src={companyDetails.logo} />
+                            <img src={companyDetails.logo} alt="Company Logo"/>
                         </div>
                     </div>
                 }

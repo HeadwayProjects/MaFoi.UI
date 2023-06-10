@@ -12,7 +12,7 @@ import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
 import RuleStateCompanyMappingDetails from "./RuleStateCompanyMappingDetails";
 import TableFilters from "../../../common/TableFilter";
-import { download, downloadFileContent, preventDefault } from "../../../../utils/common";
+import { download, downloadFileContent } from "../../../../utils/common";
 import { useExportActStateMappings } from "../../../../backend/exports";
 
 function RuleStateCompanyMapping() {
@@ -231,7 +231,7 @@ function RuleStateCompanyMapping() {
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Act/Rule/Activity"} />
                                 <div className="d-flex">
-                                     <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
                                         <Icon name={'download'} className="me-2"></Icon>Export
                                     </Button>
                                     <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
@@ -257,6 +257,9 @@ function RuleStateCompanyMapping() {
             }
             {
                 deleting && <PageLoader>Deleting...</PageLoader>
+            }
+            {
+                exporting && <PageLoader />
             }
         </>
     )

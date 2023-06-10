@@ -68,7 +68,7 @@ function fileTypeValidator({ regex }) {
 }
 
 function TextField(props) {
-    const { label, meta = {}, input, type = 'text', name } = useFieldApi(props);
+    const { label, meta = {}, input, name } = useFieldApi(props);
     const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
     const maxLength = ((props.validate || []).find(x => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
     const isPasswordField = props.fieldType === 'password';

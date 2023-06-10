@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { InputGroup } from "react-bootstrap"
 import Select from "react-select";
-import { debounce, object } from "underscore";
+import { debounce } from "underscore";
 const DEFAULT_OPTION = { value: 'ALL', label: 'All' };
 
 function TableFilters({ search, filterConfig, onFilterChange, placeholder }) {

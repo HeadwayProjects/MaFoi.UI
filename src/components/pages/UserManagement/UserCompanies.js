@@ -51,7 +51,7 @@ function UserCompanies() {
     const { users, isFetching: fetchingUsers } = useGetUsers({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { userCompanies, isFetching, refetch } = useGetUserCompanies({ userId: (user || {}).value }, Boolean(user));
     const [userLocations, setUserLocations] = useState(null);
-    const { createUserLocationMapping: deleteLocations, creating: deleting } = useCreateUserLocationMapping((response) => {
+    const { createUserLocationMapping: deleteLocations } = useCreateUserLocationMapping((response) => {
         if (response.key === API_RESULT.SUCCESS) {
             toast.success(`${userLocations.associateCompanyName} deleted successsfully.`);
             setUserLocations(null);

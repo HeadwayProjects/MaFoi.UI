@@ -15,8 +15,8 @@ function UserLocationMapping({ user, data, onClose, onSubmit }) {
     const [selectedLocations, setSelectedLocations] = useState([]);
     const [parentCompany, setParentCompany] = useState();
     const [associateCompany, setAssociateCompany] = useState();
-    const { companies: parentCompanies, isFetching: fetchingCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
-    const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({
+    const { companies: parentCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
+    const { companies: associateCompanies } = useGetCompanies({
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (parentCompany || {}).value }]
     }, Boolean((parentCompany || {}).value));

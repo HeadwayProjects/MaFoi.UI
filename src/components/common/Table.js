@@ -9,9 +9,6 @@ import Icon from "./Icon";
 import Select from "react-select";
 import '../shared/PageLoader.css';
 import PageLoader from "../shared/PageLoader";
-import { preventDefault } from "../../utils/common";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
 
 const PageNav = {
     FIRST: 'first',
@@ -138,9 +135,6 @@ function Table(props) {
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [pageSize, setPageSize] = useState({ value: paginationSize, label: paginationSize });
-    const [selectAll, setSelectAll] = useState(false);
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [data, setData] = useState([]);
 
     function handleResize() {
         if (divEle && divEle.current) {
@@ -171,6 +165,8 @@ function Table(props) {
             case PageNav.LAST:
                 _page = lastPage * 1;
                 break;
+            default:
+                break;
         }
         setPage(_page);
         if (props.onPageNav) {
@@ -185,28 +181,6 @@ function Table(props) {
         if (props.onPageNav) {
             props.onPageNav({ pageNumber: 1, pageSize: e.value });
         }
-    }
-
-    function HeaderSelectionTmpl() {
-        function handleSelectAll(e) {
-            preventDefault(e);
-            setSelectAll(e.target.value);
-        }
-
-        return (
-            <div className="d-flex flex-row align-items-center">
-                <input type="checkbox" onChange={handleSelectAll} checked={selectAll} />
-            </div>
-        )
-    }
-
-    function SelectionTmpl({ cell }) {
-        const value = cell.getValue();
-        return (
-            <div className="d-flex flex-row align-items-center">
-                <FontAwesomeIcon icon={value ? faCheckSquare : faSquare} />
-            </div>
-        )
     }
 
     useEffect(() => {
@@ -293,7 +267,6 @@ function Table(props) {
             setLastPage(_lastPage);
             if (table.replaceData && (table.rowManager || {}).renderer) {
                 try {
-                    setData((props.data || {}).data || [])
                     table.replaceData((props.data || {}).data || []);
                     const length = ((props.data || {}).data || []).length
                     if (length === 0) {

@@ -5,7 +5,7 @@ import { Button } from "react-bootstrap";
 import { toast } from 'react-toastify';
 import { useCreateCompanyLocation, useGetCities, useGetStates, useUpdateCompanyLocation } from "../../../../backend/masters";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
-import { ACTIONS } from "../../../common/Constants";
+import { ACTIONS, PATTERNS } from "../../../common/Constants";
 import { getValue, preventDefault } from "../../../../utils/common";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { GetActionTitle } from "../Master.constants";
@@ -86,8 +86,17 @@ function CompanyLocationDetails({ action, parentCompany, associateCompany, data,
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'locationName',
+                label: 'Location Name',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'locationName') : ''
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'locationCode',
-                label: 'Short Code',
+                label: 'Location Short Code',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 4 },
@@ -95,15 +104,6 @@ function CompanyLocationDetails({ action, parentCompany, associateCompany, data,
                 ],
                 styleClass: 'text-uppercase',
                 content: action === ACTIONS.VIEW ? getValue(locationDetails, 'locationCode') : ''
-            },
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'locationName',
-                label: 'Location Name',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'locationName') : ''
             },
             {
                 component: componentTypes.PLAIN_TEXT,
@@ -127,7 +127,7 @@ function CompanyLocationDetails({ action, parentCompany, associateCompany, data,
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },
-                    { type: validatorTypes.PATTERN, pattern: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, message: 'Should be numeric value of length 10' }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.MOBILE, message: 'Should be numeric value of length 10' }
                 ],
                 content: action === ACTIONS.VIEW ? getValue(locationDetails, 'contactPersonMobile') : ''
             },
@@ -200,7 +200,7 @@ function CompanyLocationDetails({ action, parentCompany, associateCompany, data,
                 ((city || {}).city || {}).code || '###',
                 locationCode || '###'
             ];
-            setCompanyLocationAddress(codes.join('-'));
+            setCompanyLocationAddress(codes.join('-').toUpperCase());
         }
     }, [locationDetails])
 

@@ -16,7 +16,6 @@ import { FindDuplicateMasters, GetActionTitle } from "./Master.constants";
 
 function LocationDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
-    const [title, setTitle] = useState();
     const [stateId, setStateId] = useState();
     const [cityId, setCityId] = useState();
     const { states, isFetching: loadingStates } = useGetStates();
@@ -67,7 +66,6 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'state',
                 label: 'State',
-                content: (data || {}).description,
                 options: states,
                 validate: [
                     { type: validatorTypes.REQUIRED }
@@ -80,7 +78,6 @@ function LocationDetails({ action, data, onClose, onSubmit }) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'city',
                 label: 'City',
-                content: (data || {}).description,
                 options: cities,
                 validate: [
                     { type: validatorTypes.REQUIRED }

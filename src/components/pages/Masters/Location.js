@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
-import { Button, InputGroup } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Icon from "../../common/Icon";
 import Table, { CellTmpl, reactFormatter } from "../../common/Table";
 import { ACTIONS } from "../../common/Constants";
@@ -16,7 +16,7 @@ function Location() {
         { id: 'masters', label: 'Masters', path: '/masters/act' },
         { id: 'location', label: 'Location' }
     ]);
-    const [search, setSearch] = useState(null);
+    const [search] = useState(null);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [location, setLocation] = useState(null);
     const [data, setData] = useState();

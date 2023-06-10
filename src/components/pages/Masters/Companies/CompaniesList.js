@@ -62,7 +62,7 @@ function CompaniesList({ changeView }) {
             <div className="d-flex align-items-center h-100">
                 {
                     row.logo &&
-                    <img src={row.logo} width={'30px'} height={'30px'} className="me-2 rounded-circle" />
+                    <img src={row.logo} width={'30px'} height={'30px'} className="me-2 rounded-circle" alt="Company Logo"/>
                 }
                 <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
                     <div className="d-flex align-items-center h-100">
@@ -70,19 +70,6 @@ function CompaniesList({ changeView }) {
                     </div>
                 </OverlayTrigger>
             </div>
-        )
-    }
-
-    function LocationTmpl({ cell }) {
-        const row = cell.getData();
-        const { location, city, state } = row;
-        const tooltip = `${(location || {}).name || 'NA'} - ${(city || {}).name || 'NA'} - ${(state || {}).name || 'NA'}`
-        return (
-            <OverlayTrigger overlay={<Tooltip>{tooltip}</Tooltip>} placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
-                <div className="d-flex align-items-center h-100">
-                    {(location || {}).code || 'NA'} - {(city || {}).code || 'NA'} - {(state || {}).code || 'NA'}
-                </div>
-            </OverlayTrigger>
         )
     }
 

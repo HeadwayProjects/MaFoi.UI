@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import * as auth from "../../../backend/auth";
 import dayjs from "dayjs";
-import NavTabs from "../../shared/NavTabs";
 import Chart from "./Chart";
 import { useGetAuditorPerformance } from "../../../backend/auditor";
 

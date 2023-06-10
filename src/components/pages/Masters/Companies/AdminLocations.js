@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Select from 'react-select';
-import { useHistory } from "raviger"
 import { useGetCompanies, useGetCompanyLocations } from "../../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 
 function AdminLocations({ onChange }) {
     const [t] = useState(new Date().getTime());
-    const { state } = useHistory();
     const [company, setCompany] = useState(null);
     const [associateCompany, setAssociateCompany] = useState(null);
     const [location, setLocation] = useState(null);

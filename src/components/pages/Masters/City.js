@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import MastersLayout from "./MastersLayout";
-import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Icon from "../../common/Icon";
 import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter, NameTmpl } from "../../common/Table";
-import { ACTIONS, TOOLTIP_DELAY } from "../../common/Constants";
+import { ACTIONS } from "../../common/Constants";
 import CityDetails from "./CityDetails";
 import ConfirmModal from "../../common/ConfirmModal";
 import { useGetCities, useDeleteCity, useGetStates } from "../../../backend/masters";

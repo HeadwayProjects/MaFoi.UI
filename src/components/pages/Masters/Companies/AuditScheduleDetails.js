@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { ACTIONS, ACTIVITY_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../../common/Constants";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { ACTIONS, ACTIVITY_STATUS, FILTERS, STATUS_MAPPING } from "../../../common/Constants";
 import { useGetAllActivities } from "../../../../backend/query";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue, preventDefault } from "../../../utils/common";
-import { ACTIONS, PATTERNS, STATUS, USER_STATUS } from "../../common/Constants";
+import { ACTIONS, PATTERNS, STATUS } from "../../common/Constants";
 import { Button, Modal } from "react-bootstrap";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import PageLoader from "../../shared/PageLoader";
@@ -99,7 +99,7 @@ function UserDetails({ action, data, onClose, onSubmit }) {
     function submit(e) {
         preventDefault(e);
         if (form.valid) {
-            const { name, userName, role, email, status } = user;
+            const { name, userName, role, email } = user;
             const request = {
                 name: name.trim(),
                 email: (email || '').trim(),

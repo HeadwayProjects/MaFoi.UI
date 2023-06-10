@@ -118,7 +118,7 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
 
     function handleSubmit() {
         if (form.valid) {
-            const { id, templateType, subject, emailFrom, emailTo, emailCC, body, signature } = templateDetails;
+            const { templateType, subject, emailFrom, emailTo, emailCC, body, signature } = templateDetails;
             const payload = {
                 subject,
                 emailFrom: emailFrom || '',

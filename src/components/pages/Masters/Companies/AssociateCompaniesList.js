@@ -84,7 +84,7 @@ function AssociateCompaniesList({ changeView, parent }) {
             <div className="d-flex align-items-center h-100">
                 {
                     row.logo &&
-                    <img src={row.logo} width={'30px'} height={'30px'} className="me-2 rounded-circle" />
+                    <img src={row.logo} width={'30px'} height={'30px'} className="me-2 rounded-circle" alt="Company Logo"/>
                 }
                 <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
                     <div className="d-flex align-items-center h-100">

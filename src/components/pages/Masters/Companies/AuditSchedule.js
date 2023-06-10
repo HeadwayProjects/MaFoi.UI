@@ -111,9 +111,8 @@ function AuditSchedule() {
     };
 
     function getFileName() {
-        const { parentCompany, associateCompany, locations, month } = exportData;
+        const { parentCompany, associateCompany, locations } = exportData;
         const _d = { ...parentCompany, ...associateCompany, ...locations };
-        // const date = new Date(month);
         const result = [
             _d.parentCompany.code
         ];
@@ -123,8 +122,6 @@ function AuditSchedule() {
         if (_d.locations) {
             result.push(_d.locations.code);
         }
-        // result.push(MONTHS_ENUM[date.getMonth()].substring(0, 3));
-        // result.push(date.getFullYear());
         return `${result.join('-')}.xlsx`
     }
 

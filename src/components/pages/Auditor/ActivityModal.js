@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { ACTIVITY_STATUS, ALLOWED_FILES_REGEX, AUDIT_STATUS, STATUS, STATUS_MAPPING } from "../../common/Constants";
+import { ACTIVITY_STATUS, ALLOWED_FILES_REGEX, AUDIT_STATUS, STATUS_MAPPING } from "../../common/Constants";
 import { useGetActivityDocuments } from "../../../backend/query";
 import Icon from "../../common/Icon";
 import { checkAuditorActivityStatus, download } from "../../../utils/common";

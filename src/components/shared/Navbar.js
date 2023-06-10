@@ -18,7 +18,7 @@ function Navbar({ showUser = true }) {
     const [newUser, setNewUser] = useState(false);
     const [unreadNotifications, setUnreadNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
-    const [notifications, setNotifications] = useState([]);
+    const [notifications] = useState([]);
 
     function logout(event) {
         preventDefault(event)
@@ -86,7 +86,7 @@ function Navbar({ showUser = true }) {
                                             </div>
                                         </div>
                                     </ul>
-                                    <img src={mofoi_logo} width={'50px'} height={'50px'} />
+                                    <img src={mofoi_logo} width={'50px'} height={'50px'} alt='Mofoi Logo'/>
                                 </div>
                                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navTop" aria-controls="navTop" aria-expanded="false" aria-label="Toggle navigation">
                                     <span className="navbar-toggler-icon"></span>

@@ -258,7 +258,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 </Modal.Footer>
             </Modal>
             {
-                (creating || uploading) && <PageLoader>{uploading ? 'Uploading...' : 'Creating...'}</PageLoader>
+                (creating || uploading || updating) && <PageLoader />
             }
         </>
     )

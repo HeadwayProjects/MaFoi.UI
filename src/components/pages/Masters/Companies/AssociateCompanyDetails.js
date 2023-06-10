@@ -270,7 +270,7 @@ function AssociateCompanyDetails({ action, parentCompany, data, onClose, onSubmi
 
     useEffect(() => {
         if (data) {
-            const { businessType, isActive } = data;
+            const { isActive } = data;
             setAssociateCompany({
                 hideButtons: true,
                 ...data,
@@ -289,7 +289,7 @@ function AssociateCompanyDetails({ action, parentCompany, data, onClose, onSubmi
                     Boolean((associateCompany || {}).logo) &&
                     <div className="position-relative">
                         <div className={styles.imageContainer}>
-                            <img src={associateCompany.logo} />
+                            <img src={associateCompany.logo} alt="Company Logo"/>
                         </div>
                     </div>
                 }

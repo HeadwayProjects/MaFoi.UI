@@ -38,7 +38,7 @@ function State() {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
-    const { exportStates, exporting } = useExportStates((response) => {
+    const { exportStates } = useExportStates((response) => {
         downloadFileContent({
             name: 'States.xlsx',
             type: response.headers['content-type'],

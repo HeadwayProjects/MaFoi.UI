@@ -256,7 +256,7 @@ function TaskManagement() {
         return (
             <>
                 {
-                    auditted !== ACTIVITY_TYPE.NO_AUDIT && value != '0001-01-01T00:00:00' &&
+                    auditted !== ACTIVITY_TYPE.NO_AUDIT && value !==   '0001-01-01T00:00:00' &&
                     <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
                 }
             </>
@@ -318,8 +318,8 @@ function TaskManagement() {
                     <div className="d-flex flex-row align-items-center position-relative">
                         <Icon className="mx-1" type="button" name="download" text="Download" data={row} action={downloadForm} />
                         {
-                            (row.auditted === ACTIVITY_TYPE.AUDIT
-                                && [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED].includes(row.status)
+                            ((row.auditted === ACTIVITY_TYPE.AUDIT
+                                && [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED].includes(row.status))
                                 || row.auditted === ACTIVITY_TYPE.PHYSICAL_AUDIT) &&
                             <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={editActivity} />
                         }

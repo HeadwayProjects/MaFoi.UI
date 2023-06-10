@@ -213,7 +213,7 @@ function CompanyLocationMappings() {
             if (_parentCompanyId) {
                 const _parentCompany = parentCompanies.find(x => x.id === _parentCompanyId);
                 setParentCompany({ value: _parentCompany.id, label: _parentCompany.name, code: _parentCompany.code });
-                if ((parentCompany || {}).value != _parentCompanyId) {
+                if ((parentCompany || {}).value !== _parentCompanyId) {
                     setAssociateCompany(null);
                     setPayload(null);
                     return;

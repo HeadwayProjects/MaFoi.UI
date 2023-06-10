@@ -2,17 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 import { ACTIONS, FILTERS, STATUS_MAPPING } from "../../../common/Constants";
 import { useGetAllActivities } from "../../../../backend/query";
-import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
+import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS } from "../../../../utils/constants";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import AdvanceSearch from "../../../common/AdvanceSearch";
 import { preventDefault } from "../../../../utils/common";
 import AlertModal from "../../../common/AlertModal";
-import PageLoader from "../../../shared/PageLoader";
 import Icon from "../../../common/Icon";
 import AdminLocations from "./AdminLocations";
-import ConfirmModal from "../../../common/ConfirmModal";
-import { useDeleteAuditSchedule } from "../../../../backend/masters";
-import { toast } from "react-toastify";
 import UnBlockModal from "./UnBlockModal";
 import BulkUnBlockModal from "./BulkUnBlockModal";
 
@@ -60,16 +56,6 @@ function LockUnLock() {
     const { activities, total, isFetching, refetch } = useGetAllActivities(payload, Boolean(hasFilters(null, 'companyId')));
     const [selectedRows, setSelectedRows] = useState([]);
     const [alertMessage, setAlertMessage] = useState(null);
-    const { deleteAuditSchedule, deleting } = useDeleteAuditSchedule((key, value) => {
-        if (key === API_RESULT.SUCCESS) {
-            toast.success('Activity deleted successfully.');
-            dismissAction();
-            refetch();
-        } else {
-            toast.error(value || ERROR_MESSAGES.DEFAULT)
-        }
-    });
-
 
     function hasFilters(ref, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
@@ -130,7 +116,6 @@ function LockUnLock() {
 
     function FormStatusTmpl({ cell }) {
         const status = cell.getValue();
-        const { formsStatusRemarks, published, auditted = ACTIVITY_TYPE.AUDIT } = cell.getData() || {};
         return (
             <div className="d-flex align-items-center position-relative">
                 <span className={`status-${status} ellipse`}>{STATUS_MAPPING[status] || status}</span>
@@ -388,7 +373,6 @@ function LockUnLock() {
                 action === ACTIONS.BULK_EDIT && (selectedRows || []).length > 0 &&
                 <BulkUnBlockModal selected={selectedRows} onSubmit={refetch} onClose={dismissAction} />
             }
-            {deleting && <PageLoader message={'Deleting...'} />}
         </>
     );
 

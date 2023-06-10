@@ -6,6 +6,7 @@ import styles from "./Companies.module.css"
 import { COMPANY_REQUEST } from "./Companies.constants";
 import { useGetCities, useGetStates } from "../../../../backend/masters"
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
+import { PATTERNS } from "../../../common/Constants";
 
 function CompanySPOC({ onNext, onPrevious, onSubmit, company, parentCompany }) {
     const [form, setForm] = useState({});
@@ -98,7 +99,7 @@ function CompanySPOC({ onNext, onPrevious, onSubmit, company, parentCompany }) {
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },
-                    { type: validatorTypes.PATTERN, pattern: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, message: 'Should be numeric value of length 10' }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.MOBILE, message: 'Should be numeric value of length 10' }
                 ]
             },
             {
@@ -107,7 +108,7 @@ function CompanySPOC({ onNext, onPrevious, onSubmit, company, parentCompany }) {
                 label: 'Email',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.PATTERN, pattern: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/, message: 'Invalid email format.' }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.EMAIL, message: 'Invalid email format.' }
                 ]
             },
             {
@@ -174,7 +175,7 @@ function CompanySPOC({ onNext, onPrevious, onSubmit, company, parentCompany }) {
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },
-                    { type: validatorTypes.PATTERN, pattern: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/, message: 'Should be numeric value of length 10' }
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.MOBILE, message: 'Should be numeric value of length 10' }
                 ]
             },
             {

@@ -3,17 +3,10 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
 import DatePicker from "react-datepicker";
-import { ACTIVITY_TYPE, API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
-import { useBulkUpdateAuditSchedule, useUpdateAuditSchedule } from "../../../../backend/masters";
-import { ACTIVITY_STATUS, STATUS_MAPPING } from "../../../common/Constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
+import { useBulkUpdateAuditSchedule } from "../../../../backend/masters";
+import { ACTIVITY_STATUS } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
-
-
-function StatusTmp({ status }) {
-    return (
-        <span className={`status-${status}`}>{STATUS_MAPPING[status]}</span>
-    )
-}
 
 function BulkUnBlockModal({ selected = {}, onClose, onSubmit }) {
     const [newDueDate, setNewDueDate] = useState(new Date());
@@ -29,11 +22,11 @@ function BulkUnBlockModal({ selected = {}, onClose, onSubmit }) {
 
     function submit() {
         const payload = selected.map((activity) => {
-            const { id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
+            const { id, auditStatus, auditRemarks, day, month, year, startDate, savedDate,
                 submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId,
                 actStateMappingId, formsStatusRemarks, published, auditted } = activity;
             return {
-                id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
+                id, auditStatus, auditRemarks, day, month, year, startDate, savedDate,
                 submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId,
                 actStateMappingId, formsStatusRemarks, published, auditted,
                 dueDate: new Date(newDueDate).toISOString(),
