@@ -11,6 +11,8 @@ import PageLoader from "../../../shared/PageLoader";
 import { getMaxMonthYear, getMinMonthYear } from "../../../../utils/common";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import dayjs from "dayjs";
+import { ActivityType } from "../Master.constants";
+import { API_DELIMITER } from "../../../../utils/constants";
 
 function getMonthYear() {
     const date = new Date();
@@ -22,11 +24,19 @@ function getMonthYear() {
     }
 }
 
+const DEFAULT_EXPORT_DATA = {
+    hideButtons: true,
+    month: new Date(),
+    types: ['Display', 'Registers', 'Returns'].map(x => {
+        return { value: x, label: x }
+    })
+}
+
 function AuditSchedule() {
     const [form, setForm] = useState({});
     const [importFile, setImportFile] = useState(false);
     const [breadcrumb] = useState(GetCompaniesBreadcrumb('Audit Schedule'));
-    const [exportData, setExportData] = useState({ hideButtons: true, month: new Date() });
+    const [exportData, setExportData] = useState({ ...DEFAULT_EXPORT_DATA });
     const [parentCompany, setParentCompany] = useState(null);
     const [associateCompany, setAssociateCompany] = useState(null);
     const { companies, isFetching: fetchingCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
@@ -95,6 +105,17 @@ function AuditSchedule() {
                 className: 'grid-col-100'
             },
             {
+                component: componentTypes.SELECT,
+                name: 'types',
+                label: 'Activity Types',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                className: 'grid-col-100',
+                options: ActivityType,
+                isMulti: true
+            },
+            {
                 component: componentTypes.MONTH_PICKER,
                 name: 'month',
                 label: 'Month',
@@ -143,7 +164,7 @@ function AuditSchedule() {
 
     function handleSubmit() {
         if (form.valid) {
-            const { parentCompany, associateCompany, locations, month } = exportData;
+            const { parentCompany, associateCompany, locations, month, types } = exportData;
             let fromDate, toDate;
             if (Array.isArray(month)) {
                 fromDate = new Date(month[0]);
@@ -161,14 +182,15 @@ function AuditSchedule() {
                 associateCompany: (associateCompany || {}).value || '',
                 location: (locations || {}).value || '',
                 fromDate: dayjs(new Date(fromDate)).local().format(),
-                toDate: dayjs(new Date(toDate)).local().format()
+                toDate: dayjs(new Date(toDate)).local().format(),
+                types: types.map(x => x.value).join(API_DELIMITER)
             };
             exportAuditSchedule(payload);
         }
     }
 
     function resetForm() {
-        setExportData({ hideButtons: true, ...getMonthYear() });
+        setExportData({ ...DEFAULT_EXPORT_DATA });
     }
 
     return (
