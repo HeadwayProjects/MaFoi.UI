@@ -9,18 +9,19 @@ import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue, preventDefault } from "../../../../utils/common";
 import { Button, Modal } from "react-bootstrap";
-import { GetActionTitle, GetRuleDesc } from "../Master.constants";
+import { CentralId, GetActionTitle, GetRuleDesc, RuleType, RuleTypeEnum } from "../Master.constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { ACTIONS, ALLOWED_FILES_REGEX, FILE_SIZE } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
+const DefaultRule = RuleTypeEnum.STATE;
 
 function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
-    const [mapping, setMapping] = useState({ hideButtons: true });
+    const [mapping, setMapping] = useState({ hideButtons: true, type: { value: DefaultRule, label: DefaultRule } });
     const [defaultPayload] = useState({ ...DEFAULT_OPTIONS_PAYLOAD, t: new Date().getTime() });
     const { acts } = useGetActs({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
-    const { rules } = useGetRules({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
+    const { rules } = useGetRules({ ...defaultPayload, filters: [{ columnName: 'type', value: ((mapping || {}).type || {}).value }] }, Boolean(defaultPayload && action !== ACTIONS.VIEW && ((mapping || {}).type || {}).value));
     const { activities } = useGetActivities({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
     const { states } = useGetStates({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
     const { uploadActStateMappingTemplate, uploading } = useUploadActStateMappingTemplate(({ key, value }) => {
@@ -99,6 +100,12 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
         )
     }
 
+    function onTypeChange(e) {
+        if (e) {
+            setMapping({ ...mapping, type: e, rule: undefined });
+        }
+    }
+
     function activityOptionLabel({ label, activity }) {
         return (
             <div className="d-flex flex-column">
@@ -116,6 +123,18 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
 
     const schema = {
         fields: [
+            {
+                component: (action === ACTIONS.VIEW || action === ACTIONS.EDIT) ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                name: 'type',
+                label: 'Type',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: getValue(mapping, 'type.label'),
+                options: RuleType,
+                onChange: onTypeChange.bind(this),
+                disabled: action === ACTIONS.EDIT
+            },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'act',
@@ -155,8 +174,14 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
+                condition: {
+                    when: 'type',
+                    is: ({ value }) => value === RuleTypeEnum.STATE,
+                    then: { visible: true },
+                    else: { set: { state: undefined } }
+                },
                 content: getValue(mapping, 'state.label'),
-                options: states
+                options: (states || []).filter(x => x.id !== CentralId)
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -192,12 +217,13 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     function submit(e) {
         preventDefault(e);
         if (form.valid) {
-            const { act, rule, activity, state, formName } = mapping;
+            const { act, rule, activity, state, formName, type } = mapping;
+            const stateId = type.value === RuleTypeEnum.CENTRAL ? CentralId : state.value;
             const request = {
                 actId: act.value,
                 ruleId: rule.value,
                 activityId: activity.value,
-                stateId: state.value,
+                stateId,
                 formName: (formName || '').trim()
             };
             if (action === ACTIONS.ADD) {
@@ -220,9 +246,11 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
 
     useEffect(() => {
         if (data) {
-            const { act, rule, activity, state } = data;
+            const { act, rule, activity, state, stateId } = data;
+            const type = (state || {}).id === CentralId ? RuleTypeEnum.CENTRAL : RuleTypeEnum.STATE;
             setMapping({
                 ...mapping, ...data,
+                type: { value: type, label: type },
                 act: { value: act.id, label: act.name, act },
                 rule: { value: rule.id, label: rule.name, rule },
                 activity: { value: activity.id, label: activity.name, activity },
