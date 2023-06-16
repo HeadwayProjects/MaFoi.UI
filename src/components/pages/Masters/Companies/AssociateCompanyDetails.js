@@ -7,9 +7,12 @@ import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../
 import { GetActionTitle } from "../Master.constants";
 import { COMPANY_STATUS } from "./Companies.constants";
 import styles from "./Companies.module.css";
+import { useGetSmtpDetails } from "../../../../backend/masters";
 
-function AssociateCompanyDetails({ action, parentCompany, data, onClose, onSubmit }) {
+function AssociateCompanyDetails({ action, parentCompany, data, onClose }) {
+    const [t] = useState(new Date().getTime());
     const [associateCompany, setAssociateCompany] = useState({ hideButtons: true });
+    const { smtp, isFetching } = useGetSmtpDetails((data || {}).id, { t }, Boolean((data || {}).id));
 
     const schema = {
         fields: [
@@ -223,36 +226,6 @@ function AssociateCompanyDetails({ action, parentCompany, data, onClose, onSubmi
                 label: 'PF Establishment Id',
                 content: getValue(associateCompany, 'pF_Establishment_Id') || '-NA-'
             },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
-            // },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
-            // },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
-            // },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
-            // },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(associateCompany, 'pan_place') || '-NA-'
-            // },
             {
                 component: componentTypes.TAB_ITEM,
                 name: 'subHeader7',
@@ -265,6 +238,69 @@ function AssociateCompanyDetails({ action, parentCompany, data, onClose, onSubmi
                 label: 'GSTN No.',
                 content: getValue(associateCompany, 'gstn_no') || '-NA-'
             },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader8',
+                content: 'SMTP Details',
+                className: 'text-lg fw-bold pb-0',
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'smtp',
+                label: '',
+                content: 'Details Not Available',
+                condition: {
+                    when: 'smtp',
+                    is: () => {
+                        const { smtp } = associateCompany
+                        return !Boolean((smtp || {}).id)
+                    },
+                    then: { visible: true }
+                },
+                className: 'fst-italic'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'smtpEmailAddress',
+                label: 'Email Address',
+                content: getValue(associateCompany, 'smtp.emailAddress') || '-NA-',
+                condition: {
+                    when: 'smtp',
+                    is: () => {
+                        const { smtp } = associateCompany
+                        return Boolean((smtp || {}).id)
+                    },
+                    then: { visible: true }
+                }
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'smtpHost',
+                label: 'Host',
+                content: getValue(associateCompany, 'smtp.host') || '-NA-',
+                condition: {
+                    when: 'smtp',
+                    is: () => {
+                        const { smtp } = associateCompany
+                        return Boolean((smtp || {}).id)
+                    },
+                    then: { visible: true }
+                }
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'smtpPort',
+                label: 'Port',
+                content: getValue(associateCompany, 'smtp.port') || '-NA-',
+                condition: {
+                    when: 'smtp',
+                    is: () => {
+                        const { smtp } = associateCompany
+                        return Boolean((smtp || {}).id)
+                    },
+                    then: { visible: true }
+                }
+            }
         ],
     };
 
@@ -277,7 +313,15 @@ function AssociateCompanyDetails({ action, parentCompany, data, onClose, onSubmi
                 status: isActive ? { value: COMPANY_STATUS.ACTIVE, label: COMPANY_STATUS.ACTIVE } : { value: COMPANY_STATUS.INACTIVE, label: COMPANY_STATUS.INACTIVE }
             });
         }
-    }, [data])
+    }, [data]);
+
+    useEffect(() => {
+        if (!isFetching && smtp) {
+            if (smtp.id) {
+                setAssociateCompany({ ...associateCompany, smtp });
+            }
+        }
+    }, [isFetching]);
 
     return (
         <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
@@ -289,7 +333,7 @@ function AssociateCompanyDetails({ action, parentCompany, data, onClose, onSubmi
                     Boolean((associateCompany || {}).logo) &&
                     <div className="position-relative">
                         <div className={styles.imageContainer}>
-                            <img src={associateCompany.logo} alt="Company Logo"/>
+                            <img src={associateCompany.logo} alt="Company Logo" />
                         </div>
                     </div>
                 }

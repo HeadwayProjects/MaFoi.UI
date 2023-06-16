@@ -12,7 +12,7 @@ import { useGetSmtpDetails } from "../../../../backend/masters";
 function ViewCompany({ company, onClose }) {
     const [t] = useState(new Date().getTime());
     const [companyDetails, setCompanyDetails] = useState({ hideButtons: true });
-    const { smtp, isFetching } = useGetSmtpDetails((company || {}).id, { t }, Boolean((company || {}).id))
+    const { smtp, isFetching } = useGetSmtpDetails((company || {}).id, { t }, Boolean((company || {}).id));
 
     const schema = {
         fields: [
@@ -328,7 +328,7 @@ function ViewCompany({ company, onClose }) {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'smtp',
                 label: '',
-                content: 'SMTP Details Not Available',
+                content: 'Details Not Available',
                 condition: {
                     when: 'smtp',
                     is: () => {
