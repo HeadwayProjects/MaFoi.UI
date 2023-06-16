@@ -1,7 +1,14 @@
 .btn.btn-primary {
+    position: relative;
+    top: -4px;
     background-color: var(--royal-blue);
     font-weight: 700;
-    box-shadow: inset 3px 4px 5px #6e9fc7, inset -2px -12px 3px -10px #3fa2f1;
+    box-shadow: 0 0 0 1px #417fbd inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #2061b1, 0 8px 8px 1px rgba(0, 0, 0, 0.5);
+}
+
+.btn.btn-primary:active {
+    box-shadow: none;
+    top: 0px;
 }
 
 .btn.btn-primary2 {
@@ -10,8 +17,27 @@
 
 .btn.btn-outline-secondary {
     background-color: var(--white);
-    border-color: var(--red);
+    border: none;
     color: var(--red);
+    box-shadow: 0 0 0 1px var(--red) inset, 0 0 0 2px rgba(206, 198, 198, 0.1) inset, 0 6px 0 0 #636262, 0 8px 8px 1px rgb(199 199 199);
+    position: relative;
+    top: -4px;
+}
+
+.btn.btn-outline-secondary:active {
+    box-shadow: none;
+    top: 0px;
+}
+
+.btn.btn-secondary {
+    box-shadow: 0 0 0 1px #959595 inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #636262, 0 8px 8px 1px rgb(199 199 199);
+    position: relative;
+    top: -4px;
+}
+
+.btn.btn-secondary:active {
+    box-shadow: none;
+    top: 0px;
 }
 
 .btn.btn-success {

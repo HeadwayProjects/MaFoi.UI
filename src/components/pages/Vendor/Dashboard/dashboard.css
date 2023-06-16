@@ -23,10 +23,11 @@
 
 .status-btn-group .btn {
     background-color: var(--white);
-    border: 1px solid;
-    /* border: 1px solid rgba(50, 44, 45, 0.5) !important; */
     color: var(--white) !important;
     font-weight: 700;
+    position: relative;
+    top: -4px;
+    border: none;
 }
 
 /* .status-btn-group input:checked+.btn {
@@ -35,33 +36,28 @@
 
 .status-btn-group input[name="ActivitySaved"]+.btn {
     background-color: var(--gray-500);
-    box-shadow: inset 3px 4px 5px #b0b0b1, inset -2px -12px 3px -10px #484848d4;
-    border-color: var(--gray-500);
+    box-shadow: 0 0 0 1px #959595 inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #636262, 0 8px 8px 1px rgb(199 199 199);
 }
 
 .status-btn-group input[name="Pending"]+.btn {
     background-color: var(--yellow);
-    box-shadow: inset 3px 4px 5px #fbe93c, inset -2px -12px 3px -10px #6e5a14;
-    border-color: #ffbb1c;
+    box-shadow: 0 0 0 1px #d79a47 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #D79A34, 0 8px 8px 1px rgb(199 199 199);
 }
 
 .status-btn-group input[name="Overdue"]+.btn,
 .status-btn-group input[name="Rejected"]+.btn {
     background-color: var(--red);
-    box-shadow: inset 3px 4px 5px #ffa0a0, inset -2px -12px 3px -10px #852a2a;
-    border-color: #d30000;
+    box-shadow: 0 0 0 1px #870101 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #8b3f3f, 0 8px 8px 1px rgb(199 199 199);
 }
 
 .status-btn-group input[name="Submitted"]+.btn {
     background-color: var(--light-green);
-    box-shadow: inset 3px 4px 5px #d3fbb7, inset -2px -12px 3px -10px #264a0fc4;
-    border-color: #37a32c;
+    box-shadow: 0 0 0 1px #52c92a inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #6b9d4b, 0 8px 8px 1px rgb(199 199 199);
 }
 
 .status-btn-group input[name="Approved"]+.btn {
     background-color: var(--dark-green);
-    box-shadow: inset 3px 4px 5px #86df4bd6, inset -2px -12px 3px -10px #2d441d;
-    border-color: #5d9b34;
+    box-shadow: 0 0 0 1px #2f7119 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #3d6f1d, 0 8px 8px 1px rgb(199 199 199);
 }
 
 ul.updates {
@@ -85,4 +81,29 @@ ul.updates {
     border-radius: 0 1.5rem 0.5rem 1rem;
     clip-path: polygon(0 0, 0 100%, 100% 100%, 99% 80%, 93% 0%);
     width: 220px;
+}
+
+.cardCount.gray-bg {
+    background-color: var(--gray-300);
+    box-shadow: 0 0 0 1px #959595 inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #9f9e9eb0, 0 8px 8px 1px rgb(199 199 199);
+}
+.cardCount.yellow-bg {
+    background-color: var(--yellow);
+    box-shadow: 0 0 0 1px #d79a47 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #D79A34, 0 8px 8px 1px rgb(199 199 199);
+}
+.cardCount.medium-red-bg {
+    background-color: var(--medium-red);
+    box-shadow: 0 0 0 1px #b93802 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #c114149c, 0 8px 8px 1px rgb(199 199 199);
+}
+.cardCount.light-green-bg {
+    background-color: var(--light-green);
+    box-shadow: 0 0 0 1px #52c92a inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #6b9d4b, 0 8px 8px 1px rgb(199 199 199);
+}
+.cardCount.green-bg {
+    background-color: var(--green);
+    box-shadow: 0 0 0 1px #2f7119 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #3d6f1d, 0 8px 8px 1px rgb(199 199 199);
+}
+.cardCount.red-bg {
+    background-color: var(--red);
+    box-shadow: 0 0 0 1px #870101 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #8b3f3f, 0 8px 8px 1px rgb(199 199 199);
 }

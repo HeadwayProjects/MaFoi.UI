@@ -18,12 +18,12 @@ const PerformanceTabs = [
 ];
 
 const Statuses = [
-    { label: 'Activities Saved', key: 'activitiesSaved', color: 'var(--gray-300)', value: 'ActivitySaved' },
-    { label: 'Pending', key: 'pending', color: 'var(--yellow)', value: 'Pending' },
-    { label: 'Over Due', key: 'overDue', color: 'var(--medium-red)', value: 'Overdue' },
-    { label: 'Submitted', key: 'submitted', color: 'var(--light-green)', value: 'Submitted' },
-    { label: 'Audited', key: 'approved', color: 'var(--green)', value: 'Audited' },
-    { label: 'Rejected', key: 'rejected', color: 'var(--red)', value: 'Rejected' }
+    { label: 'Activities Saved', key: 'activitiesSaved', className: 'gray-bg', value: 'ActivitySaved' },
+    { label: 'Pending', key: 'pending', className: 'yellow-bg', value: 'Pending' },
+    { label: 'Over Due', key: 'overDue', className: 'medium-red-bg', value: 'Overdue' },
+    { label: 'Submitted', key: 'submitted', className: 'light-green-bg', value: 'Submitted' },
+    { label: 'Audited', key: 'approved', className: 'green-bg', value: 'Audited' },
+    { label: 'Rejected', key: 'rejected', className: 'red-bg', value: 'Rejected' }
 ]
 
 function ActivityPerformance({ current, selectedCompany, selectedAssociateCompany, selectedLocation }) {
@@ -128,7 +128,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                     Statuses.map(status => {
                                         return (
                                             <div className="w-33 mb-3 me-3" key={status.key} style={{ width: "calc(33% - 1rem)" }}>
-                                                <div className="card shadow cardCount border-0 p-2" style={{ backgroundColor: `${status.color}` }}>
+                                                <div className={`card cardCount border-0 p-2 ${status.className}`}>
                                                     <div className="card-body py-0">
                                                         <div className="row d-flex align-items-center performance-status h-100">
                                                             <div className="col-9 px-0 py-0 overflow-hidden">

@@ -7,10 +7,10 @@ import { useGetAuditorLimeStatus } from "../../../backend/auditor";
 import Performance from "./Performance"
 
 const StatusMapping = [
-    { label: 'Total Vendors', key: 'totalVendors', color: 'var(--gray)', value: 'ActivitySaved' },
+    { label: 'Total Vendors', key: 'totalVendors', className: 'gray-bg', value: 'ActivitySaved' },
     // { label: 'Audit To Be Done This Month', key: 'auditToBeDoneForThisMonth', color: 'yellow', value: 'Pending' },
-    { label: 'Audit Approval Pending', key: 'auditApprovalPending', color: 'var(--medium-red)', value: 'Overdue' },
-    { label: 'Vendors Not Submitted', key: 'vendorsNotSubmitted', color: 'var(--yellow)', value: 'Submitted' }
+    { label: 'Audit Approval Pending', key: 'auditApprovalPending', className: 'medium-red-bg', value: 'Overdue' },
+    { label: 'Vendors Not Submitted', key: 'vendorsNotSubmitted', className: 'yellow-bg', value: 'Submitted' }
 ]
 
 function AuditorPerformance() {
@@ -18,7 +18,7 @@ function AuditorPerformance() {
     const { limeStatus } = useGetAuditorLimeStatus(user.userid);
 
     return (
-        <div className="d-flex flex-row mt-4">
+        <div className="d-flex flex-row my-4 mx-3 card shadow p-4">
             <div className="col-1"></div>
             <div className="col-2">
                 <div className="col-12 h-100">
@@ -26,7 +26,7 @@ function AuditorPerformance() {
                         {
                             StatusMapping.map(status => {
                                 return (
-                                    <div className="card shadow cardCount auditor-status-card" style={{ backgroundColor: status.color }} key={status.key}>
+                                    <div className={`card cardCount auditor-status-card border-0 p-2 ${status.className}`} key={status.key}>
                                         <div className="card-body py-1">
                                             <div className="row d-flex flex-column align-items-center justify-content-between h-100 fw-bold">
                                                 <label className="text-center px-3 text-md">{status.label}</label>
