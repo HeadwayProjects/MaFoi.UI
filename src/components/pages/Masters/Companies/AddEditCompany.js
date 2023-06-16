@@ -12,11 +12,13 @@ import { useCreateCompany, useUpdateCompany, useUploadLogo } from "../../../../b
 import PageLoader from "../../../shared/PageLoader";
 import { toast } from "react-toastify";
 import companyStyles from "./Companies.module.css";
+import CompanySMTP from "./CompanySMTP";
 
 const STEPS = {
     DETAILS: 'STEP1',
     SPOC: 'STEP2',
-    TDS_PF: 'STEP3'
+    TDS_PF: 'STEP3',
+    SMTP: 'STEP4'
 };
 
 function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
@@ -100,6 +102,9 @@ function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
                     setActiveStep(STEPS.TDS_PF);
                     break;
                 case STEPS.TDS_PF:
+                    setActiveStep(STEPS.SMTP);
+                    break;
+                case STEPS.SMTP:
                     parentCompany ? backToAssociateCompaniesList() : backToCompaniesList();
                     break;
                 default:
@@ -171,6 +176,15 @@ function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
                             activeStep === STEPS.TDS_PF &&
                             <CompanyTDS company={companyDetails} parentCompany={parentCompany}
                                 onPrevious={() => setActiveStep(STEPS.SPOC)}
+                                onNext={() => setActiveStep(STEPS.SMTP)}
+                                onSubmit={submitDetails} />
+                        }
+                    </Tab>
+                    <Tab eventKey={STEPS.SMTP} title="SMTP Details" disabled={!Boolean(companyDetails)}>
+                        {
+                            activeStep === STEPS.SMTP &&
+                            <CompanySMTP company={companyDetails} parentCompany={parentCompany}
+                                onPrevious={() => setActiveStep(STEPS.TDS_PF)}
                                 onNext={parentCompany ? backToAssociateCompaniesList : backToCompaniesList}
                                 onSubmit={submitDetails} />
                         }

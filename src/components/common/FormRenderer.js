@@ -338,7 +338,10 @@ function HtmlField(props) {
 
     return (
         <div className={`form-group ${props.className || ''}`}>
-            <label className="form-label text-sm">{label}</label>
+            {
+                label &&
+                <label className="form-label text-sm">{label}</label>
+            }
             <div className="input-group">
                 <div>{props.content}</div>
             </div>

@@ -478,6 +478,65 @@ export function useDeleteCompany(onSuccess, onError) {
     return { deleteCompany, error };
 }
 
+export function useGetSmtpDetails(companyId, payload, enabled = true) {
+    const queryClient = useQueryClient();
+    function invalidate() {
+        queryClient.invalidateQueries(['smtpDetails', companyId, payload])
+    }
+    const { data, isFetching, refetch } = useQuery(
+        ['smtpDetails', companyId, payload],
+        async () => await api.get(`/api/Smtp/GetByCompanyId/${companyId}`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+    return { smtp: (data || {}).data || {}, isFetching, refetch, invalidate };
+}
+
+export function useCreateSmtp(onSuccess, onError) {
+    const { mutate: createSmtp, error, isLoading: creating } = useMutation(
+        ['createSmtp'],
+        async (payload) => await api.post('/api/Smtp/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createSmtp, error, creating };
+}
+
+export function useUpdateSmtp(onSuccess, onError) {
+    const { mutate: updateSmtp, error, isLoading: updating } = useMutation(
+        ['updateSmtp'],
+        async (payload) => await api.put('/api/Smtp/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateSmtp, error, updating };
+}
+
+export function useDeleteSmtp(onSuccess, onError) {
+    const { mutate: deleteSmtp, error } = useMutation(
+        ['deleteSmtp'],
+        async (id) => await api.del(`/api/Smtp/Delete?Id=${id}`),
+        {
+            onError,
+            onSuccess
+        }
+    );
+    return { deleteSmtp, error };
+}
+
 export function useGetRuleCompliances(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['ruleCompliances', payload],

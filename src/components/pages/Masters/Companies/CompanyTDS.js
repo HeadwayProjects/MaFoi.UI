@@ -237,11 +237,11 @@ function CompanyTDS({ onNext, onPrevious, onSubmit, company }) {
                     <div className="d-flex justify-content-between mt-4">
                         <div>
                             <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onPrevious}>{'Previous'}</Button>
-                            <Button variant="outline-secondary" className="btn btn-outline-secondary px-4 ms-3" onClick={onNext}>{'Cancel'}</Button>
+                            <Button variant="outline-secondary" className="btn btn-outline-secondary px-4 ms-3" onClick={onNext}>{'Next'}</Button>
                         </div>
                         <div>
                             <Button variant="primary" onClick={() => handleSubmit(false)} className="px-4" disabled={!form.valid}>{'Save'}</Button>
-                            <Button variant="primary" onClick={() => handleSubmit(true)} className="px-4 ms-3" disabled={!form.valid}>{'Save & Close'}</Button>
+                            <Button variant="primary" onClick={() => handleSubmit(true)} className="px-4 ms-3" disabled={!form.valid}>{'Save & Next'}</Button>
                         </div>
                     </div>
                 </div>

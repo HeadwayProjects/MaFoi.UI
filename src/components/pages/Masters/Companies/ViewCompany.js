@@ -7,9 +7,12 @@ import { API_DELIMITER, UI_DELIMITER } from "../../../../utils/constants";
 import { GetActionTitle } from "../Master.constants";
 import { ACTIONS } from "../../../common/Constants";
 import styles from "./Companies.module.css";
+import { useGetSmtpDetails } from "../../../../backend/masters";
 
 function ViewCompany({ company, onClose }) {
+    const [t] = useState(new Date().getTime());
     const [companyDetails, setCompanyDetails] = useState({ hideButtons: true });
+    const { smtp, isFetching } = useGetSmtpDetails((company || {}).id, { t }, Boolean((company || {}).id))
 
     const schema = {
         fields: [
@@ -63,15 +66,46 @@ function ViewCompany({ company, onClose }) {
             },
             {
                 component: componentTypes.PLAIN_TEXT,
+                name: 'companyAddressNotAvailable',
+                label: '',
+                content: 'Details Not Available',
+                condition: {
+                    when: 'companyAddressNotAvailable',
+                    is: () => {
+                        const { companyAddress } = companyDetails
+                        return !Boolean(companyAddress)
+                    },
+                    then: { visible: true }
+                },
+                className: 'fst-italic'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
                 name: 'companyAddress',
                 label: 'Address',
-                content: getValue(companyDetails, 'companyAddress') || '-NA-'
+                content: getValue(companyDetails, 'companyAddress') || '-NA-',
+                condition: {
+                    when: 'companyAddressNotAvailable',
+                    is: () => {
+                        const { companyAddress } = companyDetails
+                        return Boolean(companyAddress)
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'address2',
                 label: 'City/State/Country',
-                content: [getValue(companyDetails, 'city'), getValue(companyDetails, 'state'), getValue(companyDetails, 'country')].join('/') || '-NA-'
+                content: [getValue(companyDetails, 'city'), getValue(companyDetails, 'state'), getValue(companyDetails, 'country')].join('/') || '-NA-',
+                condition: {
+                    when: 'companyAddressNotAvailable',
+                    is: () => {
+                        const { companyAddress } = companyDetails
+                        return Boolean(companyAddress)
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.TAB_ITEM,
@@ -99,33 +133,88 @@ function ViewCompany({ company, onClose }) {
             },
             {
                 component: componentTypes.PLAIN_TEXT,
+                name: 'contactPersonNotAvailable',
+                label: '',
+                content: 'Details Not Available',
+                condition: {
+                    when: 'contactPersonNotAvailable',
+                    is: () => {
+                        const { contactPersonName } = companyDetails
+                        return !Boolean(contactPersonName);
+                    },
+                    then: { visible: true }
+                },
+                className: 'fst-italic'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
                 name: 'contactPersonName',
                 label: 'Name',
-                content: getValue(companyDetails, 'contactPersonName') || '-NA-'
+                content: getValue(companyDetails, 'contactPersonName') || '-NA-',
+                condition: {
+                    when: 'contactPersonNotAvailable',
+                    is: () => {
+                        const { contactPersonName } = companyDetails
+                        return Boolean(contactPersonName);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'contactPersonDesignation',
                 label: 'Designation',
-                content: getValue(companyDetails, 'contactPersonDesignation') || '-NA-'
+                content: getValue(companyDetails, 'contactPersonDesignation') || '-NA-',
+                condition: {
+                    when: 'contactPersonNotAvailable',
+                    is: () => {
+                        const { contactPersonName } = companyDetails
+                        return Boolean(contactPersonName);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'contactPersonDepartment',
                 label: 'Depatment',
-                content: getValue(companyDetails, 'contactPersonDepartment') || '-NA-'
+                content: getValue(companyDetails, 'contactPersonDepartment') || '-NA-',
+                condition: {
+                    when: 'contactPersonNotAvailable',
+                    is: () => {
+                        const { contactPersonName } = companyDetails
+                        return Boolean(contactPersonName);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'contactPersonMobile',
                 label: 'Phone',
-                content: getValue(companyDetails, 'contactPersonMobile') || '-NA-'
+                content: getValue(companyDetails, 'contactPersonMobile') || '-NA-',
+                condition: {
+                    when: 'contactPersonNotAvailable',
+                    is: () => {
+                        const { contactPersonName } = companyDetails
+                        return Boolean(contactPersonName);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'contactPersonEmail',
                 label: 'Business Email',
-                content: getValue(companyDetails, 'contactPersonEmail') || '-NA-'
+                content: getValue(companyDetails, 'contactPersonEmail') || '-NA-',
+                condition: {
+                    when: 'contactPersonNotAvailable',
+                    is: () => {
+                        const { contactPersonName } = companyDetails
+                        return Boolean(contactPersonName);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.TAB_ITEM,
@@ -217,36 +306,6 @@ function ViewCompany({ company, onClose }) {
                 label: 'PF Establishment Id',
                 content: getValue(companyDetails, 'pF_Establishment_Id') || '-NA-'
             },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(companyDetails, 'pan_place') || '-NA-'
-            // },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(companyDetails, 'pan_place') || '-NA-'
-            // },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(companyDetails, 'pan_place') || '-NA-'
-            // },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(companyDetails, 'pan_place') || '-NA-'
-            // },
-            // {
-            //     component: componentTypes.PLAIN_TEXT,
-            //     name: 'pan_place',
-            //     label: 'Place',
-            //     content: getValue(companyDetails, 'pan_place') || '-NA-'
-            // },
             {
                 component: componentTypes.TAB_ITEM,
                 name: 'subHeader7',
@@ -259,17 +318,89 @@ function ViewCompany({ company, onClose }) {
                 label: 'GSTN No.',
                 content: getValue(companyDetails, 'gstn_no') || '-NA-'
             },
-        ],
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader8',
+                content: 'SMTP Details',
+                className: 'text-lg fw-bold pb-0',
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'smtp',
+                label: '',
+                content: 'SMTP Details Not Available',
+                condition: {
+                    when: 'smtp',
+                    is: () => {
+                        const { smtp } = companyDetails
+                        return !Boolean((smtp || {}).id)
+                    },
+                    then: { visible: true }
+                },
+                className: 'fst-italic'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'smtpEmailAddress',
+                label: 'Email Address',
+                content: getValue(companyDetails, 'smtp.emailAddress') || '-NA-',
+                condition: {
+                    when: 'smtp',
+                    is: () => {
+                        const { smtp } = companyDetails
+                        return Boolean((smtp || {}).id)
+                    },
+                    then: { visible: true }
+                }
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'smtpHost',
+                label: 'Host',
+                content: getValue(companyDetails, 'smtp.host') || '-NA-',
+                condition: {
+                    when: 'smtp',
+                    is: () => {
+                        const { smtp } = companyDetails
+                        return Boolean((smtp || {}).id)
+                    },
+                    then: { visible: true }
+                }
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'smtpPort',
+                label: 'Port',
+                content: getValue(companyDetails, 'smtp.port') || '-NA-',
+                condition: {
+                    when: 'smtp',
+                    is: () => {
+                        const { smtp } = companyDetails
+                        return Boolean((smtp || {}).id)
+                    },
+                    then: { visible: true }
+                }
+            }
+        ]
     };
 
     useEffect(() => {
         if (company) {
             setCompanyDetails({
+                ...companyDetails,
                 hideButtons: true,
                 ...company,
             });
         }
     }, [company])
+
+    useEffect(() => {
+        if (!isFetching && smtp) {
+            if (smtp.id) {
+                setCompanyDetails({ ...companyDetails, smtp });
+            }
+        }
+    }, [isFetching]);
 
     return (
         <Modal show={true} backdrop="static" dialogClassName="drawer" animation={false}>
@@ -281,7 +412,7 @@ function ViewCompany({ company, onClose }) {
                     Boolean((companyDetails || {}).logo) &&
                     <div className="position-relative">
                         <div className={styles.imageContainer}>
-                            <img src={companyDetails.logo} alt="Company Logo"/>
+                            <img src={companyDetails.logo} alt="Company Logo" />
                         </div>
                     </div>
                 }
