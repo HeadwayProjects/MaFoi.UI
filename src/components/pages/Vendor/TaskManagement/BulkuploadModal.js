@@ -10,6 +10,7 @@ import { useGetUserCompanies } from "../../../../backend/query";
 import { toast } from 'react-toastify';
 import PageLoader from "../../../shared/PageLoader";
 import { ALLOWED_FILES_REGEX } from "../../../common/Constants";
+import { ACTIVITY_TYPE } from "../../../../utils/constants";
 
 const Months = [
     { value: 'January', label: 'January' },
@@ -112,7 +113,7 @@ function BulkUploadModal({ onClose }) {
         setYear(years[0]);
     }
 
-    function submit() {
+    function validateAndSubmit() {
         let hasError = false;
         const _uploadedFiles = [...uploadFiles];
         _uploadedFiles.forEach(file => {
@@ -130,7 +131,35 @@ function BulkUploadModal({ onClose }) {
             return;
         }
         setSubmitting(true);
+        const _payload = {
+            company: company.value,
+            associateCompany: associateCompany.value,
+            location: location.value,
+            month: month.value,
+            year: year.value,
+            statuses: ['']
+        };
+        api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
+            if (response && response.data) {
+                const _rows = response.data || [];
+                const _applicableRows = _rows.filter(x => x.auditted === ACTIVITY_TYPE.AUDIT);
+                const _published = _applicableRows.filter(x => x.published);
+                if (_published.length > 0) {
+                    setSubmitting(false);
+                    toast.warn('All the activities are published for the selected month and year. You cannot modify them by performing bulk upload.');
+                } else if (_applicableRows.length === 0) {
+                    setSubmitting(false);
+                    toast.warn('There are no activities available for the selected month and year.');
+                } else {
+                    submit();
+                }
+            }
+        });
+    }
+
+    function submit() {
         const formData = new FormData();
+        const _uploadedFiles = [...uploadFiles];
         _uploadedFiles.forEach(file => {
             formData.append('files', file.file, `${file.file.name}|${file.type.value}`);
         });
@@ -140,7 +169,7 @@ function BulkUploadModal({ onClose }) {
         formData.append('month', month.value);
         formData.append('year', year.value);
         api.post('/api/FileUpload/UploadBulkFiles', formData).then(response => {
-            onClose();
+            onClose(true);
             toast.success('Files saved successfully.');
         }, error => {
             console.error(error);
@@ -313,7 +342,7 @@ function BulkUploadModal({ onClose }) {
                         <Button variant="secondary" className="me-3" onClick={clearAll}>
                             Reset
                         </Button>
-                        <Button variant="primary" onClick={submit} disabled={uploadFiles.length === 0}>
+                        <Button variant="primary" onClick={validateAndSubmit} disabled={uploadFiles.length === 0}>
                             Submit
                         </Button>
                     </div>

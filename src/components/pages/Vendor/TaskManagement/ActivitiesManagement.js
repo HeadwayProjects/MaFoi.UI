@@ -40,7 +40,7 @@ const SortFields = {
     'location.name': 'locationname'
 };
 
-const AuditTypeFilter = [{columnName: 'auditted', value: ACTIVITY_TYPE.AUDIT}];
+const AuditTypeFilter = [{ columnName: 'auditted', value: ACTIVITY_TYPE.AUDIT }];
 
 function ActivitiesManagement() {
     const [readOnly] = useState(!auth.isVendor());
@@ -58,8 +58,8 @@ function ActivitiesManagement() {
     const [locationFilters, setLocationFilter] = useState();
     const lfRef = useRef();
     lfRef.current = locationFilters;
-    const [advaceSearchFilters, setAdvanceSearchFilters] = useState((state || {}).fromDate ? 
-    [{columnName: 'fromDate', value: state.fromDate}, {columnName: 'toDate', value: state.toDate}]: undefined);
+    const [advaceSearchFilters, setAdvanceSearchFilters] = useState((state || {}).fromDate ?
+        [{ columnName: 'fromDate', value: state.fromDate }, { columnName: 'toDate', value: state.toDate }] : undefined);
     const afRef = useRef();
     afRef.current = advaceSearchFilters;
     const [statusFilters, setStatusFilters] = useState();
@@ -158,7 +158,10 @@ function ActivitiesManagement() {
                 if (response && response.data) {
                     const _rows = response.data || [];
                     const _applicableRows = _rows.filter(x => x.auditted === ACTIVITY_TYPE.AUDIT);
-                    if (_applicableRows.length) {
+                    const _published = _applicableRows.filter(x => x.published);
+                    if (_published.length > 0) {
+                        setAlertMessage('All the activities are published for the selected month and year. See Audit report for more details.');
+                    } else if (_applicableRows.length) {
                         setSelectedRows(_applicableRows);
                         setSubmitToAuditor(true);
                     }
@@ -410,6 +413,13 @@ function ActivitiesManagement() {
         return _payload;
     }
 
+    function handleBulkUploadClose(refresh = false) {
+        if (refresh) {
+            refetch();
+        }
+        setBulkUpload(false);
+    }
+
     useEffect(() => {
         if (locationFilters) {
             setPayload({
@@ -569,7 +579,7 @@ function ActivitiesManagement() {
 
             {
                 bulkUpload &&
-                <BulkUploadModal onClose={() => setBulkUpload(false)} onSubmit={refetch} />
+                <BulkUploadModal onClose={handleBulkUploadClose} onSubmit={refetch} />
             }
             {
                 submitToAuditor &&

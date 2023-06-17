@@ -118,7 +118,7 @@ export function checkVendorActivityStatus(activity) {
     return {
       editable: false,
       type: 'danger',
-      message: `This acivity is expired and cannot be editted further. Contact Admin to extend the due date.`
+      message: `This acivity is expired and cannot be edited further. Contact Admin to extend the due date.`
     }
   }
 
