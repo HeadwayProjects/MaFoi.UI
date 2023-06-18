@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { InputGroup } from "react-bootstrap"
 import Select from "react-select";
 import { debounce } from "underscore";
+import { DEBOUNCE_TIME } from "../../utils/constants";
 const DEFAULT_OPTION = { value: 'ALL', label: 'All' };
 
 function TableFilters({ search, filterConfig, onFilterChange, placeholder }) {
@@ -66,7 +67,7 @@ function TableFilters({ search, filterConfig, onFilterChange, placeholder }) {
                     <label className="filter-label"><small>{placeholder || 'Search'}</small></label>
                     <InputGroup>
                         <input type="text" ref={searchRef} className="form-control" placeholder={search.placeholder || 'Search'}
-                            onKeyUp={debounce(handleKeyup, 750)} />
+                            onKeyUp={debounce(handleKeyup, DEBOUNCE_TIME)} />
                     </InputGroup>
                 </div>
             }

@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
-    useCreateStateRuleCompanyMapping, useGetActivities, useGetActs,
-    useGetRules, useGetStates,
-    useUpdateStateRuleMapping, useUploadActStateMappingTemplate
+    getActivities,
+    getActs,
+    getRules,
+    useCreateStateRuleCompanyMapping,
+    useGetStates,
+    useUpdateStateRuleMapping,
+    useUploadActStateMappingTemplate
 } from "../../../../backend/masters";
 import { toast } from "react-toastify";
-import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
+import { API_RESULT, DEBOUNCE_TIME, ERROR_MESSAGES } from "../../../../utils/constants";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue, preventDefault } from "../../../../utils/common";
 import { Button, Modal } from "react-bootstrap";
@@ -13,16 +17,17 @@ import { CentralId, GetActionTitle, GetRuleDesc, RuleType, RuleTypeEnum } from "
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { ACTIONS, ALLOWED_FILES_REGEX, FILE_SIZE } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
-import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
+import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from "../../../common/Table";
+import { debounce } from "underscore";
 const DefaultRule = RuleTypeEnum.STATE;
 
 function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const [mapping, setMapping] = useState({ hideButtons: true, type: { value: DefaultRule, label: DefaultRule } });
     const [defaultPayload] = useState({ ...DEFAULT_OPTIONS_PAYLOAD, t: new Date().getTime() });
-    const { acts } = useGetActs({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
-    const { rules } = useGetRules({ ...defaultPayload, filters: [{ columnName: 'type', value: ((mapping || {}).type || {}).value }] }, Boolean(defaultPayload && action !== ACTIONS.VIEW && ((mapping || {}).type || {}).value));
-    const { activities } = useGetActivities({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
+    const [acts, setActs] = useState([]);
+    const [rules, setRules] = useState([]);
+    const [activities, setActivities] = useState([]);
     const { states } = useGetStates({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
     const { uploadActStateMappingTemplate, uploading } = useUploadActStateMappingTemplate(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
@@ -136,36 +141,66 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
                 disabled: action === ACTIONS.EDIT
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.ASYNC_SELECT,
                 name: 'act',
                 label: 'Act Name',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
                 content: getValue(mapping, 'act.label'),
-                options: acts
+                defaultOptions: acts,
+                loadOptions: debounce((keyword, callback) => {
+                    getActs({ ...DEFAULT_PAYLOAD, search: keyword }).then(response => {
+                        const list = ((response || {}).data || {}).list || [];
+                        const _options = list.map(act => {
+                            return { value: act.id, label: act.name, act }
+                        });
+                        setActs(_options);
+                        callback(_options);
+                    })
+                }, DEBOUNCE_TIME)
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.ASYNC_SELECT,
                 name: 'rule',
                 label: 'Rule',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
                 content: action !== ACTIONS.ADD ? GetRuleDesc(getValue(mapping, 'rule.rule') || {}) : '',
-                options: rules,
-                formatOptionLabel: ruleOptionLabel
+                formatOptionLabel: ruleOptionLabel,
+                defaultOptions: rules,
+                loadOptions: debounce((keyword, callback) => {
+                    getRules({ ...DEFAULT_PAYLOAD, search: keyword }).then(response => {
+                        const list = ((response || {}).data || {}).list || [];
+                        const _options = list.map(rule => {
+                            return { value: rule.id, label: rule.name, rule }
+                        });
+                        setRules(_options);
+                        callback(_options);
+                    })
+                }, DEBOUNCE_TIME)
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.ASYNC_SELECT,
                 name: 'activity',
                 label: 'Activity',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
                 content: getValue(mapping, 'activity.label'),
-                options: activities,
-                formatOptionLabel: activityOptionLabel
+                formatOptionLabel: activityOptionLabel,
+                defaultOptions: activities,
+                loadOptions: debounce((keyword, callback) => {
+                    getActivities({ ...DEFAULT_PAYLOAD, search: keyword }).then(response => {
+                        const list = ((response || {}).data || {}).list || [];
+                        const _options = list.map(activity => {
+                            return { value: activity.id, label: activity.name, activity }
+                        });
+                        setActivities(_options);
+                        callback(_options);
+                    })
+                }, DEBOUNCE_TIME)
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,

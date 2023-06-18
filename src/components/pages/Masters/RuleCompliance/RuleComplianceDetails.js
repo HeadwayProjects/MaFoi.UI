@@ -2,20 +2,21 @@ import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
-import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
-import { useCreateRuleCompliance, useGetRules, useGetStates, useUpdateRuleCompliance } from "../../../../backend/masters";
+import { API_RESULT, DEBOUNCE_TIME, ERROR_MESSAGES } from "../../../../utils/constants";
+import { getRules, useCreateRuleCompliance, useGetStates, useUpdateRuleCompliance } from "../../../../backend/masters";
 import { getValue, preventDefault } from "../../../../utils/common";
 import { ActivityType, AuditType, GetActionTitle, RiskType } from "../Master.constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { ACTIONS } from "../../../common/Constants";
 import { toast } from "react-toastify";
 import PageLoader from "../../../shared/PageLoader";
-import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
+import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from "../../../common/Table";
+import { debounce } from "underscore";
 
 function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
     const [form, setForm] = useState({});
     const { states, isFetching: loadingStates } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
-    const { rules, isFetching: loadingRules } = useGetRules({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const [rules, setRules] = useState([]);
     const [compliance, setCompliance] = useState({ hideButtons: true });
     const { updateRuleCompliance, updating } = useUpdateRuleCompliance(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
@@ -101,7 +102,7 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 options: states
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.ASYNC_SELECT,
                 name: 'rule',
                 label: 'Rule',
                 options: rules,
@@ -109,8 +110,18 @@ function RuleComplianceDetails({ action, data, onClose, onSubmit }) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                isLoading: loadingRules,
-                content: getValue(compliance, 'rule.label')
+                content: getValue(compliance, 'rule.label'),
+                defaultOptions: rules,
+                loadOptions: debounce((keyword, callback) => {
+                    getRules({ ...DEFAULT_PAYLOAD, search: keyword }).then(response => {
+                        const list = ((response || {}).data || {}).list || [];
+                        const _options = list.map(rule => {
+                            return { value: rule.id, label: rule.name, rule }
+                        });
+                        setRules(_options);
+                        callback(_options);
+                    })
+                }, DEBOUNCE_TIME)
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,

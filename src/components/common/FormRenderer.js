@@ -290,7 +290,7 @@ function AsyncSelectField(props) {
         return {
             ...input,
             required,
-            placeholder: props.placeholder || `Select ${label}`,
+            placeholder: props.placeholder || `Search for ${label}`,
             onChange: (e) => {
                 input.onChange(e);
                 if (props.onChange) {
@@ -317,13 +317,11 @@ function AsyncSelectField(props) {
                     styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
                     formatOptionLabel={props.formatOptionLabel}
                     loadOptions={props.loadOptions}
+                    defaultOptions={props.defaultOptions}
                     {...onInput(input)}
                 />
             </div>
-            {
-                props.description &&
-                <span className="text-muted form-text">{props.description}</span>
-            }
+            <span className="text-muted form-text">{props.description || `Hint: Start typing ${label} to see results.`}</span>
             {
                 meta.touched && meta.error && <div className="invalid-feedback d-block">
                     {meta.error}

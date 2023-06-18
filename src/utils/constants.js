@@ -29,3 +29,4 @@ export const ACTIVITY_TYPE_ICONS = {
 
 export const UI_DELIMITER = ', ';
 export const API_DELIMITER = ';';
+export const DEBOUNCE_TIME = 750; // Milliseconds

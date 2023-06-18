@@ -58,6 +58,10 @@ export function useDeleteLaw(onSuccess, onError) {
     return { deleteLaw, error, deleting };
 }
 
+export async function getActs(payload) {
+    return await api.post(`/api/Act/GetAll`, payload)
+}
+
 export function useGetActs(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['acts', payload],
@@ -117,6 +121,10 @@ export function useDeleteAct(onSuccess, onError) {
     return { deleteAct, error, deleting };
 }
 
+export async function getActivities(payload) {
+    return await api.post(`/api/Activity/GetAll`, payload)
+}
+
 export function useGetActivities(payload, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['activities', payload],
@@ -174,6 +182,10 @@ export function useDeleteActivity(onSuccess, onError) {
         }
     );
     return { deleteActivity, error, deleting };
+}
+
+export async function getRules(payload) {
+    return await api.post(`/api/Rule/GetAll`, payload);
 }
 
 export function useGetRules(payload, enabled = true) {
@@ -391,7 +403,7 @@ export function useDeleteLocation(onSuccess, onError) {
 export function useImportLocations(onSuccess, onError) {
     const { mutate: importLocations, error, isLoading: uploading } = useMutation(
         ['importLocations'],
-        async ({CID, ACID, formData}) => await api.post(`/api/Mappings/BulkImportCompanyLocations?companyId=${CID}&associateCompanyId=${ACID}`, formData, null, true, { responseType: 'blob' }),
+        async ({ CID, ACID, formData }) => await api.post(`/api/Mappings/BulkImportCompanyLocations?companyId=${CID}&associateCompanyId=${ACID}`, formData, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
