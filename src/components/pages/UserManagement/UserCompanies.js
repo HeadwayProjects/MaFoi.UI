@@ -121,17 +121,17 @@ function UserCompanies() {
         },
         {
             title: "Contact No.", field: "associateCompanyMobile",
-            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
             title: "Email Address", field: "associateCompanyEmail",
-            headerSort: false, formatter: reactFormatter(<CellTmpl />),
+            formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
             title: "Locations", field: "count",
-            headerSort: false, formatter: reactFormatter(<CountTmpl />),
+            formatter: reactFormatter(<CountTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
@@ -141,11 +141,12 @@ function UserCompanies() {
     ];
 
     const [tableConfig] = useState({
-        paginationMode: 'remote',
+        paginationMode: 'local',
         ajaxRequestFunc,
         columns,
         rowHeight: 54,
-        selectable: false
+        selectable: false,
+        sortMode: 'local'
     });
 
     function formatApiResponse(params, list, pagination = {}) {

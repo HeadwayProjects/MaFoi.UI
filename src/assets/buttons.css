@@ -1,4 +1,5 @@
 .btn.btn-primary {
+    border: none;
     position: relative;
     top: -4px;
     background-color: var(--royal-blue);
