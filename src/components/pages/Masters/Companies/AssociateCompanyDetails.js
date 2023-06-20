@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
-import { Button } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 import { API_DELIMITER, UI_DELIMITER } from "../../../../utils/constants";
 import { getValue } from "../../../../utils/common";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
@@ -8,6 +8,7 @@ import { GetActionTitle } from "../Master.constants";
 import { COMPANY_STATUS } from "./Companies.constants";
 import styles from "./Companies.module.css";
 import { useGetSmtpDetails } from "../../../../backend/masters";
+import { ACTIONS } from "../../../common/Constants";
 
 function AssociateCompanyDetails({ action, parentCompany, data, onClose }) {
     const [t] = useState(new Date().getTime());
@@ -330,18 +331,24 @@ function AssociateCompanyDetails({ action, parentCompany, data, onClose }) {
             </Modal.Header>
             <Modal.Body>
                 {
-                    Boolean((associateCompany || {}).logo) &&
-                    <div className="position-relative">
-                        <div className={styles.imageContainer}>
-                            <img src={associateCompany.logo} alt="Company Logo" />
-                        </div>
-                    </div>
+                    action === ACTIONS.EDIT && associateCompany.isCopied === 'YES' &&
+                    <Alert variant="warning">This associate company is copied from parent company details. To modify any infomation, modify parent company details.</Alert>
                 }
-                <FormRenderer FormTemplate={FormTemplate}
-                    initialValues={associateCompany}
-                    componentMapper={ComponentMapper}
-                    schema={schema}
-                />
+                <div className="position-relative">
+                    {
+                        Boolean((associateCompany || {}).logo) &&
+                        <div className="position-relative">
+                            <div className={styles.imageContainer}>
+                                <img src={associateCompany.logo} alt="Company Logo" />
+                            </div>
+                        </div>
+                    }
+                    <FormRenderer FormTemplate={FormTemplate}
+                        initialValues={associateCompany}
+                        componentMapper={ComponentMapper}
+                        schema={schema}
+                    />
+                </div>
             </Modal.Body>
             <Modal.Footer className="d-flex justify-content-between">
                 <Button variant="primary" onClick={onClose} className="px-4 ms-auto">{'Close'}</Button>

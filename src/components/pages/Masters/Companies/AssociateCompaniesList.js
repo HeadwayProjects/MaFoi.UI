@@ -57,11 +57,20 @@ function AssociateCompaniesList({ changeView, parent }) {
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
                 <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event) => {
-                    changeView(VIEWS.EDIT, { company: row, parentCompany: row.parentCompany });
+                    if (row.isCopied === 'YES') {
+                        setAssociateCompany(row);
+                        setAction(ACTIONS.EDIT);
+                    } else {
+                        changeView(VIEWS.EDIT, { company: row, parentCompany: row.parentCompany });
+                    }
                 }} />
                 <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event) => {
-                    setAssociateCompany(row);
-                    setAction(ACTIONS.DELETE);
+                    if (row.isCopied === 'YES') {
+                        toast.warn('This company is copied from the parent company. Hence cannot be deleted.')
+                    } else {
+                        setAssociateCompany(row);
+                        setAction(ACTIONS.DELETE);
+                    }
                 }} />
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event) => {
                     setAssociateCompany(row);

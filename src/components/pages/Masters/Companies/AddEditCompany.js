@@ -8,11 +8,12 @@ import CompanyDetails from "./CompanyDetails";
 import CompanySPOC from "./CompanySPOC";
 import CompanyTDS from "./CompanyTDS";
 import { Tab, Tabs } from "react-bootstrap";
-import { useCreateCompany, useUpdateCompany, useUploadLogo } from "../../../../backend/masters";
+import { useCreateCompany, useGetCompanies, useUpdateCompany, useUploadLogo } from "../../../../backend/masters";
 import PageLoader from "../../../shared/PageLoader";
 import { toast } from "react-toastify";
 import companyStyles from "./Companies.module.css";
 import CompanySMTP from "./CompanySMTP";
+import { DEFAULT_PAYLOAD } from "../../../common/Table";
 
 const STEPS = {
     DETAILS: 'STEP1',
@@ -21,17 +22,29 @@ const STEPS = {
     SMTP: 'STEP4'
 };
 
-function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
+function AddEditCompany({ company, parentCompany, changeView, _t }) {
+    const [t] = useState(new Date().getTime());
     const [payload, setPayload] = useState();
     const [doNext, setDoNext] = useState();
     const [isParentCompany] = useState(!Boolean(parentCompany));
     const [activeStep, setActiveStep] = useState(STEPS.DETAILS);
     const [companyDetails, setCompanyDetails] = useState(company);
+    const { companies, refetch } = useGetCompanies({
+        ...DEFAULT_PAYLOAD,
+        filters: [
+            { columnName: 'isCopied', value: 'YES' },
+            { columnName: 'isParent', value: 'false' },
+            { columnName: 'parentCompanyId', value: (companyDetails || {}).id }
+        ]
+    }, Boolean((companyDetails || {}).id && !parentCompany))
     const { uploadLogo, uploading } = useUploadLogo(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success('Logo uploaded successfully.');
             const _company = { ...payload, id: companyDetails.id };
             delete _company.file;
+            if (_company.isCopied === 'YES') {
+                updateAssociateCompany({ ..._company, logo: value });
+            }
             setCompanyDetails({ ..._company, logo: value });
             setPayload(null);
             handleNext();
@@ -55,6 +68,9 @@ function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
                 uploadCompanyLogo(id);
             } else {
                 setCompanyDetails(payload);
+                if (payload.isCopied === 'YES') {
+                    updateAssociateCompany(payload);
+                }
                 setPayload(null);
                 handleNext();
             }
@@ -62,6 +78,8 @@ function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
             toast.error(message || ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
+    const { createCompany: _createAssociateCompany } = useCreateCompany(refetch);
+    const { updateCompany: _updateAssociateCompany } = useUpdateCompany();
 
     function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
@@ -122,6 +140,18 @@ function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
         uploadLogo({ id, formData })
     }
 
+    function updateAssociateCompany(company) {
+        const acRequest = { ...company, isParent: false, isCopied: 'YES', parentCompanyId: company.id };
+        delete acRequest.id;
+        delete acRequest.parentCompany;
+        if ((companies || []).length) {
+            acRequest.id = companies[0].id;
+            _updateAssociateCompany(acRequest);
+        } else {
+            _createAssociateCompany(acRequest);
+        }
+    }
+
     return (
         <>
             <div className="d-flex flex-column h-full position-relative">
@@ -147,7 +177,7 @@ function AddEditCompany({ action, company, parentCompany, changeView, _t }) {
                 {
                     companyDetails && companyDetails.logo &&
                     <div className={`${companyStyles.imageContainer}`}>
-                        <img src={companyDetails.logo} alt="Logo Not Available"/>
+                        <img src={companyDetails.logo} alt="Logo Not Available" />
                     </div>
                 }
                 <Tabs className="dashboardTabs mx-2"

@@ -42,6 +42,17 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, 
                 disabled: Boolean(company)
             },
             {
+                component: componentTypes.CHECKBOX,
+                name: 'copyCompany',
+                label: 'Copy as Associate Company',
+                disabled: Boolean(company),
+                condition: {
+                    when: 'isAssociateCompany',
+                    is: false,
+                    then: { visible: true }
+                },
+            },
+            {
                 component: componentTypes.SELECT,
                 name: 'parentCompany',
                 label: 'Parent Company',
@@ -55,15 +66,6 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, 
                     { type: validatorTypes.REQUIRED }
                 ],
                 isDisabled: Boolean(company)
-            },
-            {
-                component: componentTypes.WIZARD,
-                name: 'emptySpace1',
-                condition: {
-                    when: 'isAssociateCompany',
-                    is: false,
-                    then: { visible: true }
-                },
             },
             {
                 component: componentTypes.TEXT_FIELD,
@@ -136,7 +138,7 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, 
         if (form.valid) {
             const { code, name, businessType, websiteUrl, status,
                 employees, isParent, parentCompany, establishmentType, file,
-                isAssociateCompany } = form.values;
+                isAssociateCompany, copyCompany } = form.values;
             if (isParent) {
                 const existingData = Boolean(company) ? companies.filter(x => x.id !== (company || {}).id) : [...companies];
                 const duplicateCompanies = FindDuplicateMasters(existingData, { code, name });
@@ -157,7 +159,8 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, 
                 isParent: !isAssociateCompany,
                 parentCompanyId: (parentCompany || {}).value || '',
                 establishmentType: (establishmentType || []).map(x => x.label).join(API_DELIMITER),
-                file
+                file,
+                isCopied: copyCompany ? 'YES' : ''
             }
             delete payload.hideButtons;
             delete payload.isAssociateCompany;
@@ -168,7 +171,7 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, 
 
     useEffect(() => {
         if (company) {
-            const { businessType, isActive, employees, isParent, establishmentType } = company || {};
+            const { businessType, isActive, employees, isParent, establishmentType, isCopied } = company || {};
             setCompanyDetails({
                 hideButtons: true,
                 ...company,
@@ -181,6 +184,7 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, 
                 establishmentType: establishmentType ? establishmentType.split(API_DELIMITER).map(x => {
                     return { value: x, label: x };
                 }) : null,
+                copyCompany: isCopied === 'YES',
                 parentCompany
             });
         }

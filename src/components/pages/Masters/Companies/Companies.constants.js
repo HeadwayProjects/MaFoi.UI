@@ -45,6 +45,7 @@ export const COMPANY_REQUEST = {
     parentCompanyId: '',
     isParent: false,
     isActive: false,
+    isCopied: '',
     pan_fullname: '',
     pan_surname: '',
     pan_designation: '',
