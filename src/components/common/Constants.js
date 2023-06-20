@@ -109,3 +109,5 @@ export const SEARCH_FIELDS = [
     { value: FILTERS.DUE_DATE, label: 'Due Date' },
     { value: FILTERS.SUBMITTED_DATE, label: 'Submitted Date' }
 ]
+
+export const SMTP_PORTS = ['25', '465', '587'];

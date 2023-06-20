@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import { useCreateSmtp, useGetCompanies, useGetSmtpDetails, useUpdateSmtp } from "../../../../backend/masters"
-import { PATTERNS } from "../../../common/Constants";
+import { PATTERNS, SMTP_PORTS } from "../../../common/Constants";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import PageLoader from "../../../shared/PageLoader";
@@ -105,14 +105,13 @@ function CompanySMTP({ onNext, onPrevious, company, parentCompany }) {
                 ]
             },
             {
-                component: componentTypes.TEXT_FIELD,
+                component: componentTypes.SELECT,
                 name: 'port',
                 label: 'Port',
                 validate: [
-                    { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.MAX_LENGTH, threshold: 4 }
+                    { type: validatorTypes.REQUIRED }
                 ],
-                fieldType: 'number'
+                options: SMTP_PORTS
             }
         ]
     }
@@ -127,7 +126,8 @@ function CompanySMTP({ onNext, onPrevious, company, parentCompany }) {
                 companyId: company.id,
                 emailAddress,
                 password,
-                host, port
+                host,
+                port: parseInt(port.value)
             }
             if (smtp.companyId) {
                 payload['id'] = smtp.id;
@@ -142,9 +142,11 @@ function CompanySMTP({ onNext, onPrevious, company, parentCompany }) {
 
     useEffect(() => {
         if (!isFetching && smtp) {
+            const { port } = smtp;
             setSmtpDetails({
                 ...smtpDetails,
                 ...smtp,
+                port: { value: `${port || SMTP_PORTS[0]}`, label: `${port || SMTP_PORTS[0]}` },
                 password: null
             });
         }
