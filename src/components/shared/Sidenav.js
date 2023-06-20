@@ -38,7 +38,7 @@ const SideNavMenu = [
         ]
     },
     {
-        id: 'email', url: '/email/templates', icon: 'envelopes-bulk', label: 'Email', children: [
+        id: 'email', url: '/email/templates', icon: 'email', label: 'Email', children: [
             { id: 'email/templates', url: '/email/templates', label: 'Manage Templates' }
         ]
     },
