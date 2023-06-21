@@ -57,6 +57,10 @@ function UnBlockModal({ activity = {}, onClose, onSubmit }) {
                                     <div className="col">{(activity.act || {}).name}</div>
                                 </div>
                                 <div className="row mb-2">
+                                    <div className="col-4 filter-label">Activity Type</div>
+                                    <div className="col">{(activity.type || {}).name}</div>
+                                </div>
+                                <div className="row mb-2">
                                     <div className="col-4 filter-label">Rule</div>
                                     <div className="col">{(activity.rule || {}).name}</div>
                                 </div>
