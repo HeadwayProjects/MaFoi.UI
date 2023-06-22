@@ -283,11 +283,7 @@ function ActivitiesManagement() {
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
-        {
-            title: "Activity Type", field: "activity.type", widthGrow: 2,
-            formatter: reactFormatter(<CellTmpl />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
-        },
+        
         {
             title: "Rule", field: "rule.name", maxWidth: 140,
             formatter: reactFormatter(<CellTmpl />),
@@ -298,6 +294,11 @@ function ActivitiesManagement() {
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />),
             widthGrow: 2
+        },
+        {
+            title: "Activity Type", field: "activity.type",
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
             title: "Associate Company", field: "associateCompany.name",

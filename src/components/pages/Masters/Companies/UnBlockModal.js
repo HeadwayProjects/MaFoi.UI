@@ -55,11 +55,7 @@ function UnBlockModal({ activity = {}, onClose, onSubmit }) {
                                 <div className="row mb-2">
                                     <div className="col-4 filter-label">Act</div>
                                     <div className="col">{(activity.act || {}).name}</div>
-                                </div>
-                                <div className="row mb-2">
-                                    <div className="col-4 filter-label">Activity Type</div>
-                                    <div className="col">{(activity.type || {}).name}</div>
-                                </div>
+                                </div> 
                                 <div className="row mb-2">
                                     <div className="col-4 filter-label">Rule</div>
                                     <div className="col">{(activity.rule || {}).name}</div>
@@ -67,6 +63,10 @@ function UnBlockModal({ activity = {}, onClose, onSubmit }) {
                                 <div className="row mb-2">
                                     <div className="col-4 filter-label">Forms/Registers & Returns</div>
                                     <div className="col">{(activity.activity || {}).name}</div>
+                                </div>
+                                <div className="row mb-2">
+                                    <div className="col-4 filter-label">Activity Type</div>
+                                    <div className="col">{(activity.type || {}).name}</div>
                                 </div>
                                 <div className="row mb-2">
                                     <div className="col-4 filter-label">Month(Year)</div>
