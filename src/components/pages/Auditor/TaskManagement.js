@@ -356,7 +356,7 @@ function TaskManagement() {
         },
         
         {
-            title: "Rule", field: "rule.name", maxWidth: 140,
+            title: "Rule", field: "rule.name", widthGrow: 2,
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },

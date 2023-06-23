@@ -99,6 +99,10 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }) {
                                     <div className="col">{(activity.activity || {}).name}</div>
                                 </div>
                                 <div className="row mb-2">
+                                    <div className="col-4 filter-label">Activity Type</div>
+                                    <div className="col">{(activity.activity || {}).type}</div>
+                                </div>
+                                <div className="row mb-2">
                                     <div className="col-4 filter-label">Month(Year)</div>
                                     <div className="col">{activity.month} ({activity.year})</div>
                                 </div>
