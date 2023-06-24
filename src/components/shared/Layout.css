@@ -5,6 +5,7 @@
     overflow: hidden;
     align-items: flex-start;
     padding-top: 84px;
+    min-width: 1024px;
 }
 
 .sidenav-container {
@@ -34,7 +35,7 @@
 }
 
 .main-container {
-    width: calc(100vw - 64px);
+    width: calc(100% - 64px);
     overflow: auto;
     transition: width 0.3s;
     height: calc(100vh - 84px);
@@ -44,14 +45,15 @@
     width: 264px;
 }
 
-.sidenav-container.open .sidenav-item-label{
+.sidenav-container.open .sidenav-item-label {
     display: flex;
     width: calc(100% - 44px);
 }
-.sidenav-container.open .sidenav-item-icon{
+
+.sidenav-container.open .sidenav-item-icon {
     width: 44px;
 }
 
 .sidenav-container.open+.main-container {
-    width: calc(100vw - 264px);
+    width: calc(100% - 264px);
 }

@@ -27,6 +27,7 @@ import AuditSchedule from "../components/pages/Masters/Companies/AuditSchedule";
 import AuditScheduleDetails from "../components/pages/Masters/Companies/AuditScheduleDetails";
 import LockUnLock from "../components/pages/Masters/Companies/LockUnLock";
 import EmailTemplates from "../components/pages/Email/EmailTemplates";
+import Home from "../components/pages/home";
 
 export const ROLE_MAPPING = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -57,10 +58,9 @@ function AuthenticatedContent() {
             const page = pages[0] || 'dashboard';
             if (page.includes('dashboard')) {
                 return layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
-            } else if (page.includes('masters')) {
-                return layout(<Law />)
+            } else {
+                return layout(<Home />)
             }
-            return <></>
         }
     }
 

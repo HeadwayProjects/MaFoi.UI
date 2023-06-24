@@ -77,8 +77,10 @@ function Sidenav({ open, toggleSidenav }) {
         useEffect(() => {
             if (urlPath) {
                 setActive(urlPath.includes(name));
-                if (urlPath === '/' && parentIndex === 0 && (index === undefined || index === 0)) {
-                    setActive(true);
+                if ((ROLE_MAPPING[user.role] || [])[0] === 'dashboard') {
+                    if (urlPath === '/' && parentIndex === 0 && (index === undefined || index === 0)) {
+                        setActive(true);
+                    }
                 }
             }
         }, [urlPath]);
@@ -141,7 +143,7 @@ function Sidenav({ open, toggleSidenav }) {
                                                     {
                                                         hasChild &&
                                                         <Icon name={toggelStatus[item.id] ? 'angle-up' : 'angle-down'}
-                                                            className={'ms-auto d-none'} />
+                                                            className={'ms-auto d-none'} action={(e) => toggleMenu(e, item, hasChild)}/>
                                                     }
                                                 </div>
                                             </NavItem>

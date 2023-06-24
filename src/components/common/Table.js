@@ -9,6 +9,7 @@ import Icon from "./Icon";
 import Select from "react-select";
 import '../shared/PageLoader.css';
 import PageLoader from "../shared/PageLoader";
+import { humanReadableNumber } from "../../utils/common";
 
 const PageNav = {
     FIRST: 'first',
@@ -37,6 +38,16 @@ export const DEFAULT_PAYLOAD = {
 export const DEFAULT_OPTIONS_PAYLOAD = {
     pagination: {
         pageSize: 5000,
+        pageNumber: 1
+    },
+    filters: [],
+    search: '',
+    sort: { columnName: 'name', order: 'asc' }
+}
+
+export const DEFAULT_DASHBOARD_PAYLOAD = {
+    pagination: {
+        pageSize: 0,
         pageNumber: 1
     },
     filters: [],
@@ -147,7 +158,7 @@ function Table(props) {
     function updatePageCounter(total) {
         const startIndex = (page - 1) * pageSize.value + 1;
         const lastIndex = page * pageSize.value;
-        setPageCounter(total ? `Showing ${startIndex} - ${lastIndex > total ? total : lastIndex} of ${total} records` : 'No records');
+        setPageCounter(total ? `Showing ${startIndex} - ${lastIndex > total ? total : lastIndex} of ${humanReadableNumber(total || 0)} records` : 'No records');
     }
 
     function handlePageNav(pageNav) {

@@ -73,6 +73,11 @@ export function humanReadableFileSize(size) {
   return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
 
+export function humanReadableNumber(number) {
+  var i = number === 0 ? 0 : Math.floor(Math.log(number) / Math.log(1000));
+  return (number / Math.pow(1000, i)).toFixed(2) * 1 + ' ' + ['', 'K'][i];
+}
+
 export function getMinMonthYear() {
   const date = new Date();
   date.setFullYear(date.getFullYear() - 5);

@@ -50,6 +50,26 @@
   --font-xxxl: 3rem;
 }
 
+@media only screen and (max-width: 1024px) {
+  :root {
+    --font-xs: 0.5rem;
+    /* 12px */
+    --font-sm: 0.625rem;
+    /* 14px */
+    --font-md: 0.75rem;
+    /* 16px */
+    --font-base: 0.875rem;
+    /* 20px */
+    --font-lg: 1rem;
+    /* 24px */
+    --font-xl: 1.25rem;
+    /* 32px */
+    --font-xxl: 1.5rem;
+    /* 64px */
+    --font-xxxl: 2rem;
+  }
+}
+
 .text-xs {
   font-size: var(--font-xs);
 }
@@ -341,6 +361,17 @@ body {
 
 .bannerSlider img {
   height: 100vh
+}
+
+@media only screen and (max-width: 1024px) {
+  .bannerSlider {
+    display: none;
+  }
+
+  .loginSection {
+    width: 100%;
+    height: 100vh;
+  }
 }
 
 .loginSection {

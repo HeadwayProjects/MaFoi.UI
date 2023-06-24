@@ -88,9 +88,9 @@ function Navbar({ showUser = true }) {
                                     </ul>
                                     <img src={mofoi_logo} width={'50px'} height={'50px'} alt='Mofoi Logo'/>
                                 </div>
-                                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navTop" aria-controls="navTop" aria-expanded="false" aria-label="Toggle navigation">
+                                {/* <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navTop" aria-controls="navTop" aria-expanded="false" aria-label="Toggle navigation">
                                     <span className="navbar-toggler-icon"></span>
-                                </button>
+                                </button> */}
                             </>
                         }
                     </div>

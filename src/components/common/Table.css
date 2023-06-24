@@ -2,7 +2,7 @@
     position: relative;
     border: none;
     background-color: #fff;
-    font-size: 14px;
+    font-size: var(--font-md);
     text-align: left;
     overflow: hidden;
     -webkit-transform: translateZ(0);
@@ -326,7 +326,7 @@
     padding: 10px;
     color: #ccc;
     font-weight: bold;
-    font-size: 20px;
+    font-size: var(--font-lg);
     white-space: normal;
 }
 
@@ -494,7 +494,7 @@
     border-radius: 10px;
     background: #fff;
     font-weight: bold;
-    font-size: 16px;
+    font-size: var(--font-base);
 }
 
 .tabulator .tabulator-alert .tabulator-alert-msg.tabulator-alert-state-msg {
@@ -582,7 +582,7 @@
 }
 
 .tabulator-row .tabulator-responsive-collapse table {
-    font-size: 14px;
+    font-size: var(--font-md);
 }
 
 .tabulator-row .tabulator-responsive-collapse table tr td {
@@ -851,7 +851,7 @@
     background: #fff;
     border: 1px solid #aaa;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
-    font-size: 14px;
+    font-size: var(--font-md);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     z-index: 10000;
@@ -867,7 +867,7 @@
     padding: 3px 5px;
     border-radius: 2px;
     box-shadow: none;
-    font-size: 12px;
+    font-size: var(--font-sm);
     pointer-events: none;
 }
 
@@ -912,7 +912,7 @@
 
 .tabulator-edit-list {
     max-height: 200px;
-    font-size: 14px;
+    font-size: var(--font-md);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
