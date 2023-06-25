@@ -7,7 +7,7 @@ import { getValue, preventDefault } from "../../../utils/common";
 import { VIEWS } from "./EmailTemplates";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import { useCreateEmailTemplate, useGetAllEmailTemplateTypes, useUpdateEmailTemplate } from "../../../backend/email";
-import { API_DELIMITER, API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
+import { API_DELIMITER, API_RESULT, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
 import { useGetCompanies } from "../../../backend/masters";
@@ -19,7 +19,8 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
     const { templateTypes } = useGetAllEmailTemplateTypes({}, Boolean(!emailTemplate));
     const { createEmailTemplate, creating } = useCreateEmailTemplate(successCallback, errorCallback);
     const { updateEmailTemplate, updating } = useUpdateEmailTemplate(successCallback, errorCallback);
-    const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] })
+    const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
+    const [validKeys, setValidKeys] = useState([]);
 
     function successCallback({ key, value }) {
         if (key === API_RESULT.SUCCESS) {
@@ -47,7 +48,7 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
                 label: 'Template Type',
                 options: (templateTypes || []).map(x => {
                     return {
-                        id: x.id, name: x.description, params: (x.parameters || '').split(API_DELIMITER)
+                        id: x.id, name: x.description, params: x.parameters ? x.parameters.split(API_DELIMITER) : []
                     }
                 }),
                 validate: [
@@ -56,7 +57,10 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
                 isDisabled: Boolean(emailTemplate),
                 className: 'w-50',
                 initialValue: view !== VIEWS.VIEW && emailTemplate ? { value: emailTemplate.templateType.id, label: emailTemplate.templateType.description } : undefined,
-                content: view === VIEWS.VIEW ? getValue(emailTemplate, 'templateType.description') : ''
+                content: view === VIEWS.VIEW ? getValue(emailTemplate, 'templateType.description') : '',
+                onChange: (event) => {
+                    setValidKeys(((event || {}).templateType || {}).params);
+                }
             },
             {
                 component: view === VIEWS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
@@ -110,7 +114,8 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
                     { type: validatorTypes.REQUIRED }
                 ],
                 initialValue: (emailTemplate || {}).body || undefined,
-                content: view === VIEWS.VIEW ? getValue(emailTemplate, 'body') : ''
+                content: view === VIEWS.VIEW ? getValue(emailTemplate, 'body') : '',
+                description: (validKeys || []).length > 0 ? `Valid Keys: ${validKeys.join(UI_DELIMITER)}` : null
             },
             {
                 component: view === VIEWS.VIEW ? componentTypes.HTML : componentTypes.TEXT_EDITOR,
@@ -163,6 +168,9 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
                     label: templateType.description
                 }
             });
+            if (templateType && templateType.parameters) {
+                setValidKeys(templateType.parameters.split(API_DELIMITER));
+            }
         }
     }, [emailTemplate])
 
