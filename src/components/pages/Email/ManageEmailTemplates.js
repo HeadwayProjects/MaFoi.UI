@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useDeleteEmailTemplate, useGetAllEmailTemplateTypes, useGetAllTemplates } from "../../../backend/email";
 import TableFilters from "../../common/TableFilter";
 import { ACTIONS } from "../../common/Constants";
-import Table, { CellTmpl, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
 import Icon from "../../common/Icon";
 import { Button } from "react-bootstrap";
 import { useEffect } from "react";
@@ -12,6 +12,7 @@ import { getValue } from "../../../utils/common";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
+import { useGetCompanies } from "../../../backend/masters";
 
 const SortFields = {
     'templateType.description': 'templateType'
@@ -27,6 +28,7 @@ function ManageEmailTemplates({ changeView }) {
     const filterRef = useRef();
     filterRef.current = filters;
     const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'templateType', order: 'asc' }, ...filterRef.current, t });
+    const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] })
     const { templates, total, isFetching, refetch = [''] } = useGetAllTemplates(payload, Boolean(payload));
     const { deleteEmailTemplate, deleting } = useDeleteEmailTemplate(({ key, value }) => {
         if (key === API_RESULT.SUCCESS) {
@@ -47,11 +49,19 @@ function ManageEmailTemplates({ changeView }) {
             options: (templateTypes || []).map(x => {
                 return { value: `${x.id}`, label: x.description };
             })
+        },
+        {
+            label: 'Company',
+            name: 'companyId',
+            options: (companies || []).map(x => {
+                return { value: x.id, label: x.name };
+            })
         }
     ]
 
     const columns = [
         { title: "Template Type", field: "templateType", formatter: reactFormatter(<TemplateTypeTmpl />) },
+        { title: "Company", field: "compnay.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Subject", field: "subject", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,

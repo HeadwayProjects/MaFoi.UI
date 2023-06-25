@@ -7,9 +7,11 @@ import { getValue, preventDefault } from "../../../utils/common";
 import { VIEWS } from "./EmailTemplates";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import { useCreateEmailTemplate, useGetAllEmailTemplateTypes, useUpdateEmailTemplate } from "../../../backend/email";
-import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
+import { API_DELIMITER, API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
+import { useGetCompanies } from "../../../backend/masters";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function EmailTemplateDetails({ changeView, emailTemplate, view }) {
     const [form, setForm] = useState({});
@@ -17,6 +19,7 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
     const { templateTypes } = useGetAllEmailTemplateTypes({}, Boolean(!emailTemplate));
     const { createEmailTemplate, creating } = useCreateEmailTemplate(successCallback, errorCallback);
     const { updateEmailTemplate, updating } = useUpdateEmailTemplate(successCallback, errorCallback);
+    const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] })
 
     function successCallback({ key, value }) {
         if (key === API_RESULT.SUCCESS) {
@@ -44,7 +47,7 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
                 label: 'Template Type',
                 options: (templateTypes || []).map(x => {
                     return {
-                        id: x.id, name: x.description
+                        id: x.id, name: x.description, params: (x.parameters || '').split(API_DELIMITER)
                     }
                 }),
                 validate: [
@@ -54,6 +57,15 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
                 className: 'w-50',
                 initialValue: view !== VIEWS.VIEW && emailTemplate ? { value: emailTemplate.templateType.id, label: emailTemplate.templateType.description } : undefined,
                 content: view === VIEWS.VIEW ? getValue(emailTemplate, 'templateType.description') : ''
+            },
+            {
+                component: view === VIEWS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                name: 'company',
+                label: 'Company',
+                className: 'w-50',
+                options: companies,
+                initialValue: view !== VIEWS.VIEW && emailTemplate && Boolean(emailTemplate.company) ? { value: emailTemplate.company.id, label: emailTemplate.company.name } : undefined,
+                isDisabled: Boolean(emailTemplate),
             },
             {
                 component: view === VIEWS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.INPUT_AS_TEXT,
@@ -118,13 +130,14 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
 
     function handleSubmit() {
         if (form.valid) {
-            const { templateType, subject, emailFrom, emailTo, emailCC, body, signature } = templateDetails;
+            const { templateType, subject, emailFrom, emailTo, emailCC, body, signature, company } = templateDetails;
             const payload = {
                 subject,
                 emailFrom: emailFrom || '',
                 emailTo: emailTo || '',
                 emailCC: emailCC || '',
                 body,
+                companyId: company ? company.value : undefined,
                 signature: signature || '',
                 templateTypeId: templateType.value,
                 templateType: { id: templateType.value, description: templateType.label }
@@ -140,10 +153,11 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
 
     useEffect(() => {
         if (emailTemplate) {
-            const { templateType } = emailTemplate;
+            const { templateType, company } = emailTemplate;
             setTemplateDetails({
                 ...templateDetails,
                 ...emailTemplate,
+                company: company ? { value: company.id, label: company.name } : undefined,
                 templateType: {
                     value: templateType.id,
                     label: templateType.description
