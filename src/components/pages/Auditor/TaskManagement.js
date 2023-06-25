@@ -40,6 +40,7 @@ const SortFields = {
     'act.name': 'actname',
     'rule.name': 'rulename',
     'activity.name': 'activityname',
+    'activity.type': 'activitytype',
     'associateCompany.name': 'associatecompanyname',
     'location.name': 'locationname'
 };
@@ -176,7 +177,7 @@ function TaskManagement() {
         if (!Boolean(_filter)) {
             setAlertMessage(`
                 <div class="mb-2">Publish activities can be performed on a specfic month only. Please refine your search to specific month and year.</div>
-                <p class="mt-3"><strong>Advance Search &gt; Filter By Month & Year &gt; Select Specific Month and Year</strong</p>
+                <p class="mt-3"><strong>Advance Search &gt; Select Specific Month and Year</strong</p>
             `);
         } else {
             setSubmitting(true);
@@ -367,7 +368,7 @@ function TaskManagement() {
             widthGrow: 2
         },
         {
-            title: "Activity Type", field: "activity.name",
+            title: "Activity Type", field: "activity.type",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },

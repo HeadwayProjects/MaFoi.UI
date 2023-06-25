@@ -1,113 +1,158 @@
 import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import Select from 'react-select';
-import DatePicker from "react-datepicker";
-import { FILTERS, MONTHS, SEARCH_FIELDS, YEARS } from "./Constants";
+import { MONTHS_ENUM } from "./Constants";
 import * as dayjs from "dayjs";
 import * as utc from "dayjs/plugin/utc";
+import { ActivityType } from "../pages/Masters/Master.constants";
+import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "./FormRenderer";
+import { getMaxMonthYear, getMinMonthYear } from "../../utils/common";
+import { ACTIVITY_TYPE, API_DELIMITER } from "../../utils/constants";
 dayjs.extend(utc);
 
+function AdvanceSearchModal({ data, onSubmit, onCancel }) {
+    const [filter, setFilter] = useState({ hideButtons: true });
 
-function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
-    const [options, setOptions] = useState([]);
-    const [payload, setPayload] = useState({});
-    const [filter, setFilter] = useState(null);
+    const schema = {
+        fields: [
+            {
+                component: componentTypes.MONTH_PICKER,
+                name: 'monthYear',
+                label: 'Month & Year',
+                className: 'grid-col-50',
+                minDate: getMinMonthYear(),
+                maxDate: getMaxMonthYear(),
+                range: false,
+                clearable: true,
+                initialValue: (filter || {}).monthYear,
+                onChange: onMonthYearChange.bind(this)
+            },
+            {
+                component: componentTypes.DATE_PICKER,
+                name: 'dueDate',
+                label: 'Due Date',
+                className: 'grid-col-100',
+                range: true,
+                clearable: true,
+                initialValue: (filter || {}).dueDate,
+                onChange: onDueDateChange.bind(this)
+            },
+            {
+                component: componentTypes.SELECT,
+                name: 'activityType',
+                label: 'Activity Type',
+                options: ActivityType,
+                isMulti: true
+            },
+            {
+                component: componentTypes.SELECT,
+                name: 'auditType',
+                label: 'Audit Type',
+                options: Object.values(ACTIVITY_TYPE),
+                isMulti: true
+            }
+        ]
+    }
+
+    function debugForm(_form) {
+        setFilter(_form.values);
+    }
 
     function isInvalid() {
-        if (filter) {
-            if (filter.value === FILTERS.MONTH) {
-                return false;
-            } else {
-                return !payload.fromDate || !payload.toDate;
-            }
-        }
-        return true;
+        return false;
     }
 
-    function onFilterChange(event) {
-        setPayload({});
-        setFilter(event);
-        if (event && event.value === FILTERS.MONTH) {
-            const month = MONTHS[new Date().getMonth()];
-            const year = YEARS.find(x => x.value === `${new Date().getFullYear()}`);
-            setPayload({ month, year, fromDate: null, toDate: null });
-        } else if (!event) {
-            search(false);
-        }
+    function clearFilter() {
+        onSubmit({});
+        onCancel();
     }
 
-    function onMonthChange(event) {
-        setPayload({ ...payload, month: event });
+    function onMonthYearChange(event) {
+        setFilter({ ...filter, monthYear: event ? event.toDate() : undefined })
     }
 
-    function onYearChange(event) {
-        setPayload({ ...payload, year: event });
+    function onDueDateChange(event) {
+        setFilter({ ...filter, dueDate: event })
     }
 
-    function fromDateChange(fromDate) {
-        const toDate = payload.toDate;
-        if (toDate && fromDate > toDate) {
-            setPayload({ ...payload, fromDate, toDate: fromDate });
-        } else {
-            setPayload({ ...payload, fromDate })
-        }
-    }
-
-    function toDateChange(toDate) {
-        const fromDate = payload.fromDate;
-        if (fromDate && toDate > fromDate) {
-            setPayload({ ...payload, toDate });
-        } else {
-            setPayload({ ...payload, toDate: fromDate });
-        }
-    }
-
-    function search(event) {
+    function search() {
+        const { monthYear, dueDate, activityType, auditType } = filter;
         const _payload = {};
-        if (event && filter) {
-            switch (filter.value) {
-                case FILTERS.MONTH:
-                    _payload.month = payload.month.value;
-                    _payload.year = payload.year.value;
-                    break;
-                case FILTERS.DUE_DATE:
-                case FILTERS.SUBMITTED_DATE:
-                    _payload.fromDate = dayjs(new Date(payload.fromDate)).local().format();
-                    _payload.toDate = dayjs(new Date(payload.toDate)).local().format();
-                    break;
-                default:
-                // Do Nothing
+        if (monthYear) {
+            const date = new Date(monthYear);
+            const month = MONTHS_ENUM[date.getMonth()];
+            const year = date.getFullYear();
+            _payload.month = month;
+            _payload.year = `${year}`;
+        }
+
+        if (dueDate) {
+            let fromDate, toDate;
+            if (Array.isArray(dueDate)) {
+                fromDate = new Date(dueDate[0]);
+                toDate = new Date(dueDate[1] || dueDate[0]);
+            } else {
+                fromDate = new Date(dueDate);
+                toDate = new Date(dueDate);
             }
+            fromDate.setHours(0);
+            fromDate.setMinutes(0);
+            fromDate.setSeconds(0);
+            fromDate.setMilliseconds(0);
+            toDate.setHours(0);
+            toDate.setMinutes(0);
+            toDate.setSeconds(0);
+            toDate.setMilliseconds(0);
+            _payload.fromDate = dayjs(new Date(fromDate)).local().format();
+            _payload.toDate = dayjs(new Date(toDate)).local().format();
+        }
+
+        if (activityType) {
+            _payload.activityType = activityType.map(x => x.value).join(API_DELIMITER);
+        }
+        if (auditType) {
+            _payload.auditType = auditType.map(x => x.value).join(API_DELIMITER);
         }
         onSubmit(_payload);
         onCancel();
     }
 
     useEffect(() => {
-        setOptions(SEARCH_FIELDS.filter(x => fields.includes(x.value)));
-    }, [fields]);
-
-    useEffect(() => {
         if (data) {
-            const _payload = { month: null, year: null, fromDate: null, toDate: null };
-            if (data.month) {
-                _payload.month = MONTHS.find(x => x.value === data.month);
-                _payload.year = YEARS.find(x => x.value === data.year);
-                setFilter(SEARCH_FIELDS.find(x => x.value === FILTERS.MONTH));
-            } else if (data.fromDate) {
-                _payload.fromDate = new Date(data.fromDate);
-                _payload.toDate = new Date(data.toDate || data.fromDate);
-                setFilter(SEARCH_FIELDS.find(x => x.value !== FILTERS.MONTH && fields.includes(x.value)));
+            const { month, year, fromDate, toDate, activityType, auditType } = data;
+            const _filter = { hideButtons: true };
+            if (month && year) {
+                const date = new Date();
+                date.setDate(1);
+                date.setFullYear(parseInt(`${year}`));
+                date.setMonth(MONTHS_ENUM.indexOf(month));
+                _filter['monthYear'] = date;
             }
-            setPayload(_payload);
+
+            if (fromDate && toDate) {
+                if (fromDate === toDate) {
+                    _filter['dueDate'] = new Date(fromDate);
+                } else {
+                    _filter['dueDate'] = [new Date(fromDate), new Date(toDate)];
+                }
+            }
+
+            if (activityType) {
+                _filter.activityType = activityType.split(API_DELIMITER).map(x => {
+                    return { value: x, label: x };
+                });
+            }
+            if (auditType) {
+                _filter.auditType = auditType.split(API_DELIMITER).map(x => {
+                    return { value: x, label: x };
+                });
+            }
+            setFilter({ ..._filter });
         }
-        setOptions(SEARCH_FIELDS.filter(x => fields.includes(x.value)));
     }, [data]);
 
-
     return (
-        <Modal show={true} backdrop="static" animation={false} size="md">
+        <Modal show={true} backdrop="static" animation={false} dialogClassName="drawer" size="md">
             <Modal.Header closeButton={true} onHide={onCancel}>
                 <Modal.Title className="bg">Advance Search</Modal.Title>
             </Modal.Header>
@@ -116,50 +161,13 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
                     <div className="col-12">
                         <form>
                             <div className="row mt-3">
-                                <div className="col-8">
-                                    <div className="row">
-                                        <div className="col-12 mb-4">
-                                            <label className="filter-label">Filter By</label>
-                                            <Select placeholder='Select Filter' options={options} onChange={onFilterChange} value={filter}
-                                                menuPosition="fixed" />
-                                        </div>
-                                    </div>
-                                    {
-                                        filter && filter.value === FILTERS.MONTH &&
-                                        <div className="row">
-                                            <div className="col-6 mb-4">
-                                                <label className="filter-label">Month</label>
-                                                <Select placeholder='Select Month' options={MONTHS} onChange={onMonthChange} value={payload.month}
-                                                    menuPosition="fixed" />
-                                            </div>
-                                            <div className="col-6 mb-4">
-                                                <label className="filter-label">Year</label>
-                                                <Select placeholder='Select Year' options={YEARS} onChange={onYearChange} value={payload.year}
-                                                    menuPosition="fixed" />
-                                            </div>
-                                        </div>
-                                    }
-                                    {
-                                        filter && [FILTERS.DUE_DATE, FILTERS.SUBMITTED_DATE].includes(filter.value) &&
-                                        <div className="row">
-                                            <div className="col-6 mb-4">
-                                                <label className="filter-label">From</label>
-                                                <DatePicker className="form-control" selected={payload.fromDate} dateFormat="dd-MM-yyyy"
-                                                    onChange={fromDateChange} placeholderText="dd-mm-yyyy"
-                                                    showMonthDropdown
-                                                    showYearDropdown
-                                                    dropdownMode="select" />
-                                            </div>
-                                            <div className="col-6 mb-4">
-                                                <label className="filter-label">To</label>
-                                                <DatePicker className="form-control" selected={payload.toDate} dateFormat="dd-MM-yyyy"
-                                                    onChange={toDateChange} placeholderText="dd-mm-yyyy"
-                                                    showMonthDropdown
-                                                    showYearDropdown
-                                                    dropdownMode="select" />
-                                            </div>
-                                        </div>
-                                    }
+                                <div className="col-12">
+                                    <FormRenderer FormTemplate={FormTemplate}
+                                        initialValues={filter}
+                                        componentMapper={ComponentMapper}
+                                        schema={schema}
+                                        debug={debugForm}
+                                    />
                                 </div>
                             </div>
                         </form>
@@ -171,7 +179,7 @@ function AdvanceSearchModal({ data, fields = [], onSubmit, onCancel }) {
                     Back
                 </Button>
                 <div>
-                    <Button variant="primary" onClick={() => onFilterChange(null)} className="mx-3">Clear</Button>
+                    <Button variant="primary" onClick={clearFilter} className="mx-3">Clear</Button>
                     <Button variant="primary" onClick={search} disabled={isInvalid()}>Submit</Button>
                 </div>
             </Modal.Footer>

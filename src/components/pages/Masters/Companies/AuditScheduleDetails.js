@@ -21,7 +21,8 @@ const SortFields = {
     'rule.name': 'rulename',
     'activity.name': 'activityname',
     'associateCompany.name': 'associatecompanyname',
-    'location.name': 'locationname'
+    'location.name': 'locationname',
+    'activity.type': 'activityType'
 };
 
 function AuditScheduleDetails() {
@@ -355,7 +356,7 @@ function AuditScheduleDetails() {
                         <div className="d-flex flex-row m-0 align-items-end">
                             <AdminLocations onChange={onLocationChange} />
                             <div >
-                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search} />
+                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE, FILTERS.ACTIVITY_TYPE]} payload={getAdvanceSearchPayload()} onSubmit={search} />
                             </div>
                             <div className="ms-auto">
                                 <button className="btn btn-danger" onClick={handleBulkDelete} disabled={!(selectedRows || []).length}>

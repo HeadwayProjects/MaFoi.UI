@@ -417,7 +417,7 @@ function FileUploadField(props) {
     );
 };
 
-export function MonthPickerField(props) {
+export function DatePickerField(props) {
     const { input, meta, label, name } = useFieldApi(props);
     const [value, setValue] = useState(props.initialValue);
     const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
@@ -425,6 +425,7 @@ export function MonthPickerField(props) {
     function onInput(input) {
         return {
             ...input,
+            placeholder: props.placeholder || `Select ${label}`,
             onChange: (e) => {
                 setValue(e);
                 input.onChange(e);
@@ -435,6 +436,82 @@ export function MonthPickerField(props) {
             disabled: props.disabled
         }
     }
+
+    function clearValue() {
+        setValue(null);
+        if (props.onChange) {
+            props.onChange(null);
+        }
+    }
+
+    useEffect(() => {
+        if (props.initialValue) {
+            setValue(props.initialValue);
+        }
+
+    }, [props.initialValue]);
+
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            {
+                label &&
+                <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+            }
+            <div className={`input-group date-picker`}>
+                <DatePicker range={props.range || false}
+                    minDate={props.minDate} format={'DD/MM/YYYY'} maxDate={props.maxDate} {...onInput(input)} value={value}>
+                    {
+                        value && props.clearable &&
+                        <Button variant="link" className="mb-2" onClick={clearValue}>Clear</Button>
+                    }
+                </DatePicker>
+            </div>
+            {
+                props.description &&
+                <span className="text-muted form-text">{props.description}</span>
+            }
+            {
+                meta.touched && meta.error && <div className="invalid-feedback d-block">
+                    {meta.error}
+                </div>
+            }
+        </div>
+    );
+}
+export function MonthPickerField(props) {
+    const { input, meta, label, name } = useFieldApi(props);
+    const [value, setValue] = useState(props.initialValue);
+    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+
+    function onInput(input) {
+        return {
+            ...input,
+            placeholder: props.placeholder || `Select ${label}`,
+            onChange: (e) => {
+                setValue(e);
+                input.onChange(e);
+                if (props.onChange) {
+                    props.onChange(e);
+                }
+            },
+            disabled: props.disabled
+        }
+    }
+
+    function clearValue() {
+        setValue(null);
+        if (props.onChange) {
+            props.onChange(null);
+        }
+    }
+
+    useEffect(() => {
+        if (props.initialValue) {
+            setValue(props.initialValue);
+        }
+
+    }, [props.initialValue])
+
     return (
         <div className={`form-group ${props.className || ''}`}>
             {
@@ -443,7 +520,12 @@ export function MonthPickerField(props) {
             }
             <div className={`input-group month-picker`}>
                 <DatePicker onlyMonthPicker={true} editable={false} range={props.range || false}
-                    minDate={props.minDate} format={'MMM, YYYY'} maxDate={props.maxDate} {...onInput(input)} value={value} />
+                    minDate={props.minDate} format={'MMM, YYYY'} maxDate={props.maxDate} {...onInput(input)} value={value} >
+                    {
+                        value && props.clearable &&
+                        <Button variant="link" className="mb-2" onClick={clearValue}>Clear</Button>
+                    }
+                </DatePicker>
             </div>
             {
                 props.description &&
@@ -502,7 +584,7 @@ function TextEditorField(props) {
 
 export const ComponentMapper = {
     [componentTypes.TEXT_FIELD]: TextField,
-    [componentTypes.DATE_PICKER]: TextField,
+    [componentTypes.DATE_PICKER]: DatePickerField,
     [componentTypes.TEXTAREA]: TextAreaField,
     [componentTypes.SELECT]: SelectField,
     [componentTypes.PLAIN_TEXT]: HtmlField,

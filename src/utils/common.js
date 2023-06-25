@@ -103,6 +103,13 @@ export function checkVendorActivityStatus(activity) {
   dueDate.setMinutes(59);
   dueDate.setSeconds(59);
   dueDate.setMilliseconds(999);
+  if (activity.auditted !== ACTIVITY_TYPE.AUDIT) {
+    return {
+      editable: false,
+      type: 'warning',
+      message: `This activity is for ${activity.auditted}. You are not allowed to edit this activity.`
+    }
+  }
   if (activity.status === ACTIVITY_STATUS.PENDING) {
     return { editable: true };
   }
@@ -114,7 +121,7 @@ export function checkVendorActivityStatus(activity) {
       return {
         editable: false,
         type: 'warning',
-        message: 'This acivity is expired. No further edits allowed.'
+        message: 'This activity is expired. No further edits allowed.'
       }
     }
   }
@@ -123,7 +130,7 @@ export function checkVendorActivityStatus(activity) {
     return {
       editable: false,
       type: 'danger',
-      message: `This acivity is expired and cannot be edited further. Contact Admin to extend the due date.`
+      message: `This activity is expired and cannot be edited further. Contact Admin to extend the due date.`
     }
   }
 
@@ -131,7 +138,7 @@ export function checkVendorActivityStatus(activity) {
     return {
       editable: false,
       type: 'success',
-      message: 'Congatulations! This acivity is submitted for Auditting.'
+      message: 'Congatulations! This activity is submitted for Auditting.'
     }
   }
 
@@ -139,7 +146,7 @@ export function checkVendorActivityStatus(activity) {
     return {
       editable: false,
       type: 'success',
-      message: 'Congatulations! This acivity is Approved.'
+      message: 'Congatulations! This activity is Approved.'
     }
   }
 

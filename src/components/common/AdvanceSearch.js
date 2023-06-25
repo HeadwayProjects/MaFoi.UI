@@ -20,11 +20,6 @@ function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
                 setLabel(filter.label);
                 setValue(`${payload.month} (${payload.year})`);
                 setFilter(FILTERS.MONTH);
-            } else if (payload.fromDate) {
-                const filter = SEARCH_FIELDS.find(x => x.value !== FILTERS.MONTH && fields.includes(x.value));
-                setLabel(filter.label);
-                setValue(`${dayjs(new Date(payload.fromDate)).format('DD/MM/YYYY')} -  ${dayjs(new Date(payload.toDate || payload.fromDate)).format('DD/MM/YYYY')}`);
-                setFilter(filter.value);
             } else {
                 setLabel('');
                 setValue('');
@@ -37,6 +32,25 @@ function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
         }
     }, [payload]);
 
+    function CheckFilters() {
+        const { fromDate, activityType, auditType } = payload;
+        let count = 0;
+        ['fromDate', 'activityType', 'auditType'].forEach((key) => {
+            if (!!payload[key]) {
+                count++;
+            }
+        });
+
+        return (
+            <>
+                {
+                    count > 0 &&
+                    <>(+{count})</>
+                }
+            </>
+        )
+    }
+
     return (
         <>
             <div className="d-flex justify-content-start h-100 align-items-end">
@@ -48,7 +62,7 @@ function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
                                 setShowModal(true);
                             }}>
                             <FontAwesomeIcon icon={faSearch} />
-                            <span className="ms-2">Advance Search</span>
+                            <span className="ms-2">Advance Search <CheckFilters /></span>
                         </button>
                     </div>
                 </div>

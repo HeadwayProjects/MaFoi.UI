@@ -101,7 +101,9 @@ export const YEARS = (() => {
 export const FILTERS = {
     MONTH: 'month',
     DUE_DATE: 'dueDate',
-    SUBMITTED_DATE: 'submittedDate'
+    SUBMITTED_DATE: 'submittedDate',
+    ACTIVITY_TYPE: 'activityType',
+    AUDIT_TYPE: 'auditType'
 }
 
 export const SEARCH_FIELDS = [

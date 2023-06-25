@@ -20,7 +20,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import AdvanceSearch from "../../../common/AdvanceSearch";
 import AlertModal from "../../../common/AlertModal";
-import { ACTIVITY_TYPE, API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
+import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
 import { useAuditReport } from "../../../../backend/exports";
 
 const STATUS_BTNS = [
@@ -36,11 +36,13 @@ const SortFields = {
     'act.name': 'actname',
     'rule.name': 'rulename',
     'activity.name': 'activityname',
+    'activity.type': 'activitytype',
     'associateCompany.name': 'associatecompanyname',
     'location.name': 'locationname'
 };
 
-const AuditTypeFilter = [{ columnName: 'auditted', value: ACTIVITY_TYPE.AUDIT }];
+// const AuditTypeFilter = [{ columnName: 'auditted', value: ACTIVITY_TYPE.AUDIT }];
+const AuditTypeFilter = [];
 
 function ActivitiesManagement() {
     const [readOnly] = useState(!auth.isVendor());
@@ -141,7 +143,7 @@ function ActivitiesManagement() {
         if (!Boolean(_filter)) {
             setAlertMessage(`
                 <div class="mb-2">Submit to auditor can be performed on a specfic month only. Please refine your search to specific month and year.</div>
-                <p class="mt-3"><strong>Advance Search &gt; Filter By Month & Year &gt; Select Specific Month and Year</strong</p>
+                <p class="mt-3"><strong>Advance Search &gt; Select Specific Month and Year</strong</p>
             `);
         } else {
             setSubmitting(true);
@@ -269,7 +271,20 @@ function ActivitiesManagement() {
         )
     }
 
+    function ActivityTypeTmpl({ cell }) {
+        const value = cell.getValue() || ACTIVITY_TYPE.AUDIT;
+        return (
+            <div className="d-flex flex-row align-items-center justify-content-center position-relative">
+                <Icon name={ACTIVITY_TYPE_ICONS[value]} text={value} />
+            </div>
+        )
+    }
+
     const columns = [
+        {
+            title: "", field: "auditted", width: 40,
+            formatter: reactFormatter(<ActivityTypeTmpl />)
+        },
         {
             title: "Month & Year", field: "month", width: 140,
             formatter: reactFormatter(<MonthTmpl />),

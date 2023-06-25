@@ -141,12 +141,22 @@ input.form-check-input {
     grid-column-end: 3;
 }
 
+.date-picker [class*="-container"],
 .month-picker [class*="-container"] {
     height: 38px !important;
 }
 
+.date-picker [class*="-container"] input,
 .month-picker [class*="-container"] input {
     height: 100% !important;
+}
+
+.date-picker [class*="-container"] {
+    width: 100%;
+}
+
+.date-picker [class*="-container"] input {
+    width: 75% !important;
 }
 
 .rmdp-arrow-container {
