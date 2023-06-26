@@ -305,7 +305,7 @@ function ActivitiesManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Forms / Registers & Returns", field: "activity.name",
+            title: "Activity", field: "activity.name",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />),
             widthGrow: 2

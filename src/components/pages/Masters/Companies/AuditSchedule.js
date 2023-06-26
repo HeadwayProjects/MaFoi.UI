@@ -123,7 +123,7 @@ function AuditSchedule() {
                     { type: validatorTypes.REQUIRED }
                 ],
                 className: 'grid-col-100',
-                initialValue: new Date(),
+                initialValue: exportData.month,
                 minDate: getMinMonthYear(),
                 maxDate: getMaxMonthYear(),
                 range: true
