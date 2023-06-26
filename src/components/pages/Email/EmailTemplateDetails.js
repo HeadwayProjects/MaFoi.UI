@@ -13,6 +13,23 @@ import PageLoader from "../../shared/PageLoader";
 import { useGetCompanies } from "../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
+function isValidEmailBody(emailBody, validKeys) {
+    if (validKeys.length > 0 ) {
+        const matches = emailBody.match(/{{.*?}}/g);
+        if (!matches) {
+            return true;
+        }
+        let noMatchFound = false;
+        matches.forEach(key => {
+            if (!validKeys.includes(key)) {
+                noMatchFound = true;
+            }
+        });
+        return !noMatchFound;
+    }
+    return true;
+}
+
 function EmailTemplateDetails({ changeView, emailTemplate, view }) {
     const [form, setForm] = useState({});
     const [templateDetails, setTemplateDetails] = useState({ hideButtons: true });
@@ -136,13 +153,17 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }) {
     function handleSubmit() {
         if (form.valid) {
             const { templateType, subject, emailFrom, emailTo, emailCC, body, signature, company } = templateDetails;
+            if (!isValidEmailBody(body, validKeys)) {
+                toast.error('Invalid keys present in email body. Please look description for valid keys.');
+                return;
+            }
             const payload = {
                 subject,
                 emailFrom: emailFrom || '',
                 emailTo: emailTo || '',
                 emailCC: emailCC || '',
                 body,
-                companyId: company ? company.value : undefined,
+                companyId: company ? company.value : null,
                 signature: signature || '',
                 templateTypeId: templateType.value,
                 templateType: { id: templateType.value, description: templateType.label }

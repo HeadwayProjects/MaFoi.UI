@@ -26,7 +26,7 @@ function RuleStateCompanyMapping() {
     filterRef.current = filters;
     const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'act', order: 'asc' } });
     const { mappings, total, isFetching, refetch } = useStateRuleCompanyMappings({ ...payload }, Boolean(payload));
-    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD, includeCentral: true });
     const { deleteActStateMapping, deleting } = useDeleteActStateMapping(response => {
         toast.success(`Mapping deleted successfully.`);
         submitCallback();
