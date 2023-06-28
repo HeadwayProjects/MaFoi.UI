@@ -124,6 +124,7 @@ function CompanyLocationDetails({ action, parentCompany, associateCompany, data,
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'contactPersonMobile',
                 label: 'Mobile',
+                fieldType: 'number',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },

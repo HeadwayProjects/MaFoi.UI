@@ -44,6 +44,19 @@ const SortFields = {
 // const AuditTypeFilter = [{ columnName: 'auditted', value: ACTIVITY_TYPE.AUDIT }];
 const AuditTypeFilter = [];
 
+function getAdvanceSearch(state) {
+    const filters = [];
+    if ((state || {}).fromDate) {
+        filters.push({ columnName: 'fromDate', value: state.fromDate })
+        filters.push({ columnName: 'toDate', value: state.toDate })
+    }
+
+    if ((state || {}).auditType) {
+        filters.push({ columnName: 'auditType', value: state.auditType })
+    }
+    return filters.length > 0 ? filters : undefined;
+}
+
 function ActivitiesManagement() {
     const [readOnly] = useState(!auth.isVendor());
     const { state } = useHistory();
@@ -60,8 +73,7 @@ function ActivitiesManagement() {
     const [locationFilters, setLocationFilter] = useState();
     const lfRef = useRef();
     lfRef.current = locationFilters;
-    const [advaceSearchFilters, setAdvanceSearchFilters] = useState((state || {}).fromDate ?
-        [{ columnName: 'fromDate', value: state.fromDate }, { columnName: 'toDate', value: state.toDate }] : undefined);
+    const [advaceSearchFilters, setAdvanceSearchFilters] = useState(getAdvanceSearch(state));
     const afRef = useRef();
     afRef.current = advaceSearchFilters;
     const [statusFilters, setStatusFilters] = useState();
@@ -298,7 +310,7 @@ function ActivitiesManagement() {
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
-        
+
         {
             title: "Rule", field: "rule.name", widthGrow: 2,
             formatter: reactFormatter(<CellTmpl />),

@@ -96,6 +96,7 @@ function CompanySPOC({ onNext, onPrevious, onSubmit, company, parentCompany }) {
                 component: componentTypes.TEXT_FIELD,
                 name: 'contactNumber',
                 label: 'Mobile',
+                fieldType: 'number',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },
@@ -172,6 +173,7 @@ function CompanySPOC({ onNext, onPrevious, onSubmit, company, parentCompany }) {
                 component: componentTypes.TEXT_FIELD,
                 name: 'contactPersonMobile',
                 label: 'Mobile',
+                fieldType: 'number',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },

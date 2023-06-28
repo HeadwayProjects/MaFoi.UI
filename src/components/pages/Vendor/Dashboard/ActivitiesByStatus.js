@@ -6,6 +6,7 @@ import "./dashboard.css";
 import { preventDefault } from "../../../../utils/common";
 import { navigate } from "raviger";
 import { getBasePath } from "../../../../App";
+import { ACTIVITY_TYPE } from "../../../../utils/constants";
 
 const StatusTabs = [
     { value: 'Overdue', label: 'Overdue' },
@@ -50,7 +51,8 @@ function ActivitiesByStatus({ tabs, selectedCompany, selectedAssociateCompany, s
                 company: selectedCompany,
                 associateCompany: selectedAssociateCompany,
                 location: selectedLocation,
-                status
+                status,
+                auditType: ACTIVITY_TYPE.AUDIT
             }
         });
     }

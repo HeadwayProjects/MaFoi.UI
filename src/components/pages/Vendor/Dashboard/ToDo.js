@@ -7,6 +7,7 @@ import "./dashboard.css";
 import { navigate } from "raviger";
 import { preventDefault } from "../../../../utils/common";
 import { getBasePath } from "../../../../App";
+import { ACTIVITY_TYPE } from "../../../../utils/constants";
 
 const TodosTabs = [
     { value: 'Today', label: 'Today' },
@@ -61,7 +62,8 @@ function Todo({ upcoming, selectedCompany, selectedAssociateCompany, selectedLoc
                 company: selectedCompany,
                 associateCompany: selectedAssociateCompany,
                 location: selectedLocation,
-                ...dateRange
+                ...dateRange,
+                auditType: ACTIVITY_TYPE.AUDIT
             }
         });
     }
