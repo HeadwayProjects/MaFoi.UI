@@ -32,26 +32,42 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
     const [title] = useState('Performance');
     const [frequency, setFrequency] = useState(PerformanceTabs[0].value);
     const [performanceStatus, setPerformanceStatus] = useState({});
+    const [auditData, setAuditData] = useState({});
+    const [physicalAuditData, setPhysicalAuditData] = useState({});
     const [label, setLabel] = useState('');
 
     function updatePerformance() {
         setLabel('');
         if (selectedCompany && selectedAssociateCompany && selectedLocation) {
-            const payload = {
-                ...DEFAULT_PAYLOAD, filters: [
-                    { columnName: 'companyId', value: selectedCompany },
-                    { columnName: 'associateCompanyId', value: selectedAssociateCompany },
-                    { columnName: 'locationId', value: selectedLocation },
-                    { columnName: 'frequency', value: frequency }
-                ]
-            }
-            api.post('/api/Dashboard/GetPreviousPerformance', payload).then(response => {
+            const filters = [
+                { columnName: 'companyId', value: selectedCompany },
+                { columnName: 'associateCompanyId', value: selectedAssociateCompany },
+                { columnName: 'locationId', value: selectedLocation },
+                { columnName: 'frequency', value: frequency }
+            ];
+            api.post('/api/Dashboard/GetPreviousPerformance', { ...DEFAULT_PAYLOAD, filters }).then(response => {
                 if (response && response.data) {
                     const label = frequency !== '0' ?
                         `${dayjs(response.data.startDate).format('DD-MMM-YYYY')} - ${dayjs(response.data.endDate).format('DD-MMM-YYYY')}` :
                         `${dayjs(response.data.startDate).format('DD-MMM-YYYY')}`;
                     setLabel(label);
                     setPerformanceStatus(response.data);
+                }
+            });
+            api.post('/api/Dashboard/GetPreviousPerformance', {
+                ...DEFAULT_PAYLOAD, filters:
+                    [...filters, { columnName: 'auditType', value: ACTIVITY_TYPE.AUDIT }]
+            }).then(response => {
+                if (response && response.data) {
+                    setAuditData(response.data);
+                }
+            });
+            api.post('/api/Dashboard/GetPreviousPerformance', {
+                ...DEFAULT_PAYLOAD, filters:
+                    [...filters, { columnName: 'auditType', value: ACTIVITY_TYPE.PHYSICAL_AUDIT }]
+            }).then(response => {
+                if (response && response.data) {
+                    setPhysicalAuditData(response.data);
                 }
             });
         }
@@ -166,6 +182,33 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                             <Chart data={performanceStatus} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
                         }
                     </div>
+                </div>
+                <div className="row m-0">
+                    {
+                        (auditData.approved > 0 || auditData.rejected > 0) &&
+                        <div className="col-5 mt-3">
+                            <div className="text-center mb-3 dashboard-date-range-label">
+                                <strong className="text-primary">Type: Audit</strong>
+                            </div>
+                            <Chart data={auditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
+
+                        </div>
+                    }
+                    {
+                        (physicalAuditData.approved > 0 || physicalAuditData.rejected > 0) &&
+                        <>
+                            {
+                                <div className="col-2"></div>
+                            }
+
+                            <div className="col-5 mt-3">
+                                <div className="text-center mb-3 dashboard-date-range-label">
+                                    <strong className="text-primary">Type: Physical Audit</strong>
+                                </div>
+                                <Chart data={physicalAuditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
+                            </div>
+                        </>
+                    }
                 </div>
             </div>
         </div>
