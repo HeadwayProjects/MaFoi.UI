@@ -74,8 +74,9 @@ export function humanReadableFileSize(size) {
 }
 
 export function humanReadableNumber(number) {
-  var i = number === 0 ? 0 : Math.floor(Math.log(number) / Math.log(1000));
-  return (number / Math.pow(1000, i)).toFixed(2) * 1 + ' ' + ['', 'K'][i];
+  // var i = number === 0 ? 0 : Math.floor(Math.log(number) / Math.log(1000));
+  // return (number / Math.pow(1000, i)).toFixed(2) * 1 + ' ' + ['', 'K'][i];
+  return number < 1000 ? number : `${number}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export function getMinMonthYear() {
