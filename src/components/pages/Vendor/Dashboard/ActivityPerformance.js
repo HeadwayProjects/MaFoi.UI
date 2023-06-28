@@ -41,7 +41,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                 `locationId=${selectedLocation}`,
                 `frequency=${frequency}`
             ];
-            api.get(`/api/Dashboard/GetPreviousPerformance?${request.join('&')}`).then(response => {
+            api.post(`/api/Dashboard/GetPreviousPerformance?${request.join('&')}`, {}).then(response => {
                 if (response && response.data) {
                     const label = frequency !== '0' ?
                         `${dayjs(response.data.startDate).format('DD-MMM-YYYY')} - ${dayjs(response.data.endDate).format('DD-MMM-YYYY')}` :
