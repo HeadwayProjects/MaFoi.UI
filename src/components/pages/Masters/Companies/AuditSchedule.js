@@ -6,23 +6,12 @@ import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { Button } from "react-bootstrap";
 import AuditScheduleImportModal from "./AuditScheduleImportModal";
-import { MONTHS } from "../../../common/Constants";
 import PageLoader from "../../../shared/PageLoader";
 import { getMaxMonthYear, getMinMonthYear } from "../../../../utils/common";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import dayjs from "dayjs";
 import { ActivityType } from "../Master.constants";
 import { API_DELIMITER } from "../../../../utils/constants";
-
-function getMonthYear() {
-    const date = new Date();
-    const month = MONTHS[date.getMonth()];
-    const year = date.getFullYear();
-    return {
-        month,
-        year: { value: `${year}`, label: year }
-    }
-}
 
 const DEFAULT_EXPORT_DATA = {
     hideButtons: true,

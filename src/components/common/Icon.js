@@ -3,7 +3,9 @@ import { preventDefault } from "../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faInfoCircle, faSearch, faExternalLink,
-    faAngleDoubleLeft, faAngleDoubleRight, faAngleRight, faAngleLeft, faPlus, faAngleDown, faAngleUp, faLockOpen, faEnvelopesBulk
+    faAngleDoubleLeft, faAngleDoubleRight,
+    faAngleRight, faAngleLeft, faPlus,
+    faAngleDown, faAngleUp, faLockOpen
 } from "@fortawesome/free-solid-svg-icons";
 import "./Icon.css";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";

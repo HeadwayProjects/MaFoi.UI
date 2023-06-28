@@ -4,8 +4,8 @@ import * as dayjs from 'dayjs';
 import * as utc from "dayjs/plugin/utc";
 import "./dashboard.css";
 import Chart from "./Chart";
-import { navigate } from "raviger";
-import { getBasePath } from "../../../../App";
+// import { navigate } from "raviger";
+// import { getBasePath } from "../../../../App";
 dayjs.extend(utc);
 
 const PerformanceTabs = [
@@ -53,18 +53,18 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
         }
     }
 
-    function viewActivities(status) {
-        navigate(`${getBasePath()}/dashboard/activities`, {
-            state: {
-                company: selectedCompany,
-                associateCompany: selectedAssociateCompany,
-                location: selectedLocation,
-                fromDate: dayjs(performanceStatus.startDate).local().format(),
-                toDate: dayjs(performanceStatus.endDate).local().format(),
-                status
-            }
-        });
-    }
+    // function viewActivities(status) {
+    //     navigate(`${getBasePath()}/dashboard/activities`, {
+    //         state: {
+    //             company: selectedCompany,
+    //             associateCompany: selectedAssociateCompany,
+    //             location: selectedLocation,
+    //             fromDate: dayjs(performanceStatus.startDate).local().format(),
+    //             toDate: dayjs(performanceStatus.endDate).local().format(),
+    //             status
+    //         }
+    //     });
+    // }
 
     function onFrequencyChange(e) {
         setFrequency(e.target.value)

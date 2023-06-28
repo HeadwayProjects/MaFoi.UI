@@ -23,7 +23,6 @@ const STEPS = {
 };
 
 function AddEditCompany({ company, parentCompany, changeView, _t }) {
-    const [t] = useState(new Date().getTime());
     const [payload, setPayload] = useState();
     const [doNext, setDoNext] = useState();
     const [isParentCompany] = useState(!Boolean(parentCompany));

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { FILTERS, SEARCH_FIELDS, TOOLTIP_DELAY } from "./Constants";
-import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import AdvanceSearchModal from "./AdvanceSearchModal";
@@ -33,7 +32,6 @@ function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
     }, [payload]);
 
     function CheckFilters() {
-        const { fromDate, activityType, auditType } = payload;
         let count = 0;
         ['fromDate', 'activityType', 'auditType'].forEach((key) => {
             if (!!payload[key]) {

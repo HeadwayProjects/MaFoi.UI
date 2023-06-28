@@ -281,7 +281,7 @@ function RuleStateCompanyMappingDetails({ action, data, onClose, onSubmit }) {
 
     useEffect(() => {
         if (data) {
-            const { act, rule, activity, state, stateId } = data;
+            const { act, rule, activity, state } = data;
             const type = (state || {}).id === CentralId ? RuleTypeEnum.CENTRAL : RuleTypeEnum.STATE;
             setMapping({
                 ...mapping, ...data,

@@ -45,13 +45,15 @@ function LayoutWithSideNav(props) {
 
     return (
         <AuthProtector>
-            <Navbar />
-            <div className="page-layout-container">
-                <div className={`sidenav-container ${open ? 'open' : ''}`} >
-                    <Sidenav open={open} toggleSidenav={setOpen} />
-                </div>
-                <div className="main-container">
-                    {props.children}
+            <div className="main-conatiner">
+                <Navbar />
+                <div className="page-layout-container">
+                    <div className={`sidenav-container ${open ? 'open' : ''}`} >
+                        <Sidenav open={open} toggleSidenav={setOpen} />
+                    </div>
+                    <div className="main-container">
+                        {props.children}
+                    </div>
                 </div>
             </div>
         </AuthProtector>

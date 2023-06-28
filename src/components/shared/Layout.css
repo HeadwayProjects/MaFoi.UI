@@ -1,10 +1,18 @@
+.main-conatiner {
+    display: grid;
+    grid-template-rows: 84px 1fr;
+    height: 100vh;
+    overflow: auto;
+}
+
+
 .page-layout-container {
     display: flex;
     flex-direction: row;
-    height: 100vh;
+    /* height: 100vh; */
     overflow: hidden;
     align-items: flex-start;
-    padding-top: 84px;
+    /* padding-top: 84px; */
     min-width: 1024px;
 }
 

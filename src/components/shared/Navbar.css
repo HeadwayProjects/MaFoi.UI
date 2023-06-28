@@ -18,6 +18,10 @@
     justify-content: center;
 }
 
+.navbar-nav .dropdown-menu {
+    position: absolute !important;
+}
+
 .dropdown-item {
     cursor: pointer;
 }
