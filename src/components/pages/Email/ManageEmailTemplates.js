@@ -61,7 +61,7 @@ function ManageEmailTemplates({ changeView }) {
 
     const columns = [
         { title: "Template Type", field: "templateType", formatter: reactFormatter(<TemplateTypeTmpl />) },
-        { title: "Company", field: "compnay.name", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Company", field: "company.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Subject", field: "subject", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,
