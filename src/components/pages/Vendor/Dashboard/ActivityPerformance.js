@@ -4,6 +4,8 @@ import * as dayjs from 'dayjs';
 import * as utc from "dayjs/plugin/utc";
 import "./dashboard.css";
 import Chart from "./Chart";
+import { DEFAULT_PAYLOAD } from "../../../common/Table";
+import { ACTIVITY_TYPE, API_DELIMITER } from "../../../../utils/constants";
 // import { navigate } from "raviger";
 // import { getBasePath } from "../../../../App";
 dayjs.extend(utc);
@@ -35,13 +37,15 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
     function updatePerformance() {
         setLabel('');
         if (selectedCompany && selectedAssociateCompany && selectedLocation) {
-            const request = [
-                `companyid=${selectedCompany}`,
-                `associateCompanyId=${selectedAssociateCompany}`,
-                `locationId=${selectedLocation}`,
-                `frequency=${frequency}`
-            ];
-            api.post(`/api/Dashboard/GetPreviousPerformance?${request.join('&')}`, {}).then(response => {
+            const payload = {
+                ...DEFAULT_PAYLOAD, filters: [
+                    { columnName: 'companyId', value: selectedCompany },
+                    { columnName: 'associateCompanyId', value: selectedAssociateCompany },
+                    { columnName: 'locationId', value: selectedLocation },
+                    { columnName: 'frequency', value: frequency }
+                ]
+            }
+            api.post('/api/Dashboard/GetPreviousPerformance', payload).then(response => {
                 if (response && response.data) {
                     const label = frequency !== '0' ?
                         `${dayjs(response.data.startDate).format('DD-MMM-YYYY')} - ${dayjs(response.data.endDate).format('DD-MMM-YYYY')}` :
