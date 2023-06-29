@@ -30,7 +30,7 @@ function Login() {
     const [form, setForm] = useState({});
     const [payload, setPayload] = useState({});
     const { userLogin, isLoading: logging } = useUserLogin((token) => {
-        if (token === 'Exceeded Incorrect Logins') {
+        if ((token || '').includes('Exceeded Incorrect Logins')) {
             toast.error('Too many attempts with incorrect credentials. Your account is temporarily blocked. Try login back after 30 mins.');
         } else if (token) {
             loginCallback(token);
