@@ -6,19 +6,19 @@ import AdvanceSearchModal from "./AdvanceSearchModal";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 
-function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
+function AdvanceSearch({ payload, fields, onSubmit, downloadReport }: any) {
     const [showModal, setShowModal] = useState(false);
-    const [label, setLabel] = useState('');
+    const [label, setLabel] = useState<any>('');
     const [value, setValue] = useState('');
-    const [filter, setFilter] = useState();
+    const [filter, setFilter] = useState<any>();
 
     useEffect(() => {
         if (payload) {
             if (payload.month) {
-                const filter = SEARCH_FIELDS.find(x => x.value === FILTERS.MONTH);
-                setLabel(filter.label);
-                setValue(`${payload.month} (${payload.year})`);
-                setFilter(FILTERS.MONTH);
+                // const filter: any = SEARCH_FIELDS.find(x => x.value === FILTERS.MONTH);
+                // setLabel(filter?.label);
+                // setValue(`${payload?.month} (${payload.year})`);
+                // setFilter(FILTERS.MONTH);
             } else {
                 setLabel('');
                 setValue('');
@@ -72,7 +72,7 @@ function AdvanceSearch({ payload, fields, onSubmit, downloadReport }) {
                             {
                                 filter === FILTERS.MONTH && Boolean(downloadReport) ?
                                     <OverlayTrigger overlay={<Tooltip>Click to download report</Tooltip>}
-                                        placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
+                                        placement="bottom" delay={{ show: TOOLTIP_DELAY } as any}>
                                         <a href="/" onClick={downloadReport}>{value}</a>
                                     </OverlayTrigger>
                                     : <>{value}</>

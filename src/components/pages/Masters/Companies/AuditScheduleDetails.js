@@ -6,7 +6,7 @@ import { ACTIONS, ACTIVITY_STATUS, FILTERS, STATUS_MAPPING } from "../../../comm
 import { useGetAllActivities } from "../../../../backend/query";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
-import AdvanceSearch from "../../../common/AdvanceSearch";
+import AdvanceSearch from "../../../common/AdvanceSearch.tsx";
 import { preventDefault } from "../../../../utils/common";
 import AlertModal from "../../../common/AlertModal";
 import PageLoader from "../../../shared/PageLoader";

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Select from 'react-select';
 import { useGetUserCompanies } from "../../backend/query";
+import { useHistory } from "raviger";
 import { sortBy } from "underscore";
-import { useHistory } from "raviger"
 
-function Location({ onChange }) {
+function Location({ onChange }: any) {
     const { state } = useHistory();
-    const [companies, setCompanies] = useState([]);
-    const [associateCompanies, setAssociateCompanies] = useState([]);
-    const [locations, setLocations] = useState([]);
-    const [company, setCompany] = useState(null);
-    const [associateCompany, setAssociateCompany] = useState(null);
-    const [location, setLocation] = useState(null);
+    const [companies, setCompanies] = useState<any[]>([]);
+    const [associateCompanies, setAssociateCompanies] = useState<any[]>([]);
+    const [locations, setLocations] = useState<any[]>([]);
+    const [company, setCompany] = useState<any>(null);
+    const [associateCompany, setAssociateCompany] = useState<any>(null);
+    const [location, setLocation] = useState<any>(null);
     const { userCompanies, isFetching } = useGetUserCompanies();
 
     useEffect(() => {
@@ -20,7 +20,7 @@ function Location({ onChange }) {
         setAssociateCompany(null);
         setLocation(null);
         if (company) {
-            const associateCompanies = (company.company.associateCompanies || []).map(associateCompany => {
+            const associateCompanies = (company.company.associateCompanies || []).map((associateCompany: any) => {
                 return {
                     label: associateCompany.associateCompany.name,
                     value: associateCompany.associateCompany.id,
@@ -28,9 +28,9 @@ function Location({ onChange }) {
                     locations: associateCompany.locations
                 };
             });
-            const sorted = sortBy(associateCompanies, 'label');
+            const sorted: any[] = sortBy(associateCompanies, 'label');
             setAssociateCompanies(sorted);
-            const _associateCompany = sorted.find(c => c.value === (state || {}).associateCompany);
+            const _associateCompany = sorted.find((c: any) => c.value === (state as any).associateCompany);
             setAssociateCompany(_associateCompany || sorted[0]);
         }
     }, [company]);
@@ -39,12 +39,12 @@ function Location({ onChange }) {
         setLocations([]);
         setLocation(null);
         if (associateCompany) {
-            const locations = (associateCompany.locations || []).map(location => {
+            const locations = (associateCompany.locations || []).map((location: any) => {
                 return { label: `${location.name}, ${location.cities.name}`, value: location.id, location, stateId: location.stateId };
             });
             const sorted = sortBy(locations, 'label');
             setLocations(sorted);
-            const _location = sorted.find(c => c.value === (state || {}).location);
+            const _location = sorted.find((c: any) => c.value === (state as any).location);
             setLocation(_location || sorted[0]);
         }
     }, [associateCompany]);
@@ -62,12 +62,12 @@ function Location({ onChange }) {
 
     useEffect(() => {
         if (!isFetching && userCompanies) {
-            const companies = userCompanies.map(company => {
+            const companies = userCompanies.map((company: any) => {
                 return { value: company.id, label: company.name, company }
             });
             const sorted = sortBy(companies, 'label');
             setCompanies(sorted);
-            const _company = sorted.find(c => c.value === (state || {}).company);
+            const _company = sorted.find((c: any) => c.value === (state as any).company);
             setCompany(_company || sorted[0]);
         }
     }, [isFetching]);

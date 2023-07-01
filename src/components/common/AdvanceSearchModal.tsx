@@ -8,12 +8,12 @@ import { ActivityType } from "../pages/Masters/Master.constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "./FormRenderer";
 import { getMaxMonthYear, getMinMonthYear } from "../../utils/common";
 import { ACTIVITY_TYPE, API_DELIMITER } from "../../utils/constants";
-dayjs.extend(utc);
+dayjs.extend(utc as any);
 
-function AdvanceSearchModal({ data, onSubmit, onCancel }) {
-    const [filter, setFilter] = useState({ hideButtons: true });
+function AdvanceSearchModal(this: any, { data, onSubmit, onCancel }: any) {
+    const [filter, setFilter] = useState<any>({ hideButtons: true });
 
-    const schema = {
+    const schema: any = {
         fields: [
             {
                 component: componentTypes.MONTH_PICKER,
@@ -24,7 +24,7 @@ function AdvanceSearchModal({ data, onSubmit, onCancel }) {
                 maxDate: getMaxMonthYear(),
                 range: false,
                 clearable: true,
-                initialValue: (filter || {}).monthYear,
+                initialValue: filter.monthYear,
                 onChange: onMonthYearChange.bind(this)
             },
             {
@@ -33,8 +33,8 @@ function AdvanceSearchModal({ data, onSubmit, onCancel }) {
                 label: 'Due Date',
                 className: 'grid-col-100',
                 range: true,
-                clearable: true,
-                initialValue: (filter || {}).dueDate,
+                clearable: true, 
+                initialValue: filter.dueDate,
                 onChange: onDueDateChange.bind(this)
             },
             {
@@ -54,7 +54,7 @@ function AdvanceSearchModal({ data, onSubmit, onCancel }) {
         ]
     }
 
-    function debugForm(_form) {
+    function debugForm(_form: any) {
         setFilter(_form.values);
     }
 
@@ -67,17 +67,17 @@ function AdvanceSearchModal({ data, onSubmit, onCancel }) {
         onCancel();
     }
 
-    function onMonthYearChange(event) {
+    function onMonthYearChange(event: any) {
         setFilter({ ...filter, monthYear: event ? event.toDate() : undefined })
     }
 
-    function onDueDateChange(event) {
+    function onDueDateChange(event: any) {
         setFilter({ ...filter, dueDate: event })
     }
 
     function search() {
         const { monthYear, dueDate, activityType, auditType } = filter;
-        const _payload = {};
+        const _payload: any = {};
         if (monthYear) {
             const date = new Date(monthYear);
             const month = MONTHS_ENUM[date.getMonth()];
@@ -103,15 +103,15 @@ function AdvanceSearchModal({ data, onSubmit, onCancel }) {
             toDate.setMinutes(0);
             toDate.setSeconds(0);
             toDate.setMilliseconds(0);
-            _payload.fromDate = dayjs(new Date(fromDate)).local().format();
-            _payload.toDate = dayjs(new Date(toDate)).local().format();
+            _payload.fromDate = dayjs.default(new Date(fromDate)).local().format();
+            _payload.toDate = dayjs.default(new Date(toDate)).local().format();
         }
 
         if (activityType) {
-            _payload.activityType = activityType.map(x => x.value).join(API_DELIMITER);
+            _payload.activityType = activityType.map((x: any) => x.value).join(API_DELIMITER);
         }
         if (auditType) {
-            _payload.auditType = auditType.map(x => x.value).join(API_DELIMITER);
+            _payload.auditType = auditType.map((x: any) => x.value).join(API_DELIMITER);
         }
         onSubmit(_payload);
         onCancel();
@@ -120,7 +120,7 @@ function AdvanceSearchModal({ data, onSubmit, onCancel }) {
     useEffect(() => {
         if (data) {
             const { month, year, fromDate, toDate, activityType, auditType } = data;
-            const _filter = { hideButtons: true };
+            const _filter: any = { hideButtons: true };
             if (month && year) {
                 const date = new Date();
                 date.setDate(1);
@@ -138,12 +138,12 @@ function AdvanceSearchModal({ data, onSubmit, onCancel }) {
             }
 
             if (activityType) {
-                _filter.activityType = activityType.split(API_DELIMITER).map(x => {
+                _filter.activityType = activityType.split(API_DELIMITER).map((x: any) => {
                     return { value: x, label: x };
                 });
             }
             if (auditType) {
-                _filter.auditType = auditType.split(API_DELIMITER).map(x => {
+                _filter.auditType = auditType.split(API_DELIMITER).map((x: any) => {
                     return { value: x, label: x };
                 });
             }
@@ -152,7 +152,7 @@ function AdvanceSearchModal({ data, onSubmit, onCancel }) {
     }, [data]);
 
     return (
-        <Modal show={true} backdrop="static" animation={false} dialogClassName="drawer" size="md">
+        <Modal show={true} backdrop="static" animation={false} dialogClassName="drawer" size="lg">
             <Modal.Header closeButton={true} onHide={onCancel}>
                 <Modal.Title className="bg">Advance Search</Modal.Title>
             </Modal.Header>

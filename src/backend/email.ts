@@ -3,7 +3,7 @@ import { del, get, post, put } from "./request";
 
 const EMAIL_TEMPLATES = '/api/EmailTemplates';
 
-export function useGetAllEmailTemplateTypes(payload, enabled = true) {
+export function useGetAllEmailTemplateTypes(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['emailTemplateTypes', payload],
         async () => await get(`${EMAIL_TEMPLATES}/GetAllTemplateTypes`, payload),
@@ -16,7 +16,7 @@ export function useGetAllEmailTemplateTypes(payload, enabled = true) {
     return { templateTypes: (data || {}).data, total: ((data || {}).data || {}).count || 0, isFetching, refetch };
 }
 
-export function useGetAllTemplates(payload, enabled = true) {
+export function useGetAllTemplates(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['templates', payload],
         async () => await post(`${EMAIL_TEMPLATES}/GetAll`, payload),
@@ -30,7 +30,7 @@ export function useGetAllTemplates(payload, enabled = true) {
     return { templates: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
 }
 
-export function useCreateEmailTemplate(onSuccess, onError) {
+export function useCreateEmailTemplate(onSuccess?: any, onError?: any) {
     const { mutate: createEmailTemplate, error, isLoading: creating } = useMutation(
         ['createEmailTemplate'],
         async (payload) => await post(`${EMAIL_TEMPLATES}/Add`, payload),
@@ -45,7 +45,7 @@ export function useCreateEmailTemplate(onSuccess, onError) {
     return { createEmailTemplate, error, creating };
 }
 
-export function useUpdateEmailTemplate(onSuccess, onError) {
+export function useUpdateEmailTemplate(onSuccess?: any, onError?: any) {
     const { mutate: updateEmailTemplate, error, isLoading: updating } = useMutation(
         ['updateEmailTemplate'],
         async (payload) => await put(`${EMAIL_TEMPLATES}/Update`, payload),
@@ -60,7 +60,7 @@ export function useUpdateEmailTemplate(onSuccess, onError) {
     return { updateEmailTemplate, error, updating };
 }
 
-export function useDeleteEmailTemplate(onSuccess, onError) {
+export function useDeleteEmailTemplate(onSuccess?: any, onError?: any) {
     const { mutate: deleteEmailTemplate, error, isLoading: deleting } = useMutation(
         ['deleteEmailTemplate'],
         async (id) => await del(`${EMAIL_TEMPLATES}/Delete?Id=${id}`),

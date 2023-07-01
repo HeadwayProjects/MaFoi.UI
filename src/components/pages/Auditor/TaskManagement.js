@@ -12,7 +12,7 @@ import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY }
 import Icon from "../../common/Icon";
 import Table, { reactFormatter, CellTmpl, TitleTmpl, DEFAULT_PAYLOAD } from "../../common/Table";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
-import AdvanceSearch from "../../common/AdvanceSearch";
+import AdvanceSearch from "../../common/AdvanceSearch.tsx";
 import AlertModal from "../../common/AlertModal";
 import { download, preventDefault, reduceArraytoObj } from "../../../utils/common";
 import PublishModal from "./PublishModal";

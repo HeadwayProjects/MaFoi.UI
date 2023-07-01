@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import '../shared/PageLoader.css';
 
-function PageLoader({ message, children }) {
+function PageLoader({ message, children }: any) {
     useEffect(() => {
         window.document.body.style.overflow = 'hidden';
         return () => {

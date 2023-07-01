@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { post } from "./request";
 
-export function useAuditReport(onSuccess, onError) {
+export function useAuditReport(onSuccess?: any, onError?: any) {
     const { mutate: auditReport, error, isLoading: exporting } = useMutation(
         ['auditReport'],
         async (payload) => await post('/api/Auditor/GetAuditReport', payload, null, true, { responseType: 'blob' }),
@@ -16,7 +16,7 @@ export function useAuditReport(onSuccess, onError) {
     return { auditReport, error, exporting };
 }
 
-export function useExportLaws(onSuccess, onError) {
+export function useExportLaws(onSuccess?: any, onError?: any) {
     const { mutate: exportLaws, error, isLoading: exporting } = useMutation(
         ['exportLaws'],
         async (payload) => await post('/api/Law/Export', payload, null, true, { responseType: 'blob' }),
@@ -31,7 +31,7 @@ export function useExportLaws(onSuccess, onError) {
     return { exportLaws, error, exporting };
 }
 
-export function useExportAct(onSuccess, onError) {
+export function useExportAct(onSuccess?: any, onError?: any) {
     const { mutate: exportAct, error, isLoading: exporting } = useMutation(
         ['exportAct'],
         async (payload) => await post('/api/Act/Export', payload, null, true, { responseType: 'blob' }),
@@ -46,7 +46,7 @@ export function useExportAct(onSuccess, onError) {
     return { exportAct, error, exporting };
 }
 
-export function useExportActivities(onSuccess, onError) {
+export function useExportActivities(onSuccess?: any, onError?: any) {
     const { mutate: exportActivity, error, isLoading: exporting } = useMutation(
         ['exportActivity'],
         async (payload) => await post('/api/Activity/Export', payload, null, true, { responseType: 'blob' }),
@@ -61,7 +61,7 @@ export function useExportActivities(onSuccess, onError) {
     return { exportActivity, error, exporting };
 }
 
-export function useExportRules(onSuccess, onError) {
+export function useExportRules(onSuccess?: any, onError?: any) {
     const { mutate: exportRules, error, isLoading: exporting } = useMutation(
         ['exportRules'],
         async (payload) => await post('/api/Rule/Export', payload, null, true, { responseType: 'blob' }),
@@ -76,7 +76,7 @@ export function useExportRules(onSuccess, onError) {
     return { exportRules, error, exporting };
 }
 
-export function useExportStates(onSuccess, onError) {
+export function useExportStates(onSuccess?: any, onError?: any) {
     const { mutate: exportStates, error, isLoading: exporting } = useMutation(
         ['exportStates'],
         async (payload) => await post('/api/State/Export', payload, null, true, { responseType: 'blob' }),
@@ -91,7 +91,7 @@ export function useExportStates(onSuccess, onError) {
     return { exportStates, error, exporting };
 }
 
-export function useExportCities(onSuccess, onError) {
+export function useExportCities(onSuccess?: any, onError?: any) {
     const { mutate: exportCities, error, isLoading: exporting } = useMutation(
         ['exportCities'],
         async (payload) => await post('/api/City/Export', payload, null, true, { responseType: 'blob' }),
@@ -105,7 +105,7 @@ export function useExportCities(onSuccess, onError) {
     );
     return { exportCities, error, exporting };
 }
-export function useExportActStateMappings(onSuccess, onError) {
+export function useExportActStateMappings(onSuccess?: any, onError?: any) {
     const { mutate: exportActStateMappings, error, isLoading: exporting } = useMutation(
         ['exportActStateMappings'],
         async (payload) => await post('/api/Mappings/ExportActStateMapping', payload, null, true, { responseType: 'blob' }),
@@ -119,7 +119,7 @@ export function useExportActStateMappings(onSuccess, onError) {
     );
     return { exportActStateMappings, error, exporting };
 }
-export function useExportRuleCompliance(onSuccess, onError) {
+export function useExportRuleCompliance(onSuccess?: any, onError?: any) {
     const { mutate: exportRuleCompliance, error, isLoading: exporting } = useMutation(
         ['exportRuleCompliance'],
         async (payload) => await post('/api/RuleComplianceDetail/Export', payload, null, true, { responseType: 'blob' }),

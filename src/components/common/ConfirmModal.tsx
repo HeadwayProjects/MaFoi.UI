@@ -2,15 +2,15 @@ import React from "react";
 import { Button, Modal } from "react-bootstrap";
 
 
-function ConfirmModal({ onSubmit, onClose, yesText = 'Yes', noText = 'No', title, message, children }) {
+function ConfirmModal({ onSubmit, onClose, yesText = 'Yes', noText = 'No', title, message, children }: any) {
 
-    function submit(event) {
+    function submit(event: any) {
         onSubmit(event);
         onClose();
     }
 
     return (
-        <Modal show={true} backdrop="static" animation={false} dialogClassName="confirm-modal" centered="true">
+        <Modal show={true} backdrop="static" animation={false} dialogClassName="confirm-modal" >
             <Modal.Header closeButton={true} onHide={onClose}>
                 {
                     title &&

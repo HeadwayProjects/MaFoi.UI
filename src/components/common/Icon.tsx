@@ -10,8 +10,8 @@ import {
 import "./Icon.css";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 
-function Icon({ className, name, action, data, style, disabled, text, type }) {
-    function onClick(event) {
+function Icon({ className, name, action, data, style, disabled, text, type }: any) {
+    function onClick(event: any) {
         preventDefault(event);
         if (action && !disabled) {
             action(data);
@@ -20,12 +20,10 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
 
     return (
         <>
-            {/* // <OverlayTrigger overlay={<Tooltip>{text || name}</Tooltip>}
-        //     placement="bottom" delay={{ show: 500 }}> */}
             <span className={`icon icon-${name} ${type === 'button' ? 'btn-icon' : ''} ${className || ''} ${disabled ? 'disabled' : ''}`}
-                style={style} onClick={onClick} disabled={disabled}
+                style={style} onClick={onClick}
                 title={text || name}>
-                {{
+                {({
                     th: (
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="3" y="3" width="8" height="8" rx="3" />
@@ -215,9 +213,8 @@ function Icon({ className, name, action, data, style, disabled, text, type }) {
                             </defs>
                         </svg>
                     )
-                }[name]}
+                } as any)[name]}
             </span>
-            {/* </OverlayTrigger> */}
         </>
     )
 }

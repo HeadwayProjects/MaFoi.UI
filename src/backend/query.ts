@@ -14,7 +14,7 @@ export function useGetUserCompanies() {
     return { userCompanies: (data || {}).data || [], isFetching, refetch };
 }
 
-export function useGetActivityDocuments(activityId) {
+export function useGetActivityDocuments(activityId: string) {
     const queryClient = useQueryClient();
     function invalidate() {
         queryClient.invalidateQueries(['activityDocuments', activityId])
@@ -31,7 +31,7 @@ export function useGetActivityDocuments(activityId) {
     return { documents: (data || {}).data || [], isFetching, invalidate };
 }
 
-export function useGetVendorActivites(payload) {
+export function useGetVendorActivites(payload: any) {
     const { data, isFetching, refetch } = useQuery(
         ['auditorActivities', payload],
         async () => await api.post('/api/ToDo/GetToDoByCriteria', payload),
@@ -45,7 +45,7 @@ export function useGetVendorActivites(payload) {
     return { activities: (data || {}).data || [], isFetching, refetch };
 }
 
-export function useGetAllActivities(payload, enabled = true) {
+export function useGetAllActivities(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['auditorActivities', payload],
         async () => await api.post('/api/ToDo/GetAll', payload),

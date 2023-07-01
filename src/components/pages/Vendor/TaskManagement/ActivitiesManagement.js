@@ -18,7 +18,7 @@ import Icon from "../../../common/Icon";
 import { download, downloadFileContent, preventDefault, reduceArraytoObj } from "../../../../utils/common";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
-import AdvanceSearch from "../../../common/AdvanceSearch";
+import AdvanceSearch from "../../../common/AdvanceSearch.tsx";
 import AlertModal from "../../../common/AlertModal";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
 import { useAuditReport } from "../../../../backend/exports";

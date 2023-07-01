@@ -51,47 +51,49 @@ const editorConfig = {
     ]
 };
 
-function fileSizeValidator({ maxSize }) {
-    return (value) => {
+function fileSizeValidator({ maxSize }: any) {
+    return (value: any) => {
         if (value && value.inputFiles[0] && value.inputFiles[0].size > maxSize) {
             return `Maximum allowed size is ${humanReadableFileSize(maxSize)}.`;
         }
     }
 }
-function fileTypeValidator({ regex }) {
-    return (value) => {
-        const file = ((value || {}).inputFiles || [])[0];
-        if (file && !regex.exec(file.name)) {
-            return `Invalid file extension.`
+function fileTypeValidator({ regex }: any) {
+    return (value: any) => {
+        if (value && value.inputFiles) {
+            const file = value.inputFiles[0];
+            if (file && !regex.exec(file.name)) {
+                return `Invalid file extension.`
+            }
         }
     }
 }
 
-function TextField(props) {
+function TextField(props: any) {
     const { label, meta = {}, input, name } = useFieldApi(props);
-    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
-    const maxLength = ((props.validate || []).find(x => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
+    const maxLength = ((props.validate || []).find((x: any) => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
     const isPasswordField = props.fieldType === 'password';
     const [showPassword, setShowPassword] = useState(false);
 
-    function onInput(input) {
+    function onInput(input: any) {
         return {
             ...input,
             type: isPasswordField ? (showPassword ? 'text' : 'password') : (props.fieldType || 'text'),
             required,
             placeholder: label ? (props.placeholder || `Enter ${label}`) : undefined,
-            onChange: (e) => {
+            onChange: (e: any) => {
                 input.onChange(e);
                 if (props.onChange) {
                     props.onChange(e);
                 }
             },
-            onPaste: (e) => {
+            onPaste: (e: any) => {
                 if (props.onPaste) {
                     props.onPaste(e);
                 }
             },
-            onKeyDown: (e) => {
+            onKeyDown: (e: any) => {
                 if (props.fieldType === 'number') {
                     const key = e.charCode || e.keyCode || 0;
                     const value = e.target.value;
@@ -139,17 +141,17 @@ function TextField(props) {
     )
 }
 
-function TextAreaField(props) {
+function TextAreaField(props: any) {
     const { label, meta = {}, input, name } = useFieldApi(props);
-    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
-    const maxLength = ((props.validate || []).find(x => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
+    const maxLength = ((props.validate || []).find((x: any) => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
 
-    function onInput(input) {
+    function onInput(input: any) {
         return {
             ...input,
             required,
             placeholder: props.placeholder || `Enter ${label}`,
-            onChange: (e) => {
+            onChange: (e: any) => {
                 input.onChange(e);
                 if (props.onChange) {
                     props.onChange(e);
@@ -178,17 +180,17 @@ function TextAreaField(props) {
     )
 }
 
-function InputasTextAreaField(props) {
+function InputasTextAreaField(props: any) {
     const { label, meta = {}, input, name } = useFieldApi(props);
-    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
-    const maxLength = ((props.validate || []).find(x => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
+    const maxLength = ((props.validate || []).find((x: any) => x.type === validatorTypes.MAX_LENGTH) || {}).threshold || 255;
 
-    function onInput(input) {
+    function onInput(input: any) {
         return {
             ...input,
             required,
             placeholder: props.placeholder || `Enter ${label}`,
-            onChange: (e) => {
+            onChange: (e: any) => {
                 const oldVal = e.target.value;
                 const value = (oldVal || '').replace(/[\r\n\t]/g, ' ');
                 const newEvent = { ...e, target: { ...e.target, value } };
@@ -220,17 +222,17 @@ function InputasTextAreaField(props) {
     )
 }
 
-function SelectField(props) {
+function SelectField(props: any) {
     const { label, meta = {}, input, name } = useFieldApi(props);
-    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
     const [options, setOptions] = useState(props.options);
 
-    function onInput(input) {
+    function onInput(input: any) {
         return {
             ...input,
             required,
             placeholder: props.placeholder || `Select ${label}`,
-            onChange: (e) => {
+            onChange: (e: any) => {
                 input.onChange(e);
                 if (props.onChange) {
                     props.onChange(e);
@@ -243,7 +245,7 @@ function SelectField(props) {
 
     useEffect(() => {
         if (props.options) {
-            setOptions((props.options || []).map(x => {
+            setOptions((props.options || []).map((x: any) => {
                 if (typeof x === 'string') {
                     return { value: x, label: x };
                 }
@@ -282,16 +284,16 @@ function SelectField(props) {
     )
 }
 
-function AsyncSelectField(props) {
+function AsyncSelectField(props: any) {
     const { label, meta = {}, input, name } = useFieldApi(props);
-    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
 
-    function onInput(input) {
+    function onInput(input: any) {
         return {
             ...input,
             required,
             placeholder: props.placeholder || `Search for ${label}`,
-            onChange: (e) => {
+            onChange: (e: any) => {
                 input.onChange(e);
                 if (props.onChange) {
                     props.onChange(e);
@@ -331,7 +333,7 @@ function AsyncSelectField(props) {
     )
 }
 
-function HtmlField(props) {
+function HtmlField(props: any) {
     const { label } = useFieldApi(props);
 
     return (
@@ -346,7 +348,7 @@ function HtmlField(props) {
         </div>
     )
 }
-function HtmlContentField(props) {
+function HtmlContentField(props: any) {
     const { label } = useFieldApi(props);
 
     return (
@@ -357,14 +359,14 @@ function HtmlContentField(props) {
     )
 }
 
-function CheckboxField(props) {
+function CheckboxField(props: any) {
     const { label, input } = useFieldApi(props);
 
-    function onInput(input) {
+    function onInput(input: any) {
         return {
             ...input,
             type: 'checkbox',
-            onChange: (e) => {
+            onChange: (e: any) => {
                 input.onChange(e);
                 if (props.onChange) {
                     props.onChange(e);
@@ -382,7 +384,7 @@ function CheckboxField(props) {
 
 }
 
-function TabItemField(props) {
+function TabItemField(props: any) {
     return (
         <div className={`form-group ${props.className || ''}`}
             dangerouslySetInnerHTML={{ __html: props.content || '--NA--' }}>
@@ -390,9 +392,9 @@ function TabItemField(props) {
     )
 }
 
-function FileUploadField(props) {
+function FileUploadField(props: any) {
     const { input, meta, label, name } = useFieldApi(props);
-    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
     return (
         <div className={`form-group ${props.className || ''}`}>
             {
@@ -417,16 +419,16 @@ function FileUploadField(props) {
     );
 };
 
-export function DatePickerField(props) {
+export function DatePickerField(props: any) {
     const { input, meta, label, name } = useFieldApi(props);
     const [value, setValue] = useState(props.initialValue);
-    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
 
-    function onInput(input) {
+    function onInput(input: any) {
         return {
             ...input,
             placeholder: props.placeholder || `Select ${label}`,
-            onChange: (e) => {
+            onChange: (e: any) => {
                 setValue(e);
                 input.onChange(e);
                 if (props.onChange) {
@@ -478,16 +480,16 @@ export function DatePickerField(props) {
         </div>
     );
 }
-export function MonthPickerField(props) {
+export function MonthPickerField(props: any) {
     const { input, meta, label, name } = useFieldApi(props);
     const [value, setValue] = useState(props.initialValue);
-    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
 
-    function onInput(input) {
+    function onInput(input: any) {
         return {
             ...input,
             placeholder: props.placeholder || `Select ${label}`,
-            onChange: (e) => {
+            onChange: (e: any) => {
                 setValue(e);
                 input.onChange(e);
                 if (props.onChange) {
@@ -540,15 +542,15 @@ export function MonthPickerField(props) {
     );
 }
 
-function TextEditorField(props) {
+function TextEditorField(props: any) {
     const { input, meta, label, name } = useFieldApi(props);
     const [value, setValue] = useState(props.initialValue);
-    const required = (props.validate || []).find(x => x.type === validatorTypes.REQUIRED) ? true : false;
-    function onInput(input) {
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
+    function onInput(input: any) {
         return {
             ...input,
             placeholder: props.placeholder || `Enter ${label}`,
-            onChange: (e) => {
+            onChange: (e: any) => {
                 setValue(e);
                 input.onChange(e);
                 if (props.onChange) {
@@ -602,7 +604,7 @@ export const ComponentMapper = {
 };
 
 
-export function FormTemplate({ formFields }) {
+export function FormTemplate({ formFields }: any) {
     const { handleSubmit, initialValues = { fullWidth: true }, getState } = useFormApi();
     const { valid, touched } = getState();
 
@@ -622,7 +624,7 @@ export function FormTemplate({ formFields }) {
     )
 }
 
-function FormRenderer(props) {
+function FormRenderer(props: any) {
     const validatorMapper = { 'file-size': fileSizeValidator, 'file-type': fileTypeValidator };
     return (
         <>

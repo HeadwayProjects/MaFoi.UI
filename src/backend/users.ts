@@ -4,7 +4,7 @@ import * as api from "./request";
 
 const USERS = '/api/UserManagement';
 
-export function useGetUsers(payload, enabled = true) {
+export function useGetUsers(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['users', payload],
         async () => await api.post(`${USERS}/GetAllUsers`, payload),
@@ -16,7 +16,7 @@ export function useGetUsers(payload, enabled = true) {
     );
     return { users: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
 }
-export function useGetUserRoles(payload, enabled = true) {
+export function useGetUserRoles(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['userRoles', payload],
         async () => await api.get(`${USERS}/GetAllRoles`, payload),
@@ -29,7 +29,7 @@ export function useGetUserRoles(payload, enabled = true) {
     return { roles: (data || {}).data || [], isFetching, refetch };
 }
 
-export function useCreateUser(onSuccess, onError) {
+export function useCreateUser(onSuccess?: any, onError?: any) {
     const { mutate: createUser, error, isLoading: creating } = useMutation(
         ['createUser'],
         async (payload) => await api.post(`${USERS}/CreateUser`, payload),
@@ -44,7 +44,7 @@ export function useCreateUser(onSuccess, onError) {
     return { createUser, error, creating };
 }
 
-export function useUpdateUser(onSuccess, onError) {
+export function useUpdateUser(onSuccess?: any, onError?: any) {
     const { mutate: updateUser, error, isLoading: updating } = useMutation(
         ['updateUser'],
         async (payload) => await api.put(`${USERS}/EditUser`, payload),
@@ -59,7 +59,7 @@ export function useUpdateUser(onSuccess, onError) {
     return { updateUser, error, updating };
 }
 
-export function useDeleteUser(onSuccess, onError) {
+export function useDeleteUser(onSuccess?: any, onError?: any) {
     const { mutate: deleteUser, error, isLoading: deleting } = useMutation(
         ['deleteUser'],
         async (id) => await api.del(`${USERS}/DeleteUser?id=${id}`),

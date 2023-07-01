@@ -55,8 +55,8 @@ export const DEFAULT_DASHBOARD_PAYLOAD = {
     sort: { columnName: 'name', order: 'asc' }
 }
 
-export function reactFormatter(JSX, JSXElementConstructor) {
-    return function customFormatter(cell, formatterParams, onRendered) {
+export function reactFormatter(JSX: any, JSXElementConstructor?: any) {
+    return function customFormatter(cell: any, formatterParams: any, onRendered: any) {
         const cellEle = cell.getElement();
         const root = ReactDOM.createRoot(cellEle);
 
@@ -74,14 +74,14 @@ export function reactFormatter(JSX, JSXElementConstructor) {
     }
 }
 
-export function TitleTmpl({ cell }) {
+export function TitleTmpl({ cell }: any) {
     const _def = cell.getColumn().getDefinition();
     return (
         <div className="ellipse two-lines">{_def.title}</div>
     )
 }
 
-export function CellTmpl({ cell }) {
+export function CellTmpl({ cell }: any) {
     const value = cell.getValue();
     return (
         <>
@@ -89,7 +89,7 @@ export function CellTmpl({ cell }) {
                 !!value &&
                 <div className="d-flex align-items-center h-100 w-auto">
                     <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
-                        placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
+                        placement="bottom" delay={{ show: TOOLTIP_DELAY } as any}>
                         <div className="ellipse two-lines">{value}</div>
                     </OverlayTrigger>
                 </div>
@@ -98,7 +98,7 @@ export function CellTmpl({ cell }) {
     )
 }
 
-export function NameTmpl({ cell }) {
+export function NameTmpl({ cell }: any) {
     const value = (cell.getValue() || {}).name;
     return (
         <>
@@ -106,7 +106,7 @@ export function NameTmpl({ cell }) {
                 !!value &&
                 <div className="d-flex align-items-center h-100 w-auto">
                     <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
-                        placement="bottom" delay={{ show: TOOLTIP_DELAY }}>
+                        placement="bottom" delay={{ show: TOOLTIP_DELAY } as any}>
                         <div className="ellipse two-lines">{value}</div>
                     </OverlayTrigger>
                 </div>
@@ -115,7 +115,7 @@ export function NameTmpl({ cell }) {
     )
 }
 
-function Table(props) {
+function Table(props: any) {
     const id = `table_${new Date().getTime()}`;
     const divEle = useRef(null);
     const {
@@ -140,8 +140,8 @@ function Table(props) {
         rowFormatter
     } = props.options;
 
-    const [table, setTable] = useState();
-    const [tableColumns, setTableColumns] = useState([]);
+    const [table, setTable] = useState<any>();
+    const [tableColumns, setTableColumns] = useState<any[]>([]);
     const [pageCounter, setPageCounter] = useState('No records');
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
@@ -149,19 +149,19 @@ function Table(props) {
 
     function handleResize() {
         if (divEle && divEle.current) {
-            const { y } = divEle.current.getBoundingClientRect();
+            const { y } = (divEle.current as any).getBoundingClientRect();
             const ht = `calc(${window.innerHeight - y}px - ${bufferSpacing || 0}px)`;
-            divEle.current.style.height = ht;
+            (divEle.current as any).style.height = ht;
         }
     }
 
-    function updatePageCounter(total) {
+    function updatePageCounter(total: number) {
         const startIndex = (page - 1) * pageSize.value + 1;
         const lastIndex = page * pageSize.value;
         setPageCounter(total ? `Showing ${startIndex} - ${lastIndex > total ? total : lastIndex} of ${humanReadableNumber(total || 0)} records` : 'No records');
     }
 
-    function handlePageNav(pageNav) {
+    function handlePageNav(pageNav: string) {
         let _page = 1;
         switch (pageNav) {
             case PageNav.FIRST:
@@ -185,7 +185,7 @@ function Table(props) {
         }
     }
 
-    function handlePageSizeChange(e) {
+    function handlePageSizeChange(e: any) {
         setPageSize(e);
         setPage(1);
         table.setPageSize(e.value)
@@ -218,7 +218,7 @@ function Table(props) {
 
     useEffect(() => {
         if (tableColumns) {
-            const _table = new Tabulator(divEle.current, {
+            const _table = new Tabulator(divEle.current as any, {
                 height: height + 10,
                 pagination: true,
                 paginationMode,
@@ -236,7 +236,7 @@ function Table(props) {
                 initialSort,
                 layout,
                 columns: tableColumns,
-                resizableColumnFit,
+                // resizableColumnFit,
                 rowHeight,
                 rowFormatter,
                 dataLoader: false
@@ -249,7 +249,7 @@ function Table(props) {
 
             _table.on('dataLoaded', (data) => {
                 setTimeout(() => {
-                    const _placeholder = _table.element.querySelector('tabulator-placeholder-contents');
+                    const _placeholder: HTMLElement | null = _table.element.querySelector('tabulator-placeholder-contents');
                     if ((data || []).length === 0 && _placeholder) {
                         _placeholder.style.display = 'inline-block';
                     }
@@ -260,7 +260,7 @@ function Table(props) {
         }
 
         return () => {
-            const _div = divEle.current;
+            const _div: any = divEle.current;
             if (!!_div) {
                 while (_div.firstChild) {
                     _div.removeChild(_div.firstChild);
@@ -327,7 +327,7 @@ function Table(props) {
                         paginate &&
                         <div className="d-flex align-items-center">
                             <Select options={PAGE_OPTIONS} value={pageSize} onChange={handlePageSizeChange}
-                                placement="top" menuPosition="fixed" className="me-3 page-changer"
+                                menuPlacement="top" menuPosition="fixed" className="me-3 page-changer"
                                 styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999, color: "var(--black-600)" }) }} />
                             <Icon name={'double-left'} className={'page-nav-btns'} type="button"
                                 action={() => handlePageNav(PageNav.FIRST)} text={'First'}

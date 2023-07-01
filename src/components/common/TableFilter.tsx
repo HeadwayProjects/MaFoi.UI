@@ -5,11 +5,11 @@ import { debounce } from "underscore";
 import { DEBOUNCE_TIME } from "../../utils/constants";
 const DEFAULT_OPTION = { value: 'ALL', label: 'All' };
 
-function TableFilters({ search, filterConfig, onFilterChange, placeholder }) {
-    const searchRef = useRef();
-    const [filters, setFilters] = useState(null);
+function TableFilters({ search, filterConfig, onFilterChange, placeholder }: any) {
+    const searchRef: any = useRef();
+    const [filters, setFilters] = useState<any>(null);
 
-    function handleFilterChange(filter, event) {
+    function handleFilterChange(filter: any, event: any) {
         const value = (event || {}).value;
         const _filters = { ...filters };
         if (value === 'ALL') {
@@ -23,7 +23,7 @@ function TableFilters({ search, filterConfig, onFilterChange, placeholder }) {
         }
     }
 
-    function handleKeyup(event) {
+    function handleKeyup(event: any) {
         const value = (event.target.value || '').trim();
         setFilters({ ...filters, search: value });
     }
@@ -31,7 +31,7 @@ function TableFilters({ search, filterConfig, onFilterChange, placeholder }) {
     useEffect(() => {
         if (filters) {
             const _filters = { ...filters };
-            const payload = { filters: [], search: '' };
+            const payload: any = { filters: [], search: '' };
             Object.keys(_filters).forEach(key => {
                 if (key === 'search') {
                     payload.search = _filters[key];
@@ -50,7 +50,7 @@ function TableFilters({ search, filterConfig, onFilterChange, placeholder }) {
     return (
         <div className="d-flex align-items-end filters">
             {
-                (filterConfig || []).map(filter => {
+                (filterConfig || []).map((filter: any) => {
                     return (
                         <div className="d-flex flex-column me-3" key={filter.name}>
                             <label className="filter-label"><small>{filter.label}</small></label>
