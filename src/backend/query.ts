@@ -14,6 +14,19 @@ export function useGetUserCompanies() {
     return { userCompanies: (data || {}).data || [], isFetching, refetch };
 }
 
+export function useGetForms(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['stateMappingForms', payload],
+        async () => await api.post('/api/ActStateMapping/GetForms', payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+    return { forms: (data || {}).data || [], isFetching, refetch };
+}
+
 export function useGetActivityDocuments(activityId: string) {
     const queryClient = useQueryClient();
     function invalidate() {

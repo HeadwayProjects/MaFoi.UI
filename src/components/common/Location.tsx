@@ -5,14 +5,14 @@ import { useHistory } from "raviger";
 import { sortBy } from "underscore";
 
 function Location({ onChange }: any) {
-    const { state } = useHistory();
+    const { state }: any = useHistory();
     const [companies, setCompanies] = useState<any[]>([]);
     const [associateCompanies, setAssociateCompanies] = useState<any[]>([]);
     const [locations, setLocations] = useState<any[]>([]);
     const [company, setCompany] = useState<any>(null);
     const [associateCompany, setAssociateCompany] = useState<any>(null);
     const [location, setLocation] = useState<any>(null);
-    const { userCompanies, isFetching } = useGetUserCompanies();
+    const { userCompanies, isFetching }: any = useGetUserCompanies();
 
     useEffect(() => {
         setAssociateCompanies([]);
@@ -30,7 +30,7 @@ function Location({ onChange }: any) {
             });
             const sorted: any[] = sortBy(associateCompanies, 'label');
             setAssociateCompanies(sorted);
-            const _associateCompany = sorted.find((c: any) => c.value === (state as any).associateCompany);
+            const _associateCompany = sorted.find((c: any) => c.value === (state || {}).associateCompany);
             setAssociateCompany(_associateCompany || sorted[0]);
         }
     }, [company]);
@@ -44,7 +44,7 @@ function Location({ onChange }: any) {
             });
             const sorted = sortBy(locations, 'label');
             setLocations(sorted);
-            const _location = sorted.find((c: any) => c.value === (state as any).location);
+            const _location = sorted.find((c: any) => c.value === (state || {}).location);
             setLocation(_location || sorted[0]);
         }
     }, [associateCompany]);
@@ -67,7 +67,7 @@ function Location({ onChange }: any) {
             });
             const sorted = sortBy(companies, 'label');
             setCompanies(sorted);
-            const _company = sorted.find((c: any) => c.value === (state as any).company);
+            const _company = sorted.find((c: any) => c.value === (state || {}).company);
             setCompany(_company || sorted[0]);
         }
     }, [isFetching]);

@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Select from "react-select";
 import * as api from "../../../../backend/request";
-import { useGetUserCompanies } from "../../../../backend/query";
+import { useGetForms, useGetUserCompanies } from "../../../../backend/query";
 import { toast } from 'react-toastify';
 import PageLoader from "../../../shared/PageLoader";
 import { ALLOWED_FILES_REGEX } from "../../../common/Constants";
@@ -38,21 +38,23 @@ function getYears() {
     });
 }
 
-function BulkUploadModal({ onClose }) {
+function BulkUploadModal({ onClose }: any) {
     const [submitting, setSubmitting] = useState(false);
-    const [uploadFiles, setUploadedFiles] = useState([]);
-    const [companies, setCompanies] = useState([]);
-    const [associateCompanies, setAssociateCompanies] = useState([]);
-    const [locations, setLocations] = useState([]);
-    const [rules, setRules] = useState([]);
-    const [months] = useState(Months);
-    const [years] = useState(getYears());
-    const [company, setCompany] = useState(null);
-    const [associateCompany, setAssociateCompany] = useState(null);
-    const [location, setLocation] = useState(null);
-    const [month, setMonth] = useState(Months[new Date().getMonth()]);
-    const [year, setYear] = useState(years[0]);
+    const [uploadFiles, setUploadedFiles] = useState<any>([]);
+    const [companies, setCompanies] = useState<any>([]);
+    const [associateCompanies, setAssociateCompanies] = useState<any>([]);
+    const [locations, setLocations] = useState<any>([]);
+    const [rules, setRules] = useState<any>([]);
+    const [months] = useState<any>(Months);
+    const [years] = useState<any>(getYears());
+    const [company, setCompany] = useState<any>(null);
+    const [associateCompany, setAssociateCompany] = useState<any>(null);
+    const [location, setLocation] = useState<any>(null);
+    const [month, setMonth] = useState<any>(Months[new Date().getMonth()]);
+    const [year, setYear] = useState<any>(years[0]);
     const { userCompanies, isFetching } = useGetUserCompanies();
+    const [payload, setPayload] = useState<any>({});
+    const { forms, isFetching: fetchingForms } = useGetForms(payload, Boolean(payload.location) && Boolean(payload.month) && Boolean(payload.year));
 
     function validateFormSelection() {
         const _uploadedFiles = [...uploadFiles];
@@ -64,7 +66,7 @@ function BulkUploadModal({ onClose }) {
         setUploadedFiles(_uploadedFiles);
     }
 
-    function onFileChange(event) {
+    function onFileChange(event: any) {
         const _uploadedFiles = [...uploadFiles];
         if (event) {
             const length = event.target.files.length;
@@ -79,7 +81,7 @@ function BulkUploadModal({ onClose }) {
         }
     }
 
-    function onTypeChange(event, index) {
+    function onTypeChange(event: any, index: number) {
         const _uploadedFiles = [...uploadFiles];
         delete _uploadedFiles[index].required;
         delete _uploadedFiles[index].duplicate;
@@ -100,7 +102,7 @@ function BulkUploadModal({ onClose }) {
         setUploadedFiles(_uploadedFiles);
     }
 
-    function onDeleteFile(index) {
+    function onDeleteFile(index: number) {
         const _uploadedFiles = [...uploadFiles];
         _uploadedFiles.splice(index, 1);
         setUploadedFiles(_uploadedFiles);
@@ -142,8 +144,8 @@ function BulkUploadModal({ onClose }) {
         api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
             if (response && response.data) {
                 const _rows = response.data || [];
-                const _applicableRows = _rows.filter(x => x.auditted === ACTIVITY_TYPE.AUDIT);
-                const _published = _applicableRows.filter(x => x.published);
+                const _applicableRows = _rows.filter((x: any) => x.auditted === ACTIVITY_TYPE.AUDIT);
+                const _published = _applicableRows.filter((x: any) => x.published);
                 if (_published.length > 0) {
                     setSubmitting(false);
                     toast.warn('All the activities are published for the selected month and year. You cannot modify them by performing bulk upload.');
@@ -176,13 +178,44 @@ function BulkUploadModal({ onClose }) {
         }).finally(() => setSubmitting(false))
     }
 
+    function ruleOptionLabel({ label, form }: any) {
+        return (
+            <div className="d-flex flex-column">
+                <div>{label}</div>
+                {
+                    form &&
+                    <div className="text-sm d-flex align-items-center">
+                        {
+                            form.sectionNo &&
+                            <>
+                                <span className="fst-italic">Section No.</span>
+                                <span className="fw-bold ms-1">{form.sectionNo}</span>
+                            </>
+                        }
+                        {
+                            form.sectionNo && form.ruleNo &&
+                            <span className="text-md mx-2">|</span>
+                        }
+                        {
+                            form.sectionNo &&
+                            <>
+                                <span className="fst-italic">Rule No.</span>
+                                <span className="fw-bold ms-1">{form.ruleNo}</span>
+                            </>
+                        }
+                    </div>
+                }
+            </div>
+        )
+    }
+
     useEffect(() => {
         setAssociateCompanies([]);
         setLocations([]);
         setAssociateCompany(null);
         setLocation(null);
         if (company) {
-            const associateCompanies = (company.company.associateCompanies || []).map(associateCompany => {
+            const associateCompanies = (company.company.associateCompanies || []).map((associateCompany: any) => {
                 return {
                     label: associateCompany.associateCompany.name,
                     value: associateCompany.associateCompany.id,
@@ -200,7 +233,7 @@ function BulkUploadModal({ onClose }) {
         setLocations([]);
         setLocation(null);
         if (associateCompany) {
-            const locations = (associateCompany.locations || []).map(location => {
+            const locations = (associateCompany.locations || []).map((location: any) => {
                 return { label: `${location.name}, ${location.cities.name}`, value: location.id, location, stateId: location.cities.stateId };
             });
             const sorted = sortBy(locations, 'label');
@@ -211,27 +244,43 @@ function BulkUploadModal({ onClose }) {
 
     useEffect(() => {
         if ((location || {}).stateId) {
-            api.get(`/api/ActStateMapping/GetByState?state=${location.stateId}`).then(response => {
-                const rules = (response.data || []).map(rule => {
-                    return { value: rule.id, label: rule.fileName }
-                });
-                setRules(rules.filter(x => Boolean(x.label)));
-                validateFormSelection();
+            setPayload({
+                company: company.value,
+                associateCompany: associateCompany.value,
+                location: location.value,
+                month: month.value,
+                year: year.value
             });
         }
     }, [location])
+    useEffect(() => {
+        if (month && year) {
+            setPayload({
+                ...payload,
+                month: month.value,
+                year: year.value
+            });
+        }
+    }, [month, year])
 
 
     useEffect(() => {
         if (!isFetching && userCompanies) {
-            const companies = userCompanies.map(company => {
+            const companies = userCompanies.map((company: any) => {
                 return { value: company.id, label: company.name, company }
             });
             const sorted = sortBy(companies, 'label');
             setCompanies(sorted);
             setCompany(sorted[0]);
         }
-    }, [isFetching])
+    }, [isFetching]);
+
+
+    useEffect(() => {
+        if (!fetchingForms && forms) {
+            validateFormSelection();
+        }
+    }, [fetchingForms])
 
     return (
         <>
@@ -281,19 +330,19 @@ function BulkUploadModal({ onClose }) {
                         <table className="table modalTable fixed_header">
                             <thead>
                                 <tr>
-                                    <th width="5%"></th>
-                                    <th width="55%" >File Name</th>
-                                    <th width="35%">Forms/Registers & Returns</th>
-                                    <th width="5%"></th>
+                                    <th style={{ width: '5%' }}></th>
+                                    <th style={{ width: '50%' }}>File Name</th>
+                                    <th style={{ width: '40%' }}>Forms/Registers & Returns</th>
+                                    <th style={{ width: '5%' }}></th>
                                 </tr>
                             </thead>
-                            <tbody height="300px">
+                            <tbody style={{ height: '300px' }}>
                                 {
-                                    uploadFiles.map((file, index) => {
+                                    uploadFiles.map((file: any, index: number) => {
                                         return (
                                             <tr key={index}>
                                                 <td width="5%">{index + 1}</td>
-                                                <td width="55%" >
+                                                <td width="50%" >
                                                     <div>{file.file.name}</div>
                                                     {
                                                         file.invalidFile &&
@@ -302,11 +351,13 @@ function BulkUploadModal({ onClose }) {
                                                         </div>
                                                     }
                                                 </td>
-                                                <td width="35%">
-                                                    <Select options={rules} className={`${(file.required || file.duplicate) && 'error'} select-control`}
+                                                <td width="40%">
+                                                    <Select options={sortBy(forms, 'formName').map((form: any) => {
+                                                        return { value: form.actStateMappingId, label: form.formName, form }
+                                                    })} className={`${(file.required || file.duplicate) && 'error'} select-control`}
                                                         value={file.type} menuPlacement="auto" menuPosition="fixed"
                                                         onChange={(event) => onTypeChange(event, index)}
-                                                        isDisabled={file.invalidFile} />
+                                                        isDisabled={file.invalidFile} formatOptionLabel={ruleOptionLabel} />
                                                     {
                                                         (file.required || file.duplicate) &&
                                                         <div className="text-danger">
