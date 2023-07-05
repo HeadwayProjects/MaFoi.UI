@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 
 function AlertModal({ title, message, onClose }: any) {
     return (
-        <Modal show={true} backdrop="static" animation={false} size="sm">
+        <Modal show={true} backdrop="static" animation={false} size="lg">
             <Modal.Header closeButton={true} onHide={onClose}>
                 <Modal.Title className="bg">{title || 'Alert'}</Modal.Title>
             </Modal.Header>
