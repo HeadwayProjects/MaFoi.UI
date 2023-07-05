@@ -29,7 +29,7 @@ import LockUnLock from "../components/pages/Masters/Companies/LockUnLock";
 import EmailTemplates from "../components/pages/Email/EmailTemplates";
 import Home from "../components/pages/home";
 
-export const ROLE_MAPPING = {
+export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
     AuditorUser: ['dashboard', 'activities'],
     VendorAdmin: ['dashboard', 'activities'],
@@ -44,7 +44,7 @@ function AuthenticatedContent() {
     const isVendor = ['VendorAdmin', 'VendorUser'].includes(user.role);
     const pages = ROLE_MAPPING[user.role] || [];
 
-    function layout(children, layoutWithSidenav = true) {
+    function layout(children: any, layoutWithSidenav = true) {
         if (layoutWithSidenav) {
             return <LayoutWithSideNav>{children}</LayoutWithSideNav>
         }
@@ -128,7 +128,7 @@ function AuthenticatedContent() {
         '/email/templates': () => (
             layout(<EmailTemplates />)
         ),
-        '/changePassword/:token': ({ token }) => (
+        '/changePassword/:token': ({ token }: any) => (
             <>
                 <Navbar showUser={false} />
                 <div className="page-layout-container bg-white">

@@ -1,14 +1,14 @@
 import { ACTIVITY_STATUS } from "../components/common/Constants";
 import { ACTIVITY_TYPE } from "./constants";
 
-export function preventDefault(event) {
+export function preventDefault(event: any) {
   if (event) {
     event.preventDefault();
     event.stopPropagation();
   }
 }
 
-export function getValue(obj, key) {
+export function getValue(obj: any, key: string) {
   if (!obj || !key) {
     return null
   }
@@ -20,20 +20,20 @@ export function getValue(obj, key) {
   return value;
 }
 
-export function filterData(obj, _search, keys) {
+export function filterData(obj: any, _search: string, keys: any[]) {
   _search = _search.toLowerCase();
   return Boolean(keys.find(x => {
     return getValue(obj, x).toLowerCase().includes(_search);
   }));
 }
 
-export function MaskEmail(email) {
+export function MaskEmail(email: string) {
   return (email || '').replace(/^(.)(.*)(.@.*)$/,
     (_, a, b, c) => a + b.replace(/./g, '*') + c
   );
 }
 
-export function download(fileName, filePath) {
+export function download(fileName: string, filePath: string) {
   if (fileName && filePath) {
     const link = document.createElement('a');
     link.href = filePath;
@@ -45,7 +45,7 @@ export function download(fileName, filePath) {
   }
 }
 
-export function downloadFileContent({ name, type, content }) {
+export function downloadFileContent({ name, type, content }: any) {
   const blob = new Blob([content], { type })
   const URL = window.URL || window.webkitURL;
   const downloadUrl = URL.createObjectURL(blob);
@@ -57,23 +57,23 @@ export function downloadFileContent({ name, type, content }) {
   document.body.removeChild(a);
 }
 
-export function reduceArraytoObj(arr, key = 'columnName', value = 'value') {
+export function reduceArraytoObj(arr: any[], key = 'columnName', value = 'value') {
   if ((arr || []).length === 0) {
     return {}
   }
-  const _obj = {};
+  const _obj: any = {};
   (arr || []).forEach(obj => {
     _obj[obj[key]] = obj[value];
   });
   return _obj;
 }
 
-export function humanReadableFileSize(size) {
+export function humanReadableFileSize(size: number) {
   var i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+  return ((size / Math.pow(1024, i)).toFixed(2) as any) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
 
-export function humanReadableNumber(number) {
+export function humanReadableNumber(number: number) {
   // var i = number === 0 ? 0 : Math.floor(Math.log(number) / Math.log(1000));
   // return (number / Math.pow(1000, i)).toFixed(2) * 1 + ' ' + ['', 'K'][i];
   return number < 1000 ? number : `${number}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -98,7 +98,7 @@ export function getMaxMonthYear() {
   return date;
 }
 
-export function checkVendorActivityStatus(activity) {
+export function checkVendorActivityStatus(activity: any) {
   const dueDate = new Date(activity.dueDate);
   dueDate.setHours(23);
   dueDate.setMinutes(59);
@@ -177,7 +177,7 @@ export function checkVendorActivityStatus(activity) {
   return { editable: false }
 }
 
-export function checkAuditorActivityStatus(activity) {
+export function checkAuditorActivityStatus(activity: any) {
   const { auditted: auditType, status, published } = activity || {};
   if (published) {
     return {

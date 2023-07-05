@@ -15,10 +15,12 @@ function AdvanceSearch({ payload, fields, onSubmit, downloadReport }: any) {
     useEffect(() => {
         if (payload) {
             if (payload.month) {
-                // const filter: any = SEARCH_FIELDS.find(x => x.value === FILTERS.MONTH);
-                // setLabel(filter?.label);
-                // setValue(`${payload?.month} (${payload.year})`);
-                // setFilter(FILTERS.MONTH);
+                const filter: any = SEARCH_FIELDS.find(x => x.value === FILTERS.MONTH);
+                if (filter) {
+                    setLabel(filter.label);
+                    setValue(`${payload.month} (${payload.year})`);
+                    setFilter(FILTERS.MONTH);
+                }
             } else {
                 setLabel('');
                 setValue('');
