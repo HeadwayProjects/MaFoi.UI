@@ -14,6 +14,8 @@ import { COMPANY_STATUS } from "./Companies.constants";
 import { VIEWS } from "./AssociateCompanies";
 import { useRef } from "react";
 import TableFilters from "../../../common/TableFilter";
+import { useExportAssociateCompanies } from "../../../../backend/exports";
+import { downloadFileContent } from "../../../../utils/common";
 
 function AssociateCompaniesList({ changeView, parent }: any) {
     const [t] = useState(new Date().getTime());
@@ -33,6 +35,16 @@ function AssociateCompaniesList({ changeView, parent }: any) {
     const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
         refetch();
     }, () => toast.error(ERROR_MESSAGES.DEFAULT));
+
+    const { exportAssociateCompanies, exporting } = useExportAssociateCompanies((response: any) => {
+        downloadFileContent({
+            name: `${parentCompany.label}.xlsx`,
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
 
     const filterConfig = [
         {
@@ -207,6 +219,12 @@ function AssociateCompaniesList({ changeView, parent }: any) {
         setPayload({ ...payload, ..._params })
     }
 
+    function handleExport() {
+        if (total > 0) {
+            exportAssociateCompanies({ ...payload, pagination: null });
+        }
+    }
+
     useEffect(() => {
         if (query && query.company && !parent) {
             setParentCompanyId(query.company);
@@ -284,9 +302,14 @@ function AssociateCompaniesList({ changeView, parent }: any) {
                         <div className="d-flex justify-content-between align-items-end">
                             <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                 placeholder={"Search for Company Code/Name/Contact No./Email"} />
-                            <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD, { parentCompany, _t: t })}>
-                                <Icon name={'plus'} className="me-2"></Icon>Add New
-                            </Button>
+                            <div className="d-flex">
+                                <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
+                                    <Icon name={'download'} className="me-2"></Icon>Export
+                                </Button>
+                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD, { parentCompany, _t: t })}>
+                                    <Icon name={'plus'} className="me-2"></Icon>Add New
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -304,6 +327,7 @@ function AssociateCompaniesList({ changeView, parent }: any) {
                 </ConfirmModal>
             }
             {deletingCompany && <PageLoader message={'Deleting Company...'} />}
+            {exporting && <PageLoader message={'Preparing data...'} />}
         </>
     )
 }

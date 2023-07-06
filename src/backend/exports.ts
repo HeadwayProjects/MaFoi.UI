@@ -119,6 +119,7 @@ export function useExportActStateMappings(onSuccess?: any, onError?: any) {
     );
     return { exportActStateMappings, error, exporting };
 }
+
 export function useExportRuleCompliance(onSuccess?: any, onError?: any) {
     const { mutate: exportRuleCompliance, error, isLoading: exporting } = useMutation(
         ['exportRuleCompliance'],
@@ -132,4 +133,49 @@ export function useExportRuleCompliance(onSuccess?: any, onError?: any) {
         }
     );
     return { exportRuleCompliance, error, exporting };
+}
+
+export function useExportCompanies(onSuccess?: any, onError?: any) {
+    const { mutate: exportCompanies, error, isLoading: exporting } = useMutation(
+        ['exportCompanies'],
+        async (payload: any) => await post('/api/Company/ExportCompany', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportCompanies, error, exporting };
+}
+
+export function useExportAssociateCompanies(onSuccess?: any, onError?: any) {
+    const { mutate: exportAssociateCompanies, error, isLoading: exporting } = useMutation(
+        ['exportAssociateCompanies'],
+        async (payload: any) => await post('/api/Company/ExportAssociateCompany', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportAssociateCompanies, error, exporting };
+}
+
+export function useExportCompanyLocations(onSuccess?: any, onError?: any) {
+    const { mutate: exportCompanyLocations, error, isLoading: exporting } = useMutation(
+        ['exportCompanyLocations'],
+        async (payload: any) => await post('/api/Mappings/ExportCompanyLocations', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportCompanyLocations, error, exporting };
 }

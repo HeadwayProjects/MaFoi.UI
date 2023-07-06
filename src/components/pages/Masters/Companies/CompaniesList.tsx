@@ -10,10 +10,11 @@ import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import ViewCompany from "./ViewCompany";
 import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
-import { preventDefault } from "../../../../utils/common";
+import { downloadFileContent, preventDefault } from "../../../../utils/common";
 import { navigate } from "raviger";
 import TableFilters from "../../../common/TableFilter";
 import { useRef } from "react";
+import { useExportCompanies } from "../../../../backend/exports";
 
 function CompaniesList({ changeView }: any) {
     const [t] = useState(new Date().getTime());
@@ -29,6 +30,16 @@ function CompaniesList({ changeView }: any) {
     const { deleteCompany, isLoading: deletingCompany } = useDeleteCompany(() => {
         refetch();
     }, () => toast.error(ERROR_MESSAGES.DEFAULT));
+
+    const { exportCompanies, exporting } = useExportCompanies((response: any) => {
+        downloadFileContent({
+            name: 'Companies.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
 
     function ActionColumnElements({ cell }: any) {
         const row = cell.getData();
@@ -177,6 +188,12 @@ function CompaniesList({ changeView }: any) {
         setPayload({ ...payload, ..._params, t })
     }
 
+    function handleExport() {
+        if (total > 0) {
+            exportCompanies({ ...payload, pagination: null });
+        }
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
             setTimeout(() => {
@@ -199,9 +216,14 @@ function CompaniesList({ changeView }: any) {
                         <div className="d-flex justify-content-between align-items-end">
                             <TableFilters search={true} onFilterChange={onFilterChange}
                                 placeholder={"Search for Company Code/Name/Contact No./Email"} />
-                            <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>
-                                <Icon name={'plus'} className="me-2"></Icon>Add New
-                            </Button>
+                            <div className="d-flex">
+                                <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
+                                    <Icon name={'download'} className="me-2"></Icon>Export
+                                </Button>
+                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>
+                                    <Icon name={'plus'} className="me-2"></Icon>Add New
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -221,6 +243,7 @@ function CompaniesList({ changeView }: any) {
                 </ConfirmModal>
             }
             {deletingCompany && <PageLoader message={'Deleting Company...'} />}
+            {exporting && <PageLoader message={'Preparing data...'} />}
         </>
     )
 }

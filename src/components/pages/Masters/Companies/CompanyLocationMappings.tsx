@@ -17,6 +17,8 @@ import { GetMastersBreadcrumb } from "../Master.constants";
 import styles from "./Companies.module.css"
 import CompanyLocationsImportModal from "./CompanyLocationsImportModal";
 import { ResponseModel } from "../../../../models/responseModel";
+import { useExportCompanyLocations } from "../../../../backend/exports";
+import { downloadFileContent } from "../../../../utils/common";
 
 function mapLocation(x: any) {
     return {
@@ -60,6 +62,16 @@ function CompanyLocationMappings() {
         } else {
             toast.error(value || ERROR_MESSAGES.ERROR);
         }
+    });
+
+    const { exportCompanyLocations, exporting } = useExportCompanyLocations((response: any) => {
+        downloadFileContent({
+            name: 'CompanyLocations.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
     });
 
 
@@ -198,6 +210,13 @@ function CompanyLocationMappings() {
         setParams({ ..._params });
         setPayload({ ...payload, ..._params })
     }
+
+    function handleExport() {
+        if (total > 0) {
+            exportCompanyLocations({ ...payload, pagination: null });
+        }
+    }
+
     useEffect(() => {
         if (query && (query.parentCompany || query.associateCompany)) {
             setParentCompany({ value: query.parentCompany });
@@ -279,6 +298,9 @@ function CompanyLocationMappings() {
                                     <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)} disabled={!Boolean(associateCompany)}>
                                         <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
                                     </Button>
+                                    <Button variant="primary" className="px-3 text-nowrap ms-3" onClick={handleExport} disabled={!total}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
                                     <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
                                         <Icon name={'plus'} className="me-2"></Icon>Add New
                                     </Button>
@@ -309,6 +331,7 @@ function CompanyLocationMappings() {
                     onClose={() => setAction(ACTIONS.NONE)} />
             }
             {deleting && <PageLoader message={'Deleting Location...'} />}
+            {exporting && <PageLoader message={'Preparing data...'} />}
         </>
     )
 }
