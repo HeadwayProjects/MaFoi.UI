@@ -479,7 +479,7 @@ export function useUpdateCompany(onSuccess?: any, onError?: any) {
 }
 
 export function useDeleteCompany(onSuccess?: any, onError?: any) {
-    const { mutate: deleteCompany, error } = useMutation(
+    const { mutate: deleteCompany, error, isLoading } = useMutation(
         ['deleteCompany'],
         async (id) => await api.del(`/api/Company/Delete?Id=${id}`),
         {
@@ -487,7 +487,7 @@ export function useDeleteCompany(onSuccess?: any, onError?: any) {
             onSuccess
         }
     );
-    return { deleteCompany, error };
+    return { deleteCompany, error, isLoading };
 }
 
 export function useGetSmtpDetails(companyId: any, payload: any, enabled = true) {
@@ -621,7 +621,7 @@ export function useStateRuleCompanyMappings(payload: any, enabled = true) {
 export function useCreateStateRuleCompanyMapping(onSuccess?: any, onError?: any) {
     const { mutate: createStateRuleCompanyMapping, error, isLoading: creating } = useMutation(
         ['createStateRuleCompanyMapping'],
-        async (payload) => await api.post('/api/Mappings/Add', payload),
+        async (payload: any) => await api.post('/api/Mappings/Add', payload),
         {
             onError,
             onSuccess: (response) => {
@@ -707,7 +707,7 @@ export function useCreateCompanyLocation(onSuccess?: any, onError?: any) {
 }
 
 export function useUpdateCompanyLocation(onSuccess?: any, onError?: any) {
-    const { mutate: updateCompanyLocation, error, isLoading: creating } = useMutation(
+    const { mutate: updateCompanyLocation, error, isLoading: updating } = useMutation(
         ['updateCompanyLocation'],
         async (payload) => await api.put('/api/Mappings/EditCompanyLocations', payload),
         {
@@ -718,7 +718,7 @@ export function useUpdateCompanyLocation(onSuccess?: any, onError?: any) {
             }
         }
     );
-    return { updateCompanyLocation, error, creating };
+    return { updateCompanyLocation, error, updating };
 }
 
 export function useDeleteCompanyLocation(onSuccess?: any, onError?: any) {
@@ -768,7 +768,7 @@ export function useCreateUserLocationMapping(onSuccess?: any, onError?: any) {
 export function useExportAuditSchedule(onSuccess?: any, onError?: any) {
     const { mutate: exportAuditSchedule, error, isLoading: exporting } = useMutation(
         ['exportAuditSchedule'],
-        async (payload) => await api.post('/api/Company/ExportAuditSchedule', payload, null, true, { responseType: 'blob' }),
+        async (payload: any) => await api.post('/api/Company/ExportAuditSchedule', payload, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
@@ -783,7 +783,7 @@ export function useExportAuditSchedule(onSuccess?: any, onError?: any) {
 export function useImportAuditSchedule(onSuccess?: any, onError?: any) {
     const { mutate: importAuditSchedule, error, isLoading: uploading } = useMutation(
         ['importAuditSchedule'],
-        async (formData) => await api.post(`/api/Company/ImportAuditSchedule`, formData, null, true, { responseType: 'blob' }),
+        async (formData: any) => await api.post(`/api/Company/ImportAuditSchedule`, formData, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
@@ -798,7 +798,7 @@ export function useImportAuditSchedule(onSuccess?: any, onError?: any) {
 export function useDeleteAuditSchedule(onSuccess?: any, onError?: any) {
     const { mutate: deleteAuditSchedule, error, isLoading: deleting } = useMutation(
         ['deleteAuditSchedule'],
-        async (payload) => await api.post(`/api/ToDo/Delete`, payload),
+        async (payload: any) => await api.post(`/api/ToDo/Delete`, payload),
         {
             onError,
             onSuccess: (response) => {
@@ -813,7 +813,7 @@ export function useDeleteAuditSchedule(onSuccess?: any, onError?: any) {
 export function useUpdateAuditSchedule(onSuccess?: any, onError?: any) {
     const { mutate: updateAuditSchedule, error, isLoading: updating } = useMutation(
         ['updateAuditSchedule'],
-        async (payload) => await api.put(`/api/ToDo/Update`, payload),
+        async (payload: any) => await api.put(`/api/ToDo/Update`, payload),
         {
             onError,
             onSuccess: (response) => {
