@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./NavTabs.module.css";
 
 function NavTabs({ list = [], onTabChange, children }: any) {
-    const [tabs] = useState();
+    const [tabs, setTabs] = useState();
     const [selectedTab, setSelectedTab] = useState(list[0].value || '')
 
     function onTabSelect(tab: string) {
@@ -11,6 +11,12 @@ function NavTabs({ list = [], onTabChange, children }: any) {
             onTabChange(tab);
         }
     }
+
+    useEffect(() => {
+        if ((list || []).length > 0){
+            setTabs(list);
+        }
+    }, [list])
 
     return (
         <div className="row">
