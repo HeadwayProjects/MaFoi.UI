@@ -194,7 +194,7 @@ function TaskManagement() {
                 if (response && response.data) {
                     const _rows = response.data || [];
                     const auditableRows = _rows.filter((x: any) => [ACTIVITY_TYPE.AUDIT, ACTIVITY_TYPE.PHYSICAL_AUDIT].includes(x.auditted));
-                    const submittedRows = auditableRows.filter((x: any) => [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.PENDING].includes(x.status));
+                    const submittedRows = auditableRows.filter((x: any) => [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.PENDING, ACTIVITY_STATUS.OVERDUE, ACTIVITY_STATUS.ACTIVITY_SAVED].includes(x.status));
                     const published = _rows.filter((x: any) => x.published);
                     if (_rows.length === 0) {
                         setAlertMessage(
@@ -330,7 +330,7 @@ function TaskManagement() {
         )
     }
 
-    function ActivityTypeTmpl({ cell }: any ) {
+    function ActivityTypeTmpl({ cell }: any) {
         const value = cell.getValue() || ACTIVITY_TYPE.AUDIT;
         return (
             <div className="d-flex flex-row align-items-center justify-content-center position-relative">

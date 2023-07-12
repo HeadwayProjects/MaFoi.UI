@@ -104,6 +104,11 @@ export function checkVendorActivityStatus(activity: any) {
   dueDate.setMinutes(59);
   dueDate.setSeconds(59);
   dueDate.setMilliseconds(999);
+  if (activity.published) {
+    return {
+      editable: false
+    }
+  }
   if (activity.auditted !== ACTIVITY_TYPE.AUDIT) {
     return {
       editable: false,
