@@ -171,7 +171,7 @@ function ActivitiesManagement() {
             api.post('/api/ToDo/GetToDoByCriteria', _payload).then(response => {
                 if (response && response.data) {
                     const _rows = response.data || [];
-                    const _applicableRows = _rows.filter((x: any) => x.auditted === ACTIVITY_TYPE.AUDIT);
+                    const _applicableRows = _rows.filter((x: any) => x.auditted === ACTIVITY_TYPE.AUDIT && x.status !== ACTIVITY_STATUS.AUDITED);
                     const _published = _applicableRows.filter((x: any) => x.published);
                     if (_published.length > 0) {
                         setAlertMessage('All the activities are published for the selected month and year. See Audit report for more details.');

@@ -352,7 +352,7 @@ function BulkUploadModal({ onClose }: any) {
                                                     }
                                                 </td>
                                                 <td width="40%">
-                                                    <Select options={sortBy(forms, 'formName').map((form: any) => {
+                                                    <Select options={sortBy(forms, 'formName').filter((form: any) => !!form.formName).map((form: any) => {
                                                         return { value: form.actStateMappingId, label: form.formName, form }
                                                     })} className={`${(file.required || file.duplicate) && 'error'} select-control`}
                                                         value={file.type} menuPlacement="auto" menuPosition="fixed"
