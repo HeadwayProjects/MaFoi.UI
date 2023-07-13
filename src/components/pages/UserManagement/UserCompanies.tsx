@@ -22,13 +22,15 @@ function mapData(list: any[]) {
     list.forEach(parentCompany => {
         const { companyName, companyId, associateCompanies } = parentCompany;
         associateCompanies.forEach((associateCompany: any) => {
-            const { associateCompanyId, associateCompanyName, locations }: any = associateCompany;
+            const { associateCompanyId, associateCompanyName, locations, contactNumber, email }: any = associateCompany;
             const count = locations.length;
             result.push({
                 companyId,
                 companyName,
                 associateCompanyId,
                 associateCompanyName,
+                contactNumber,
+                email,
                 count,
                 locations
             });
@@ -120,14 +122,16 @@ function UserCompanies() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Contact No.", field: "associateCompanyMobile",
+            title: "Contact No.", field: "contactNumber",
             formatter: reactFormatter(<CellTmpl />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            headerSort: false
         },
         {
-            title: "Email Address", field: "associateCompanyEmail",
+            title: "Email Address", field: "email",
             formatter: reactFormatter(<CellTmpl />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            headerSort: false
         },
         {
             title: "Locations", field: "count",

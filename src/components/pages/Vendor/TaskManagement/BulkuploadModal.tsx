@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import PageLoader from "../../../shared/PageLoader";
 import { ALLOWED_FILES_REGEX } from "../../../common/Constants";
 import { ACTIVITY_TYPE } from "../../../../utils/constants";
+import { checkVendorActivityStatus } from "../../../../utils/common";
 
 const Months = [
     { value: 'January', label: 'January' },
@@ -352,7 +353,9 @@ function BulkUploadModal({ onClose }: any) {
                                                     }
                                                 </td>
                                                 <td width="40%">
-                                                    <Select options={sortBy(forms, 'formName').filter((form: any) => !!form.formName).map((form: any) => {
+                                                    <Select options={sortBy(forms, 'formName').filter((form: any) => {
+                                                        return !!form.formName && (checkVendorActivityStatus(form) || {}).editable
+                                                    }).map((form: any) => {
                                                         return { value: form.actStateMappingId, label: form.formName, form }
                                                     })} className={`${(file.required || file.duplicate) && 'error'} select-control`}
                                                         value={file.type} menuPlacement="auto" menuPosition="fixed"
