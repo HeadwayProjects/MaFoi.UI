@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
 import { useGetCompanies } from "../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
+import { sortBy } from "underscore";
 
 function isValidEmailBody(emailBody: string, validKeys: any[]) {
     if (validKeys.length > 0) {
@@ -63,7 +64,7 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }: any) {
                 component: view === VIEWS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'templateType',
                 label: 'Template Type',
-                options: (templateTypes || []).map((x: any) => {
+                options: sortBy(templateTypes || [], 'description').map((x: any) => {
                     return {
                         id: x.id, name: x.description, params: x.parameters ? x.parameters.split(API_DELIMITER) : []
                     }

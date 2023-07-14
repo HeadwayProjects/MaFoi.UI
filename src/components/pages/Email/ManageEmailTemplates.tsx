@@ -13,6 +13,7 @@ import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
 import { useGetCompanies } from "../../../backend/masters";
+import { sortBy } from "underscore";
 
 const SortFields: any = {
     'templateType.description': 'templateType'
@@ -46,7 +47,7 @@ function ManageEmailTemplates({ changeView }: any) {
         {
             label: 'Template Type',
             name: 'templateTypeId',
-            options: (templateTypes || []).map((x: any) => {
+            options: sortBy(templateTypes || [], 'description').map((x: any) => {
                 return { value: `${x.id}`, label: x.description };
             })
         },
