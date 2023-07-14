@@ -52,20 +52,20 @@ function AddEditCompany({ company, parentCompany, changeView, _t }: any) {
             toast.error(value || ERROR_MESSAGES.UPLOAD_FILE);
         }
     }, errorCallback);
-    const { createCompany, creating } = useCreateCompany(({ id, name, message }: any) => {
-        if (id) {
-            toast.success(`Company ${name} created successfully.`);
-            setCompanyDetails({ ...payload, id, parentCompany });
-            uploadCompanyLogo(id);
+    const { createCompany, creating } = useCreateCompany(({ key, value }: ResponseModel) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`Company ${payload.name} created successfully.`);
+            setCompanyDetails({ ...payload, id: value, parentCompany });
+            uploadCompanyLogo(value);
         } else {
-            toast.error(message || ERROR_MESSAGES.ERROR);
+            toast.error(value === 'DUPLICATE' ? 'Company with similar name or code already exists.' : (value || ERROR_MESSAGES.ERROR));
         }
     }, errorCallback);
-    const { updateCompany, updating } = useUpdateCompany(({ id, name, message }: any) => {
-        if (id) {
-            toast.success(`Company ${name} updated successfully.`);
+    const { updateCompany, updating } = useUpdateCompany(({ key, value }: ResponseModel) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`Company ${payload.name} updated successfully.`);
             if (payload.file) {
-                uploadCompanyLogo(id);
+                uploadCompanyLogo(value);
             } else {
                 setCompanyDetails(payload);
                 if (payload.isCopied === 'YES') {
@@ -75,7 +75,7 @@ function AddEditCompany({ company, parentCompany, changeView, _t }: any) {
                 handleNext();
             }
         } else {
-            toast.error(message || ERROR_MESSAGES.ERROR);
+            toast.error(value === 'DUPLICATE' ? 'Company with similar name or code already exists.' : (value || ERROR_MESSAGES.ERROR));
         }
     }, errorCallback);
     const { createCompany: _createAssociateCompany } = useCreateCompany(refetch);
