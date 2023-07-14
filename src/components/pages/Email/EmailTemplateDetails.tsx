@@ -14,7 +14,7 @@ import { useGetCompanies } from "../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function isValidEmailBody(emailBody: string, validKeys: any[]) {
-    if (validKeys.length > 0 ) {
+    if (validKeys.length > 0) {
         const matches = emailBody.match(/{{.*?}}/g);
         if (!matches) {
             return true;
@@ -163,10 +163,9 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }: any) {
                 emailTo: emailTo || '',
                 emailCC: emailCC || '',
                 body,
-                companyId: company ? company.value : null,
+                companyId: (company || {}).value || null,
                 signature: signature || '',
-                templateTypeId: templateType.value,
-                templateType: { id: templateType.value, description: templateType.label }
+                templateTypeId: templateType.value
             };
             if (Boolean(emailTemplate)) {
                 payload['id'] = emailTemplate.id;
