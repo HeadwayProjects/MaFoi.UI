@@ -227,6 +227,7 @@ function CompanyLocationMappings() {
     useEffect(() => {
         if (filters) {
             const { filters: _filters, search } = filters;
+            setData(formatApiResponse(params, [], 0));
             const _associateCompanyId = (_filters.find((x: any) => x.columnName === 'associateCompanyId') || {}).value;
             const _parentCompanyId = (_filters.find((x: any) => x.columnName === 'parentCompanyId') || {}).value;
             if (_parentCompanyId) {

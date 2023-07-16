@@ -79,7 +79,9 @@ function CompanyTDS({ onNext, onPrevious, onSubmit, company }: any) {
                 name: 'pan_mobile',
                 label: 'Phone Number',
                 validate: [
-                    { type: validatorTypes.REQUIRED }
+                    { type: validatorTypes.REQUIRED },
+                    { type: validatorTypes.MAX_LENGTH, threshold: 10 },
+                    { type: validatorTypes.PATTERN, pattern: PATTERNS.MOBILE, message: 'Should be numeric value of length 10' }
                 ]
             },
             {
