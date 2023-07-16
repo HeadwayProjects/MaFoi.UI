@@ -23,7 +23,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
     const { cities } = useGetCities({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'stateId', value: stateId }], t }, Boolean(stateId && action !== ACTIONS.VIEW));
     const { createCompanyLocation, creating } = useCreateCompanyLocation((response: ResponseModel) => {
         if (response.key === API_RESULT.SUCCESS) {
-            toast.success(`${response.name} created successsfully.`);
+            toast.success(`Location ${locationDetails.locationName} created successsfully.`);
             onSubmit();
         } else {
             toast.error(response.value || ERROR_MESSAGES.ERROR);
@@ -31,7 +31,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
     }, errorCallback);
     const { updateCompanyLocation, updating } = useUpdateCompanyLocation(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
-            toast.success(`${locationDetails.locationName} updated successsfully.`);
+            toast.success(`Location ${locationDetails.locationName} updated successsfully.`);
             onSubmit();
         } else {
             toast.error(value || ERROR_MESSAGES.ERROR);
