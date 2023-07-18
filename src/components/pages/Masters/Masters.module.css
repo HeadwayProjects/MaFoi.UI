@@ -1,3 +1,7 @@
 .breadcrumb li {
     font-size: var(--font-lg) !important;
 }
+
+.importBtn svg path {
+    fill: var(--white);
+}

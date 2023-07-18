@@ -12,6 +12,8 @@ import PageLoader from "../../shared/PageLoader";
 import UserDetails from "./UserDetails";
 import { useRef } from "react";
 import TableFilters from "../../common/TableFilter";
+import { useExportUsers } from "../../../backend/exports";
+import { downloadFileContent } from "../../../utils/common";
 
 const SortFields: any = {
     'userRoles': 'role'
@@ -36,6 +38,15 @@ function MangeUsers() {
     const { deleteUser, deleting } = useDeleteUser((response: any) => {
         toast.success(`${user.name} deleted successfully.`);
         submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+    const { exportUsers, exporting } = useExportUsers((response: any) => {
+        downloadFileContent({
+            name: 'Users.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
@@ -150,6 +161,12 @@ function MangeUsers() {
         setPayload({ ...payload, ..._params })
     }
 
+    function handleExport() {
+        if (total > 0) {
+            exportUsers({ ...payload, pagination: null });
+        }
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
             setData(formatApiResponse(params, users, total));
@@ -165,9 +182,15 @@ function MangeUsers() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Name/Username/Email"} />
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                <div className="d-flex">
+                                    <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
+                                    <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -188,6 +211,7 @@ function MangeUsers() {
             {
                 deleting && <PageLoader>Deleting User...</PageLoader>
             }
+            {exporting && <PageLoader message={'Preparing data...'} />}
         </>
     )
 }

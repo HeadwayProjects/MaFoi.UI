@@ -179,3 +179,18 @@ export function useExportCompanyLocations(onSuccess?: any, onError?: any) {
     );
     return { exportCompanyLocations, error, exporting };
 }
+
+export function useExportUsers(onSuccess?: any, onError?: any) {
+    const { mutate: exportUsers, error, isLoading: exporting } = useMutation(
+        ['exportUsers'],
+        async (payload: any) => await post('/api/UserManagement/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportUsers, error, exporting };
+}

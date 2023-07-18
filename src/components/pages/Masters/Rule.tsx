@@ -15,6 +15,8 @@ import { useRef } from "react";
 import TableFilters from "../../common/TableFilter";
 import { downloadFileContent } from "../../../utils/common";
 import { useExportRules } from "../../../backend/exports";
+import RulesImportModal from "./RulesImportModal";
+import styles from "./Masters.module.css";
 
 function Rule() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Rule'));
@@ -178,10 +180,13 @@ function Rule() {
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Rule/Description"} />
                                 <div className="d-flex">
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)}>
+                                        <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
+                                    </Button>
+                                    <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}>
                                         <Icon name={'download'} className="me-2"></Icon>Export
                                     </Button>
-                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
                                         <Icon name={'plus'} className="me-2"></Icon>Add New
                                     </Button>
                                 </div>
@@ -204,6 +209,10 @@ function Rule() {
                 <ConfirmModal title={'Delete Rule Master'} onSubmit={deleteRuleMaster} onClose={() => setAction(ACTIONS.NONE)}>
                     <div className="text-center mb-4">Are you sure you want to delete the rule <strong>{(rule || {}).name}</strong> ?</div>
                 </ConfirmModal>
+            }
+            {
+                action === ACTIONS.IMPORT &&
+                <RulesImportModal onSubmit={refetch} onClose={() => setAction(ACTIONS.NONE)} />
             }
             {deletingRule && <PageLoader message={'Deleting Rule. Please wait...'} />}
             {

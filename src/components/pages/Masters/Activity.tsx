@@ -15,6 +15,8 @@ import { useRef } from "react";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import { downloadFileContent } from "../../../utils/common";
 import { useExportActivities } from "../../../backend/exports";
+import ActivitiesImportModal from "./ActivitiesImportModal";
+import styles from "./Masters.module.css";
 
 function Activity() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Activity'));
@@ -199,10 +201,13 @@ function Activity() {
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Activity"} />
                                 <div className="d-flex">
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)}>
+                                        <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
+                                    </Button>
+                                    <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}>
                                         <Icon name={'download'} className="me-2"></Icon>Export
                                     </Button>
-                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
                                         <Icon name={'plus'} className="me-2"></Icon>Add New
                                     </Button>
                                 </div>
@@ -222,6 +227,10 @@ function Activity() {
                 <ConfirmModal title={'Delete Activity Master'} onSubmit={onDelete} onClose={cancelCallback}>
                     <div className="text-center mb-4">Are you sure you want to delete the Activity, <strong>{(activity || {}).name}</strong> ?</div>
                 </ConfirmModal>
+            }
+            {
+                action === ACTIONS.IMPORT &&
+                <ActivitiesImportModal onSubmit={refetch} onClose={() => setAction(ACTIONS.NONE)} />
             }
             {
                 deleting && <PageLoader>Deleting...</PageLoader>

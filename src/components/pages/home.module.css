@@ -11,9 +11,9 @@
     min-height: 96px;
     position: relative;
     top: -4px;
-    background-color: var(--royal-blue) !important;
+    background-color: var(--white) !important;
     font-weight: 700;
-    color: var(--white) !important;
+    color: var(--black) !important;
     box-shadow: 0 0 0 1px #417fbd inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #2061b1, 0 8px 8px 1px rgba(0, 0, 0, 0.5);
 }
 

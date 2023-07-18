@@ -121,6 +121,21 @@ export function useDeleteAct(onSuccess?: any, onError?: any) {
     return { deleteAct, error, deleting };
 }
 
+export function useImportActs(onSuccess?: any, onError?: any) {
+    const { mutate: importActs, error, isLoading: uploading } = useMutation(
+        ['importActs'],
+        async ({ formData }: any) => await api.post('/api/Act/Import', formData, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importActs, error, uploading };
+}
+
 export async function getActivities(payload: any) {
     return await api.post(`/api/Activity/GetAll`, payload)
 }
@@ -184,6 +199,21 @@ export function useDeleteActivity(onSuccess?: any, onError?: any) {
     return { deleteActivity, error, deleting };
 }
 
+export function useImportActivities(onSuccess?: any, onError?: any) {
+    const { mutate: importActivities, error, isLoading: uploading } = useMutation(
+        ['importActivities'],
+        async ({ formData }: any) => await api.post('/api/Activity/Import', formData, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importActivities, error, uploading };
+}
+
 export async function getRules(payload: any) {
     return await api.post(`/api/Rule/GetAll`, payload);
 }
@@ -244,6 +274,20 @@ export function useDeleteRule(onSuccess?: any, onError?: any) {
     return { deleteRule, error, isLoading };
 }
 
+export function useImportRules(onSuccess?: any, onError?: any) {
+    const { mutate: importRules, error, isLoading: uploading } = useMutation(
+        ['importRules'],
+        async ({ formData }: any) => await api.post('/api/Rule/Import', formData, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importRules, error, uploading };
+}
 export function useGetStates(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['states', payload],
