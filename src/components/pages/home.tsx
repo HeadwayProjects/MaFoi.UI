@@ -76,7 +76,7 @@ function Home() {
                                     {
                                         EZYCOMP_HIGHLIGHTS.map(item => {
                                             return (
-                                                <Button className={`btn btn-primary card  border-0 p-2 ${styles.cardCount}`} key={item.key}
+                                                <Button className={`btn btn-primary card  border-0 p-2 ${styles.cardCount} ${styles[item.key]}`} key={item.key}
                                                     onClick={() => navigateToPage(item.url)}>
                                                     <div className="card-body py-1 w-100">
                                                         <div className="row d-flex flex-column align-items-center justify-content-between h-100 fw-bold">
