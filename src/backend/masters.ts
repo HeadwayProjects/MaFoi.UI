@@ -648,6 +648,21 @@ export function useDeleteRuleCompliance(onSuccess?: any, onError?: any) {
     return { deleteRuleCompliance, error, deleting };
 }
 
+export function useImportRuleCompliance(onSuccess?: any, onError?: any) {
+    const { mutate: importRuleCompliance, error, isLoading: uploading } = useMutation(
+        ['importRuleCompliance'],
+        async ({ formData }: any) => await api.post('/api/RuleComplianceDetail/Import', formData, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importRuleCompliance, error, uploading };
+}
+
 export function useStateRuleCompanyMappings(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['mappings', payload],

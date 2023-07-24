@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { post } from "./request";
+import { get, post } from "./request";
 
 export function useAuditReport(onSuccess?: any, onError?: any) {
     const { mutate: auditReport, error, isLoading: exporting } = useMutation(
@@ -133,6 +133,21 @@ export function useExportRuleCompliance(onSuccess?: any, onError?: any) {
         }
     );
     return { exportRuleCompliance, error, exporting };
+}
+
+export function useExportRuleComplianceMapping(onSuccess?: any, onError?: any) {
+    const { mutate: exportRuleComplianceMapping, error, isLoading: exporting } = useMutation(
+        ['exportRuleComplianceMapping'],
+        async (payload: any) => await get('/api/RuleComplianceDetail/ExportMapping', payload, null, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportRuleComplianceMapping, error, exporting };
 }
 
 export function useExportCompanies(onSuccess?: any, onError?: any) {

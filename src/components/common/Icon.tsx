@@ -100,7 +100,7 @@ function Icon({ className, name, action, data, style, disabled, text, type }: an
                     ),
                     upload: (
                         <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3.2 10.6998H8V5.8998H11.2L5.6 0.299805L0 5.8998H3.2V10.6998ZM0 12.2998H11.2V13.8998H0V12.2998Z" fill="#2965AD" />
+                            <path d="M3.2 10.6998H8V5.8998H11.2L5.6 0.299805L0 5.8998H3.2V10.6998ZM0 12.2998H11.2V13.8998H0V12.2998Z" />
                         </svg>
                     ),
                     info: (

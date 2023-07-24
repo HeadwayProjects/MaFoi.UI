@@ -15,6 +15,7 @@ import { useRef } from "react";
 import TableFilters from "../../../common/TableFilter";
 import { useExportRuleCompliance } from "../../../../backend/exports";
 import { downloadFileContent } from "../../../../utils/common";
+import RuleComplianceImportModal from "./RuleComplianceImportModal";
 
 const SortFields: any = {
     'state.name': 'state',
@@ -196,6 +197,10 @@ function RuleCompliance() {
         exportRuleCompliance({ ...payload, pagination: null });
     }
 
+    function handleImport() {
+        setAction(ACTIONS.IMPORT)
+    }
+
     function onFilterChange(e: any) {
         setFilters(e);
         setPayload({ ...DEFAULT_PAYLOAD, ...params, ...e });
@@ -226,7 +231,10 @@ function RuleCompliance() {
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Name/Description/Rule"} />
                                 <div className="d-flex">
-                                    <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport}>
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleImport}>
+                                        <Icon name={'upload'} className="me-2"></Icon>Import
+                                    </Button>
+                                    <Button variant="primary" className="px-3 text-nowrap mx-3" onClick={handleExport}>
                                         <Icon name={'download'} className="me-2"></Icon>Export
                                     </Button>
                                     <Button variant="primary" className="text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
@@ -243,6 +251,11 @@ function RuleCompliance() {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <RuleComplianceDetails action={action} data={action !== ACTIONS.ADD ? compliance : null}
                     onClose={() => setAction(ACTIONS.NONE)} onSubmit={submitCallback} />
+            }
+            {
+                action === ACTIONS.IMPORT &&
+                <RuleComplianceImportModal onClose={() => setAction(ACTIONS.NONE)} />
+
             }
             {
                 action === ACTIONS.DELETE &&
