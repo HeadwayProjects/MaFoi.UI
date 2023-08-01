@@ -42,6 +42,15 @@ function UnBlockModal({ activity = {}, onClose, onSubmit }: any) {
         updateAuditSchedule(payload)
     }
 
+    function isValid() {
+        const today = new Date();
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        today.setMilliseconds(0);
+        return newDueDate && newDueDate >= today;
+    }
+
     return (
         <>
             {
@@ -97,7 +106,7 @@ function UnBlockModal({ activity = {}, onClose, onSubmit }: any) {
                         <Button variant="outline-secondary" onClick={onClose} className="btn btn-outline-secondary">
                             Back
                         </Button>
-                        <Button variant="primary" onClick={submit}>Un-Block</Button>
+                        <Button variant="primary" onClick={submit} disabled={!isValid()}>Un-Block</Button>
                     </Modal.Footer>
                 </Modal>
             }
