@@ -443,18 +443,6 @@ function TaskManagement() {
             last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
             page: pageNumber || 1
         };
-        // list.forEach(x => {
-        //     const { id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-        //         submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId, auditted } = x;
-        //     if (auditted !== ACTIVITY_TYPE.NO_AUDIT) {
-        //         console.log(JSON.stringify({
-        //             id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-        //             submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId,
-        //             status: ACTIVITY_STATUS.OVERDUE
-        //         }));
-        //     }
-        // });
-        // list.forEach(x => console.log(x.id))
         setData(tdata);
         return tdata;
     }

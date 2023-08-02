@@ -17,9 +17,10 @@ import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRe
 import PageLoader from "../../shared/PageLoader";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
 import VerifyOTP from "./VerifyOTP";
-import { clearAuthToken, getAuthToken, setAuthToken, useGenerateOTP, useUserLogin } from "../../../backend/auth";
+import { clearUserSession, getAuthToken, setAuthToken, setUserSession, useGenerateOTP, useUserLogin } from "../../../backend/auth";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { getBasePath } from "../../../App";
+import { Storage } from "../../../backend/storage";
 
 function Login() {
     const [token] = useState(getAuthToken());
@@ -33,7 +34,7 @@ function Login() {
         if ((token || '').includes('Exceeded Incorrect Logins')) {
             toast.error('Too many attempts with incorrect credentials. Your account is temporarily blocked. Try login back after 30 mins.');
         } else if (token) {
-            loginCallback(token);
+            loginCallback({ token, privileges: '' });
         } else {
             toast.error('Email/Phone No. or password is incorrect.');
         }
@@ -55,8 +56,9 @@ function Login() {
         userLogin({ username, password });
     }
 
-    function loginCallback(token: string) {
-        setAuthToken(token);
+    function loginCallback({ token, privileges }: any) {
+        privileges = privileges || 'VIEW_LAW_CATEGORY;VIEW_ACTS;VIEW_ACTIVITIES;VIEW_RULES;VIEW_STATES;VIEW_CITIES;VIEW_RULE_COMPLIANCE;VIEW_MAPPING;VIEW_COMPANIES;VIEW_ASSOCIATE_COMPANY;VIEW_LOCATION_MAPPING;AUDIT_SCHEDULE;VIEW_USERS;VIEW_COMPANY_MAPPING;VIEW_EMAIL_TEMPLATES';
+        setUserSession(token, privileges)
         navigate(`${getBasePath()}/`);
         window.location.reload();
     }
@@ -100,7 +102,7 @@ function Login() {
 
     useEffect(() => {
         if (token) {
-            clearAuthToken();
+            clearUserSession();
         }
     }, [token]);
 

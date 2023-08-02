@@ -10,13 +10,10 @@ function Report({ data, onClose, payload }: any) {
 
     function downloadAuditReport(e: any) {
         preventDefault(e);
-        // auditReport(summary, data, auth.getUserDetails().name);
-        console.log(payload);
     }
 
     function downloadCheckList(e: any) {
         preventDefault(e);
-        // checkList(summary, data);
     }
     useEffect(() => {
         if ((data || []).length > 0) {

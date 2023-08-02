@@ -8,7 +8,7 @@ import { PATTERNS } from "../../common/Constants";
 import { preventDefault } from "../../../utils/common";
 import { navigate } from "raviger";
 import { Alert, Button } from "react-bootstrap";
-import { getUserDetails, clearAuthToken, getAuthToken, useChangePassword } from "../../../backend/auth";
+import { getUserDetails, getAuthToken, useChangePassword, clearUserSession } from "../../../backend/auth";
 import PageLoader from "../../shared/PageLoader";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
@@ -33,7 +33,7 @@ function ChangePasswordModal({ onClose }: any) {
 
     function signIn(event: any) {
         preventDefault(event);
-        clearAuthToken();
+        clearUserSession();
         navigate(`${getBasePath()}/login`, { replace: true });
         setTimeout(() => {
             window.location.reload();

@@ -16,6 +16,8 @@ import { useRef } from "react";
 import TableFilters from "../../../common/TableFilter";
 import { useExportAssociateCompanies } from "../../../../backend/exports";
 import { downloadFileContent } from "../../../../utils/common";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 
 function AssociateCompaniesList({ changeView, parent }: any) {
     const [t] = useState(new Date().getTime());
@@ -68,22 +70,28 @@ function AssociateCompaniesList({ changeView, parent }: any) {
         const row = cell.getData();
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
-                    if (row.isCopied === 'YES') {
-                        setAssociateCompany(row);
-                        setAction(ACTIONS.EDIT);
-                    } else {
-                        changeView(VIEWS.EDIT, { company: row, parentCompany: row.parentCompany });
-                    }
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
-                    if (row.isCopied === 'YES') {
-                        toast.warn('This company is copied from the parent company. Hence cannot be deleted.')
-                    } else {
-                        setAssociateCompany(row);
-                        setAction(ACTIONS.DELETE);
-                    }
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_ASSOCIATE_COMPANY) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
+                        if (row.isCopied === 'YES') {
+                            setAssociateCompany(row);
+                            setAction(ACTIONS.EDIT);
+                        } else {
+                            changeView(VIEWS.EDIT, { company: row, parentCompany: row.parentCompany });
+                        }
+                    }} />
+                }
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_ASSOCIATE_COMPANY) &&
+                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                        if (row.isCopied === 'YES') {
+                            toast.warn('This company is copied from the parent company. Hence cannot be deleted.')
+                        } else {
+                            setAssociateCompany(row);
+                            setAction(ACTIONS.DELETE);
+                        }
+                    }} />
+                }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event: any) => {
                     setAssociateCompany(row);
                     setAction(ACTIONS.VIEW);
@@ -303,12 +311,18 @@ function AssociateCompaniesList({ changeView, parent }: any) {
                             <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                 placeholder={"Search for Company Code/Name/Contact No./Email"} />
                             <div className="d-flex">
-                                <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
-                                    <Icon name={'download'} className="me-2"></Icon>Export
-                                </Button>
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD, { parentCompany, _t: t })}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.EXPORT_ASSOCIATE_COMPANIES) &&
+                                    <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
+                                }
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.ADD_ASSOCIATE_COMPANY) &&
+                                    <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD, { parentCompany, _t: t })}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+                                }
                             </div>
                         </div>
                     </div>

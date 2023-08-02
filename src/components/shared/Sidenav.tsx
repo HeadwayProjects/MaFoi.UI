@@ -6,43 +6,62 @@ import { preventDefault } from '../../utils/common';
 import Icon from '../common/Icon';
 import { getBasePath } from '../../App';
 import { ROLE_MAPPING } from '../../containers/AuthenticatedContent';
+import { API_DELIMITER } from '../../utils/constants';
+import { USER_PRIVILEGES } from '../pages/UserManagement/Roles/RoleConfiguration';
 
 const SideNavMenu = [
-    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard' },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.SUBMITTER_DASHBOARD },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.REVIEWER_DASHBOARD },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.OWNER_DASHBOARD },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.MANAGER_DASHBOARD },
     {
-        id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters', children: [
-            { id: 'masters/law', url: '/masters/law', label: 'Law Category' },
-            { id: 'masters/Act', url: '/masters/Act', label: 'Act' },
-            { id: 'masters/activity', url: '/masters/activity', label: 'Activity' },
-            { id: 'masters/rule', url: '/masters/rule', label: 'Rule' },
-            { id: 'masters/state', url: '/masters/state', label: 'State' },
-            { id: 'masters/city', url: '/masters/city', label: 'City' },
-            { id: 'masters/compliance', url: '/masters/compliance', label: 'Rule Compliance' },
-            { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings' }
+        id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters',
+        children: [
+            { id: 'masters/law', url: '/masters/law', label: 'Law Category', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'masters/Act', url: '/masters/Act', label: 'Act', privilege: USER_PRIVILEGES.VIEW_ACTS },
+            { id: 'masters/activity', url: '/masters/activity', label: 'Activity', privilege: USER_PRIVILEGES.VIEW_ACTIVITIES },
+            { id: 'masters/rule', url: '/masters/rule', label: 'Rule', privilege: USER_PRIVILEGES.VIEW_RULES },
+            { id: 'masters/state', url: '/masters/state', label: 'State', privilege: USER_PRIVILEGES.VIEW_STATES },
+            { id: 'masters/city', url: '/masters/city', label: 'City', privilege: USER_PRIVILEGES.VIEW_CITIES },
+            { id: 'masters/compliance', url: '/masters/compliance', label: 'Rule Compliance', privilege: USER_PRIVILEGES.VIEW_RULE_COMPLIANCE },
+            { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings', privilege: USER_PRIVILEGES.VIEW_MAPPINGS }
         ]
     },
     {
-        id: 'companies', url: '/companies/list', icon: 'building', label: 'Companies', children: [
-            { id: 'companies/list', url: '/companies/list', label: 'Manage Companies' },
-            { id: 'companies/associateCompanies', url: '/companies/associateCompanies', label: 'Associate Companies' },
-            { id: 'companies/locationMapping', url: '/companies/locationMapping', label: 'Location Mapping' },
-            { id: 'companies/auditSchedule', url: '/companies/auditSchedule', label: 'Audit Schedule' },
-            { id: 'companies/audit-schedule-details', url: '/companies/audit-schedule-details', label: 'Audit Schedule Details' },
-            { id: 'companies/blockUnblock', url: '/companies/blockUnblock', label: 'Block Un-Block' }
+        id: 'companies', url: '/companies/list', icon: 'building', label: 'Companies',
+        children: [
+            { id: 'companies/list', url: '/companies/list', label: 'Manage Companies', privilege: USER_PRIVILEGES.VIEW_COMPANIES },
+            { id: 'companies/associateCompanies', url: '/companies/associateCompanies', label: 'Associate Companies', privilege: USER_PRIVILEGES.VIEW_ASSOCIATE_COMPANIES },
+            { id: 'companies/locationMapping', url: '/companies/locationMapping', label: 'Location Mapping', privilege: USER_PRIVILEGES.VIEW_LOCATION_MAPPINGS }
         ]
     },
     {
-        id: 'userManagement', url: '/userManagement/users', icon: 'users', label: 'User Management', children: [
-            { id: 'userManagement/users', url: '/userManagement/users', label: 'Manage Users' },
-            { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Company Mapping' },
+        id: 'auditSchedule', url: '/auditSchedule/importExport', icon: 'building', label: 'Audit Management',
+        children: [
+            { id: 'auditSchedule/importExport', url: '/auditSchedule/importExport', label: 'Audit Schedule', privilege: USER_PRIVILEGES.AUDIT_SCHEDULE },
+            { id: 'auditSchedule/details', url: '/auditSchedule/details', label: 'Audit Schedule Details', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_DETAILS },
+            { id: 'auditSchedule/blockUnblock', url: '/auditSchedule/blockUnblock', label: 'Block Un-Block', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK }
         ]
     },
     {
-        id: 'email', url: '/email/templates', icon: 'email', label: 'Email', children: [
-            { id: 'email/templates', url: '/email/templates', label: 'Manage Templates' }
+        id: 'userManagement', url: '/userManagement/roles', icon: 'users', label: 'User Management',
+        children: [
+            { id: 'userManagement/roles', url: '/userManagement/roles', label: 'Manage Roles', privilege: USER_PRIVILEGES.VIEW_ROLES },
+            { id: 'userManagement/users', url: '/userManagement/users', label: 'Manage Users', privilege: USER_PRIVILEGES.VIEW_USERS },
+            { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Company Mapping', privilege: USER_PRIVILEGES.VIEW_COMPANY_MAPPINGS },
         ]
     },
-    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities' },
+    {
+        id: 'email', url: '/email/templates', icon: 'email', label: 'Email',
+        children: [
+            { id: 'email/templates', url: '/email/templates', label: 'Manage Templates', privilege: USER_PRIVILEGES.VIEW_EMAIL_TEMPLATES }
+        ]
+    },
+    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.READ_ONLY_ACTIVITIES },
+    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES },
+    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.OWNER_ACTIVITIES },
+    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.MANAGER_ACTIVITIES },
+    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES },
     { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true }
 ];
 
@@ -53,8 +72,26 @@ function Sidenav({ open, toggleSidenav }: any) {
 
     useEffect(() => {
         if (user) {
-            const pages = ROLE_MAPPING[user.role] || [];
-            const _menu = SideNavMenu.filter(x => pages.includes(x.id));
+            // const privileges = (user.privileges || '').split(API_DELIMITER);
+            const privileges = 'VIEW_AUDIT_SCHEDULE_DETAILS;VIEW_ROLES;ADD_ROLE;EDIT_ROLE;DELETE_ROLE;VIEW_LAW_CATEGORY;VIEW_ACTS;VIEW_ACTIVITIES;VIEW_RULES;VIEW_STATES;VIEW_CITIES;VIEW_RULE_COMPLIANCE;VIEW_MAPPING;VIEW_COMPANIES;VIEW_ASSOCIATE_COMPANY;VIEW_LOCATION_MAPPING;AUDIT_SCHEDULE;VIEW_USERS;VIEW_COMPANY_MAPPING;VIEW_EMAIL_TEMPLATES'.split(API_DELIMITER);
+            const _menu: any[] = [];
+            SideNavMenu.forEach((menu: any) => {
+                if (menu.children) {
+                    const children = menu.children.filter((child: any) => {
+                        return privileges.includes(child.privilege);
+                    });
+                    if (children.length) {
+                        _menu.push({
+                            ...menu,
+                            children
+                        });
+                    }
+                } else {
+                    if (privileges.includes(menu.privilege)) {
+                        _menu.push(menu);
+                    }
+                }
+            });
             const _toggleStatus = {};
             _menu.forEach(x => {
                 toggelStatus[x.id] = false

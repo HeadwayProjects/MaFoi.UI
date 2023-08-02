@@ -28,13 +28,15 @@ import AuditScheduleDetails from "../components/pages/Masters/Companies/AuditSch
 import LockUnLock from "../components/pages/Masters/Companies/LockUnLock";
 import EmailTemplates from "../components/pages/Email/EmailTemplates";
 import Home from "../components/pages/home";
+import ManageRoles from "../components/pages/UserManagement/Roles/ManageRoles";
+import Roles from "../components/pages/UserManagement/Roles/Roles";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
     AuditorUser: ['dashboard', 'activities'],
     VendorAdmin: ['dashboard', 'activities'],
     VendorUser: ['dashboard', 'activities'],
-    SuperAdmin: ['masters', 'companies', 'userManagement', 'email']
+    SuperAdmin: ['masters', 'companies', 'auditSchedule', 'userManagement', 'email']
 }
 
 function AuthenticatedContent() {
@@ -113,11 +115,17 @@ function AuthenticatedContent() {
         '/companies/auditSchedule': () => (
             layout(<AuditSchedule />)
         ),
-        '/companies/audit-schedule-details': () => (
+        '/auditSchedule/importExport': () => (
+            layout(<AuditSchedule />)
+        ),
+        '/auditSchedule/details': () => (
             layout(<AuditScheduleDetails />)
         ),
-        '/companies/blockUnblock': () => (
+        '/auditSchedule/blockUnblock': () => (
             layout(<LockUnLock />)
+        ),
+        '/userManagement/roles': () => (
+            layout(<Roles />)
         ),
         '/userManagement/users': () => (
             layout(<MangeUsers />)

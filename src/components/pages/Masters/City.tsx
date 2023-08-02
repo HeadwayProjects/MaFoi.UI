@@ -15,6 +15,8 @@ import { useExportCities } from "../../../backend/exports";
 import { downloadFileContent } from "../../../utils/common";
 import PageLoader from "../../shared/PageLoader";
 import { ERROR_MESSAGES } from "../../../utils/constants";
+import { hasUserAccess } from "../../../backend/auth";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
 
 function City() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('City'));
@@ -63,14 +65,20 @@ function City() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
-                    setCity(row);
-                    setAction(ACTIONS.EDIT)
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                    setCity(row);
-                    setAction(ACTIONS.DELETE)
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_CITY) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
+                        setCity(row);
+                        setAction(ACTIONS.EDIT)
+                    }} />
+                }
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_CITY) &&
+                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                        setCity(row);
+                        setAction(ACTIONS.DELETE)
+                    }} />
+                }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setCity(row);
                     setAction(ACTIONS.VIEW)
@@ -171,12 +179,18 @@ function City() {
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for City Code/Name"} />
                                 <div className="d-flex">
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.EXPORT_CITIES) &&
+                                        <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                            <Icon name={'download'} className="me-2"></Icon>Export
+                                        </Button>
+                                    }
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.ADD_CITY) &&
+                                        <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                            <Icon name={'plus'} className="me-2"></Icon>Add New
+                                        </Button>
+                                    }
                                 </div>
                             </div>
                         </div>

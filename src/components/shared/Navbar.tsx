@@ -22,7 +22,7 @@ function Navbar({ showUser = true }) {
 
     function logout(event: any) {
         preventDefault(event)
-        auth.clearAuthToken();
+        auth.clearUserSession();
         setTimeout(() => {
             navigate(`${getBasePath()}/`);
             window.location.reload();

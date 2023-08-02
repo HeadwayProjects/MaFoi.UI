@@ -194,7 +194,6 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
     useEffect(() => {
         if (locationDetails && parentCompany && associateCompany) {
             const { state, city, locationCode } = locationDetails;
-            console.log(state, city)
             const codes = [
                 parentCompany.code || '###',
                 associateCompany.code || '###',

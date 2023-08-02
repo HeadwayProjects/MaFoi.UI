@@ -12,6 +12,8 @@ import ConfirmModal from "../../common/ConfirmModal";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import MastersLayout from "../Masters/MastersLayout";
+import { hasUserAccess } from "../../../backend/auth";
+import { USER_PRIVILEGES } from "./Roles/RoleConfiguration";
 
 function mapData(list: any[]) {
     if ((list || []).length === 0) {
@@ -84,14 +86,20 @@ function UserCompanies() {
         const row = cell.getData();
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
-                    setUserLocations(row);
-                    setAction(ACTIONS.EDIT);
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
-                    setUserLocations(row);
-                    setAction(ACTIONS.DELETE);
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_LOCATION_MAPPING) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
+                        setUserLocations(row);
+                        setAction(ACTIONS.EDIT);
+                    }} />
+                }
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_LOCATION_MAPPING) &&
+                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                        setUserLocations(row);
+                        setAction(ACTIONS.DELETE);
+                    }} />
+                }
             </div>
         )
     }
@@ -140,7 +148,8 @@ function UserCompanies() {
         },
         {
             title: "Actions", hozAlign: "center", width: 160,
-            headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
+            headerSort: false, formatter: reactFormatter(<ActionColumnElements />),
+            visible: hasUserAccess(USER_PRIVILEGES.EDIT_LOCATION_MAPPING) && hasUserAccess(USER_PRIVILEGES.DELETE_LOCATION_MAPPING)
         }
     ];
 
@@ -216,14 +225,17 @@ function UserCompanies() {
                                         }
                                     } />
                                 </div>
-                                <Button variant="primary" className="px-4 ms-auto text-nowrap" disabled={!Boolean(user)}
-                                    onClick={() => setAction(ACTIONS.ADD)}>Add User Location</Button>
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.ADD_LOCATION_MAPPING) &&
+                                    < Button variant="primary" className="px-4 ms-auto text-nowrap" disabled={!Boolean(user)}
+                                        onClick={() => setAction(ACTIONS.ADD)}>Add User Location</Button>
+                                }
                             </div>
                         </div>
                     </div>
                     <Table data={data} options={tableConfig} isLoading={isFetching} />
                 </div>
-            </MastersLayout>
+            </MastersLayout >
 
             {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&

@@ -1,0 +1,32 @@
+.privilegesCard {
+    display: inline !important;
+    margin: 0 20px 20px 0;
+    float: left;
+    position: unset !important;
+}
+
+.privilegesList {
+    display: grid;
+    grid-template-columns: repeat(1, auto auto auto);
+    grid-column-gap: 20px;
+    grid-auto-flow: row dense;
+}
+
+.label {
+    font-size: 13px;
+}
+
+.chips {
+    display: inline-block;
+    margin: 0 5px 5px 0;
+    border: 1px solid var(--gray-500);
+    background-color: var(--gray-800);
+    border-radius: 6px;
+    padding: 0 4px;
+    font-size: var(--font-sm)
+}
+
+.breadcrumb li {
+    font-size: var(--font-lg) !important;
+}
+

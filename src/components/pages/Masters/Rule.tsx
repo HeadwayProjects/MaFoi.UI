@@ -17,6 +17,8 @@ import { downloadFileContent } from "../../../utils/common";
 import { useExportRules } from "../../../backend/exports";
 import RulesImportModal from "./RulesImportModal";
 import styles from "./Masters.module.css";
+import { hasUserAccess } from "../../../backend/auth";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
 
 function Rule() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Rule'));
@@ -56,14 +58,20 @@ function Rule() {
         const row = cell.getData();
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
-                    setRule(row);
-                    setAction(ACTIONS.EDIT)
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                    setRule(row);
-                    setAction(ACTIONS.DELETE)
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_RULE) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
+                        setRule(row);
+                        setAction(ACTIONS.EDIT)
+                    }} />
+                }
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_RULE) &&
+                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                        setRule(row);
+                        setAction(ACTIONS.DELETE)
+                    }} />
+                }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setRule(row);
                     setAction(ACTIONS.VIEW)
@@ -180,15 +188,24 @@ function Rule() {
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Rule/Description"} />
                                 <div className="d-flex">
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)}>
-                                        <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
-                                    </Button>
-                                    <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.ADD_RULE) &&
+                                        <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)}>
+                                            <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
+                                        </Button>
+                                    }
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.EXPORT_RULES) &&
+                                        <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}>
+                                            <Icon name={'download'} className="me-2"></Icon>Export
+                                        </Button>
+                                    }
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.ADD_RULE) &&
+                                        <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                            <Icon name={'plus'} className="me-2"></Icon>Add New
+                                        </Button>
+                                    }
                                 </div>
                             </div>
                         </div>
