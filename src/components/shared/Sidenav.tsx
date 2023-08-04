@@ -30,9 +30,16 @@ const SideNavMenu = [
             { id: 'companies/locationMapping', url: '/companies/locationMapping', label: 'Location Mapping' },
             { id: 'companies/auditSchedule', url: '/companies/auditSchedule', label: 'Audit Schedule' },
             { id: 'companies/audit-schedule-details', url: '/companies/audit-schedule-details', label: 'Audit Schedule Details' },
-            { id: 'companies/blockUnblock', url: '/companies/blockUnblock', label: 'Block Un-Block' }
+            { id: 'companies/blockUnblock', url: '/companies/blockUnblock', label: 'Block Un-Block' },
+            { id: 'complianceManagement/complianceSchedule', url: '/complianceManagement/complianceSchedule', label: 'Compliance Schedule' },
+            { id: 'complianceManagement/compliance-schedule-details', url: '/complianceManagement/compliance-schedule-details', label: 'Comp Schedule Details' },
+            { id: 'complianceManagement/blockUnblock', url: '/complianceManagement/blockUnblock', label: 'Block Un-Block' }
         ]
     },
+    // {
+    //     id: 'complianceManagement', url: '/complianceManagement/list', icon: 'building', label: 'Compliance Management', children: [
+    //     ]
+    // },
     {
         id: 'userManagement', url: '/userManagement/users', icon: 'users', label: 'User Management', children: [
             { id: 'userManagement/users', url: '/userManagement/users', label: 'Manage Users' },

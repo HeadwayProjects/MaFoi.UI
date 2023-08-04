@@ -30,6 +30,9 @@ import EmailTemplates from "../components/pages/Email/EmailTemplates";
 import Home from "../components/pages/home";
 import ManageVerticals from "../components/pages/Masters/Companies/Verticals/ManageVerticals";
 import ManageDepartments from "../components/pages/Masters/Companies/Departments/ManageDepartments";
+import ComplianceSchedule from "../components/pages/Compliance/ComplianceSchedule";
+import ComplianceScheduleDetails from "../components/pages/Compliance/ComplianceScheduleDetails";
+import LockUnLockCompliance from "../components/pages/Compliance/LockUnLockCompliance";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -126,6 +129,15 @@ function AuthenticatedContent() {
         ),
         '/companies/blockUnblock': () => (
             layout(<LockUnLock />)
+        ),
+        '/complianceManagement/complianceSchedule': () => (
+            layout(<ComplianceSchedule />)
+        ),
+        '/complianceManagement/compliance-schedule-details': () => (
+            layout(<ComplianceScheduleDetails />)
+        ),
+        '/complianceManagement/blockUnblock': () => (
+            layout(<LockUnLockCompliance />)
         ),
         '/userManagement/users': () => (
             layout(<MangeUsers />)
