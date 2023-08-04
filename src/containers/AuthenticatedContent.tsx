@@ -28,6 +28,8 @@ import AuditScheduleDetails from "../components/pages/Masters/Companies/AuditSch
 import LockUnLock from "../components/pages/Masters/Companies/LockUnLock";
 import EmailTemplates from "../components/pages/Email/EmailTemplates";
 import Home from "../components/pages/home";
+import ManageVerticals from "../components/pages/Masters/Companies/Verticals/ManageVerticals";
+import ManageDepartments from "../components/pages/Masters/Companies/Departments/ManageDepartments";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -106,6 +108,12 @@ function AuthenticatedContent() {
         ),
         '/companies/associateCompanies': () => (
             layout(<AssociateCompanies />)
+        ),
+        '/companies/verticals': () => (
+            layout(<ManageVerticals />)
+        ),
+        '/companies/departments': () => (
+            layout(<ManageDepartments />)
         ),
         '/companies/locationMapping': () => (
             layout(<CompanyLocationMappings />)

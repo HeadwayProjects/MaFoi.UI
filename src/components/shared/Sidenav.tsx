@@ -25,6 +25,8 @@ const SideNavMenu = [
         id: 'companies', url: '/companies/list', icon: 'building', label: 'Companies', children: [
             { id: 'companies/list', url: '/companies/list', label: 'Manage Companies' },
             { id: 'companies/associateCompanies', url: '/companies/associateCompanies', label: 'Associate Companies' },
+            { id: 'companies/verticals', url: '/companies/verticals', label: 'Verticals' },
+            { id: 'companies/departments', url: '/companies/departments', label: 'Departments' },
             { id: 'companies/locationMapping', url: '/companies/locationMapping', label: 'Location Mapping' },
             { id: 'companies/auditSchedule', url: '/companies/auditSchedule', label: 'Audit Schedule' },
             { id: 'companies/audit-schedule-details', url: '/companies/audit-schedule-details', label: 'Audit Schedule Details' },
