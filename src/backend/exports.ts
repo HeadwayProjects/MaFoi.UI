@@ -209,3 +209,33 @@ export function useExportUsers(onSuccess?: any, onError?: any) {
     );
     return { exportUsers, error, exporting };
 }
+
+export function useExportVerticals(onSuccess?: any, onError?: any) {
+    const { mutate: exportVertical, error, isLoading: exporting } = useMutation(
+        ['exportVertical'],
+        async (payload: any) => await post('/api/Vertical/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportVertical, error, exporting };
+}
+
+export function useExportDepartments(onSuccess?: any, onError?: any) {
+    const { mutate: exportDepartments, error, isLoading: exporting } = useMutation(
+        ['exportDepartments'],
+        async (payload: any) => await post('/api/Department/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportDepartments, error, exporting };
+}

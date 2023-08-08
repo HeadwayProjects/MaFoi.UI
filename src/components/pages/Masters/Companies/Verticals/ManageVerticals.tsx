@@ -11,6 +11,8 @@ import TableFilters from "../../../../common/TableFilter";
 import ConfirmModal from "../../../../common/ConfirmModal";
 import PageLoader from "../../../../shared/PageLoader";
 import VerticalDetails from "./VerticalDetails";
+import { useExportVerticals } from "../../../../../backend/exports";
+import { downloadFileContent } from "../../../../../utils/common";
 
 function ManageVerticals() {
     const [t] = useState(new Date().getTime());
@@ -32,6 +34,15 @@ function ManageVerticals() {
     const { deleteVertical, deleting } = useDeleteVertical(() => {
         toast.success(`${vertical.name} deleted successfully.`);
         submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+    const { exportVertical, exporting } = useExportVerticals((response: any) => {
+        downloadFileContent({
+            name: 'Verticals.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
@@ -154,6 +165,10 @@ function ManageVerticals() {
         setPayload({ ...payload, ..._params })
     }
 
+    function handleExport() {
+        exportVertical({ ...payload, pagination: null });
+    }
+
     useEffect(() => {
         if (!isFetching && payload) {
             setTimeout(() => {
@@ -172,6 +187,10 @@ function ManageVerticals() {
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder="Search for Vertical" />
                                 <div className="d-flex">
+                                    <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}
+                                        disabled={!Boolean(total)}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
                                     <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
                                         <Icon name={'plus'} className="me-2"></Icon>Add New
                                     </Button>
@@ -195,6 +214,9 @@ function ManageVerticals() {
             }
             {
                 deleting && <PageLoader>Deleting Vertical...</PageLoader>
+            }
+            {
+                exporting && <PageLoader>Preparing Data...</PageLoader>
             }
         </>
     )

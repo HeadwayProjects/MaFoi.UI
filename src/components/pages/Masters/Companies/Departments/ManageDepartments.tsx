@@ -11,6 +11,8 @@ import TableFilters, { DEFAULT_OPTION } from "../../../../common/TableFilter";
 import ConfirmModal from "../../../../common/ConfirmModal";
 import PageLoader from "../../../../shared/PageLoader";
 import DepartmentDetails from "./DepartmentDetails";
+import { useExportDepartments } from "../../../../../backend/exports";
+import { downloadFileContent } from "../../../../../utils/common";
 
 function ManageDepartments() {
     const [t] = useState(new Date().getTime());
@@ -35,6 +37,15 @@ function ManageDepartments() {
     const { deleteDepartment, deleting } = useDeleteDepartment(() => {
         toast.success(`${department.name} deleted successfully.`);
         submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+    const { exportDepartments, exporting } = useExportDepartments((response: any) => {
+        downloadFileContent({
+            name: 'Departments.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
@@ -186,6 +197,10 @@ function ManageDepartments() {
         setPayload({ ...payload, ..._params })
     }
 
+    function handleExport() {
+        exportDepartments({ ...payload, pagination: null });
+    }
+
     // useEffect(() => {
     //     if (filters) {
     //         const { filters: _filters, search } = filters;
@@ -243,6 +258,10 @@ function ManageDepartments() {
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder="Search for Vertical" />
                                 <div className="d-flex">
+                                    <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}
+                                        disabled={!Boolean(total)}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
                                     <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
                                         <Icon name={'plus'} className="me-2"></Icon>Add New
                                     </Button>
@@ -266,6 +285,9 @@ function ManageDepartments() {
             }
             {
                 deleting && <PageLoader>Deleting Vertical...</PageLoader>
+            }
+            {
+                exporting && <PageLoader>Preparing Data...</PageLoader>
             }
         </>
     )
