@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { ACTIONS } from "../../../../common/Constants";
+import { ACTIONS, TOOLTIP_DELAY } from "../../../../common/Constants";
 import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../../../common/Table";
 import { useDeleteVertical, useGetCompanies, useGetVerticals } from "../../../../../backend/masters";
 import { ERROR_MESSAGES } from "../../../../../utils/constants";
@@ -46,6 +46,24 @@ function ManageVerticals() {
         }
     ]
 
+    function CompanyTmpl({ cell }: any) {
+        const row = cell.getData();
+        const value = ((row || {}).company || {}).name;
+        return (
+            <>
+                {
+                    !!value &&
+                    <div className="d-flex align-items-center h-100 w-auto">
+                        <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
+                            placement="bottom" delay={{ show: TOOLTIP_DELAY } as any}>
+                            <div className="ellipse two-lines">{value}</div>
+                        </OverlayTrigger>
+                    </div>
+                }
+            </>
+        )
+    }
+
     function ActionColumnElements({ cell }: any) {
         const row = cell.getData();
 
@@ -68,10 +86,10 @@ function ManageVerticals() {
     }
 
     const columns = [
-        { title: "Company", field: "company.name", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Code", field: "code", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
+        { title: "Company", field: "companyId", formatter: reactFormatter(<CompanyTmpl />) },
+        { title: "Code", field: "shortCode", formatter: reactFormatter(<CellTmpl />) },
         { title: "Name", field: "name", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Description", field: "description", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Description", field: "description", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -85,7 +103,7 @@ function ManageVerticals() {
         rowHeight: 54,
         selectable: false,
         paginate: true,
-        initialSort: [{ column: 'name', dir: 'asc' }]
+        initialSort: [{ column: 'companyId', dir: 'asc' }]
     });
 
     function formatApiResponse(params: any, list: any[], totalRecords: number) {

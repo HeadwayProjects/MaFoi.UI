@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { toast } from "react-toastify";
-import { ACTIONS } from "../../../../common/Constants";
+import { ACTIONS, TOOLTIP_DELAY } from "../../../../common/Constants";
 import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../../../common/Table";
 import { useDeleteDepartment, useGetCompanies, useGetDepartments, useGetVerticals } from "../../../../../backend/masters";
 import { ERROR_MESSAGES } from "../../../../../utils/constants";
 import Icon from "../../../../common/Icon";
 import MastersLayout from "../../MastersLayout";
-import TableFilters from "../../../../common/TableFilter";
+import TableFilters, { DEFAULT_OPTION } from "../../../../common/TableFilter";
 import ConfirmModal from "../../../../common/ConfirmModal";
 import PageLoader from "../../../../shared/PageLoader";
 import DepartmentDetails from "./DepartmentDetails";
@@ -26,8 +26,10 @@ function ManageDepartments() {
     const [filters, setFilters] = useState<any>();
     const filterRef: any = useRef();
     filterRef.current = filters;
+    const [company, setCompany] = useState<any>(null);
+    const [vertical, setVertical] = useState<any>(null);
     const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
-    const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t });
+    const { companies, isFetching: fetchingCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t });
     const { verticals } = useGetVerticals({ ...DEFAULT_OPTIONS_PAYLOAD, t });
     const { departments, total, isFetching, refetch } = useGetDepartments(payload);
     const { deleteDepartment, deleting } = useDeleteDepartment(() => {
@@ -38,21 +40,60 @@ function ManageDepartments() {
     });
 
     const filterConfig = [
-        {
-            label: 'Company',
-            name: 'company',
-            options: (companies || []).map((x: any) => {
-                return { value: x.id, label: x.name };
-            })
-        },
+        // {
+        //     label: 'Company',
+        //     name: 'companyId',
+        //     options: (companies || []).map((x: any) => {
+        //         return { value: x.id, label: x.name };
+        //     }),
+        //     value: company
+        // },
         {
             label: 'Vertical',
-            name: 'vertical',
+            name: 'verticalId',
             options: (verticals || []).map((x: any) => {
                 return { value: x.id, label: x.name };
-            })
+            }),
+            // value: vertical
         }
     ]
+
+    function CompanyTmpl({ cell }: any) {
+        const row = cell.getData();
+        const vertical = (row || {}).vertical || {};
+        const value = ((vertical || {}).company || {}).name;
+        return (
+            <>
+                {
+                    !!value &&
+                    <div className="d-flex align-items-center h-100 w-auto">
+                        <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
+                            placement="bottom" delay={{ show: TOOLTIP_DELAY } as any}>
+                            <div className="ellipse two-lines">{value}</div>
+                        </OverlayTrigger>
+                    </div>
+                }
+            </>
+        )
+    }
+
+    function VerticalTmpl({ cell }: any) {
+        const row = cell.getData();
+        const value = ((row || {}).vertical || {}).name;
+        return (
+            <>
+                {
+                    !!value &&
+                    <div className="d-flex align-items-center h-100 w-auto">
+                        <OverlayTrigger overlay={<Tooltip>{value}</Tooltip>} rootClose={true}
+                            placement="bottom" delay={{ show: TOOLTIP_DELAY } as any}>
+                            <div className="ellipse two-lines">{value}</div>
+                        </OverlayTrigger>
+                    </div>
+                }
+            </>
+        )
+    }
 
     function ActionColumnElements({ cell }: any) {
         const row = cell.getData();
@@ -76,11 +117,11 @@ function ManageDepartments() {
     }
 
     const columns = [
-        { title: "Company", field: "company.name", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Code", field: "code", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Company", field: "companyId", formatter: reactFormatter(<CompanyTmpl />) },
+        { title: "Vertical", field: "verticalId", formatter: reactFormatter(<VerticalTmpl />) },
+        { title: "Code", field: "shortCode", formatter: reactFormatter(<CellTmpl />) },
         { title: "Name", field: "name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Description", field: "description", formatter: reactFormatter(<CellTmpl />), widthGrow: 2 },
-        { title: "Vertical", field: "vertical.name", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -94,7 +135,7 @@ function ManageDepartments() {
         rowHeight: 54,
         selectable: false,
         paginate: true,
-        initialSort: [{ column: 'name', dir: 'asc' }]
+        initialSort: [{ column: 'verticalId', dir: 'asc' }]
     });
 
     function formatApiResponse(params: any, list: any[], totalRecords: number) {
@@ -144,6 +185,45 @@ function ManageDepartments() {
         setParams({ ..._params });
         setPayload({ ...payload, ..._params })
     }
+
+    // useEffect(() => {
+    //     if (filters) {
+    //         const { filters: _filters, search } = filters;
+    //         setData(formatApiResponse(params, [], 0));
+    //         const _companyId = (_filters.find((x: any) => x.columnName === 'companyId') || {}).value;
+    //         const _x = [{ columnName: 'companyId', value: _companyId }];
+    //         if (_companyId && (company || {}).value !== _companyId) {
+    //             setVertical(DEFAULT_OPTION);
+    //             const { id, name } = companies.find((x: any) => x.id === _companyId) || {};
+    //             setCompany({ value: id, label: name });
+    //         }
+    //         const _verticalId = _companyId ? (_filters.find((x: any) => x.columnName === 'verticalId') || {}).value : null;
+    //         if (_verticalId) {
+    //             const { id, name } = verticals.find((x: any) => x.id === _verticalId) || {};
+    //             if (id && name) {
+    //                 setVertical({ value: id, label: name });
+    //             }
+    //             _x.push({ columnName: 'verticalId', value: _verticalId });
+    //         }
+    //         setPayload({ ...DEFAULT_PAYLOAD, ...params, filters: _x, search });
+    //     }
+
+    // }, [filters]);
+
+    // useEffect(() => {
+    //     if (!fetchingCompanies && companies) {
+    //         const { id, name } = (companies || [])[0] || {};
+    //         setCompany({ value: id, label: name });
+    //         if (id && name) {
+    //             setVertical(DEFAULT_OPTION);
+    //             const { search } = filterRef.current || { search: '' };
+    //             setFilters({
+    //                 filters: [{ columnName: 'companyId', value: id }],
+    //                 search
+    //             });
+    //         }
+    //     }
+    // }, [fetchingCompanies]);
 
     useEffect(() => {
         if (!isFetching && payload) {

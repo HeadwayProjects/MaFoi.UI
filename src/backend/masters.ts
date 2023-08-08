@@ -798,7 +798,7 @@ export function useDeleteCompanyLocation(onSuccess?: any, onError?: any) {
 export function useGetVerticals(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['verticals', payload],
-        async () => await api.post(`/api/Verticals/GetAll`, payload),
+        async () => await api.post(`/api/Vertical/GetAll`, payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
@@ -812,12 +812,15 @@ export function useGetVerticals(payload: any, enabled = true) {
 }
 
 export function useCreateVertical(onSuccess?: any, onError?: any) {
-    const { mutate: createVertical, error, isLoading } = useMutation(
+    const { mutate: createVertical, error, isLoading } = useMutation<any>(
         ['createVertical'],
-        async (payload) => await api.post('/api/Verticals/Add', payload),
+        async (payload) => await api.post('/api/Vertical/Add', payload),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { createVertical, error, creating: isLoading };
@@ -826,10 +829,13 @@ export function useCreateVertical(onSuccess?: any, onError?: any) {
 export function useUpdateVertical(onSuccess?: any, onError?: any) {
     const { mutate: updateVertical, error, isLoading } = useMutation(
         ['updateVertical'],
-        async (payload) => await api.put('/api/Verticals/Update', payload),
+        async (payload) => await api.put('/api/Vertical/Update', payload),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { updateVertical, error, updating: isLoading };
@@ -838,10 +844,13 @@ export function useUpdateVertical(onSuccess?: any, onError?: any) {
 export function useDeleteVertical(onSuccess?: any, onError?: any) {
     const { mutate: deleteVertical, error, isLoading } = useMutation(
         ['deleteVertical'],
-        async (id) => await api.del(`/api/Verticals/Delete?id=${id}`),
+        async (id) => await api.del(`/api/Vertical/Delete?id=${id}`),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { deleteVertical, error, deleting: isLoading };
@@ -850,7 +859,7 @@ export function useDeleteVertical(onSuccess?: any, onError?: any) {
 export function useGetDepartments(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['departments', payload],
-        async () => await api.post(`/api/Departments/GetAll`, payload),
+        async () => await api.post(`/api/Department/GetAll`, payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
@@ -866,10 +875,13 @@ export function useGetDepartments(payload: any, enabled = true) {
 export function useCreateDepartment(onSuccess?: any, onError?: any) {
     const { mutate: createDepartment, error, isLoading } = useMutation(
         ['createDepartment'],
-        async (payload) => await api.post('/api/Departments/Add', payload),
+        async (payload) => await api.post('/api/Department/Add', payload),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { createDepartment, error, creating: isLoading };
@@ -878,10 +890,13 @@ export function useCreateDepartment(onSuccess?: any, onError?: any) {
 export function useUpdateDepartment(onSuccess?: any, onError?: any) {
     const { mutate: updateDepartment, error, isLoading } = useMutation(
         ['updateDepartment'],
-        async (payload) => await api.put('/api/Departments/Update', payload),
+        async (payload) => await api.put('/api/Department/Update', payload),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { updateDepartment, error, updating: isLoading };
@@ -890,10 +905,13 @@ export function useUpdateDepartment(onSuccess?: any, onError?: any) {
 export function useDeleteDepartment(onSuccess?: any, onError?: any) {
     const { mutate: deleteDepartment, error, isLoading } = useMutation(
         ['deleteDepartment'],
-        async (id) => await api.del(`/api/Departments/Delete?id=${id}`),
+        async (id) => await api.del(`/api/Department/Delete?id=${id}`),
         {
             onError,
-            onSuccess
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
         }
     );
     return { deleteDepartment, error, deleting: isLoading };

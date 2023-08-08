@@ -62,12 +62,12 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'code',
+                name: 'shortCode',
                 label: 'Short Code',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },
-                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z]{2, 10}/, message: 'Should be alpha value of length 2' }
+                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{2,10}/, message: 'Should be alphanumeric value of length 2' }
                 ],
                 styleClass: 'text-uppercase',
                 content: getValue(department, 'code')
@@ -102,12 +102,12 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
     function submit(e: any) {
         preventDefault(e);
         if (form.valid) {
-            const { id, code, name, description, company } = department;
+            const { shortCode, name, description, vertical } = department;
             const request: any = {
-                code,
+                shortCode,
                 name: name.trim(),
-                description: description.trim(),
-                company: company.value
+                description: (description || '').trim(),
+                verticalId: vertical.value
             };
 
             if (action === ACTIONS.EDIT) {
@@ -131,11 +131,13 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
 
     useEffect(() => {
         if (data) {
-            const { id, name } = data.company || {};
+            const { vertical } = data || {};
+            const { company } = vertical || {};
             setDepartment({
                 ...department,
                 ...data,
-                company: id ? { value: id, label: name } : null
+                company: company.id ? { value: company.id, label: company.name } : null,
+                vertical: vertical ? { value: vertical.id, label: vertical.name } : null
             });
         }
     }, [data]);

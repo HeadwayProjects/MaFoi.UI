@@ -15,7 +15,9 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
     const [form, setForm] = useState<any>({});
     const [vertical, setvertical] = useState<any>({ hideButtons: true });
     const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t }, action !== ACTIONS.VIEW);
-    const { createVertical, creating } = useCreateVertical(({ key, value }: any) => {
+    const { createVertical, creating } = useCreateVertical((response: any) => {
+        console.log(response);
+        const { key, value } = response;
         if (key === API_RESULT.SUCCESS) {
             toast.success(`${vertical.name} created successfully.`);
             onSubmit();
@@ -23,7 +25,9 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
             toast.error(value);
         }
     }, errorCallback);
-    const { updateVertical, updating } = useUpdateVertical(({ key, value }: any) => {
+    const { updateVertical, updating } = useUpdateVertical((response: any) => {
+        console.log(response);
+        const { key, value } = response;
         if (key === API_RESULT.SUCCESS) {
             toast.success(`${vertical.name} updated successfully.`);
             onSubmit();
@@ -50,15 +54,15 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'code',
+                name: 'shortCode',
                 label: 'Short Code',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },
-                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z]{2, 10}/, message: 'Should be alpha value of length 2' }
+                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{2,10}/, message: 'Should be alphanumeric value of length 2' }
                 ],
                 styleClass: 'text-uppercase',
-                content: getValue(vertical, 'code')
+                content: getValue(vertical, 'shortCode')
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -86,12 +90,12 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
     function submit(e: any) {
         preventDefault(e);
         if (form.valid) {
-            const { id, code, name, description, company } = vertical;
+            const { id, shortCode, name, description, company } = vertical;
             const request: any = {
-                code,
+                shortCode,
                 name: name.trim(),
-                description: description.trim(),
-                company: company.value
+                description: (description || '').trim(),
+                companyId: company.value
             };
 
             if (action === ACTIONS.EDIT) {
