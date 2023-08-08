@@ -16,7 +16,6 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
     const [vertical, setvertical] = useState<any>({ hideButtons: true });
     const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t }, action !== ACTIONS.VIEW);
     const { createVertical, creating } = useCreateVertical((response: any) => {
-        console.log(response);
         const { key, value } = response;
         if (key === API_RESULT.SUCCESS) {
             toast.success(`${vertical.name} created successfully.`);
@@ -26,7 +25,6 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
         }
     }, errorCallback);
     const { updateVertical, updating } = useUpdateVertical((response: any) => {
-        console.log(response);
         const { key, value } = response;
         if (key === API_RESULT.SUCCESS) {
             toast.success(`${vertical.name} updated successfully.`);
