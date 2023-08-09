@@ -96,6 +96,7 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
         const _company = (_form.values.company || {}).value || null;
         if (company !== _company) {
             setCompany(_company);
+            setDepartment({ ..._form.values, vertical: null });
         }
     }
 
