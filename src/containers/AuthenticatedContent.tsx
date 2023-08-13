@@ -30,6 +30,11 @@ import EmailTemplates from "../components/pages/Email/EmailTemplates";
 import Home from "../components/pages/home";
 import ManageRoles from "../components/pages/UserManagement/Roles/ManageRoles";
 import Roles from "../components/pages/UserManagement/Roles/Roles";
+import ManageVerticals from "../components/pages/Masters/Companies/Verticals/ManageVerticals";
+import ManageDepartments from "../components/pages/Masters/Companies/Departments/ManageDepartments";
+import ComplianceSchedule from "../components/pages/Compliance/ComplianceSchedule";
+import ComplianceScheduleDetails from "../components/pages/Compliance/ComplianceScheduleDetails";
+import LockUnLockCompliance from "../components/pages/Compliance/LockUnLockCompliance";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -109,6 +114,12 @@ function AuthenticatedContent() {
         '/companies/associateCompanies': () => (
             layout(<AssociateCompanies />)
         ),
+        '/companies/verticals': () => (
+            layout(<ManageVerticals />)
+        ),
+        '/companies/departments': () => (
+            layout(<ManageDepartments />)
+        ),
         '/companies/locationMapping': () => (
             layout(<CompanyLocationMappings />)
         ),
@@ -126,6 +137,15 @@ function AuthenticatedContent() {
         ),
         '/userManagement/roles': () => (
             layout(<Roles />)
+        ),
+        '/complianceManagement/complianceSchedule': () => (
+            layout(<ComplianceSchedule />)
+        ),
+        '/complianceManagement/compliance-schedule-details': () => (
+            layout(<ComplianceScheduleDetails />)
+        ),
+        '/complianceManagement/blockUnblock': () => (
+            layout(<LockUnLockCompliance />)
         ),
         '/userManagement/users': () => (
             layout(<MangeUsers />)

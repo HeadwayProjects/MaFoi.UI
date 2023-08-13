@@ -44,6 +44,13 @@ const SideNavMenu = [
         ]
     },
     {
+        id: 'complianceManagement', url: '/complianceManagement/list', icon: 'building', label: 'Compliance Management', children: [
+            { id: 'complianceManagement/complianceSchedule', url: '/complianceManagement/complianceSchedule', label: 'Compliance Schedule' },
+            { id: 'complianceManagement/compliance-schedule-details', url: '/complianceManagement/compliance-schedule-details', label: 'Comp Schedule Details' },
+            { id: 'complianceManagement/blockUnblock', url: '/complianceManagement/blockUnblock', label: 'Block Un-Block' }
+        ]
+    },
+    {
         id: 'userManagement', url: '/userManagement/roles', icon: 'users', label: 'User Management',
         children: [
             { id: 'userManagement/roles', url: '/userManagement/roles', label: 'Manage Roles', privilege: USER_PRIVILEGES.VIEW_ROLES },

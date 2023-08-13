@@ -3,7 +3,7 @@ import { InputGroup } from "react-bootstrap"
 import Select from "react-select";
 import { debounce } from "underscore";
 import { DEBOUNCE_TIME } from "../../utils/constants";
-const DEFAULT_OPTION = { value: 'ALL', label: 'All' };
+export const DEFAULT_OPTION = { value: 'ALL', label: 'All' };
 
 function TableFilters({ search, filterConfig, onFilterChange, placeholder }: any) {
     const searchRef: any = useRef();
