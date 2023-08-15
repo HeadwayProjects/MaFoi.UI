@@ -54,8 +54,12 @@
 }
 
 .sidenav-container.open .sidenav-item-label {
-    display: flex;
-    width: calc(100% - 44px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    text-align: left;
+    padding-right: 6px;
 }
 
 .sidenav-container.open .sidenav-item-icon {

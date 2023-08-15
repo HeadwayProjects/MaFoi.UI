@@ -44,9 +44,9 @@ const SideNavMenu = [
     },
     {
         id: 'complianceManagement', url: '/complianceManagement/list', icon: 'building', label: 'Compliance Management', children: [
-            { id: 'complianceManagement/complianceSchedule', url: '/complianceManagement/complianceSchedule', label: 'Compliance Schedule' },
-            { id: 'complianceManagement/compliance-schedule-details', url: '/complianceManagement/compliance-schedule-details', label: 'Comp Schedule Details' },
-            { id: 'complianceManagement/blockUnblock', url: '/complianceManagement/blockUnblock', label: 'Block Un-Block' }
+            { id: 'complianceManagement/complianceSchedule', url: '/complianceManagement/complianceSchedule', label: 'Compliance Schedule', privilege: USER_PRIVILEGES.COMPLIANCE_SCHEDULE },
+            { id: 'complianceManagement/compliance-schedule-details', url: '/complianceManagement/compliance-schedule-details', label: 'Comp Schedule Details', privilege: USER_PRIVILEGES.VIEW_COMPLIANCE_SCHEDULE_DETAILS },
+            { id: 'complianceManagement/blockUnblock', url: '/complianceManagement/blockUnblock', label: 'Block Un-Block', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK }
         ]
     },
     {
