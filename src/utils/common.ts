@@ -1,4 +1,6 @@
+import { hasUserAccess } from "../backend/auth";
 import { ACTIVITY_STATUS } from "../components/common/Constants";
+import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
 import { ACTIVITY_TYPE } from "./constants";
 
 export function preventDefault(event: any) {
@@ -99,6 +101,9 @@ export function getMaxMonthYear() {
 }
 
 export function checkVendorActivityStatus(activity: any) {
+  if (!hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD)) {
+    return { editable: false }
+  }
   const dueDate = new Date(activity.dueDate);
   dueDate.setHours(23);
   dueDate.setMinutes(59);
@@ -183,6 +188,9 @@ export function checkVendorActivityStatus(activity: any) {
 }
 
 export function checkAuditorActivityStatus(activity: any) {
+  if (!hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_AUDIT)) {
+    return { editable: false };
+  }
   const { auditted: auditType, status, published } = activity || {};
   if (published) {
     return {

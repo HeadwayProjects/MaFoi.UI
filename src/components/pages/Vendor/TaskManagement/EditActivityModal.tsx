@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import * as api from "../../../../backend/request";
-import * as auth from "../../../../backend/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
@@ -20,7 +19,6 @@ function StatusTmp({ status }: any) {
 
 function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
     const [submitting, setSubmitting] = useState(false);
-    const [allowEdit] = useState(auth.isVendor());
     const [formStatus] = useState(checkVendorActivityStatus(activity))
     const [file, setFile] = useState<any>(null);
     const [invalidFile, setInvalidFile] = useState(false);
@@ -78,7 +76,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
                 Boolean(formStatus) &&
                 <Modal show={true} backdrop="static" animation={false} size="lg">
                     <Modal.Header closeButton={true} onHide={onClose}>
-                        <Modal.Title className="bg">{(allowEdit && formStatus.editable) ? 'Edit Activity' : 'Activity Details'}</Modal.Title>
+                        <Modal.Title className="bg">{formStatus.editable ? 'Edit Activity' : 'Activity Details'}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <div className="d-flex justify-content-center">
@@ -111,7 +109,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                     <div className="col">{activity.status && <StatusTmp status={activity.status} />}</div>
                                 </div>
                                 {
-                                    allowEdit && formStatus.editable &&
+                                    formStatus.editable &&
                                     <>
                                         <div className="row mb-4">
                                             <div className="col w-100">
@@ -171,7 +169,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                                                 </span>
                                                                 {/* Delet */}
                                                                 {
-                                                                    allowEdit && formStatus.editable &&
+                                                                    formStatus.editable &&
                                                                     <span style={{ opacity: 0.5, cursor: "pointer", color: "var(--red)" }} onClick={() => deleteFile(file)}
                                                                         title="Delete">
                                                                         <FontAwesomeIcon icon={faTrash} />
@@ -199,7 +197,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
                         </div>
                     </Modal.Body>
                     {
-                        allowEdit && formStatus.editable ?
+                        formStatus.editable ?
                             <>
                                 <Modal.Footer className="d-flex justify-content-between">
                                     <Button variant="outline-secondary" onClick={onClose} className="btn btn-outline-secondary">

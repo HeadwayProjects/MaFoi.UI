@@ -277,7 +277,7 @@ function ActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                                         <td width="75%">{file.fileName}</td>
                                                         <td width="25%">
                                                             <div className="d-flex flex-row align-items-center">
-                                                                <Icon name={'download'} action={() => download(file.fileName, file.filePath)} title="Download" />
+                                                                <Icon name={'download'} action={() => download(file.fileName, file.filePath)} text="Download" />
                                                             </div>
                                                         </td>
                                                     </tr>

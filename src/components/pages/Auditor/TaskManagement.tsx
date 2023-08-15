@@ -17,10 +17,11 @@ import AlertModal from "../../common/AlertModal";
 import { download, preventDefault, reduceArraytoObj } from "../../../utils/common";
 import PublishModal from "./PublishModal";
 import ActivityModal from "./ActivityModal";
-import { getUserDetails } from "../../../backend/auth";
+import { getUserDetails, hasUserAccess } from "../../../backend/auth";
 import { useAuditReport } from "../../../backend/exports";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
 import { useGetAllActivities } from "../../../backend/query";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -322,7 +323,8 @@ function TaskManagement() {
                             ((row.auditted === ACTIVITY_TYPE.AUDIT
                                 && [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED].includes(row.status))
                                 || row.auditted === ACTIVITY_TYPE.PHYSICAL_AUDIT) &&
-                            <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={editActivity} />
+                            <Icon className="mx-2" type="button" name={hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_AUDIT) ? 'pencil' : 'eye'}
+                                text={hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_AUDIT) ? 'Edit' : 'View'} data={row} action={editActivity} />
                         }
                     </div>
                 }
@@ -443,18 +445,6 @@ function TaskManagement() {
             last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
             page: pageNumber || 1
         };
-        // list.forEach(x => {
-        //     const { id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-        //         submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId, auditted } = x;
-        //     if (auditted !== ACTIVITY_TYPE.NO_AUDIT) {
-        //         console.log(JSON.stringify({
-        //             id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-        //             submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId,
-        //             status: ACTIVITY_STATUS.OVERDUE
-        //         }));
-        //     }
-        // });
-        // list.forEach(x => console.log(x.id))
         setData(tdata);
         return tdata;
     }
@@ -602,7 +592,7 @@ function TaskManagement() {
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search}
-                                    downloadReport={downloadReport} />
+                                    downloadReport={hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT) ? downloadReport : undefined} />
                             </div>
                         </div>
                     </div>
@@ -624,15 +614,17 @@ function TaskManagement() {
                                     })
                                 }
                             </div>
-                            <div className="d-flex">
-                                <button className="btn btn-success" onClick={publishActivity}
-                                >
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon={faSave} />
-                                        <span className="ms-2">Publish</span>
-                                    </div>
-                                </button>
-                            </div>
+                            {
+                                hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_PUBLISH) &&
+                                <div className="d-flex">
+                                    <button className="btn btn-success" onClick={publishActivity}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon={faSave} />
+                                            <span className="ms-2">Publish</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            }
                         </div>
                     </div>
                 </form>

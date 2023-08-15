@@ -33,7 +33,7 @@ function AdvanceSearchModal(this: any, { data, onSubmit, onCancel }: any) {
                 label: 'Due Date',
                 className: 'grid-col-100',
                 range: true,
-                clearable: true, 
+                clearable: true,
                 initialValue: filter.dueDate,
                 onChange: onDueDateChange.bind(this)
             },
@@ -103,8 +103,8 @@ function AdvanceSearchModal(this: any, { data, onSubmit, onCancel }: any) {
             toDate.setMinutes(0);
             toDate.setSeconds(0);
             toDate.setMilliseconds(0);
-            _payload.fromDate = dayjs.default(new Date(fromDate)).local().format();
-            _payload.toDate = dayjs.default(new Date(toDate)).local().format();
+            _payload.fromDate = dayjs(new Date(fromDate)).local().format();
+            _payload.toDate = dayjs(new Date(toDate)).local().format();
         }
 
         if (activityType) {

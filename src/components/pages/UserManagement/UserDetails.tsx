@@ -8,6 +8,7 @@ import { ACTIONS, PATTERNS, STATUS } from "../../common/Constants";
 import { Button, Modal } from "react-bootstrap";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import PageLoader from "../../shared/PageLoader";
+import ViewPrivileges from "./Roles/ViewPrivileges";
 
 function UserDetails({ action, data, onClose, onSubmit }: any) {
     const [form, setForm] = useState<any>({});
@@ -33,11 +34,6 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
 
     function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
-    }
-
-    function onRoleChange(e: any) {
-        const { pages } = roles.find((x: any) => x.id === e.value);
-        setUserpages(pages.split(API_DELIMITER).join(UI_DELIMITER));
     }
 
     const schema = {
@@ -74,19 +70,11 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'role',
                 label: 'Role',
-                onChange: onRoleChange,
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
                 content: getValue(user, 'role.label'),
-                options: (roles || []).map((x: any) => {
-                    return {
-                        id: x.id,
-                        name: x.description,
-                        role: x
-                    }
-                }),
-                description: userPages ? `Accessible Modules: ${userPages}` : ''
+                options: roles
             }
         ],
     };
@@ -94,6 +82,11 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
     function debugForm(_form: any) {
         setForm(_form);
         setUser(_form.values);
+        const { role } = _form.values || {};
+        if (role) {
+            const { pages, privileges } = (role || {}).role || {};
+            setUserpages(privileges || pages)
+        }
     }
 
     function submit(e: any) {
@@ -132,12 +125,14 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
 
     useEffect(() => {
         if (data) {
+            const role = data.userRoles[0];
             setUser({
                 ...user,
                 ...data,
-                role: { value: data.userRoles[0].id, label: data.userRoles[0].description },
+                role: { value: role.id, label: role.name },
                 status: { value: data.isActive ? STATUS.ACTIVE : STATUS.INACTIVE, label: data.isActive ? STATUS.ACTIVE : STATUS.INACTIVE }
             });
+            setUserpages(role.privileges || role.pages);
         }
     }, [data]);
 
@@ -154,6 +149,7 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
                         schema={schema}
                         debug={debugForm}
                     />
+                    <ViewPrivileges privileges={userPages} fullView={false} />
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">
                     {

@@ -14,6 +14,8 @@ import { useRef } from "react";
 import TableFilters from "../../common/TableFilter";
 import { useExportUsers } from "../../../backend/exports";
 import { downloadFileContent } from "../../../utils/common";
+import { hasUserAccess } from "../../../backend/auth";
+import { USER_PRIVILEGES } from "./Roles/RoleConfiguration";
 
 const SortFields: any = {
     'userRoles': 'role'
@@ -66,14 +68,20 @@ function MangeUsers() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
-                    setUser(row);
-                    setAction(ACTIONS.EDIT)
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
-                    setUser(row);
-                    setAction(ACTIONS.DELETE)
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_USER) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
+                        setUser(row);
+                        setAction(ACTIONS.EDIT)
+                    }} />
+                }
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_USER) &&
+                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                        setUser(row);
+                        setAction(ACTIONS.DELETE)
+                    }} />
+                }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event: any) => {
                     setUser(row);
                     setAction(ACTIONS.VIEW)
@@ -183,12 +191,18 @@ function MangeUsers() {
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Name/Username/Email"} />
                                 <div className="d-flex">
-                                    <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.EXPORT_USERS) &&
+                                        <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
+                                            <Icon name={'download'} className="me-2"></Icon>Export
+                                        </Button>
+                                    }
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.ADD_USER) &&
+                                        <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                            <Icon name={'plus'} className="me-2"></Icon>Add New
+                                        </Button>
+                                    }
                                 </div>
 
                             </div>

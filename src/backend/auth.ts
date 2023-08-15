@@ -1,17 +1,36 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import jwtDecode from "jwt-decode";
 import { get, post } from "./request";
+import { Storage } from "./storage";
+import { API_DELIMITER } from "../utils/constants";
+
+const AUTH_TOKEN = 'auth-token';
+const USER_PRIVILEGES = 'user-privileges';
 
 export function getAuthToken() {
-    return sessionStorage.getItem('auth-token') || null;
+    return Storage.getValue(AUTH_TOKEN);
+}
+
+export function getUserPrivileges() {
+    const userPrivileges = Storage.getValue(USER_PRIVILEGES) || '';
+    return userPrivileges.split(API_DELIMITER);
 }
 
 export function setAuthToken(token: string) {
-    sessionStorage.setItem('auth-token', token);
+    Storage.setValue(AUTH_TOKEN, token);
 }
 
 export function clearAuthToken() {
-    sessionStorage.removeItem('auth-token');
+    Storage.removeValue([AUTH_TOKEN]);
+}
+
+export function setUserSession(token: string, privileges: string) {
+    Storage.setValue(AUTH_TOKEN, token);
+    Storage.setValue(USER_PRIVILEGES, privileges);
+}
+
+export function clearUserSession() {
+    Storage.removeValue([AUTH_TOKEN, USER_PRIVILEGES]);
 }
 
 export function getUserDetails(_token = ''): any {
@@ -24,18 +43,6 @@ export function getUserDetails(_token = ''): any {
         }
     }
     return null;
-}
-
-export function isVendor() {
-    const user = getUserDetails();
-    if (user) {
-        try {
-            return user.role.toLowerCase().includes('vendor');
-        } catch (e) {
-            return false;
-        }
-    }
-    return false;
 }
 
 export function useUserLogin(onSuccess?: any, onError?: any) {
@@ -136,4 +143,9 @@ export function useLoginWithOtp(onSuccess?: any, onError?: any) {
         }
     );
     return { loginWithOtp, error, isLoading };
+}
+
+export function hasUserAccess(key: string) {
+    const privileges = (Storage.getValue(USER_PRIVILEGES) || '').split(API_DELIMITER);
+    return privileges.includes(key);
 }

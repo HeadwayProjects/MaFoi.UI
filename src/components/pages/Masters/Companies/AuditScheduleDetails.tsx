@@ -15,6 +15,8 @@ import AdminLocations from "./AdminLocations";
 import ConfirmModal from "../../../common/ConfirmModal";
 import { useDeleteAuditSchedule } from "../../../../backend/masters";
 import { toast } from "react-toastify";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -127,7 +129,10 @@ function AuditScheduleDetails(this: any) {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                <Icon className="mx-1" type="button" name="trash" text="Delete" data={row} action={handleDelete} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_AUDIT_SCHEDULE_DETAILS) &&
+                    <Icon className="mx-1" type="button" name="trash" text="Delete" data={row} action={handleDelete} />
+                }
             </div>
         )
     }
@@ -198,7 +203,8 @@ function AuditScheduleDetails(this: any) {
             title: "Actions", hozAlign: "center", width: 120,
             headerSort: false,
             formatter: reactFormatter(<ActionColumnElements />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            visible: hasUserAccess(USER_PRIVILEGES.DELETE_AUDIT_SCHEDULE_DETAILS)
         }
     ]
 
@@ -355,12 +361,15 @@ function AuditScheduleDetails(this: any) {
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE, FILTERS.ACTIVITY_TYPE]} payload={getAdvanceSearchPayload()} onSubmit={search} />
                             </div>
                             <div className="ms-auto">
-                                <button className="btn btn-danger" onClick={handleBulkDelete} disabled={!(selectedRows || []).length}>
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon={faTrash} />
-                                        <span className="ms-2 text-nowrap">Bulk Delete</span>
-                                    </div>
-                                </button>
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.DELETE_AUDIT_SCHEDULE_DETAILS) &&
+                                    <button className="btn btn-danger" onClick={handleBulkDelete} disabled={!(selectedRows || []).length}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon={faTrash} />
+                                            <span className="ms-2 text-nowrap">Bulk Delete</span>
+                                        </div>
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>

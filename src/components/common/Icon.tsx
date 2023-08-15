@@ -10,7 +10,18 @@ import {
 import "./Icon.css";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 
-function Icon({ className, name, action, data, style, disabled, text, type }: any) {
+interface IconProps {
+    className?: string,
+    name: string,
+    action?: any,
+    data?: any,
+    style?: any,
+    disabled?: boolean,
+    text?: any,
+    type?: string
+}
+
+function Icon({ className, name, action, data, style, disabled, text, type }: IconProps) {
     function onClick(event: any) {
         preventDefault(event);
         if (action && !disabled) {

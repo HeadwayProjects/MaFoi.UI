@@ -11,6 +11,8 @@ import Icon from "../../../common/Icon";
 import AdminLocations from "./AdminLocations";
 import UnBlockModal from "./UnBlockModal";
 import BulkUnBlockModal from "./BulkUnBlockModal";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -128,7 +130,10 @@ function LockUnLock() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                <Icon className="mx-1" type="button" name="lock-open" text="Un-Block" data={row} action={handleUnblock} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.AUDIT_SCHEDULE_UNBLOCK_BLOCKED) &&
+                    <Icon className="mx-1" type="button" name="lock-open" text="Un-Block" data={row} action={handleUnblock} />
+                }
             </div>
         )
     }
@@ -200,7 +205,8 @@ function LockUnLock() {
             title: "Actions", hozAlign: "center", width: 120,
             headerSort: false,
             formatter: reactFormatter(<ActionColumnElements />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            visible: hasUserAccess(USER_PRIVILEGES.AUDIT_SCHEDULE_UNBLOCK_BLOCKED)
         }
     ]
 
@@ -347,14 +353,17 @@ function LockUnLock() {
                             <div >
                                 <AdvanceSearch fields={[FILTERS.MONTH]} payload={getAdvanceSearchPayload()} onSubmit={search} />
                             </div>
-                            <div className="ms-auto">
-                                <button className="btn btn-success" onClick={handleBulkUpdate} disabled={(selectedRows || []).length === 0}>
-                                    <div className="d-flex align-items-center">
-                                        <Icon name={'lock-open'} />
-                                        <span className="ms-2 text-nowrap">Un-Block</span>
-                                    </div>
-                                </button>
-                            </div>
+                            {
+                                hasUserAccess(USER_PRIVILEGES.AUDIT_SCHEDULE_UNBLOCK_BLOCKED) &&
+                                <div className="ms-auto">
+                                    <button className="btn btn-success" onClick={handleBulkUpdate} disabled={(selectedRows || []).length === 0}>
+                                        <div className="d-flex align-items-center">
+                                            <Icon name={'lock-open'} />
+                                            <span className="ms-2 text-nowrap">Un-Block</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            }
                         </div>
                     </div>
                 </form>
