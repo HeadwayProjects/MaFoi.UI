@@ -4,12 +4,12 @@ import styles from "./Notifications.module.css";
 import { useState } from "react";
 import { useEffect } from "react";
 
-function NotificationsModal({ notifications, onDismiss, onSubmit }) {
-    const containerRef = useRef();
-    const [readNotifications, setReadNotifications] = useState({});
+function NotificationsModal({ notifications, onDismiss, onSubmit }: any) {
+    const containerRef = useRef<any>();
+    const [readNotifications, setReadNotifications] = useState<any>({});
 
-    function handleHeaderClick({ id, isRead }) {
-        const _readList = { ...readNotifications };
+    function handleHeaderClick({ id, isRead }: any) {
+        const _readList: any = { ...readNotifications };
         if (!_readList[id] && !isRead) {
             _readList[id] = true;
             setReadNotifications(_readList);
@@ -24,15 +24,13 @@ function NotificationsModal({ notifications, onDismiss, onSubmit }) {
 
     useEffect(() => {
         if (notifications) {
-            const _readList = { ...readNotifications };
-            (notifications || []).forEach(x => {
-
-
+            const _readList: any = { ...readNotifications };
+            (notifications || []).forEach((x: any) => {
                 if (_readList[x.id]) {
 
 
                 } else {
-                    _readList[x.id] = x.isRead ? true: false;
+                    _readList[x.id] = x.isRead ? true : false;
 
                 }
             });
@@ -50,7 +48,7 @@ function NotificationsModal({ notifications, onDismiss, onSubmit }) {
                     <div ref={containerRef} className={styles.notificaitonsContainer}>
                         <Accordion>
                             {
-                                (notifications || []).map(notification => {
+                                (notifications || []).map((notification: any) => {
                                     return (
                                         <Accordion.Item eventKey={notification.id} key={notification.id}>
                                             <Accordion.Header onClick={() => handleHeaderClick(notification)}>

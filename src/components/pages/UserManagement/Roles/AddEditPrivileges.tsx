@@ -1,16 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { PAGES_CONFIGURATION } from "./RoleConfiguration";
+import { PAGES_CONFIGURATION, USER_PRIVILEGES } from "./RoleConfiguration";
 import styles from "./Roles.module.css";
 import { preventDefault } from "../../../../utils/common";
 import { Link } from "raviger";
 import { Button } from "react-bootstrap";
 import { VIEWS } from "./Roles";
-import { API_DELIMITER } from "../../../../utils/constants";
-import Icon from "../../../common/Icon";
+import { API_DELIMITER, API_RESULT } from "../../../../utils/constants";
+import { useCreateRole, useUpdateRole } from "../../../../backend/users";
+import PageLoader from "../../../shared/PageLoader";
+import { toast } from "react-toastify";
 
 export default function AddEditPrivileges({ role, changeView }: any) {
     const [mappings] = useState(PAGES_CONFIGURATION);
     const [selected, setSelected] = useState<any>({});
+    const { createRole, creating } = useCreateRole(({ key, value }: any) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(value);
+            changeView(VIEWS.LIST);
+        } else {
+            toast.error(value);
+        }
+    }, (error: any) => {
+        console.log(error);
+    });
+    const { updateRole, updating } = useUpdateRole(({ key, value }: any) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(value);
+            changeView(VIEWS.LIST);
+        } else {
+            toast.error(value);
+        }
+    }, (error: any) => {
+        console.log(error);
+    });
 
     function backToRoles(event?: any) {
         preventDefault(event);
@@ -27,7 +49,11 @@ export default function AddEditPrivileges({ role, changeView }: any) {
         const name = event.target.value;
         const selection = { ...selected };
         mapping.privileges.forEach((x: any) => {
-            delete selection[x.id];
+            const { id, actions = [] } = x;
+            delete selection[id];
+            actions.forEach(({ id }: any) => {
+                delete selection[id];
+            });
         });
         setSelected({ ...selection, [name]: true });
     }
@@ -58,13 +84,52 @@ export default function AddEditPrivileges({ role, changeView }: any) {
     function handleSubmit() {
         const privileges = getSelected().sort().join(API_DELIMITER);
         const request = { ...role, privileges };
+        if (request.id) {
+            updateRole(request);
+        } else {
+            createRole(request);
+        }
+    }
+
+    function getActionOptions(mapping: any) {
+        const privilege = mapping.privileges.find((x: any) => selected[x.id]);
+        if (((privilege || {}).actions || []).length) {
+            return (
+                <>
+                    <div className="d-flex flex-row align-items-center mb-1">
+                        <div className="fw-semibold fs-6 text-appprimary">Actions</div>
+                    </div>
+                    <div className={styles.privilegesList}>
+                        {
+                            privilege.actions.map((action: any) => {
+                                return (
+                                    <div className="form-check" key={action.id}>
+                                        <input type="checkbox" id={action.id}
+                                            className="form-check-input"
+                                            name={action.id}
+                                            checked={selected[action.id]}
+                                            onChange={handleChange} />
+                                        <label title={action.name} htmlFor={action.id} className={`form-check-label ${styles.label}`}>{action.name}</label>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                </>
+            )
+        }
+        return (<></>)
     }
 
     useEffect(() => {
         if (role) {
             if (role.privileges) {
                 const _selected: any = {};
-                role.privileges.split(API_DELIMITER).forEach((key: string) => _selected[key] = true);
+                const _validKeys: string[] = Object.values(USER_PRIVILEGES);
+                console.log(role.privileges);
+                role.privileges.split(API_DELIMITER).forEach((key: string) => {
+                    if (_validKeys.includes(key)) _selected[key] = true
+                });
                 setSelected(_selected);
             }
         }
@@ -153,6 +218,7 @@ export default function AddEditPrivileges({ role, changeView }: any) {
                                                         })
                                                     }
                                                 </div>
+                                                <>{getActionOptions(mapping)}</>
                                             </>
                                         }
                                     </div>
@@ -166,6 +232,8 @@ export default function AddEditPrivileges({ role, changeView }: any) {
                     </div>
                 </div>
             </div>
+            {creating && <PageLoader message={"Creating Role..."} />}
+            {updating && <PageLoader message={"Updating Role..."} />}
         </>
     )
 }

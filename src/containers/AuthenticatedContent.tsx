@@ -35,6 +35,7 @@ import ManageDepartments from "../components/pages/Masters/Companies/Departments
 import ComplianceSchedule from "../components/pages/Compliance/ComplianceSchedule";
 import ComplianceScheduleDetails from "../components/pages/Compliance/ComplianceScheduleDetails";
 import LockUnLockCompliance from "../components/pages/Compliance/LockUnLockCompliance";
+import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -48,8 +49,6 @@ function AuthenticatedContent() {
     const [query] = useQueryParams();
     const user = auth.getUserDetails() || {};
     const hasToken = !!auth.getAuthToken();
-    const isVendor = ['VendorAdmin', 'VendorUser'].includes(user.role);
-    const pages = ROLE_MAPPING[user.role] || [];
 
     function layout(children: any, layoutWithSidenav = true) {
         if (layoutWithSidenav) {
@@ -62,25 +61,40 @@ function AuthenticatedContent() {
         if (!hasToken) {
             return <Login />
         } else {
-            const page = pages[0] || 'dashboard';
-            if (page.includes('dashboard')) {
-                return layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
+            if (auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_DASHBOARD)) {
+                return layout(<VendorDashboard />);
+            } else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_DASHBOARD)) {
+                return layout(<AuditorDashboard />);
+            } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
+                return layout(<VendorDashboard />);
+            } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
+                return layout(<VendorDashboard />);
             } else {
                 return layout(<Home />)
             }
         }
     }
 
+    function getActivitiesByRole() {
+        if (auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES)) {
+            return layout(<ActivitiesManagement />);
+        } else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES)) {
+            return layout(<TaskManagement />);
+        } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
+            return layout(<VendorDashboard />);
+        } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
+            return layout(<VendorDashboard />);
+        } else {
+            return layout(<></>)
+        }
+    }
+
     const routes = {
-        '/dashboard': () => (
-            layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
-        ),
+        '/dashboard': () => getHomePage(),
         '/dashboard/activities': () => (
             layout(<ActivitiesManagement />)
         ),
-        '/activities': () => (
-            layout(isVendor ? < ActivitiesManagement /> : <TaskManagement />)
-        ),
+        '/activities': () => getActivitiesByRole(),
         '/masters/law': () => (
             layout(<Law />)
         ),

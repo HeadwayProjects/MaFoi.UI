@@ -3,18 +3,17 @@ import { PAGES_CONFIGURATION } from "./RoleConfiguration";
 import styles from "./Roles.module.css";
 import { API_DELIMITER } from "../../../../utils/constants";
 
-export default function ViewPrivileges({ privileges, onSubmit, onEdit }: any) {
+export default function ViewPrivileges({ privileges, fullView = true }: any) {
     const [mappings, setMappings] = useState<any[]>([]);
 
     useEffect(() => {
         if (privileges) {
-            // const privileges: any[] = pages.split(API_DELIMITER);
-            const _privileges: any[] = 'LAW_CATEGORY_VIEW;ACTS_VIEW;ACTIVITIES_VIEW;RULES_VIEW;STATE_VIEW;CITY_VIEW;RULE_COMPLIANCE_VIEW;MAPPING_VIEW;VIEW_COMPANIES;VIEW_ASSOCIATE_COMPANY;VIEW_LOCATION_MAPPING;AUDIT_SCHEDULE;VIEW_USERS;VIEW_COMPANY_MAPPING;VIEW_EMAIL_TEMPLATES'.split(API_DELIMITER);
             const _mappings: any = [];
+            const userPrivileges = (privileges || '').split(API_DELIMITER);
             PAGES_CONFIGURATION.forEach((page: any) => {
                 const _privilegesCopy: any[] = [];
                 page.privileges.forEach((privilege: any) => {
-                    if (_privileges.includes(privilege.id)) {
+                    if (userPrivileges.includes(privilege.id)) {
                         _privilegesCopy.push(privilege);
                     }
                 });
@@ -28,10 +27,11 @@ export default function ViewPrivileges({ privileges, onSubmit, onEdit }: any) {
             setMappings(_mappings);
         }
     }, [privileges]);
+
     return (
         <div className="d-flex flex-column" style={{ marginTop: '-0.8rem' }}>
             {
-                mappings.map((page: any) => {
+                fullView && mappings.map((page: any) => {
                     return (
                         <div className="d-flex flex-column mb-1" key={page.id}>
                             <div className="fw-bold text-md">{page.name}</div>
@@ -47,6 +47,17 @@ export default function ViewPrivileges({ privileges, onSubmit, onEdit }: any) {
                         </div>
                     )
                 })
+            }
+            {
+                !fullView && <div className="mt-2">
+                    {
+                        mappings.map((page: any) => {
+                            return (
+                                <span className={styles.chips} key={page.id}>{page.name}</span>
+                            )
+                        })
+                    }
+                </div>
             }
         </div>
     )

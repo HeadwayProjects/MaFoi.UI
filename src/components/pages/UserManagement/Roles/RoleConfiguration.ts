@@ -99,9 +99,15 @@ export enum USER_PRIVILEGES {
     MANAGER_DASHBOARD = 'MANAGER_DASHBOARD',
     READ_ONLY_ACTIVITIES = 'READ_ONLY_ACTIVITIES',
     REVIEWER_ACTIVITIES = 'REVIEWER_ACTIVITIES',
+    REVIEWER_ACTIVITIES_AUDIT = 'REVIEWER_ACTIVITIES_AUDIT',
+    REVIEWER_ACTIVITIES_PUBLISH = 'REVIEWER_ACTIVITIES_PUBLISH',
+    REVIEWER_ACTIVITIES_DOWNLOAD_REPORT = 'REVIEWER_ACTIVITIES_DOWNLOAD_REPORT',
     OWNER_ACTIVITIES = 'OWNER_ACTIVITIES',
     MANAGER_ACTIVITIES = 'MANAGER_ACTIVITIES',
     SUBMITTER_ACTIVITIES = 'SUBMITTER_ACTIVITIES',
+    SUBMITTER_ACTIVITIES_SUBMIT = 'SUBMITTER_ACTIVITIES_SUBMIT',
+    SUBMITTER_ACTIVITIES_UPLOAD = 'SUBMITTER_ACTIVITIES_UPLOAD',
+    SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT = 'SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT',
     VIEW_USER_NOTIFICATIONS = 'VIEW_USER_NOTIFICATIONS'
 }
 
@@ -553,10 +559,6 @@ export const PAGES_CONFIGURATION = [
         isMulti: false,
         privileges: [
             {
-                id: USER_PRIVILEGES.READ_ONLY_ACTIVITIES,
-                name: 'Read Only'
-            },
-            {
                 id: USER_PRIVILEGES.OWNER_ACTIVITIES,
                 name: 'Owner'
             },
@@ -566,11 +568,39 @@ export const PAGES_CONFIGURATION = [
             },
             {
                 id: USER_PRIVILEGES.SUBMITTER_ACTIVITIES,
-                name: 'Submitter'
+                name: 'Submitter',
+                actions: [
+                    {
+                        id: USER_PRIVILEGES.SUBMITTER_ACTIVITIES_SUBMIT,
+                        name: 'Submit for Approval'
+                    },
+                    {
+                        id: USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD,
+                        name: 'Upload Documents'
+                    },
+                    {
+                        id: USER_PRIVILEGES.SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT,
+                        name: 'Download Report'
+                    }
+                ]
             },
             {
                 id: USER_PRIVILEGES.REVIEWER_ACTIVITIES,
-                name: 'Reviewer'
+                name: 'Reviewer',
+                actions: [
+                    {
+                        id: USER_PRIVILEGES.REVIEWER_ACTIVITIES_AUDIT,
+                        name: 'Approve/Reject'
+                    },
+                    {
+                        id: USER_PRIVILEGES.REVIEWER_ACTIVITIES_PUBLISH,
+                        name: 'Publish Activities'
+                    },
+                    {
+                        id: USER_PRIVILEGES.REVIEWER_ACTIVITIES_DOWNLOAD_REPORT,
+                        name: 'Download Report'
+                    }
+                ]
             }
         ]
     },

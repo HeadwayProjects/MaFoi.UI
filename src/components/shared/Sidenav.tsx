@@ -6,7 +6,6 @@ import { preventDefault } from '../../utils/common';
 import Icon from '../common/Icon';
 import { getBasePath } from '../../App';
 import { ROLE_MAPPING } from '../../containers/AuthenticatedContent';
-import { API_DELIMITER } from '../../utils/constants';
 import { USER_PRIVILEGES } from '../pages/UserManagement/Roles/RoleConfiguration';
 
 const SideNavMenu = [
@@ -79,8 +78,7 @@ function Sidenav({ open, toggleSidenav }: any) {
 
     useEffect(() => {
         if (user) {
-            // const privileges = (user.privileges || '').split(API_DELIMITER);
-            const privileges = 'VIEW_AUDIT_SCHEDULE_DETAILS;VIEW_ROLES;ADD_ROLE;EDIT_ROLE;DELETE_ROLE;VIEW_LAW_CATEGORY;VIEW_ACTS;VIEW_ACTIVITIES;VIEW_RULES;VIEW_STATES;VIEW_CITIES;VIEW_RULE_COMPLIANCE;VIEW_MAPPING;VIEW_COMPANIES;VIEW_ASSOCIATE_COMPANY;VIEW_LOCATION_MAPPING;AUDIT_SCHEDULE;VIEW_USERS;VIEW_COMPANY_MAPPING;VIEW_EMAIL_TEMPLATES'.split(API_DELIMITER);
+            const privileges: any = auth.getUserPrivileges();
             const _menu: any[] = [];
             SideNavMenu.forEach((menu: any) => {
                 if (menu.children) {
@@ -121,10 +119,12 @@ function Sidenav({ open, toggleSidenav }: any) {
         useEffect(() => {
             if (urlPath) {
                 setActive(urlPath.includes(name));
-                if ((ROLE_MAPPING[user.role] || [])[0] === 'dashboard') {
-                    if (urlPath === '/' && parentIndex === 0 && (index === undefined || index === 0)) {
-                        setActive(true);
-                    }
+                const hasDashboardAccess = auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)
+                    || auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)
+                    || auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_DASHBOARD)
+                    || auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_DASHBOARD)
+                if (hasDashboardAccess && urlPath === '/' && parentIndex === 0 && (index === undefined || index === 0)) {
+                    setActive(true);
                 }
             }
         }, [urlPath]);

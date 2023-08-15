@@ -25,15 +25,6 @@ export default function AddEditRole({ action, role, onSubmit, onClose, updatePri
                 content: getValue(roleDetails, 'name')
             },
             {
-                component: componentTypes.TEXT_FIELD,
-                name: 'code',
-                label: 'Code',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ]
-
-            },
-            {
                 component: componentTypes.TEXTAREA,
                 name: 'description',
                 label: 'Description'
@@ -50,7 +41,7 @@ export default function AddEditRole({ action, role, onSubmit, onClose, updatePri
                         return Boolean(privileges);
                     },
                     then: { visible: true }
-                },
+                }
             }
         ]
     };
@@ -64,8 +55,7 @@ export default function AddEditRole({ action, role, onSubmit, onClose, updatePri
         const { id, privileges } = role || {};
         const { code, name, description } = roleDetails;
         return {
-            id, code, name, description,
-            privileges: 'LAW_CATEGORY_VIEW;ACTS_VIEW;ACTIVITIES_VIEW;RULES_VIEW;STATE_VIEW;CITY_VIEW;RULE_COMPLIANCE_VIEW;MAPPING_VIEW;VIEW_COMPANIES;VIEW_ASSOCIATE_COMPANY;VIEW_LOCATION_MAPPING;AUDIT_SCHEDULE;VIEW_USERS;VIEW_COMPANY_MAPPING;VIEW_EMAIL_TEMPLATES'
+            id, code, name, description, privileges
         };
     }
 
@@ -79,7 +69,8 @@ export default function AddEditRole({ action, role, onSubmit, onClose, updatePri
 
     useEffect(() => {
         if (role) {
-            setRole({ ...roleDetails, ...role });
+            const { pages, privileges } = role || {};
+            setRole({ ...roleDetails, ...role, privileges: privileges ? privileges : pages });
         }
     }, [role]);
 
@@ -97,8 +88,8 @@ export default function AddEditRole({ action, role, onSubmit, onClose, updatePri
                         debug={debugForm}
                     />
                     {
-                        Boolean((role || {}).privileges) &&
-                        <ViewPrivileges privileges={role.privileges} />
+                        Boolean((roleDetails || {}).privileges) &&
+                        <ViewPrivileges privileges={roleDetails.privileges} />
                     }
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">

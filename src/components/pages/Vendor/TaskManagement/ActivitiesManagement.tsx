@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import SubmitToAuditorModal from "./SubmitToAuditorModal";
 import * as api from "../../../../backend/request";
-import * as auth from "../../../../backend/auth";
+import { hasUserAccess, getUserDetails } from "../../../../backend/auth";
 import EditActivityModal from "./EditActivityModal";
 import { toast } from 'react-toastify';
 import PageLoader from "../../../shared/PageLoader";
@@ -22,6 +22,7 @@ import AdvanceSearch from "../../../common/AdvanceSearch";
 import AlertModal from "../../../common/AlertModal";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
 import { useAuditReport } from "../../../../backend/exports";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -58,7 +59,6 @@ function getAdvanceSearch(state: any) {
 }
 
 function ActivitiesManagement() {
-    const [readOnly] = useState(!auth.isVendor());
     const { state }: any = useHistory();
     const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
@@ -139,7 +139,7 @@ function ActivitiesManagement() {
                 const list = response.data || [];
                 const _report = list.filter((x: any) => x.published);
                 if (_report.length > 0) {
-                    const user = auth.getUserDetails();
+                    const user = getUserDetails();
                     _payload['auditorId'] = user.userid;
                     auditReport(_payload);
                 } else {
@@ -278,8 +278,8 @@ function ActivitiesManagement() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                <Icon className="mx-2" type="button" name={readOnly ? 'eye' : 'pencil'}
-                    text={readOnly ? 'View' : 'Edit'} data={row} action={editActivity} />
+                <Icon className="mx-2" type="button" name={hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD) ? 'pencil' : 'eye'}
+                    text={hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD) ? 'Edit' : 'View'} data={row} action={editActivity} />
                 <Icon className="ms-1" type="button" name="download" text="Download" data={row} action={downloadForm} />
             </div>
         )
@@ -555,7 +555,7 @@ function ActivitiesManagement() {
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.DUE_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search}
-                                    downloadReport={downloadReport} />
+                                    downloadReport={hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT) ? downloadReport : undefined} />
                             </div>
                         </div>
                     </div>
@@ -576,9 +576,10 @@ function ActivitiesManagement() {
                                     })
                                 }
                             </div>
-                            {
-                                !readOnly &&
-                                <div className="d-flex">
+
+                            <div className="d-flex">
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD) &&
                                     <div className="mx-2">
                                         <button className="btn btn-primary" onClick={(e) => {
                                             e.preventDefault();
@@ -590,7 +591,9 @@ function ActivitiesManagement() {
                                             </div>
                                         </button>
                                     </div>
-
+                                }
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_SUBMIT) &&
                                     <div>
                                         <button className="btn btn-primary" onClick={onSubmitToAuditor}
                                             disabled={activities.length === 0}>
@@ -600,8 +603,9 @@ function ActivitiesManagement() {
                                             </div>
                                         </button>
                                     </div>
-                                </div>
-                            }
+                                }
+
+                            </div>
                         </div>
                     </div>
                 </form>

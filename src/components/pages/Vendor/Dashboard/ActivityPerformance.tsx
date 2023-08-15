@@ -46,8 +46,8 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
             api.post('/api/Dashboard/GetPreviousPerformance', { ...DEFAULT_PAYLOAD, filters }).then(response => {
                 if (response && response.data) {
                     const label = frequency !== '0' ?
-                        `${dayjs.default(response.data.startDate).format('DD-MMM-YYYY')} - ${dayjs.default(response.data.endDate).format('DD-MMM-YYYY')}` :
-                        `${dayjs.default(response.data.startDate).format('DD-MMM-YYYY')}`;
+                        `${dayjs(response.data.startDate).format('DD-MMM-YYYY')} - ${dayjs(response.data.endDate).format('DD-MMM-YYYY')}` :
+                        `${dayjs(response.data.startDate).format('DD-MMM-YYYY')}`;
                     setLabel(label);
                     setPerformanceStatus(response.data);
                 }

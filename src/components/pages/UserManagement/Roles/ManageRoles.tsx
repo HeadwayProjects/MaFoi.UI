@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { Button } from "react-bootstrap";
 import { ACTIONS } from "../../../common/Constants";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, reactFormatter } from "../../../common/Table";
-import { useGetUserRoles } from "../../../../backend/users";
+import { useDeleteRole, useGetUserRoles } from "../../../../backend/users";
 import Icon from "../../../common/Icon";
 import MastersLayout from "../../Masters/MastersLayout";
 import TableFilters from "../../../common/TableFilter";
@@ -12,12 +12,16 @@ import AddEditRole from "./AddEditRole";
 import { VIEWS } from "./Roles";
 import { hasUserAccess } from "../../../../backend/auth";
 import { USER_PRIVILEGES } from "./RoleConfiguration";
+import ConfirmModal from "../../../common/ConfirmModal";
+import { ERROR_MESSAGES } from "../../../../utils/constants";
+import PageLoader from "../../../shared/PageLoader";
 
 const SortFields: any = {
     'userRoles': 'role'
 };
 
 function ManageRoles({ changeView }: any) {
+    const [t] = useState(new Date().getTime());
     const [breadcrumb] = useState([
         { id: 'home', label: 'Home', path: '/' },
         { id: 'userManagement', label: 'User Management', path: '/userManagement/roles' },
@@ -30,23 +34,14 @@ function ManageRoles({ changeView }: any) {
     const [filters, setFilters] = useState<any>();
     const filterRef: any = useRef();
     filterRef.current = filters;
-    const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
+    const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' }, t });
     const { roles, isFetching, refetch } = useGetUserRoles(payload, Boolean(payload));
-    // const { deleteUser, deleting } = useDeleteUser((response: any) => {
-    //     toast.success(`${user.name} deleted successfully.`);
-    //     submitCallback();
-    // }, () => {
-    //     toast.error(ERROR_MESSAGES.DEFAULT);
-    // });
-    // const { exportUsers, exporting } = useExportUsers((response: any) => {
-    //     downloadFileContent({
-    //         name: 'Users.xlsx',
-    //         type: response.headers['content-type'],
-    //         content: response.data
-    //     });
-    // }, () => {
-    //     toast.error(ERROR_MESSAGES.DEFAULT);
-    // });
+    const { deleteRole, deleting } = useDeleteRole((response: any) => {
+        toast.success(`${role.name} deleted successfully.`);
+        submitCallback();
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
 
     // const filterConfig = [
     //     {
@@ -117,7 +112,10 @@ function ManageRoles({ changeView }: any) {
         const { pagination } = params || {};
         const { pageSize, pageNumber } = pagination || {};
         const tdata = {
-            data: list,
+            data: list.map((x: any) => {
+                const { pages, privileges } = x;
+                return { ...x, privileges: privileges || pages };
+            }),
             total: totalRecords || list.length,
             last_page: Math.ceil((totalRecords || list.length) / (pageSize || 1)) || 1,
             page: pageNumber || 1
@@ -160,12 +158,6 @@ function ManageRoles({ changeView }: any) {
         setParams({ ..._params });
         setPayload({ ...payload, ..._params })
     }
-
-    // function handleExport() {
-    //     if (total > 0) {
-    //         exportUsers({ ...payload, pagination: null });
-    //     }
-    // }
 
     useEffect(() => {
         if (!isFetching && payload) {
@@ -210,17 +202,15 @@ function ManageRoles({ changeView }: any) {
                         changeView(VIEWS.ADD, _role);
                     }} />
             }
-            {/* {
-                action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Act Master'} onSubmit={() => deleteUser(user.id)} onClose={() => setAction(ACTIONS.NONE)}>
-                    <div className="text-center mb-4">Are you sure you want to delete the User, <strong>{(user || {}).name}</strong> ?</div>
+            {
+                action === ACTIONS.DELETE && role &&
+                <ConfirmModal title={'Delete Role'} onSubmit={() => deleteRole(role.id)} onClose={() => setAction(ACTIONS.NONE)}>
+                    <div className="text-center mb-4">Are you sure you want to delete the Role, <strong>{(role || {}).name}</strong> ?</div>
                 </ConfirmModal>
             }
             {
-                deleting && <PageLoader>Deleting User...</PageLoader>
+                deleting && <PageLoader>Deleting Role...</PageLoader>
             }
-            {exporting && <PageLoader message={'Preparing data...'} />} */}
-
         </>
     )
 }

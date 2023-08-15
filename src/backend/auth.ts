@@ -11,6 +11,11 @@ export function getAuthToken() {
     return Storage.getValue(AUTH_TOKEN);
 }
 
+export function getUserPrivileges() {
+    const userPrivileges = Storage.getValue(USER_PRIVILEGES) || '';
+    return userPrivileges.split(API_DELIMITER);
+}
+
 export function setAuthToken(token: string) {
     Storage.setValue(AUTH_TOKEN, token);
 }
@@ -38,18 +43,6 @@ export function getUserDetails(_token = ''): any {
         }
     }
     return null;
-}
-
-export function isVendor() {
-    const user = getUserDetails();
-    if (user) {
-        try {
-            return user.role.toLowerCase().includes('vendor');
-        } catch (e) {
-            return false;
-        }
-    }
-    return false;
 }
 
 export function useUserLogin(onSuccess?: any, onError?: any) {

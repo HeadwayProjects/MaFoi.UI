@@ -17,10 +17,9 @@ import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRe
 import PageLoader from "../../shared/PageLoader";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
 import VerifyOTP from "./VerifyOTP";
-import { clearUserSession, getAuthToken, setAuthToken, setUserSession, useGenerateOTP, useUserLogin } from "../../../backend/auth";
+import { clearUserSession, getAuthToken, setUserSession, useGenerateOTP, useUserLogin } from "../../../backend/auth";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { getBasePath } from "../../../App";
-import { Storage } from "../../../backend/storage";
 
 function Login() {
     const [token] = useState(getAuthToken());
@@ -30,13 +29,12 @@ function Login() {
     const [schema, setSchema] = useState<any>({ fields: [LOGIN_FIELDS.USERNAME, LOGIN_FIELDS.PASSWORD] });
     const [form, setForm] = useState<any>({});
     const [payload, setPayload] = useState<any>({});
-    const { userLogin, isLoading: logging } = useUserLogin((token: string) => {
-        if ((token || '').includes('Exceeded Incorrect Logins')) {
-            toast.error('Too many attempts with incorrect credentials. Your account is temporarily blocked. Try login back after 30 mins.');
-        } else if (token) {
-            loginCallback({ token, privileges: '' });
+    const { userLogin, isLoading: logging } = useUserLogin((response: any) => {
+        const { result, token, privileges, message } = response || {};
+        if (result === API_RESULT.SUCCESS) {
+            loginCallback({ token, privileges });
         } else {
-            toast.error('Email/Phone No. or password is incorrect.');
+            toast.error(message || 'Something went wrong. Please try again.');
         }
     }, errorCallback);
     const { generateOTP, isLoading: generatingOTP } = useGenerateOTP(({ result, message }: any) => {
@@ -57,7 +55,6 @@ function Login() {
     }
 
     function loginCallback({ token, privileges }: any) {
-        privileges = privileges || 'VIEW_LAW_CATEGORY;VIEW_ACTS;VIEW_ACTIVITIES;VIEW_RULES;VIEW_STATES;VIEW_CITIES;VIEW_RULE_COMPLIANCE;VIEW_MAPPING;VIEW_COMPANIES;VIEW_ASSOCIATE_COMPANY;VIEW_LOCATION_MAPPING;AUDIT_SCHEDULE;VIEW_USERS;VIEW_COMPANY_MAPPING;VIEW_EMAIL_TEMPLATES';
         setUserSession(token, privileges)
         navigate(`${getBasePath()}/`);
         window.location.reload();

@@ -73,3 +73,48 @@ export function useDeleteUser(onSuccess?: any, onError?: any) {
     );
     return { deleteUser, error, deleting };
 }
+
+export function useCreateRole(onSuccess?: any, onError?: any) {
+    const { mutate: createRole, error, isLoading: creating } = useMutation(
+        ['createRole'],
+        async (payload) => await api.post(`${USERS}/CreateRole`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createRole, error, creating };
+}
+
+export function useUpdateRole(onSuccess?: any, onError?: any) {
+    const { mutate: updateRole, error, isLoading: updating } = useMutation(
+        ['updateRole'],
+        async (payload) => await api.put(`${USERS}/EditRole`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateRole, error, updating };
+}
+
+export function useDeleteRole(onSuccess?: any, onError?: any) {
+    const { mutate: deleteRole, error, isLoading: deleting } = useMutation(
+        ['deleteRole'],
+        async (id) => await api.del(`${USERS}/DeleteRole?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteRole, error, deleting };
+}
