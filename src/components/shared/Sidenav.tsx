@@ -40,6 +40,14 @@ const SideNavMenu = [
             {
                 id: 'companies/locationMapping', url: '/companies/locationMapping',
                 label: 'Location Mapping', privilege: USER_PRIVILEGES.VIEW_LOCATION_MAPPINGS
+            },
+            {
+                id: 'companies/verticals', url: '/companies/verticals',
+                label: 'Verticals', privilege: USER_PRIVILEGES.VIEW_VERTICALS
+            },
+            {
+                id: 'companies/departments', url: '/companies/departments',
+                label: 'Departments', privilege: USER_PRIVILEGES.VIEW_DEPARTMENTS
             }
         ]
     },
