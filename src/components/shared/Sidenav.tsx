@@ -29,24 +29,51 @@ const SideNavMenu = [
     {
         id: 'companies', url: '/companies/list', icon: 'building', label: 'Companies',
         children: [
-            { id: 'companies/list', url: '/companies/list', label: 'Manage Companies', privilege: USER_PRIVILEGES.VIEW_COMPANIES },
-            { id: 'companies/associateCompanies', url: '/companies/associateCompanies', label: 'Associate Companies', privilege: USER_PRIVILEGES.VIEW_ASSOCIATE_COMPANIES },
-            { id: 'companies/locationMapping', url: '/companies/locationMapping', label: 'Location Mapping', privilege: USER_PRIVILEGES.VIEW_LOCATION_MAPPINGS }
+            {
+                id: 'companies/list', url: '/companies/list',
+                label: 'Manage Companies', privilege: USER_PRIVILEGES.VIEW_COMPANIES
+            },
+            {
+                id: 'companies/associateCompanies', url: '/companies/associateCompanies',
+                label: 'Associate Companies', privilege: USER_PRIVILEGES.VIEW_ASSOCIATE_COMPANIES
+            },
+            {
+                id: 'companies/locationMapping', url: '/companies/locationMapping',
+                label: 'Location Mapping', privilege: USER_PRIVILEGES.VIEW_LOCATION_MAPPINGS
+            }
         ]
     },
     {
         id: 'auditSchedule', url: '/auditSchedule/importExport', icon: 'building', label: 'Audit Management',
         children: [
-            { id: 'auditSchedule/importExport', url: '/auditSchedule/importExport', label: 'Audit Schedule', privilege: USER_PRIVILEGES.AUDIT_SCHEDULE },
-            { id: 'auditSchedule/details', url: '/auditSchedule/details', label: 'Audit Schedule Details', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_DETAILS },
-            { id: 'auditSchedule/blockUnblock', url: '/auditSchedule/blockUnblock', label: 'Block Un-Block', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK }
+            {
+                id: 'auditSchedule/importExport', url: '/auditSchedule/importExport',
+                label: 'Audit Schedule', privilege: USER_PRIVILEGES.AUDIT_SCHEDULE
+            },
+            {
+                id: 'auditSchedule/details', url: '/auditSchedule/details',
+                label: 'Audit Schedule Details', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_DETAILS
+            },
+            {
+                id: 'auditSchedule/blockUnblock', url: '/auditSchedule/blockUnblock',
+                label: 'Block Un-Block', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK
+            }
         ]
     },
     {
         id: 'complianceManagement', url: '/complianceManagement/list', icon: 'building', label: 'Compliance Management', children: [
-            { id: 'complianceManagement/complianceSchedule', url: '/complianceManagement/complianceSchedule', label: 'Compliance Schedule', privilege: USER_PRIVILEGES.COMPLIANCE_SCHEDULE },
-            { id: 'complianceManagement/compliance-schedule-details', url: '/complianceManagement/compliance-schedule-details', label: 'Comp Schedule Details', privilege: USER_PRIVILEGES.VIEW_COMPLIANCE_SCHEDULE_DETAILS },
-            { id: 'complianceManagement/blockUnblock', url: '/complianceManagement/blockUnblock', label: 'Block Un-Block', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK }
+            {
+                id: 'complianceManagement/complianceSchedule', url: '/complianceManagement/complianceSchedule',
+                label: 'Compliance Schedule', privilege: USER_PRIVILEGES.COMPLIANCE_SCHEDULE
+            },
+            {
+                id: 'complianceManagement/compliance-schedule-details', url: '/complianceManagement/compliance-schedule-details',
+                label: 'Comp Schedule Details', privilege: USER_PRIVILEGES.VIEW_COMPLIANCE_SCHEDULE_DETAILS
+            },
+            {
+                id: 'complianceManagement/blockUnblock', url: '/complianceManagement/blockUnblock',
+                label: 'Block Un-Block', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK
+            }
         ]
     },
     {

@@ -28,7 +28,6 @@ import AuditScheduleDetails from "../components/pages/Masters/Companies/AuditSch
 import LockUnLock from "../components/pages/Masters/Companies/LockUnLock";
 import EmailTemplates from "../components/pages/Email/EmailTemplates";
 import Home from "../components/pages/home";
-import ManageRoles from "../components/pages/UserManagement/Roles/ManageRoles";
 import Roles from "../components/pages/UserManagement/Roles/Roles";
 import ManageVerticals from "../components/pages/Masters/Companies/Verticals/ManageVerticals";
 import ManageDepartments from "../components/pages/Masters/Companies/Departments/ManageDepartments";
@@ -36,6 +35,7 @@ import ComplianceSchedule from "../components/pages/Compliance/ComplianceSchedul
 import ComplianceScheduleDetails from "../components/pages/Compliance/ComplianceScheduleDetails";
 import LockUnLockCompliance from "../components/pages/Compliance/LockUnLockCompliance";
 import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
+import ComplianceOwnerDashboard from "../components/pages/ComplianceOwner/Dashboard/ComplianceOwnerDashboard";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -66,7 +66,7 @@ function AuthenticatedContent() {
             } else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_DASHBOARD)) {
                 return layout(<AuditorDashboard />);
             } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
-                return layout(<VendorDashboard />);
+                return layout(<ComplianceOwnerDashboard />);
             } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
                 return layout(<VendorDashboard />);
             } else {
@@ -161,6 +161,9 @@ function AuthenticatedContent() {
         '/complianceManagement/blockUnblock': () => (
             layout(<LockUnLockCompliance />)
         ),
+        '/complianceManagement/dashboard': () => (
+            layout(<ComplianceOwnerDashboard />)
+        ),
         '/userManagement/users': () => (
             layout(<MangeUsers />)
         ),
@@ -187,7 +190,7 @@ function AuthenticatedContent() {
         ),
         '/login': () => (
             <Login />
-        ),
+        )
     }
 
     useEffect(() => {

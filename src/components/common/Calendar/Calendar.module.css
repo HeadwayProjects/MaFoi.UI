@@ -1,0 +1,75 @@
+.ezycompCalendar {
+    min-width: 200px;
+    max-width: 450px;
+}
+
+.ezycompCalendarHeader {
+    color: var(--white);
+    background-color: var(--royal-blue);
+    width: 436px;
+}
+
+.ezycompCalendarHeader>span {
+    cursor: pointer;
+}
+
+.ezycompMonthCalendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+}
+
+.ezycompCalendarWeekDay {
+    display: inline-flex;
+    height: 48px;
+    width: 48px;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+}
+
+.ezycompCalendarMonthDay {
+    display: inline-flex;
+    height: 56px;
+    width: 56px;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+}
+
+.ezycompCalendarWeekDay span,
+.ezycompCalendarMonthDay span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    cursor: pointer;
+    /* border: 1px solid; */
+}
+
+.calendarTabs {
+    border-bottom-width: 0px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.calendarTab {
+    border-radius: 25px 25px 0 0 !important;
+    background-color: var(--gray) !important;
+    color: var(--white) !important;
+    padding: 10px 35px !important;
+    font-weight: 500 !important;
+    width: 100% !important;
+    border-bottom-width: 0px !important;
+}
+
+.active {
+    background-color: var(--royal-blue) !important;
+    color: var(--white) !important;
+    border: none !important;
+    border-bottom-width: 0px !important;
+    box-shadow: 0 0 0 1px #417fbd inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #1a406b, 0 8px 8px 1px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
