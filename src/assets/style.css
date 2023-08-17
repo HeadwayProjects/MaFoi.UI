@@ -492,8 +492,10 @@ table.table {
 .filters [class*="-container"] [class*="-control"] {
   font-size: var(--font-md);
   box-shadow: none;
-  width: 150px;
   border-color: var(--page-bg);
+  width: auto;
+  min-width: 150px;
+  max-width: 200px;
 }
 
 .filters [class*="-container"] [class*="-control"]:hover,

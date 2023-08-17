@@ -21,7 +21,7 @@ function ComplianceScheduleImportModal({ onClose }: any) {
         }
         const data = response.data;
         if (data &&  data.size === 0) {
-            toast.success('ToDos generated successfully.');
+            toast.success('Compliance activities generated successfully.');
             onClose();
         } else {
             setApiError(response);

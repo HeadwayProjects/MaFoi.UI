@@ -1,12 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { ACTIONS, ACTIVITY_STATUS, FILTERS, STATUS_MAPPING } from "../../common/Constants";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
-import { useGetAllActivities } from "../../../backend/query";
-import { useDeleteComplianceSchedule } from "../../../backend/compliance";
+import { useDeleteComplianceSchedule, useGetAllComplianceActivities } from "../../../backend/compliance";
 import Icon from "../../common/Icon";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../common/Table";
 import { preventDefault } from "../../../utils/common";
@@ -15,6 +14,10 @@ import AdvanceSearch from "../../common/AdvanceSearch";
 import AlertModal from "../../common/AlertModal";
 import ConfirmModal from "../../common/ConfirmModal";
 import PageLoader from "../../shared/PageLoader";
+import { hasUserAccess } from "../../../backend/auth";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import { Button } from "react-bootstrap";
+import ComplianceAssignUser from "./ComplianceAssignUser";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -42,7 +45,7 @@ function ComplianceScheduleDetails(this: any) {
     const [payload, setPayload] = useState<any>();
     const payloadRef: any = useRef();
     payloadRef.current = payload;
-    const { activities, total, isFetching, refetch } = useGetAllActivities(payload, Boolean(hasFilters(null, 'companyId')));
+    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, Boolean(hasFilters(null, 'companyId')));
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const [alertMessage, setAlertMessage] = useState<any>(null);
     const { deleteComplianceSchedule, deleting } = useDeleteComplianceSchedule(({ key, value }: any) => {
@@ -185,7 +188,7 @@ function ComplianceScheduleDetails(this: any) {
             widthGrow: 1
         },
         {
-            title: "Audit Due Date", field: "dueDate", width: 120,
+            title: "Due Date", field: "dueDate", width: 120,
             formatter: reactFormatter(<DueDateTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
@@ -271,6 +274,13 @@ function ComplianceScheduleDetails(this: any) {
         setAction(ACTIONS.DELETE);
     }
 
+    function handleCancel(refresh = false) {
+        setAction(ACTIONS.NONE);
+        if (refresh) {
+            refetch();
+        }
+    }
+
     function performDelete() {
         deleteComplianceSchedule([activity.id]);
     }
@@ -282,6 +292,13 @@ function ComplianceScheduleDetails(this: any) {
         preventDefault(e);
         if ((selectedRows || []).length > 0) {
             setAction(ACTIONS.BULK_DELETE);
+        }
+    }
+
+    function handleAssignUser(e: any) {
+        preventDefault(e);
+        if ((selectedRows || []).length > 0) {
+            setAction(ACTIONS.ASSIGN);
         }
     }
 
@@ -336,7 +353,7 @@ function ComplianceScheduleDetails(this: any) {
         <>
             <div className="d-flex flex-column">
                 <div className="d-flex p-2 align-items-center pageHeading shadow">
-                    <h4 className="mb-0">Audit Schedule Details</h4>
+                    <h4 className="mb-0">Compliance Schedule Details</h4>
                     <div className="d-flex align-items-end h-100">
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 d-flex justify-content-end">
@@ -354,13 +371,21 @@ function ComplianceScheduleDetails(this: any) {
                             <div >
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE, FILTERS.ACTIVITY_TYPE]} payload={getAdvanceSearchPayload()} onSubmit={search} />
                             </div>
-                            <div className="ms-auto">
-                                <button className="btn btn-danger" onClick={handleBulkDelete} disabled={!(selectedRows || []).length}>
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon={faTrash} />
-                                        <span className="ms-2 text-nowrap">Bulk Delete</span>
-                                    </div>
-                                </button>
+                            <div className="d-flex flex-row alighn-items-center ms-auto">
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS) &&
+                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleAssignUser}
+                                        disabled={!(selectedRows || []).length}>
+                                        <FontAwesomeIcon icon={faUsers} />Assign User
+                                    </Button>
+                                }
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.DELETE_COMPLIANCE_SCHEDULE_DETAILS) &&
+                                    <Button variant="danger" className="px-3 ms-2 text-nowrap" onClick={handleBulkDelete}
+                                        disabled={!(selectedRows || []).length}>
+                                        <FontAwesomeIcon icon={faTrash} />Bulk Delete
+                                    </Button>
+                                }
                             </div>
                         </div>
                     </div>
@@ -386,6 +411,10 @@ function ComplianceScheduleDetails(this: any) {
                     <p className="text-center mb-4">There are {selectedRows.length} record(s) selected for deleting.</p>
                     <div className="text-center mb-4">Are you sure you want to delete all of them ?</div>
                 </ConfirmModal>
+            }
+            {
+                action === ACTIONS.ASSIGN &&
+                <ComplianceAssignUser action={action} activities={selectedRows} onCancel={handleCancel} />
             }
             {deleting && <PageLoader message={'Deleting...'} />}
         </>

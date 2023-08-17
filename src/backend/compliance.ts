@@ -4,7 +4,7 @@ import { post, put } from "./request";
 export function useExportComplianceSchedule(onSuccess?: any, onError?: any) {
     const { mutate: exportComplianceSchedule, error, isLoading: exporting } = useMutation(
         ['exportComplianceSchedule'],
-        async (payload: any) => await post('/api/Compliance/ExportComplianceSchedule', payload, null, true, { responseType: 'blob' }),
+        async (payload: any) => await post('/api/Compliance/ExportAuditSchedule', payload, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
@@ -19,7 +19,7 @@ export function useExportComplianceSchedule(onSuccess?: any, onError?: any) {
 export function useImportComplianceSchedule(onSuccess?: any, onError?: any) {
     const { mutate: importComplianceSchedule, error, isLoading: uploading } = useMutation(
         ['importComplianceSchedule'],
-        async (formData: any) => await post(`/api/Compliance/ImportComplianceSchedule`, formData, null, true, { responseType: 'blob' }),
+        async (formData: any) => await post(`/api/Compliance/ImportAuditSchedule`, formData, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
