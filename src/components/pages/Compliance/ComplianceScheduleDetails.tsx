@@ -358,7 +358,7 @@ function ComplianceScheduleDetails(this: any) {
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb mb-0 d-flex justify-content-end">
                                 <li className="breadcrumb-item">Home</li>
-                                <li className="breadcrumb-item fw-bold active">Audit Schedule Details</li>
+                                <li className="breadcrumb-item fw-bold active">Compliance Schedule Details</li>
                             </ol>
                         </nav>
                     </div>
@@ -371,7 +371,7 @@ function ComplianceScheduleDetails(this: any) {
                             <div >
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE, FILTERS.ACTIVITY_TYPE]} payload={getAdvanceSearchPayload()} onSubmit={search} />
                             </div>
-                            <div className="d-flex flex-row alighn-items-center ms-auto">
+                            <div className="d-flex flex-row align-items-center ms-auto">
                                 {
                                     hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS) &&
                                     <Button variant="primary" className="px-3 text-nowrap" onClick={handleAssignUser}

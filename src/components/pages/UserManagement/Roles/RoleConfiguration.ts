@@ -75,6 +75,10 @@ export enum USER_PRIVILEGES {
     EXPORT_USERS = 'EXPORT_USERS',
     VIEW_COMPANY_MAPPINGS = 'VIEW_COMPANY_MAPPINGS',
     UPDATE_COMPANY_MAPPINGS = 'UPDATE_COMPANY_MAPPINGS',
+    VIEW_DEPARTMENT_USER_MAPPING = 'VIEW_DEPARTMENT_USER_MAPPING',
+    ADD_DEPARTMENT_USER_MAPPING = 'ADD_DEPARTMENT_USER_MAPPING',
+    UPDATE_DEPARTMENT_USER_MAPPING = 'UPDATE_DEPARTMENT_USER_MAPPING',
+    DELETE_DEPARTMENT_USER_MAPPING = 'DELETE_DEPARTMENT_USER_MAPPING',
     AUDIT_SCHEDULE = 'AUDIT_SCHEDULE',
     VIEW_AUDIT_SCHEDULE_DETAILS = 'VIEW_AUDIT_SCHEDULE_DETAILS',
     DELETE_AUDIT_SCHEDULE_DETAILS = 'DELETE_AUDIT_SCHEDULE_DETAILS',
@@ -496,6 +500,22 @@ export const PAGES_CONFIGURATION = [
             {
                 id: USER_PRIVILEGES.UPDATE_COMPANY_MAPPINGS,
                 name: 'Update Company Mapping'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_DEPARTMENT_USER_MAPPING,
+                name: 'View Department User Mapping'
+            },
+            {
+                id: USER_PRIVILEGES.ADD_DEPARTMENT_USER_MAPPING,
+                name: 'Add Department User Mapping'
+            },
+            {
+                id: USER_PRIVILEGES.UPDATE_DEPARTMENT_USER_MAPPING,
+                name: 'Update Department User Mapping'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_DEPARTMENT_USER_MAPPING,
+                name: 'Delete Department User Mapping'
             }
         ]
     },

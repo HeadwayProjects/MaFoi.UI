@@ -122,11 +122,11 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
 
     function getTitle() {
         if (action === ACTIONS.ADD) {
-            return 'Add Vertical';
+            return 'Add Department';
         } else if (action === ACTIONS.EDIT) {
-            return 'Edit Vertical';
+            return 'Edit Department';
         } else if (action === ACTIONS.VIEW) {
-            return 'Vertical Details';
+            return 'Department Details';
         }
     }
 

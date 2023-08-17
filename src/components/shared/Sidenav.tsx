@@ -90,6 +90,10 @@ const SideNavMenu = [
             { id: 'userManagement/roles', url: '/userManagement/roles', label: 'Manage Roles', privilege: USER_PRIVILEGES.VIEW_ROLES },
             { id: 'userManagement/users', url: '/userManagement/users', label: 'Manage Users', privilege: USER_PRIVILEGES.VIEW_USERS },
             { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Company Mapping', privilege: USER_PRIVILEGES.VIEW_COMPANY_MAPPINGS },
+            {
+                id: 'userManagement/userDepartment', url: '/userManagement/userDepartment',
+                label: 'User Department Mapping', privilege: USER_PRIVILEGES.VIEW_DEPARTMENT_USER_MAPPING
+            }
         ]
     },
     {

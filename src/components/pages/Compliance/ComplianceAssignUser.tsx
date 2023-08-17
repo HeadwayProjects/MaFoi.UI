@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useGetDepartments, useGetVerticals } from "../../../backend/masters";
+import { useGetDepartmentUserMappings, useGetDepartments, useGetVerticals } from "../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 import { toast } from "react-toastify";
-import { ERROR_MESSAGES } from "../../../utils/constants";
-import { ACTIONS } from "../../common/Constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import { getValue, preventDefault } from "../../../utils/common";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button, Modal } from "react-bootstrap";
+import { useBulkUpdateComplianceSchedule } from "../../../backend/compliance";
+import { ResponseModel } from "../../../models/responseModel";
 
-export default function ComplianceAssignUser(this: any, { action, activities, onCancel }: any) {
+export default function ComplianceAssignUser(this: any, { activities, onCancel }: any) {
     const [t] = useState(new Date().getTime());
     const [form, setForm] = useState<any>({});
     const [data, setData] = useState<any>({ hideButtons: true });
@@ -24,28 +25,22 @@ export default function ComplianceAssignUser(this: any, { action, activities, on
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'verticalId', value: (vertical || {}).value }], t
     }, Boolean(vertical));
-    // const { verticals } = useGetUse({ ...DEFAULT_OPTIONS_PAYLOAD, t });
-    // const { createAct, creating } = useCreateAct(({ key, value }: ResponseModel) => {
-    //     if (key === API_RESULT.SUCCESS) {
-    //         toast.success(`${act.name} created successfully.`);
-    //         onSubmit();
-    //     } else {
-    //         toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Act, Establishment Type and Law combination already exists.' : ERROR_MESSAGES.ERROR);
-    //     }
-    // }, errorCallback);
-    // const { updateAct, updating } = useUpdateAct(({ key, value }: ResponseModel) => {
-    //     if (key === API_RESULT.SUCCESS) {
-    //         toast.success(`${act.name} updated successfully.`);
-    //         onSubmit();
-    //     } else {
-    //         toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Act, Establishment Type and Law combination already exists.' : ERROR_MESSAGES.ERROR);
-    //     }
-    // }, errorCallback);
+    const { departmentUsers } = useGetDepartmentUserMappings({
+        ...DEFAULT_OPTIONS_PAYLOAD,
+        filters: [{ columnName: 'departmentId', value: (department || {}).value }]
+    }, Boolean(department));
+    const { updateBulkComplianceSchedule, updating } = useBulkUpdateComplianceSchedule(({ key, value }: ResponseModel) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`Users assigned successfully.`);
+            onCancel(true);
+        } else {
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Act, Establishment Type and Law combination already exists.' : ERROR_MESSAGES.ERROR);
+        }
+    }, errorCallback);
 
     function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
     }
-
 
     const schema = {
         fields: [
@@ -79,7 +74,12 @@ export default function ComplianceAssignUser(this: any, { action, activities, on
                 component: componentTypes.SELECT,
                 name: 'owner',
                 label: 'Owner',
-                options: [],
+                options: (departmentUsers || []).map((x: any) => {
+                    return {
+                        id: x.userId,
+                        name: x.user.name
+                    }
+                }),
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
@@ -88,7 +88,12 @@ export default function ComplianceAssignUser(this: any, { action, activities, on
                 component: componentTypes.SELECT,
                 name: 'manager',
                 label: 'Manager',
-                options: [],
+                options: (departmentUsers || []).map((x: any) => {
+                    return {
+                        id: x.userId,
+                        name: x.user.name
+                    }
+                }),
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
@@ -115,7 +120,17 @@ export default function ComplianceAssignUser(this: any, { action, activities, on
     function submit(e: any) {
         preventDefault(e);
         if (form.valid) {
-            // const { name, establishmentType, law } = data;
+            const { vertical, department, owner, manager } = data;
+            const request = activities.map((activity: any) => {
+                return {
+                    ...activity,
+                    veriticalId: vertical.value,
+                    departmentId: department.value,
+                    complianceOwnerId: owner.value,
+                    complianceManagerId: manager.value
+                }
+            });
+            updateBulkComplianceSchedule(request);
             // const request: any = {
             //     name: name.trim(),
             //     lawId: law.value,

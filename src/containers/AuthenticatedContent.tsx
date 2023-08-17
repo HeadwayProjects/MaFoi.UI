@@ -36,6 +36,7 @@ import ComplianceScheduleDetails from "../components/pages/Compliance/Compliance
 import LockUnLockCompliance from "../components/pages/Compliance/LockUnLockCompliance";
 import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
 import ComplianceOwnerDashboard from "../components/pages/ComplianceOwner/Dashboard/ComplianceOwnerDashboard";
+import MangeDepartmentUsers from "../components/pages/UserManagement/DepartmentUsers.tsx/ManageDepartmentUsers";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -169,6 +170,9 @@ function AuthenticatedContent() {
         ),
         '/userManagement/mapping': () => (
             layout(<UserCompanies />)
+        ),
+        '/userManagement/userDepartment': () => (
+            layout(<MangeDepartmentUsers />)
         ),
         '/email/templates': () => (
             layout(<EmailTemplates />)

@@ -917,6 +917,66 @@ export function useDeleteDepartment(onSuccess?: any, onError?: any) {
     return { deleteDepartment, error, deleting: isLoading };
 }
 
+export function useGetDepartmentUserMappings(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['departmentUsers', payload],
+        async () => await api.post(`/api/UserDepartmentMap/GetAll`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+    return {
+        departmentUsers: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch
+    };
+}
+
+export function useCreateDepartmentUserMapping(onSuccess?: any, onError?: any) {
+    const { mutate: createDepartmentUserMapping, error, isLoading } = useMutation(
+        ['createDepartmentUserMapping'],
+        async (payload) => await api.post('/api/UserDepartmentMap/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createDepartmentUserMapping, error, creating: isLoading };
+}
+
+export function useUpdateDepartmentUserMapping(onSuccess?: any, onError?: any) {
+    const { mutate: updateDepartmentUserMapping, error, isLoading } = useMutation(
+        ['updateDepartmentUserMapping'],
+        async (payload) => await api.put('/api/UserDepartmentMap/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateDepartmentUserMapping, error, updating: isLoading };
+}
+
+export function useDeleteDepartmentUserMapping(onSuccess?: any, onError?: any) {
+    const { mutate: deleteDepartmentUserMapping, error, isLoading } = useMutation(
+        ['deleteDepartmentUserMapping'],
+        async (id) => await api.del(`/api/UserDepartmentMap/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteDepartmentUserMapping, error, deleting: isLoading };
+}
+
 export function useGetUserCompanies(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['userCompanies', payload],
