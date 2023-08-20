@@ -3,20 +3,20 @@ import Calendar from "../../../common/Calendar/Calendar"
 import DashboardCharts from "./DashboardCharts"
 import ComplianceOwnerDashboardActivities from "./ComplianceOwnerDashboardActivities";
 import styles from "./ComplianceOwnerDashboard.module.css";
+import ComplianceActivities from "../TaskManagement/ComplianceActivities";
 
-export default function DataGrid(props: any) {
+export default function DataGrid({ filters }: any) {
     const [changes, setChanges] = useState<any>(null);
     return (
         <>
-            <div className="d-flex flex-row px-2 gap-4">
-                <div className="d-flex flex-column">
-                    <div className={styles.dashboardCol1}>
-                        <Calendar handleChange={setChanges} />
-                        <ComplianceOwnerDashboardActivities {...changes} />
-                    </div>
+            <div className={styles.dashboardGrid}>
+                <div className={styles.dashboardGridCol1}>
+                    <Calendar handleChange={setChanges} />
+                    <ComplianceOwnerDashboardActivities {...changes} filters={filters} />
                 </div>
-                <div className="d-flex flex-column w-100">
-                    <DashboardCharts />
+                <div className={styles.dashboardGridCol2}>
+                    <DashboardCharts filters={filters} />
+                    <ComplianceActivities {...changes} filters={filters} />
                 </div>
             </div>
         </>

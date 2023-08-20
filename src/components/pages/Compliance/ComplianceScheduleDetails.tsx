@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faFloppyDisk, faTrash, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { ACTIONS, ACTIVITY_STATUS, FILTERS, STATUS_MAPPING } from "../../common/Constants";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
@@ -16,7 +16,7 @@ import ConfirmModal from "../../common/ConfirmModal";
 import PageLoader from "../../shared/PageLoader";
 import { hasUserAccess } from "../../../backend/auth";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
-import { Button } from "react-bootstrap";
+import { Button, Dropdown, DropdownButton } from "react-bootstrap";
 import ComplianceAssignUser from "./ComplianceAssignUser";
 
 const SortFields: any = {
@@ -130,7 +130,14 @@ function ComplianceScheduleDetails(this: any) {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                <Icon className="mx-1" type="button" name="trash" text="Delete" data={row} action={handleDelete} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS) &&
+                    <Icon className="me-3" type="button" name="people" text="Assign User" data={row} action={handleSingleAssign} />
+                }
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_COMPLIANCE_SCHEDULE_DETAILS) &&
+                    <Icon type="button" name="trash" text="Delete" data={row} action={handleDelete} />
+                }
             </div>
         )
     }
@@ -173,16 +180,29 @@ function ComplianceScheduleDetails(this: any) {
         {
             title: "Activity Type", field: "activity.type",
             formatter: reactFormatter(<CellTmpl />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            minWidth: 140
         },
         {
-            title: "Associate Company", field: "associateCompany.name",
+            title: "Vertical", field: "veritical.name",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />),
             widthGrow: 1
         },
         {
-            title: "Location Name", field: "location.name",
+            title: "Department", field: "department.name",
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            widthGrow: 1
+        },
+        {
+            title: "Owner", field: "complianceOwner.name",
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            widthGrow: 1
+        },
+        {
+            title: "Manager", field: "complianceManager.name",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />),
             widthGrow: 1
@@ -269,6 +289,11 @@ function ComplianceScheduleDetails(this: any) {
         return _payload;
     }
 
+    function handleSingleAssign(_activity: any) {
+        setActivity(_activity)
+        setAction(ACTIONS.ASSIGN_SINGLE);
+    }
+
     function handleDelete(_activity: any) {
         setActivity(_activity)
         setAction(ACTIONS.DELETE);
@@ -298,7 +323,14 @@ function ComplianceScheduleDetails(this: any) {
     function handleAssignUser(e: any) {
         preventDefault(e);
         if ((selectedRows || []).length > 0) {
-            setAction(ACTIONS.ASSIGN);
+            setAction(ACTIONS.ASSIGN_BULK);
+        }
+    }
+
+    function handleCopyTo(e: any) {
+        // preventDefault(e);
+        if ((selectedRows || []).length > 0) {
+            setAction(ACTIONS.COPY_TO);
         }
     }
 
@@ -373,18 +405,32 @@ function ComplianceScheduleDetails(this: any) {
                             </div>
                             <div className="d-flex flex-row align-items-center ms-auto">
                                 {
-                                    hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS) &&
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleAssignUser}
-                                        disabled={!(selectedRows || []).length}>
-                                        <FontAwesomeIcon icon={faUsers} />Assign User
-                                    </Button>
-                                }
-                                {
-                                    hasUserAccess(USER_PRIVILEGES.DELETE_COMPLIANCE_SCHEDULE_DETAILS) &&
-                                    <Button variant="danger" className="px-3 ms-2 text-nowrap" onClick={handleBulkDelete}
-                                        disabled={!(selectedRows || []).length}>
-                                        <FontAwesomeIcon icon={faTrash} />Bulk Delete
-                                    </Button>
+                                    (hasUserAccess(USER_PRIVILEGES.COMPLIANCE_SCHEDULE)
+                                        || hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS)
+                                        || hasUserAccess(USER_PRIVILEGES.DELETE_COMPLIANCE_SCHEDULE_DETAILS)) &&
+                                    <DropdownButton title="Actions" variant="primary">
+                                        {
+                                            hasUserAccess(USER_PRIVILEGES.COMPLIANCE_SCHEDULE) &&
+                                            <Dropdown.Item onClick={handleCopyTo}
+                                                disabled={!(selectedRows || []).length} className="my-1">
+                                                <FontAwesomeIcon icon={faFloppyDisk} className="me-2" />Copy To.
+                                            </Dropdown.Item>
+                                        }
+                                        {
+                                            hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS) &&
+                                            <Dropdown.Item onClick={handleAssignUser}
+                                                disabled={!(selectedRows || []).length} className="my-1">
+                                                <FontAwesomeIcon icon={faUsers} className="me-2" />Assign User
+                                            </Dropdown.Item>
+                                        }
+                                        {
+                                            hasUserAccess(USER_PRIVILEGES.DELETE_COMPLIANCE_SCHEDULE_DETAILS) &&
+                                            <Dropdown.Item onClick={handleBulkDelete} className="my-1"
+                                                disabled={!(selectedRows || []).length}>
+                                                <FontAwesomeIcon icon={faTrash} className="me-2" />Bulk Delete
+                                            </Dropdown.Item>
+                                        }
+                                    </DropdownButton>
                                 }
                             </div>
                         </div>
@@ -413,8 +459,9 @@ function ComplianceScheduleDetails(this: any) {
                 </ConfirmModal>
             }
             {
-                action === ACTIONS.ASSIGN &&
-                <ComplianceAssignUser action={action} activities={selectedRows} onCancel={handleCancel} />
+                (action === ACTIONS.ASSIGN_BULK || action === ACTIONS.ASSIGN_SINGLE) &&
+                <ComplianceAssignUser action={action}
+                    activities={action === ACTIONS.ASSIGN_BULK ? selectedRows : [activity]} onCancel={handleCancel} />
             }
             {deleting && <PageLoader message={'Deleting...'} />}
         </>

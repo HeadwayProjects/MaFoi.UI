@@ -1,13 +1,6 @@
 .dashboardContainer {
-    min-height: calc(100vh - 136px);
+    height: calc(100vh - 136px);
 }
-
-.dashboardCol1 {
-    display: grid;
-    grid-template-rows: auto 0px auto minmax(200px, 1fr);
-    min-width: 436px;
-}
-
 .activityItem {
     display: grid;
     min-height: 80px;
@@ -19,4 +12,22 @@
 .activityItemLeft {
     max-height: 120px;
     color: var(--white);
+}
+
+.dashboardGrid {
+    display: grid;
+    grid-template-columns: 436px 1fr;
+    grid-gap: 1rem;
+}
+
+.dashboardGridCol1 {
+    display: grid;
+    grid-template-rows: auto 0px auto minmax(200px, 1fr);
+    height: calc(100vh - 234px);
+}
+
+.dashboardGridCol2 {
+    display: grid;
+    grid-template-rows: 40px 300px 1fr;
+    grid-gap: 1rem;
 }

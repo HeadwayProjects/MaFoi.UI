@@ -89,3 +89,17 @@ export function useUpdateComplianceSchedule(onSuccess?: any, onError?: any) {
     );
     return { updateComplianceSchedule, error, updating };
 }
+
+export function useGetComplianceByDate(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['complianceByDate', payload],
+        async () => await post('/api/Compliance/GetAllGroupByDate', payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { groups: (data || {}).data || [], isFetching, refetch };
+}

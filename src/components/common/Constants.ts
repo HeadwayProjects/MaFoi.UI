@@ -22,7 +22,9 @@ export const ACTIONS = {
     BULK_DELETE: '5',
     BULK_EDIT: '6',
     IMPORT: '7',
-    ASSIGN: '8'
+    ASSIGN_SINGLE: '8',
+    ASSIGN_BULK: '9',
+    COPY_TO: '10'
 }
 
 export const ACTIVITY_STATUS = {

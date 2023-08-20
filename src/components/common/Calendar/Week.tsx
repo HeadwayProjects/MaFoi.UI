@@ -3,8 +3,9 @@ import dayjs from 'dayjs';
 import { CalendarProps, CalendarType } from "./Calendar.constants";
 import Icon from '../Icon';
 import styles from "./Calendar.module.css";
+import { COMPLIANCE_ACTIVITY_INDICATION } from '../../pages/ComplianceOwner/Compliance.constants';
 
-export default function Week(props: CalendarProps) {
+export default function Week(this: any, props: CalendarProps) {
     const { minDate, maxDate, handleChange, onDateSelection } = props;
     const [currentDate, setCurrentDate] = useState<Date>(dayjs().startOf('D').toDate());
     const [dateRange, setDateRange] = useState<any>();
@@ -28,7 +29,7 @@ export default function Week(props: CalendarProps) {
         setDateRange({ from: _from, to: _to });
     }
 
-    function generateDates({ from, to }: any) {
+    function generateDates(this: any, { from, to }: any) {
         const list: any[] = [];
         const date = new Date(from);
         while (date < to) {
@@ -39,6 +40,9 @@ export default function Week(props: CalendarProps) {
             date.setDate(date.getDate() + 1);
         }
         setDates(list);
+        if (handleChange) {
+            handleChange({ type: CalendarType.WEEK, dateRange, dates: list, dataChanged: handleDataChange.bind(this) });
+        }
     }
 
     function handleDateSelection(date: any) {
@@ -47,16 +51,20 @@ export default function Week(props: CalendarProps) {
         }
     }
 
-    function handleDataChange(_data: any) {
-
+    function handleDataChange({ dates, data }: any) {
+        const _dates = [...dates];
+        _dates.forEach((_dt: any) => {
+            const x = data.find((x: any) => x.date === _dt.id);
+            if (x) {
+                _dt.status = x.activities[0].status
+            }
+        });
+        setDates(_dates);
     }
 
     useEffect(() => {
         if (dateRange) {
             generateDates(dateRange);
-            if (handleChange) {
-                handleChange({type: CalendarType.WEEK, dateRange, dataChanged: (e: any) => handleDataChange(e)});
-            }
         }
     }, [dateRange]);
 
@@ -70,15 +78,10 @@ export default function Week(props: CalendarProps) {
 
             const date = new Date();
             date.setDate(date.getDate() - day);
-            const from  = dayjs(date).startOf('D').toDate();
+            const from = dayjs(date).startOf('D').toDate();
             date.setDate(date.getDate() + 6);
-            const to  = dayjs(date).endOf('D').toDate();
-            // const from = dayjs(currentDate).startOf('w').toDate();
-            // const to = dayjs(currentDate).endOf('w').toDate();
-            // from.setDate(from.getDate() + 1);
-            // to.setDate(to.getDate() + 1);
+            const to = dayjs(date).endOf('D').toDate();
             setDateRange({ from, to })
-
         }
     }, [currentDate]);
 
@@ -98,7 +101,10 @@ export default function Week(props: CalendarProps) {
                                 dates.map((date: any) => {
                                     return (
                                         <div className={styles.ezycompCalendarWeekDay} key={date.id}>
-                                            <span onClick={() => handleDateSelection(date.date)}>{dayjs(date.date).format('D')}</span>
+                                            <span onClick={() => handleDateSelection(date.date)}
+                                                style={{ borderColor: COMPLIANCE_ACTIVITY_INDICATION[date.status] || 'transparent' }}>
+                                                {dayjs(date.date).format('D')}
+                                            </span>
                                         </div>
                                     )
                                 })

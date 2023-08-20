@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { CalendarProps, CalendarType } from "./Calendar.constants";
 import styles from "./Calendar.module.css";
 import Icon from '../Icon';
+import { COMPLIANCE_ACTIVITY_INDICATION } from '../../pages/ComplianceOwner/Compliance.constants';
 
 const WeekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -31,7 +32,7 @@ export default function Month(props: CalendarProps) {
         }
     }
 
-    function generateDates({ from, to }: any) {
+    function generateDates(this: any, { from, to }: any) {
         const list: any[] = [];
         const startDate = dayjs(from).toDate();
         while (startDate.getDay() !== 1) {
@@ -49,16 +50,26 @@ export default function Month(props: CalendarProps) {
             });
             date.setDate(date.getDate() + 1);
         }
-
         setDates(list);
+        if (handleChange) {
+            handleChange({ type: CalendarType.MONTH, dateRange, dates: list, dataChanged: handleDataChange.bind(this) });
+        }
+    }
+
+    function handleDataChange({ dates, data }: any) {
+        const _dates = [...dates];
+        _dates.forEach((_dt: any) => {
+            const x = data.find((x: any) => x.date === _dt.id);
+            if (x) {
+                _dt.status = x.activities[0].status
+            }
+        });
+        setDates(_dates);
     }
 
     useEffect(() => {
         if (dateRange) {
             generateDates(dateRange);
-            if (handleChange) {
-                handleChange({type: CalendarType.MONTH, dateRange});
-            }
         }
     }, [dateRange]);
 
@@ -96,7 +107,10 @@ export default function Month(props: CalendarProps) {
                                     return (
                                         <div className={styles.ezycompCalendarMonthDay} key={date.id}>
                                             <span onClick={() => handleDateSelection(date.date)}
-                                                style={{ opacity: (date.date < dateRange.from || date.date > dateRange.to) ? 0.5 : 1 }}>
+                                                style={{
+                                                    opacity: (date.date < dateRange.from || date.date > dateRange.to) ? 0.5 : 1,
+                                                    borderColor: COMPLIANCE_ACTIVITY_INDICATION[date.status] || 'transparent'
+                                                }}>
                                                 {dayjs(date.date).format('D')}
                                             </span>
                                         </div>

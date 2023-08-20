@@ -11,9 +11,10 @@ enum DashboardView {
 
 function ComplianceOwnerDashboard() {
     const [view, setView] = useState(DashboardView.CALENDAR);
+    const [filters, setFilters] = useState<any>(null);
 
     function onLocationChange(event: any) {
-        console.log(event)
+        setFilters(event);
     }
 
     return (
@@ -38,14 +39,13 @@ function ComplianceOwnerDashboard() {
             <div className={`row m-0 py-2 bg-white ${styles.dashboardContainer}`}>
                 <div className="col-12">
                     <div className="d-flex flex-row m-0 pb-2">
-                        <OptionalLocations onChange={onLocationChange}/>
-                        {/* <Location onChange={onLocationChange} /> */}
+                        <OptionalLocations onChange={onLocationChange} />
                         {/* <div className="col-5">
                             <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search}
                                 downloadReport={downloadReport} />
                         </div> */}
                     </div>
-                    <DataGrid />
+                    <DataGrid filters={filters}/>
                 </div>
             </div>
         </div>

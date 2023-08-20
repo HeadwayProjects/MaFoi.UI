@@ -517,3 +517,19 @@ table.table {
 .modal-dialog.modal-lg.lg-mini {
   max-width: 600px;
 }
+
+*::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 5px;
+}
+ 
+*::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 0.5rem transparent;
+  border-radius: 5px;
+}
+ 
+*::-webkit-scrollbar-thumb {
+  background-color: var(--gray-500);
+  border-radius: 5px;
+}

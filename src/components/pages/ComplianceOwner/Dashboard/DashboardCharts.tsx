@@ -77,7 +77,7 @@ export default function DashboardCharts(props: any) {
 
     return (
         <>
-            <div className="d-flex flex-row px-4 justify-content-between rounded-3 mb-3" style={{ backgroundColor: "var(--page-bg)" }}>
+            <div className="d-flex flex-row px-4 justify-content-between rounded-3" style={{ backgroundColor: "var(--page-bg)" }}>
                 <div className="form-check my-2" >
                     <input className="form-check-input" type="radio" name="frequency" checked={category === ChartCategory.DEPARTMENT}
                         id={ChartCategory.DEPARTMENT} onChange={handleCateoryChange} value={ChartCategory.DEPARTMENT} />
@@ -99,7 +99,6 @@ export default function DashboardCharts(props: any) {
                     <label className="form-check-label" htmlFor={ChartCategory.ENTITY}>{'Entity'}</label>
                 </div>
             </div>
-
             <div className="d-flex w-100">
                 {
                     option && <ReactECharts option={option} />
