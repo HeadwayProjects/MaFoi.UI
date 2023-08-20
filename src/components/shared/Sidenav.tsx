@@ -102,7 +102,7 @@ const SideNavMenu = [
             { id: 'email/templates', url: '/email/templates', label: 'Manage Templates', privilege: USER_PRIVILEGES.VIEW_EMAIL_TEMPLATES }
         ]
     },
-    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.READ_ONLY_ACTIVITIES },
+    // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.READ_ONLY_ACTIVITIES },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.OWNER_ACTIVITIES },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.MANAGER_ACTIVITIES },
