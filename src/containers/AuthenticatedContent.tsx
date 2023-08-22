@@ -37,6 +37,8 @@ import LockUnLockCompliance from "../components/pages/Compliance/LockUnLockCompl
 import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
 import ComplianceOwnerDashboard from "../components/pages/ComplianceOwner/Dashboard/ComplianceOwnerDashboard";
 import MangeDepartmentUsers from "../components/pages/UserManagement/DepartmentUsers.tsx/ManageDepartmentUsers";
+import ComplianceOwnerActivities from "../components/pages/ComplianceOwner/TaskManagement/ComplianceOwnerActivities";
+import ComplianceManagerDashboard from "../components/pages/ComplianceManager/Dashboard/ComplianceManagerDashboard";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -69,7 +71,7 @@ function AuthenticatedContent() {
             } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
                 return layout(<ComplianceOwnerDashboard />);
             } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
-                return layout(<VendorDashboard />);
+                return layout(<ComplianceManagerDashboard />);
             } else {
                 return layout(<Home />)
             }
@@ -82,7 +84,7 @@ function AuthenticatedContent() {
         } else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES)) {
             return layout(<TaskManagement />);
         } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
-            return layout(<VendorDashboard />);
+            return layout(<ComplianceOwnerActivities />);
         } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
             return layout(<VendorDashboard />);
         } else {

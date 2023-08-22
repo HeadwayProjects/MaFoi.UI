@@ -104,15 +104,15 @@ const SideNavMenu = [
     },
     // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.READ_ONLY_ACTIVITIES },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES },
-    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.OWNER_ACTIVITIES },
-    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.MANAGER_ACTIVITIES },
+    // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.OWNER_ACTIVITIES },
+    // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.MANAGER_ACTIVITIES },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES },
     { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true }
 ];
 
 function Sidenav({ open, toggleSidenav }: any) {
     const [user] = useState(auth.getUserDetails());
-    const [sideMenu, setSideMenu] = useState<any[]>([]);
+    const [sideMenu, setSideMenu] = useState<any[] | null>([]);
     const [toggelStatus, setToggleStatus] = useState<any>({});
 
     useEffect(() => {
@@ -196,7 +196,7 @@ function Sidenav({ open, toggleSidenav }: any) {
     return (
         <>
             {
-                user !== null ?
+                (user !== null && sideMenu !== null) ?
                     <ul className='sideNav m-0 p-0'>
                         <li>
                             <div className="d-flex flex-row w-100 align-items-center justify-content-end border-bottom" style={{ height: '48px' }}>

@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { post, put } from "./request";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { get, post, put } from "./request";
 
 export function useExportComplianceSchedule(onSuccess?: any, onError?: any) {
     const { mutate: exportComplianceSchedule, error, isLoading: exporting } = useMutation(
@@ -43,6 +43,20 @@ export function useGetAllComplianceActivities(payload: any, enabled = true) {
     );
 
     return { activities: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
+}
+
+export function useGetComplianceById(id: any) {
+    const { data, isFetching, refetch } = useQuery(
+        ['complianceById', id],
+        async () => await get(`/api/Compliance/Get/${id}`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: Boolean(id)
+        }
+    );
+
+    return { activity: (data || {}).data || null, isFetching, refetch };
 }
 
 export function useDeleteComplianceSchedule(onSuccess?: any, onError?: any) {
@@ -90,6 +104,39 @@ export function useUpdateComplianceSchedule(onSuccess?: any, onError?: any) {
     return { updateComplianceSchedule, error, updating };
 }
 
+
+export function useSubmitComplianceActivity(onSuccess?: any, onError?: any) {
+    const { mutate: submitComplianceActivity, error, isLoading: submitting } = useMutation(
+        ['submitComplianceActivity'],
+        async (keys: any) => await post(`/api/Compliance/SubmitToAudit`, keys),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { submitComplianceActivity, error, submitting };
+}
+
+export function useGetComplianceActivityDocuments(payload: any = {}) {
+    const queryClient = useQueryClient();
+    function invalidate() {
+        queryClient.invalidateQueries(['complianceActivityDocuments', payload])
+    }
+    const { data, isFetching, refetch } = useQuery(
+        ['complianceActivityDocuments', payload],
+        async () => await get('/api/ComplianceDetails/GetByToDo', payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: Boolean((payload || {}).complianceId)
+        }
+    );
+    return { documents: (data || {}).data || [], isFetching, invalidate, refetch };
+}
+
 export function useGetComplianceByDate(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['complianceByDate', payload],
@@ -102,4 +149,19 @@ export function useGetComplianceByDate(payload: any, enabled = true) {
     );
 
     return { groups: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useUploadDocument(onSuccess?: any, onError?: any) {
+    const { mutate: uploadDocument, error, isLoading: uploading } = useMutation(
+        ['uploadFile'],
+        async ({ id, formData }: any) => await post(`api/FileUpload/UploadComplianceSingleFile?complianceId=${id}`, formData, null, true),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { uploadDocument, error, uploading };
 }

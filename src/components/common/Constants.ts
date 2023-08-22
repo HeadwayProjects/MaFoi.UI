@@ -24,7 +24,8 @@ export const ACTIONS = {
     IMPORT: '7',
     ASSIGN_SINGLE: '8',
     ASSIGN_BULK: '9',
-    COPY_TO: '10'
+    COPY_TO: '10',
+    CONFIRM: '11'
 }
 
 export const ACTIVITY_STATUS = {

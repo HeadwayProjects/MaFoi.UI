@@ -21,6 +21,7 @@ export const componentTypes = {
     WIZARD: iComponentTypes.WIZARD,
     TAB_ITEM: iComponentTypes.TAB_ITEM,
     FILE_UPLOAD: 'file-upload',
+    DOCUMENTS_UPLOAD: 'documents-upload',
     ASYNC_SELECT: 'async-select',
     MONTH_PICKER: 'month-picker',
     INPUT_AS_TEXT: 'input-as-text',
@@ -419,6 +420,68 @@ function FileUploadField(props: any) {
     );
 };
 
+function DocumentsWithUploadField(props: any) {
+    const { input, meta, label, name } = useFieldApi(props);
+    const [documents, setDocuments] = useState(props.documents);
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
+
+    useEffect(() => {
+        if (props.documents) {
+            setDocuments(props.documents)
+        }
+    }, [props.documents]);
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            {
+                documents !== undefined &&
+                <>
+                    {
+                        (documents || []).length === 0 && <div className="fst-italic text-sm mb-2">No documents available</div>
+                    }
+                    {
+                        (documents || []).length > 0 &&
+                        <div className="d-flex flex-column">
+                            {
+                                (documents || []).map((document: any) => {
+                                    return (
+                                        <div className="d-flex flex-row w-100 align-items-center mb-2" key={document.id}>
+                                            <Icon action={props.downloadDocument} data={document} name="download" className="text-appprimary text-md me-3" />
+                                            <span>{document.fileName}</span>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    }
+                </>
+            }
+            {
+                props.upload &&
+                <>
+                    {
+                        label &&
+                        <label className="text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+                    }
+                    <div className={`input-group`}>
+                        <input id={name}
+                            className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''} ${props.styleClass || ''}`}
+                            {...input} />
+                    </div>
+                    {
+                        props.description &&
+                        <span className="text-muted form-text">{props.description}</span>
+                    }
+                    {
+                        meta.touched && meta.error && <div className="invalid-feedback d-block">
+                            {meta.error}
+                        </div>
+                    }
+                </>
+            }
+        </div>
+    );
+};
+
 export function DatePickerField(props: any) {
     const { input, meta, label, name } = useFieldApi(props);
     const [value, setValue] = useState(props.initialValue);
@@ -597,6 +660,7 @@ export const ComponentMapper = {
     },
     [componentTypes.TAB_ITEM]: TabItemField,
     [componentTypes.FILE_UPLOAD]: FileUploadField,
+    [componentTypes.DOCUMENTS_UPLOAD]: DocumentsWithUploadField,
     [componentTypes.ASYNC_SELECT]: AsyncSelectField,
     [componentTypes.MONTH_PICKER]: MonthPickerField,
     [componentTypes.INPUT_AS_TEXT]: InputasTextAreaField,
@@ -613,7 +677,7 @@ export function FormTemplate({ formFields }: any) {
             {formFields}
             {
                 !initialValues.hideButtons &&
-                <div className="d-flex flex-row mt-4 justify-content-center">
+                <div className={`d-flex flex-row mt-4 ${initialValues.buttonWrapStyles || 'justify-content-center'}`}>
                     <Button variant="primary" type="submit" className={`btn btn-primary px-4 ${initialValues.fullWidth ? 'w-100' : ''}`}
                         disabled={!valid || !touched}>
                         {initialValues.submitBtnText || 'Submit'}

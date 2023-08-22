@@ -8,6 +8,9 @@ import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 import Icon from "../../../common/Icon";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import styles from "./Styles.module.css";
+import ComplianceActivityDetails from "./ComplianceActivityDetails";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -18,7 +21,7 @@ const SortFields: any = {
     'activity.type': 'activityType'
 };
 
-function ComplianceActivities({ dateRange, filters }: any) {
+function ComplianceManagerActivities({ dateRange, filters }: any) {
     const [activity, setActivity] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState<any>();
@@ -34,9 +37,12 @@ function ComplianceActivities({ dateRange, filters }: any) {
         return (company || {}).value;
     }
 
-    function dismissAction() {
+    function dismissAction(refresh = false) {
         setAction(ACTIONS.NONE);
         setActivity(null);
+        if (refresh) {
+            refetch();
+        }
     }
 
     function MonthTmpl({ cell }: any) {
@@ -67,16 +73,21 @@ function ComplianceActivities({ dateRange, filters }: any) {
             </div>
         )
     }
+    function FormIndicationTmpl({ cell }: any) {
+        const status = cell.getValue();
+        return (
+            <div className="d-flex align-items-center">
+                <FontAwesomeIcon icon={faCircle} className={`status-${status} text-md`}/>
+            </div>
+        )
+    }
 
     function ActionColumnElements({ cell }: any) {
         const row = cell.getData();
-
+        const hasAccess = hasUserAccess(USER_PRIVILEGES.MANAGER_ACTIVITIES_REVIEW);
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                {
-                    hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT) &&
-                    <Icon className="me-3" type="button" name="pencil" text="Edit" data={row} action={handleEdit} />
-                }
+                <Icon className="me-3" type="button" name={hasAccess ? "pencil" : "eye"} text={hasAccess ? "Edit" : "View"} data={row} action={handleEdit} />
             </div>
         )
     }
@@ -94,15 +105,19 @@ function ComplianceActivities({ dateRange, filters }: any) {
         {
             title: "", width: 40,
             headerSort: false,
-            formatter: reactFormatter(<ActionColumnElements />),
-            visible: hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT)
+            formatter: reactFormatter(<ActionColumnElements />)
+        },
+        {
+            title: "", field: "status", width: 40,
+            headerSort: false,
+            formatter: reactFormatter(<FormIndicationTmpl />)
         },
         {
             title: "", field: "auditted", width: 40,
             formatter: reactFormatter(<ActivityTypeTmpl />)
         },
         {
-            title: "Manager", field: "complianceManager.name",
+            title: "Owner", field: "complianceOwner.name",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />),
             widthGrow: 1, minWidth: 140
@@ -209,7 +224,7 @@ function ComplianceActivities({ dateRange, filters }: any) {
     function getUserFilter() {
         const user = getUserDetails();
         return [{
-            columnName: 'complianceOwnerId',
+            columnName: 'complianceManagerId',
             value: user.userid
         }]
     }
@@ -251,10 +266,10 @@ function ComplianceActivities({ dateRange, filters }: any) {
             } else {
                 _filters[toIndex].value = toDate;
             }
-            if (!_filters.find((x: any) => x.columnName.toLowerCase() === 'complianceownerid')) {
+            if (!_filters.find((x: any) => x.columnName.toLowerCase() === 'compliancemanagerid')) {
                 const _user = getUserDetails();
                 console.log(_user);
-                _filters.push({ columnName: 'complianceOwnerId', value: _user.userid });
+                _filters.push({ columnName: 'complianceManagerId', value: _user.userid });
             }
             setPayload({ ..._payload, filters: _filters });
         }
@@ -266,10 +281,10 @@ function ComplianceActivities({ dateRange, filters }: any) {
             const _filters = _payload.filters;
             const fromDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'fromdate');
             const toDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'todate');
-            let complianceOwner = _filters.find((x: any) => x.columnName.toLowerCase() === 'complianceownerid');
+            let complianceOwner = _filters.find((x: any) => x.columnName.toLowerCase() === 'compliancemanagerid');
             if (!complianceOwner) {
                 const _user = getUserDetails();
-                complianceOwner = { columnName: 'complianceOwnerId', value: _user.userid };
+                complianceOwner = { columnName: 'complianceManagerId', value: _user.userid };
             }
             const _fs = Object.keys(filters).map((columnName: string) => {
                 return { columnName, value: filters[columnName] }
@@ -296,9 +311,13 @@ function ComplianceActivities({ dateRange, filters }: any) {
                     </div>
                 </div>
             </div>
+            {
+                action === ACTIONS.EDIT && Boolean(activity) &&
+                <ComplianceActivityDetails data={activity} onCancel={dismissAction} onSubmit={() => dismissAction(true)} />
+            }
         </>
     );
 
 }
 
-export default ComplianceActivities;
+export default ComplianceManagerActivities;

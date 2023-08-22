@@ -10,7 +10,7 @@ export function preventDefault(event: any) {
   }
 }
 
-export function getValue(obj: any, key: string) {
+export function getValue(obj: any, key: string, type?: any) {
   if (!obj || !key) {
     return null
   }
@@ -19,6 +19,9 @@ export function getValue(obj: any, key: string) {
   keys.forEach(_key => {
     value = (value || {})[_key];
   });
+  if (type === 'BOOLEAN') {
+    return value === true ? 'Yes' : (value === false ? 'No' : '')
+  }
   return value;
 }
 

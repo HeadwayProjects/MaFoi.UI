@@ -1,0 +1,33 @@
+.dashboardContainer {
+    height: calc(100vh - 136px);
+}
+.activityItem {
+    display: grid;
+    min-height: 80px;
+    grid-template-columns: 80px 1fr;
+    border-bottom: 2px solid var(--page-bg);
+    gap: 8px;
+}
+
+.activityItemLeft {
+    max-height: 120px;
+    color: var(--white);
+}
+
+.dashboardGrid {
+    display: grid;
+    grid-template-columns: 436px 1fr;
+    grid-gap: 1rem;
+}
+
+.dashboardGridCol1 {
+    display: grid;
+    grid-template-rows: auto 0px auto minmax(200px, 1fr);
+    height: calc(100vh - 234px);
+}
+
+.dashboardGridCol2 {
+    display: grid;
+    grid-template-rows: 40px 300px 1fr;
+    grid-gap: 1rem;
+}

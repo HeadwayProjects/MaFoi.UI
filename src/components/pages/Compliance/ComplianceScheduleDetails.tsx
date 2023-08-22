@@ -313,22 +313,19 @@ function ComplianceScheduleDetails(this: any) {
         deleteComplianceSchedule(selectedRows.map((x: any) => x.id));
     }
 
-    function handleBulkDelete(e: any) {
-        preventDefault(e);
+    function handleBulkDelete() {
         if ((selectedRows || []).length > 0) {
             setAction(ACTIONS.BULK_DELETE);
         }
     }
 
-    function handleAssignUser(e: any) {
-        preventDefault(e);
+    function handleAssignUser() {
         if ((selectedRows || []).length > 0) {
             setAction(ACTIONS.ASSIGN_BULK);
         }
     }
 
-    function handleCopyTo(e: any) {
-        // preventDefault(e);
+    function handleCopyTo() {
         if ((selectedRows || []).length > 0) {
             setAction(ACTIONS.COPY_TO);
         }
@@ -409,13 +406,13 @@ function ComplianceScheduleDetails(this: any) {
                                         || hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS)
                                         || hasUserAccess(USER_PRIVILEGES.DELETE_COMPLIANCE_SCHEDULE_DETAILS)) &&
                                     <DropdownButton title="Actions" variant="primary">
-                                        {
+                                        {/* {
                                             hasUserAccess(USER_PRIVILEGES.COMPLIANCE_SCHEDULE) &&
                                             <Dropdown.Item onClick={handleCopyTo}
                                                 disabled={!(selectedRows || []).length} className="my-1">
                                                 <FontAwesomeIcon icon={faFloppyDisk} className="me-2" />Copy To.
                                             </Dropdown.Item>
-                                        }
+                                        } */}
                                         {
                                             hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS) &&
                                             <Dropdown.Item onClick={handleAssignUser}
