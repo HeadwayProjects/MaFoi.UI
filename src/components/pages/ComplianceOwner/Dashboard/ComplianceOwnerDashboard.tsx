@@ -3,14 +3,10 @@ import Icon from "../../../common/Icon";
 import DataGrid from "./DataGrid";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import OptionalLocations from "../../../common/OptionalLocations";
-
-enum DashboardView {
-    CALENDAR = 'calendar',
-    CHART = 'chart'
-}
+import { DashboardView } from "../Compliance.constants";
 
 function ComplianceOwnerDashboard() {
-    const [view, setView] = useState(DashboardView.CALENDAR);
+    const [view, setView] = useState(DashboardView.CHART);
     const [filters, setFilters] = useState<any>(null);
 
     function onLocationChange(event: any) {
@@ -40,12 +36,8 @@ function ComplianceOwnerDashboard() {
                 <div className="col-12">
                     <div className="d-flex flex-row m-0 pb-2">
                         <OptionalLocations onChange={onLocationChange} />
-                        {/* <div className="col-5">
-                            <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search}
-                                downloadReport={downloadReport} />
-                        </div> */}
                     </div>
-                    <DataGrid filters={filters}/>
+                    <DataGrid filters={filters} view={view}/>
                 </div>
             </div>
         </div>

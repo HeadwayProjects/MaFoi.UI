@@ -194,6 +194,12 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
     const schema2 = {
         fields: [
             {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'formsStatusRemarks',
+                label: 'Remarks',
+                content: getValue(activityDetails, 'formsStatusRemarks')
+            },
+            {
                 component: componentTypes.TAB_ITEM,
                 name: 'subHeader2',
                 content: 'Documents',

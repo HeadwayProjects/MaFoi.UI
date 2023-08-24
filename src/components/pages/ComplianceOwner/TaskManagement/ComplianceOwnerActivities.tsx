@@ -9,6 +9,8 @@ import Icon from "../../../common/Icon";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import styles from "./Styles.module.css";
 import ComplianceActivityDetails from "./ComplianceActivityDetails";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -72,6 +74,15 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
         )
     }
 
+    function FormIndicationTmpl({ cell }: any) {
+        const status = cell.getValue();
+        return (
+            <div className="d-flex align-items-center">
+                <FontAwesomeIcon icon={faCircle} className={`status-${status} text-md`}/>
+            </div>
+        )
+    }
+
     function ActionColumnElements({ cell }: any) {
         const row = cell.getData();
         const hasAccess = hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT);
@@ -97,6 +108,11 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
             title: "", width: 40,
             headerSort: false,
             formatter: reactFormatter(<ActionColumnElements />)
+        },
+        {
+            title: "", width: 40, field: "status",
+            headerSort: false,
+            formatter: reactFormatter(<FormIndicationTmpl />)
         },
         {
             title: "", field: "auditted", width: 40,
@@ -290,7 +306,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
     return (
         <>
             <div className="d-flex flex-column overflow-hidden">
-                <div className="mb-0 text-appprimary text-xl fw-bold">Compliance Schedule</div>
+                {/* <div className="mb-0 text-appprimary text-xl fw-bold">Compliance Schedule</div> */}
                 <div className={`card shadow ${styles.tableWrapper}`}>
                     <div className={styles.flexibleContainer}>
                         <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />

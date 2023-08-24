@@ -1,5 +1,5 @@
 .dashboardContainer {
-    height: calc(100vh - 136px);
+    min-height: calc(100vh - 136px);
 }
 .activityItem {
     display: grid;
@@ -28,6 +28,12 @@
 
 .dashboardGridCol2 {
     display: grid;
-    grid-template-rows: 40px 300px 1fr;
+    grid-template-rows: 1fr;
     grid-gap: 1rem;
+}
+
+.overallChartGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 250px;
 }

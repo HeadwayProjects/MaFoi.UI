@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactECharts from "echarts-for-react";
+import NavTabs from "../../../shared/NavTabs";
 
 enum ChartCategory {
     DEPARTMENT = 'department',
@@ -138,6 +139,13 @@ const data = {
 
 const colors = ['#A9D18E', '#FFC000', '#FF2D2D'];
 
+const list = [
+    { value: ChartCategory.DEPARTMENT, label: 'Department' },
+    { value: ChartCategory.STATE, label: 'State' },
+    { value: ChartCategory.LOCATION, label: 'Location' },
+    { value: ChartCategory.ENTITY, label: 'Entity' },
+]
+
 export default function DashboardCharts(props: any) {
     const [category, setCategory] = useState(ChartCategory.DEPARTMENT);
     const [options, setOptions] = useState<any>(null);
@@ -222,7 +230,8 @@ export default function DashboardCharts(props: any) {
     });
 
     function handleCategoryChange(event: any) {
-        setCategory(event.target.value);
+        // setCategory(event.target.value);
+        setCategory(event);
     }
 
     useEffect(() => {
@@ -252,7 +261,7 @@ export default function DashboardCharts(props: any) {
 
     return (
         <>
-            <div className="d-flex flex-row px-4 justify-content-between rounded-3" style={{ backgroundColor: "var(--page-bg)" }}>
+            {/* <div className="d-flex flex-column px-4 justify-content-between rounded-3" style={{ backgroundColor: "var(--page-bg)" }}>
                 <div className="form-check my-2" >
                     <input className="form-check-input" type="radio" name="frequency" checked={category === ChartCategory.DEPARTMENT}
                         id={ChartCategory.DEPARTMENT} onChange={handleCategoryChange} value={ChartCategory.DEPARTMENT} />
@@ -273,8 +282,10 @@ export default function DashboardCharts(props: any) {
                         id={ChartCategory.ENTITY} onChange={handleCategoryChange} value={ChartCategory.ENTITY} />
                     <label className="form-check-label" htmlFor={ChartCategory.ENTITY}>{'Entity'}</label>
                 </div>
-            </div>
-            <div className="w-100">
+            </div> */}
+            <div className="mb-2 text-appprimary text-xl fw-bold">Compliance Status by Category</div>
+            <NavTabs list={list} onTabChange={handleCategoryChange} />
+            <div className="w-100 mt-2">
                 {
                     options && <ReactECharts option={options} />
                 }

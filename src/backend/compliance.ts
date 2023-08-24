@@ -165,3 +165,17 @@ export function useUploadDocument(onSuccess?: any, onError?: any) {
     );
     return { uploadDocument, error, uploading };
 }
+
+export function useGetOverallComplianceStatus(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['overallComplianceStatus', payload],
+        async () => await post('/api/Compliance/GetByStatus', payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { response: (data || {}).data || [], isFetching, refetch };
+}
