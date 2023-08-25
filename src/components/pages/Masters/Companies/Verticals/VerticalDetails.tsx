@@ -48,7 +48,7 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
                     { type: validatorTypes.REQUIRED }
                 ],
                 options: companies,
-                content: getValue(vertical, 'company.label')
+                content: action !== ACTIONS.ADD ? getValue(vertical, 'company.label') : null
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -57,7 +57,7 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: getValue(vertical, 'name')
+                content: action === ACTIONS.VIEW ? getValue(vertical, 'name') : null
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -69,13 +69,13 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
                     { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{2,10}/, message: 'Should be alphanumeric value of length 2' }
                 ],
                 styleClass: 'text-uppercase',
-                content: getValue(vertical, 'shortCode')
+                content: action === ACTIONS.VIEW ? getValue(vertical, 'shortCode') : null
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
                 name: 'description',
                 label: 'Description',
-                content: getValue(vertical, 'description')
+                content: action === ACTIONS.VIEW ? getValue(vertical, 'description') : null
             }
         ]
     };
@@ -90,7 +90,7 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
         if (form.valid) {
             const { id, shortCode, name, description, company } = vertical;
             const request: any = {
-                shortCode,
+                shortCode: shortCode.toUpperCase(),
                 name: name.trim(),
                 description: (description || '').trim(),
                 companyId: company.value

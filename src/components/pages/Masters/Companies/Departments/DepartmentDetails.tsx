@@ -48,17 +48,17 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
                     { type: validatorTypes.REQUIRED }
                 ],
                 options: companies,
-                content: getValue(department, 'company.label')
+                content: action !== ACTIONS.ADD ? getValue(department, 'company.label') : null
             },
             {
                 component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
                 name: 'vertical',
                 label: 'Vertical',
-                validate: [
+                validate: action === ACTIONS.ADD ? [
                     { type: validatorTypes.REQUIRED }
-                ],
+                ] : [],
                 options: verticals,
-                content: getValue(department, 'vertical.label')
+                content: action !== ACTIONS.ADD ? getValue(department, 'vertical.label') : null
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -67,7 +67,7 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: getValue(department, 'name')
+                content: action === ACTIONS.VIEW ? getValue(department, 'name') : null
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -79,24 +79,26 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
                     { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{2,10}/, message: 'Should be alphanumeric value of length 2' }
                 ],
                 styleClass: 'text-uppercase',
-                content: getValue(department, 'code')
+                content: action === ACTIONS.VIEW ? getValue(department, 'shortCode') : null
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
                 name: 'description',
                 label: 'Description',
-                content: getValue(department, 'description')
+                content: action === ACTIONS.VIEW ? getValue(department, 'description') : null
             }
         ]
     };
 
     function debugForm(_form: any) {
         setForm(_form);
-        setDepartment(_form.values);
-        const _company = (_form.values.company || {}).value || null;
-        if (company !== _company) {
-            setCompany(_company);
-            setDepartment({ ..._form.values, vertical: null });
+        setDepartment({ ...department, ..._form.values });
+        if (action === ACTIONS.ADD) {
+            const _company = (_form.values.company || {}).value || null;
+            if (company !== _company) {
+                setCompany(_company);
+                setDepartment({ ..._form.values, vertical: null });
+            }
         }
     }
 
@@ -105,7 +107,7 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
         if (form.valid) {
             const { shortCode, name, description, vertical } = department;
             const request: any = {
-                shortCode,
+                shortCode: shortCode.toUpperCase(),
                 name: name.trim(),
                 description: (description || '').trim(),
                 verticalId: vertical.value
@@ -133,12 +135,12 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
     useEffect(() => {
         if (data) {
             const { vertical } = data || {};
-            const { company } = vertical || {};
+            const { id, name, company } = vertical || {};
             setDepartment({
                 ...department,
                 ...data,
                 company: company.id ? { value: company.id, label: company.name } : null,
-                vertical: vertical ? { value: vertical.id, label: vertical.name } : null
+                vertical: id ? { value: id, label: name } : null
             });
         }
     }, [data]);

@@ -256,7 +256,7 @@ function ManageDepartments() {
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
-                                    placeholder="Search for Vertical" />
+                                    placeholder="Search for Department" />
                                 <div className="d-flex">
                                     <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}
                                         disabled={!Boolean(total)}>
