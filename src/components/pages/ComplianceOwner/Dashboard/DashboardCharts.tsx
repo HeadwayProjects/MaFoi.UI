@@ -118,9 +118,13 @@ export default function DashboardCharts({ filters }: any) {
 
     useEffect(() => {
         if (filters) {
-            const _filters = [...filters];
-            setUserDetailsInFilters(_filters, true);
-            setPayload({ ...payload, filters: _filters });
+            const _payload = { ...DEFAULT_PAYLOAD, ...payload };
+            const _fs = Object.keys(filters).map((columnName: string) => {
+                return { columnName, value: filters[columnName] }
+            });
+            setPayload({
+                ..._payload, filters: setUserDetailsInFilters(_fs, true)
+            });
         }
     }, [filters]);
 

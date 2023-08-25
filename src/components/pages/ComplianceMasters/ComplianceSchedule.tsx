@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
 import dayjs from "dayjs";
-import { useExportAuditSchedule, useGetCompanies, useGetCompanyLocations } from "../../../backend/masters";
+import { useGetCompanies, useGetCompanyLocations } from "../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 import { GetCompaniesBreadcrumb } from "../Masters/Companies/Companies.constants";
 import { GetComplianceBreadcrumb } from "./Compliance.constants";

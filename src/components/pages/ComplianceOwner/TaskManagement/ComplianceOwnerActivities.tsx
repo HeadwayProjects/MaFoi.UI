@@ -259,11 +259,6 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
             } else {
                 _filters[toIndex].value = toDate;
             }
-            // if (!_filters.find((x: any) => x.columnName.toLowerCase() === 'complianceownerid')) {
-            //     const _user = getUserDetails();
-            //     console.log(_user);
-            //     _filters.push({ columnName: 'complianceOwnerId', value: _user.userid });
-            // }
             setPayload({ ..._payload, filters: setUserDetailsInFilters(_filters) });
         }
     }, [dateRange]);

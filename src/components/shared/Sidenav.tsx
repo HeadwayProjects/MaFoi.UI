@@ -107,7 +107,8 @@ const SideNavMenu = [
     // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.OWNER_ACTIVITIES },
     // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.MANAGER_ACTIVITIES },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES },
-    { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true }
+    { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true },
+    { id: 'notifications', url: '/notifications', icon: 'notification', label: 'Notifications', privilege: USER_PRIVILEGES.VIEW_USER_NOTIFICATIONS }
 ];
 
 function Sidenav({ open, toggleSidenav }: any) {

@@ -3,8 +3,7 @@ import { useGetOverallComplianceStatus } from "../../../../backend/compliance";
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
 import { ComplianceChartStatus, setUserDetailsInFilters } from "../Compliance.constants";
 import styles from "./ComplianceOwnerDashboard.module.css";
-import ComplianceStatusChart1 from "./ComplianceStatusChart1";
-import ComplianceStatusChart2 from "./ComplianceStatusChart2";
+import ComplianceStatusChart from "./ComplianceStatusChart";
 const keys = [
     {
         id: 'col1',
@@ -17,26 +16,20 @@ const keys = [
 ]
 
 export default function OverallComplianceStatusCharts({ filters }: any) {
-    const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, pagination: null, filters: setUserDetailsInFilters([], true) });
-    const { response, isFetching } = useGetOverallComplianceStatus(payload, Boolean(payload));
-    const [d1, setD1] = useState<any>(null);
-    const [d2, setD2] = useState<any>(null);
+    const [payload, setPayload] = useState<any>();
+    const { response } = useGetOverallComplianceStatus(payload, Boolean(payload));
 
     useEffect(() => {
         if (filters) {
-            const _filters = [...filters];
-            setUserDetailsInFilters(_filters, true);
-            setPayload({ ...payload, filters: _filters });
+            const _payload = { ...DEFAULT_PAYLOAD, ...payload };
+            const _fs = Object.keys(filters).map((columnName: string) => {
+                return { columnName, value: filters[columnName] }
+            });
+            setPayload({
+                ..._payload, filters: setUserDetailsInFilters(_fs, true)
+            });
         }
     }, [filters]);
-
-    useEffect(() => {
-        if (!isFetching && response) {
-            console.log(response);
-            setD1(response);
-            setD2(response);
-        }
-    }, [isFetching]);
 
     return (
         <>
@@ -44,12 +37,11 @@ export default function OverallComplianceStatusCharts({ filters }: any) {
             <div className="fw-bold">Total Activities: {(response || {}).total || 0}</div>
             <div className={styles.overallChartGrid}>
                 {
-                    Boolean(d1) &&
-                    <ComplianceStatusChart1 data={d1} fields={keys[0].fields} />
-                }
-                {
-                    Boolean(d2) &&
-                    <ComplianceStatusChart2 data={d2} fields={keys[1].fields} />
+                    keys.map(({ id, fields }: any) => {
+                        return (
+                            <ComplianceStatusChart data={response} fields={fields} key={id} />
+                        )
+                    })
                 }
             </div>
         </>

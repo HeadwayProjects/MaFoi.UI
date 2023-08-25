@@ -1,6 +1,7 @@
 .dashboardContainer {
     min-height: calc(100vh - 136px);
 }
+
 .activityItem {
     display: grid;
     min-height: 80px;
@@ -36,4 +37,26 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     height: 250px;
+}
+
+.qButtons {
+    border: 1px solid var(--gray);
+    border-radius: 1rem;
+    box-sizing: border-box;
+    width: 44px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qButtons:hover {
+    background-color: var(--gray-800);
+}
+
+.qButtonSelected {
+    border: 2px solid var(--royal-blue);
+    font-weight: bold;
+    color: var(--royal-blue);
 }

@@ -31,13 +31,14 @@ import Home from "../components/pages/home";
 import Roles from "../components/pages/UserManagement/Roles/Roles";
 import ManageVerticals from "../components/pages/Masters/Companies/Verticals/ManageVerticals";
 import ManageDepartments from "../components/pages/Masters/Companies/Departments/ManageDepartments";
-import ComplianceSchedule from "../components/pages/Compliance/ComplianceSchedule";
-import ComplianceScheduleDetails from "../components/pages/Compliance/ComplianceScheduleDetails";
-import LockUnLockCompliance from "../components/pages/Compliance/LockUnLockCompliance";
+import ComplianceSchedule from "../components/pages/ComplianceMasters/ComplianceSchedule";
+import ComplianceScheduleDetails from "../components/pages/ComplianceMasters/ComplianceScheduleDetails";
+import LockUnLockCompliance from "../components/pages/ComplianceMasters/LockUnLockCompliance";
 import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
 import ComplianceOwnerDashboard from "../components/pages/ComplianceOwner/Dashboard/ComplianceOwnerDashboard";
 import MangeDepartmentUsers from "../components/pages/UserManagement/DepartmentUsers.tsx/ManageDepartmentUsers";
 import ComplianceOwnerActivities from "../components/pages/ComplianceOwner/TaskManagement/ComplianceOwnerActivities";
+import NotificationsCenter from "../components/pages/Notifications/NotificationsCenter";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -177,6 +178,9 @@ function AuthenticatedContent() {
         ),
         '/email/templates': () => (
             layout(<EmailTemplates />)
+        ),
+        '/notifications': () => (
+            layout(<NotificationsCenter />)
         ),
         '/changePassword/:token': ({ token }: any) => (
             <>

@@ -4,12 +4,15 @@ import DataGrid from "./DataGrid";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import OptionalLocations from "../../../common/OptionalLocations";
 import { DashboardView } from "../Compliance.constants";
+import { Button } from "react-bootstrap";
+import DashboardAdvanceFilters from "./DashboardAdvanceFilters";
 
 function ComplianceOwnerDashboard() {
     const [view, setView] = useState(DashboardView.CALENDAR);
     const [filters, setFilters] = useState<any>(null);
 
     function onLocationChange(event: any) {
+        console.log(event);
         setFilters(event);
     }
 
@@ -34,8 +37,9 @@ function ComplianceOwnerDashboard() {
             </div>
             <div className={`row m-0 py-2 bg-white ${styles.dashboardContainer}`}>
                 <div className="col-12">
-                    <div className="d-flex flex-row m-0 pb-2">
+                    <div className="d-flex flex-row m-0 pb-2 justify-content-between align-items-end">
                         <OptionalLocations onChange={onLocationChange} />
+                        <DashboardAdvanceFilters />
                     </div>
                     <DataGrid filters={filters} view={view}/>
                 </div>

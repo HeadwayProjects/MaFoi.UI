@@ -52,7 +52,7 @@ export enum ComplianceChartStatus {
     PENDING = 'pending'
 }
 
-export const ComplianceChartStatusMapping = {
+export const ComplianceChartStatusMapping: any = {
     [ComplianceChartStatus.DUE]: {
         value: ComplianceChartStatus.DUE,
         label: ComplianceStatusMapping[ComplianceActivityStatus.DUE],
@@ -108,6 +108,5 @@ export function setUserDetailsInFilters(filters: any[], type = false) {
             filters.push({ columnName: 'user', value: userType })
         }
     }
-    console.log(filters);
     return filters;
 }

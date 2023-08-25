@@ -141,7 +141,7 @@ export const PAGES_CONFIGURATION = [
             },
             {
                 id: USER_PRIVILEGES.EXPORT_LAW_CATEGORIES,
-                name: 'Delete Law Category'
+                name: 'Export Law Category'
             },
             {
                 id: USER_PRIVILEGES.VIEW_ACTS,
