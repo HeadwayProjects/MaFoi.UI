@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CalendarType } from "../../../common/Calendar/Calendar.constants";
-import { COMPLIANCE_ACTIVITY_INDICATION, COMPLIANCE_ACTIVITY_ORDER, ComplianceActivityStatus } from "../Compliance.constants";
+import { COMPLIANCE_ACTIVITY_INDICATION, COMPLIANCE_ACTIVITY_ORDER, ComplianceActivityStatus, setUserDetailsInFilters } from "../Compliance.constants";
 import dayjs from "dayjs";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
@@ -80,12 +80,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
             } else {
                 _filters[toIndex].value = toDate;
             }
-            if (!_filters.find((x: any) => x.columnName.toLowerCase() === 'complianceownerid')) {
-                const _user = getUserDetails();
-                console.log(_user);
-                _filters.push({ columnName: 'complianceOwnerId', value: _user.userid });
-            }
-            setPayload({ ..._payload, filters: _filters, pagination: null });
+            setPayload({ ..._payload, filters: setUserDetailsInFilters(_filters), pagination: null });
         }
     }, [dateRange])
 

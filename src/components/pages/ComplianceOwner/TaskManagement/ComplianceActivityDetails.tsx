@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { getValue } from "../../../../utils/common";
-import { useGetComplianceActivityDocuments, useGetComplianceById, useSubmitComplianceActivity, useUploadDocument } from "../../../../backend/compliance";
+import { useGetComplianceActivityDocuments, useGetComplianceById, useSubmitComplianceActivity, useUpdateComplianceSchedule, useUploadDocument } from "../../../../backend/compliance";
 import styles from "./Styles.module.css";
 import Icon from "../../../common/Icon";
 import { ACTIONS, FILE_SIZE } from "../../../common/Constants";
@@ -12,18 +12,35 @@ import ConfirmModal from "../../../common/ConfirmModal";
 import { download } from "../../../../utils/common";
 import { hasUserAccess } from "../../../../backend/auth";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import { toast } from "react-toastify";
+
+function isEditable(status: string) {
+    if (hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT)) {
+        return status === ComplianceActivityStatus.PENDING || status === ComplianceActivityStatus.REJECTED;
+    } else if (hasUserAccess(USER_PRIVILEGES.MANAGER_ACTIVITIES_REVIEW)) {
+        return status === ComplianceActivityStatus.SUBMITTED;
+    }
+    return false;
+}
 
 export default function ComplianceActivityDetails(this: any, { data, onCancel, onSubmit }: any) {
     const [t] = useState(new Date().getTime());
+    const [form, setForm] = useState<any>({ valid: true });
+    const [formData, setFormData] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
-    const [editable] = useState(data.status === ComplianceActivityStatus.PENDING || data.status === ComplianceActivityStatus.REJECTED);
+    const [editable] = useState(isEditable(data.status));
     const [activityDetails, setActivity] = useState<any>(null);
     const [ruleCompliance, setRuleCompliance] = useState<any>(null);
-    const { activity, isFetching } = useGetComplianceById(data.id);
+    const { activity, isFetching, invalidate } = useGetComplianceById(data.id);
     const { documents, refetch } = useGetComplianceActivityDocuments({ complianceId: data.id, t });
-    const [initialValue, setInitialValue] = useState({ hideButtons: !editable || !hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD), buttonWrapStyles: styles.btnGroup, submitBtnText: 'Upload' })
+    const [initialValue] = useState({ hideButtons: !editable || !hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD), buttonWrapStyles: styles.btnGroup, submitBtnText: 'Upload' })
     const { uploadDocument } = useUploadDocument(refetch)
-    const { submitComplianceActivity } = useSubmitComplianceActivity(onSubmit)
+    const { submitComplianceActivity } = useSubmitComplianceActivity(onSubmit);
+    const { updateComplianceSchedule } = useUpdateComplianceSchedule(() => {
+        toast.success('Compliance activity reviewed successfully.');
+        invalidate();
+        onSubmit();
+    });
 
     const schema = {
         fields: [
@@ -187,21 +204,29 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 name: 'cancellationSuspensionOfLicense',
                 label: 'Cancellation/Suspension of License',
                 content: getValue(ruleCompliance, 'cancellationSuspensionOfLicense', 'BOOLEAN'),
-            }
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'formsStatusRemarksReadOnly',
+                label: 'Remarks',
+                content: getValue(activityDetails, 'formsStatusRemarks'),
+                className: 'grid-col-100',
+                condition: {
+                    when: 'formsStatusRemarksReadOnly',
+                    is: () => {
+                        return hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)
+                    },
+                    then: { visible: true }
+                }
+            },
         ]
     }
 
     const schema2 = {
         fields: [
             {
-                component: componentTypes.PLAIN_TEXT,
-                name: 'formsStatusRemarks',
-                label: 'Remarks',
-                content: getValue(activityDetails, 'formsStatusRemarks')
-            },
-            {
                 component: componentTypes.TAB_ITEM,
-                name: 'subHeader2',
+                name: 'documentSubHeader',
                 content: 'Documents',
                 className: 'grid-col-100 text-lg fw-bold pb-0',
             },
@@ -212,18 +237,88 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 type: 'file',
                 upload: editable && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD),
                 documents,
-                validate: [
+                validate: editable && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD) ? [
                     { type: validatorTypes.REQUIRED },
                     { type: 'file-size', maxSize: 25 * FILE_SIZE.MB }
-                ],
+                ] : [],
                 className: 'w-33',
                 downloadDocument: downloadDocument.bind(this)
+            },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'reviewSubHeader',
+                content: 'Review',
+                className: 'grid-col-100 text-lg fw-bold pb-0',
+                condition: {
+                    when: 'reviewSubHeader',
+                    is: () => {
+                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)
+                    },
+                    then: { visible: true }
+                }
+            },
+            {
+                component: editable ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
+                name: 'status',
+                label: 'Compliance Status',
+                options: [
+                    { id: ComplianceActivityStatus.APPROVE, name: 'Approve' },
+                    { id: ComplianceActivityStatus.REJECT, name: 'Reject' }
+                ],
+                className: 'w-33',
+                content: getValue(activityDetails, 'status'),
+                validate: [
+                    { type: validatorTypes.REQUIRED },
+                ],
+                condition: {
+                    when: 'status',
+                    is: () => {
+                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)
+                    },
+                    then: { visible: true }
+                }
+            },
+            {
+                component: editable ? componentTypes.TEXTAREA : componentTypes.PLAIN_TEXT,
+                name: 'formsStatusRemarks',
+                label: 'Remarks',
+                className: 'w-33',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: getValue(activityDetails, 'formsStatusRemarks'),
+                condition: {
+                    when: 'formsStatusRemarks',
+                    is: () => {
+                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)
+                    },
+                    then: { visible: true }
+                }
             }
         ]
     }
 
+    function debugForm(_form: any) {
+        setForm(_form);
+        setFormData(_form.values);
+    }
+
     function downloadDocument({ fileName, filePath }: any) {
         download(fileName, filePath);
+    }
+
+    function performSubmit() {
+        if (hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
+            setAction(ACTIONS.CONFIRM);
+        } else if (hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
+            const { status, formsStatusRemarks } = formData;
+            updateComplianceSchedule({
+                ...activityDetails,
+                status: status.value,
+                formsStatusRemarks,
+                auditedDate: new Date().toISOString()
+            })
+        }
     }
 
     function handleSubmit() {
@@ -271,22 +366,34 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                                 />
 
                             </div>
-                            <FormRenderer FormTemplate={FormTemplate}
-                                initialValues={initialValue}
-                                componentMapper={ComponentMapper}
-                                schema={schema2}
-                                onSubmit={handleUpload}
-                            />
+                            {
+                                hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) &&
+                                <FormRenderer FormTemplate={FormTemplate}
+                                    initialValues={initialValue}
+                                    componentMapper={ComponentMapper}
+                                    schema={schema2}
+                                    onSubmit={handleUpload}
+                                />
+                            }
+                            {
+                                hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) &&
+                                <FormRenderer FormTemplate={FormTemplate}
+                                    initialValues={{ hideButtons: true }}
+                                    componentMapper={ComponentMapper}
+                                    schema={schema2}
+                                    debug={debugForm}
+                                />
+                            }
                             <div className="d-flex justify-content-end mt-4">
                                 {
-                                    editable && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT) &&
+                                    editable &&
                                     <>
                                         <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onCancel}>{'Cancel'}</Button>
-                                        <Button variant="primary" onClick={() => setAction(ACTIONS.CONFIRM)} className="px-4 ms-3" >{'Submit'}</Button>
+                                        <Button variant="primary" onClick={performSubmit} disabled={!form.valid} className="px-4 ms-3" >{'Submit'}</Button>
                                     </>
                                 }
                                 {
-                                    (!editable || !hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT)) &&
+                                    !editable &&
                                     <Button variant="primary" onClick={onCancel} className="px-4 ms-3" >{'Close'}</Button>
                                 }
                             </div>

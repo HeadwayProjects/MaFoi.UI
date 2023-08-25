@@ -62,8 +62,17 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'name',
+                label: 'Department Name',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: getValue(department, 'name')
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'shortCode',
-                label: 'Short Code',
+                label: 'Department Code',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },
@@ -71,15 +80,6 @@ function DepartmentDetails({ action, data, onClose, onSubmit }: any) {
                 ],
                 styleClass: 'text-uppercase',
                 content: getValue(department, 'code')
-            },
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'name',
-                label: 'Name',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: getValue(department, 'name')
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,

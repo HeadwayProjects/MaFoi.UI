@@ -11,6 +11,7 @@ import styles from "./Styles.module.css";
 import ComplianceActivityDetails from "./ComplianceActivityDetails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { setUserDetailsInFilters } from "../Compliance.constants";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -85,7 +86,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
 
     function ActionColumnElements({ cell }: any) {
         const row = cell.getData();
-        const hasAccess = hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT);
+        const hasAccess = hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT) || hasUserAccess(USER_PRIVILEGES.MANAGER_ACTIVITIES_REVIEW);
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
@@ -216,19 +217,9 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
         setPayload({
             ...DEFAULT_PAYLOAD,
             ..._params,
-            filters: [
-                ...getUserFilter()
-            ]
+            filters: setUserDetailsInFilters([])
         });
         return Promise.resolve(formatApiResponse(params, activities, total));
-    }
-
-    function getUserFilter() {
-        const user = getUserDetails();
-        return [{
-            columnName: 'complianceOwnerId',
-            value: user.userid
-        }]
     }
 
     function handlePageNav(_pagination: any) {
@@ -268,12 +259,12 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
             } else {
                 _filters[toIndex].value = toDate;
             }
-            if (!_filters.find((x: any) => x.columnName.toLowerCase() === 'complianceownerid')) {
-                const _user = getUserDetails();
-                console.log(_user);
-                _filters.push({ columnName: 'complianceOwnerId', value: _user.userid });
-            }
-            setPayload({ ..._payload, filters: _filters });
+            // if (!_filters.find((x: any) => x.columnName.toLowerCase() === 'complianceownerid')) {
+            //     const _user = getUserDetails();
+            //     console.log(_user);
+            //     _filters.push({ columnName: 'complianceOwnerId', value: _user.userid });
+            // }
+            setPayload({ ..._payload, filters: setUserDetailsInFilters(_filters) });
         }
     }, [dateRange]);
 
@@ -283,16 +274,12 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
             const _filters = _payload.filters;
             const fromDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'fromdate');
             const toDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'todate');
-            let complianceOwner = _filters.find((x: any) => x.columnName.toLowerCase() === 'complianceownerid');
-            if (!complianceOwner) {
-                const _user = getUserDetails();
-                complianceOwner = { columnName: 'complianceOwnerId', value: _user.userid };
-            }
             const _fs = Object.keys(filters).map((columnName: string) => {
                 return { columnName, value: filters[columnName] }
             });
+
             setPayload({
-                ..._payload, filters: [..._fs, fromDate, toDate, complianceOwner]
+                ..._payload, filters: setUserDetailsInFilters([..._fs, fromDate, toDate])
             });
         }
     }, [filters]);

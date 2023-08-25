@@ -46,6 +46,10 @@ export function useGetAllComplianceActivities(payload: any, enabled = true) {
 }
 
 export function useGetComplianceById(id: any) {
+    const queryClient = useQueryClient();
+    function invalidate() {
+        queryClient.invalidateQueries(['complianceById', id])
+    }
     const { data, isFetching, refetch } = useQuery(
         ['complianceById', id],
         async () => await get(`/api/Compliance/Get/${id}`),
@@ -56,7 +60,7 @@ export function useGetComplianceById(id: any) {
         }
     );
 
-    return { activity: (data || {}).data || null, isFetching, refetch };
+    return { activity: (data || {}).data || null, isFetching, refetch, invalidate };
 }
 
 export function useDeleteComplianceSchedule(onSuccess?: any, onError?: any) {
@@ -123,10 +127,10 @@ export function useSubmitComplianceActivity(onSuccess?: any, onError?: any) {
 export function useGetComplianceActivityDocuments(payload: any = {}) {
     const queryClient = useQueryClient();
     function invalidate() {
-        queryClient.invalidateQueries(['complianceActivityDocuments', payload])
+        queryClient.invalidateQueries(['complianceActivityDocuments', payload.complianceId])
     }
     const { data, isFetching, refetch } = useQuery(
-        ['complianceActivityDocuments', payload],
+        ['complianceActivityDocuments', payload.complianceId],
         async () => await get('/api/ComplianceDetails/GetByToDo', payload),
         {
             refetchOnMount: false,
@@ -170,6 +174,20 @@ export function useGetOverallComplianceStatus(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['overallComplianceStatus', payload],
         async () => await post('/api/Compliance/GetByStatus', payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { response: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useGetComplianceStatusByCategory(category: string, payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['complianceStatusByCategory', category, payload],
+        async () => await post(`/api/Compliance/GetByCategory?category=${category}`, payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,

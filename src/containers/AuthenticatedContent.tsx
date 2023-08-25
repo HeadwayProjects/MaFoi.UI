@@ -38,7 +38,6 @@ import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleCo
 import ComplianceOwnerDashboard from "../components/pages/ComplianceOwner/Dashboard/ComplianceOwnerDashboard";
 import MangeDepartmentUsers from "../components/pages/UserManagement/DepartmentUsers.tsx/ManageDepartmentUsers";
 import ComplianceOwnerActivities from "../components/pages/ComplianceOwner/TaskManagement/ComplianceOwnerActivities";
-import ComplianceManagerDashboard from "../components/pages/ComplianceManager/Dashboard/ComplianceManagerDashboard";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -71,7 +70,7 @@ function AuthenticatedContent() {
             } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
                 return layout(<ComplianceOwnerDashboard />);
             } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
-                return layout(<ComplianceManagerDashboard />);
+                return layout(<ComplianceOwnerDashboard />);
             } else {
                 return layout(<Home />)
             }

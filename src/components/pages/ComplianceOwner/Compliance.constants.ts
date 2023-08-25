@@ -24,9 +24,7 @@ export const ComplianceStatusMapping = {
     [ComplianceActivityStatus.ON_TIME]: 'On time',
     [ComplianceActivityStatus.SUBMITTED]: 'Sumitted',
     [ComplianceActivityStatus.AUDITED]: 'Approved',
-    [ComplianceActivityStatus.REJECTED]: 'Rejected',
-    [ComplianceActivityStatus.APPROVE]: 'Approve',
-    [ComplianceActivityStatus.REJECT]: 'Reject',
+    [ComplianceActivityStatus.REJECTED]: 'Rejected'
 }
 
 
@@ -110,5 +108,6 @@ export function setUserDetailsInFilters(filters: any[], type = false) {
             filters.push({ columnName: 'user', value: userType })
         }
     }
+    console.log(filters);
     return filters;
 }

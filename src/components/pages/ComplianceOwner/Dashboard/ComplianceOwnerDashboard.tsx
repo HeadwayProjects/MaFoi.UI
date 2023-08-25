@@ -6,7 +6,7 @@ import OptionalLocations from "../../../common/OptionalLocations";
 import { DashboardView } from "../Compliance.constants";
 
 function ComplianceOwnerDashboard() {
-    const [view, setView] = useState(DashboardView.CHART);
+    const [view, setView] = useState(DashboardView.CALENDAR);
     const [filters, setFilters] = useState<any>(null);
 
     function onLocationChange(event: any) {

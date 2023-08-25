@@ -52,8 +52,17 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'name',
+                label: 'Vertical Name',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: getValue(vertical, 'name')
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'shortCode',
-                label: 'Short Code',
+                label: 'Vertical Code',
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },
@@ -61,15 +70,6 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
                 ],
                 styleClass: 'text-uppercase',
                 content: getValue(vertical, 'shortCode')
-            },
-            {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'name',
-                label: 'Name',
-                validate: [
-                    { type: validatorTypes.REQUIRED }
-                ],
-                content: getValue(vertical, 'name')
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
