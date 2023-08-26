@@ -5,21 +5,12 @@ import { ComplianceChartStatus, ComplianceChartStatusMapping } from "../Complian
 export default function ComplianceStatusChart({ data, fields }: any) {
     const [series, setSeries] = useState<any>([])
 
-    function formatter({ value, total }: any) {
-        const _valueByTotal = value / total;
-        if (isNaN(_valueByTotal)) return '0 %';
-        const _percentageValue = _valueByTotal * 100;
-        return `${Math.round(_percentageValue)} %`;
-    }
-
     useEffect(() => {
         if (Object.keys(data || {}).length) {
-            const total = fields.reduce((n: any, { key }: any) => n + data[key], 0);
             const _data = fields.map((key: ComplianceChartStatus) => {
                 const _chart: any = ComplianceChartStatusMapping[key];
                 return {
                     value: data[key],
-                    total,
                     name: `${data[key]} ${_chart.label}`,
                     itemStyle: {
                         color: _chart.color
@@ -51,7 +42,7 @@ export default function ComplianceStatusChart({ data, fields }: any) {
                 label: {
                     show: true,
                     position: 'inner',
-                    formatter
+                    formatter: "{d}%"
                 },
                 emphasis: {
                     itemStyle: {

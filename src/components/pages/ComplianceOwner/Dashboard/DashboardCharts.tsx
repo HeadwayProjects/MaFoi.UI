@@ -95,19 +95,31 @@ export default function DashboardCharts({ filters }: any) {
             {
                 seriesLayoutBy: 'row',
                 type: 'bar',
-                barMaxWidth: 20
+                barWidth : 16,
+                label: {
+                    show: true,
+                    position: 'top'
+                }
             },
             {
-                type: 'line',
+                type: 'bar',
                 smooth: true,
                 seriesLayoutBy: 'row',
-                emphasis: { focus: 'series' }
+                barWidth : 16,
+                label: {
+                    show: true,
+                    position: 'top'
+                }
             },
             {
-                type: 'line',
+                type: 'bar',
                 smooth: true,
                 seriesLayoutBy: 'row',
-                emphasis: { focus: 'series' }
+                barWidth : 16,
+                label: {
+                    show: true,
+                    position: 'top'
+                }
             }
         ]
     });

@@ -56,7 +56,8 @@ function DepartmentUserDetails(this: any, { action, data, onClose, onSubmit }: a
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action !== ACTIONS.ADD ? getValue(details, 'user.label') : ''
+                content: action !== ACTIONS.ADD ? getValue(details, 'user.label') : '',
+                formatOptionLabel: userOptionLabel
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
@@ -92,6 +93,16 @@ function DepartmentUserDetails(this: any, { action, data, onClose, onSubmit }: a
             }
         ],
     };
+
+    function userOptionLabel({ label, user }: any) {
+        const { name } = user.userRoles[0];
+        return (
+            <div className="d-flex flex-column">
+                <div>{label}</div>
+                <div className="text-sm fw-bold fst-italic text-black-600">Role: {name}</div>
+            </div>
+        )
+    }
 
     function handleCompanyChange(event: any) {
         setCompany(event);
