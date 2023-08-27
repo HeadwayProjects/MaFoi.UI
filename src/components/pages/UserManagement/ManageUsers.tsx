@@ -4,7 +4,7 @@ import { useDeleteUser, useGetUserRoles, useGetUsers } from "../../../backend/us
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import Icon from "../../common/Icon";
-import Table, { CellTmpl, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
+import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
 import MastersLayout from "../Masters/MastersLayout";
 import { Button } from "react-bootstrap";
 import ConfirmModal from "../../common/ConfirmModal";
@@ -36,7 +36,7 @@ function MangeUsers() {
     filterRef.current = filters;
     const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
     const { users, total, isFetching, refetch } = useGetUsers(payload, Boolean(payload));
-    const { roles } = useGetUserRoles(null, true);
+    const { roles } = useGetUserRoles({...DEFAULT_OPTIONS_PAYLOAD});
     const { deleteUser, deleting } = useDeleteUser((response: any) => {
         toast.success(`${user.name} deleted successfully.`);
         submitCallback();

@@ -48,6 +48,10 @@ const SideNavMenu = [
             {
                 id: 'companies/departments', url: '/companies/departments',
                 label: 'Departments', privilege: USER_PRIVILEGES.VIEW_DEPARTMENTS
+            },
+            {
+                id: 'companies/escalationMatrix', url: '/companies/escalationMatrix',
+                label: 'Escalation Matrix', privilege: USER_PRIVILEGES.VIEW_COMPANY_ESCALTION_MATIX
             }
         ]
     },

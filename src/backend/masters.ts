@@ -917,6 +917,67 @@ export function useDeleteDepartment(onSuccess?: any, onError?: any) {
     return { deleteDepartment, error, deleting: isLoading };
 }
 
+export function useGetEscalationMatrix(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['escalationMatrix', payload],
+        async () => await api.post(`/api/EscalationMatrix/GetAll`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return {
+        matrixList: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch
+    };
+}
+
+export function useCreateEscalationMatrix(onSuccess?: any, onError?: any) {
+    const { mutate: createMatrix, error, isLoading } = useMutation(
+        ['createMatrix'],
+        async (payload) => await api.post('/api/EscalationMatrix/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createMatrix, error, creating: isLoading };
+}
+
+export function useUpdateEscalationMatrix(onSuccess?: any, onError?: any) {
+    const { mutate: updateMatrix, error, isLoading } = useMutation(
+        ['updateMatrix'],
+        async (payload) => await api.put('/api/EscalationMatrix/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateMatrix, error, updating: isLoading };
+}
+
+export function useDeleteEscalationMatrix(onSuccess?: any, onError?: any) {
+    const { mutate: deleteMatrix, error, isLoading } = useMutation(
+        ['deleteMatrix'],
+        async (id) => await api.del(`/api/EscalationMatrix/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteMatrix, error, deleting: isLoading };
+}
+
 export function useGetDepartmentUserMappings(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['departmentUsers', payload],

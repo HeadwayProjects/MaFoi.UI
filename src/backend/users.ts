@@ -19,7 +19,7 @@ export function useGetUsers(payload: any, enabled = true) {
 export function useGetUserRoles(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['userRoles', payload],
-        async () => await api.get(`${USERS}/GetAllRoles`, payload),
+        async () => await api.post(`${USERS}/GetAllRoles`, payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
@@ -74,6 +74,18 @@ export function useDeleteUser(onSuccess?: any, onError?: any) {
     return { deleteUser, error, deleting };
 }
 
+export function useGetCompanyUsers(companyId: any) {
+    const { data, isFetching, refetch } = useQuery(
+        ['companyUsers', companyId],
+        async () => await api.get(`/api/Mappings/GetUsersByCompany`, { companyId }),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: Boolean(companyId)
+        }
+    );
+    return { companyUsers: (data || {}).data || [], isFetching, refetch };
+}
 export function useCreateRole(onSuccess?: any, onError?: any) {
     const { mutate: createRole, error, isLoading: creating } = useMutation(
         ['createRole'],

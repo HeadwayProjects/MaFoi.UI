@@ -9,11 +9,12 @@ import { Button, Modal } from "react-bootstrap";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import PageLoader from "../../shared/PageLoader";
 import ViewPrivileges from "./Roles/ViewPrivileges";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 
 function UserDetails({ action, data, onClose, onSubmit }: any) {
     const [form, setForm] = useState<any>({});
     const [user, setUser] = useState<any>({ hideButtons: true, status: { value: STATUS.ACTIVE, label: STATUS.ACTIVE } });
-    const { roles } = useGetUserRoles(null);
+    const { roles } = useGetUserRoles({...DEFAULT_OPTIONS_PAYLOAD});
     const [userPages, setUserpages] = useState('');
     const { createUser, creating } = useCreateUser(({ key, value }: any) => {
         if (key === 'SUCCESS') {
