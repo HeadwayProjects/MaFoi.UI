@@ -1142,3 +1142,36 @@ export function useBulkUpdateAuditSchedule(onSuccess?: any, onError?: any) {
     return { updateBulkAuditSchedule, error, updating };
 }
 
+
+export function useGetAllNotifications(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['notifications', payload],
+        async () => await api.post(`/api/Mappings/GetNotifications`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+    return {
+        notifications: ((data || {}).data || {}).list || [],
+        total: ((data || {}).data || {}).count || 0,
+        counts: ((data || {}).data || {}).notificationcounts || {},
+        isFetching, refetch
+    };
+}
+
+export function useUpdateNotificationStatus(onSuccess?: any, onError?: any) {
+    const { mutate: updateStatus, error, isLoading: creating } = useMutation(
+        ['updateStatus'],
+        async (payload: any) => await api.post('/api/Mappings/UpdateNotificationStatus', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateStatus, error, creating };
+}

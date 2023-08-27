@@ -1,9 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
+import { useUpdateNotificationStatus } from "../../../backend/masters";
+import { NotificationStatus } from "./NotificationCard";
 
 
-function NotificationDetails({ notification, onClose }: any) {
-    const [notificationDetails, setNotification] = useState<any>({ hideButtons: true });
+function NotificationDetails({ notification, onClose, onSubmit }: any) {
+    const { updateStatus, creating } = useUpdateNotificationStatus(onSubmit);
+
+    useEffect(() => {
+        if (notification.notifyStatus === NotificationStatus.UNREAD && !creating) {
+            updateStatus({
+                notificationId: notification.id,
+                statusflag: "Read"
+            });
+        }
+    }, [])
 
     return (
         <>

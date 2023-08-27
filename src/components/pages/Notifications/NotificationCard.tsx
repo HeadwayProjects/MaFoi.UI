@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "react-avatar";
 import Icon from "../../common/Icon";
 import { Button } from "react-bootstrap";
@@ -7,14 +7,19 @@ import { faClock } from "@fortawesome/free-regular-svg-icons";
 import dayjs from "dayjs";
 import NotificationDetails from "./NotificationDetails";
 
-enum NotificationStatus {
+export enum NotificationStatus {
     UNREAD = 1,
     READ = 2
 }
 
 export default function NotificationCard({ notification, onSubmit }: any) {
     const [open, setOpen] = useState(false);
-    const [unread] = useState(notification.notifyStatus === NotificationStatus.UNREAD)
+    const [unread, setUnread] = useState(true);
+    useEffect(() => {
+        if (notification) {
+            setUnread(notification.notifyStatus === NotificationStatus.UNREAD);
+        }
+    }, [notification]);
     return (
         <>
             <div className="mx-3 d-flex flex-row card shadow mb-2">
@@ -40,7 +45,7 @@ export default function NotificationCard({ notification, onSubmit }: any) {
                 </div>
             </div>
             {
-                open && <NotificationDetails notification={notification} onClose={() => setOpen(false)} />
+                open && Boolean(notification) && <NotificationDetails notification={{ ...notification }} onClose={() => setOpen(false)} onSubmit={onSubmit} />
             }
         </>
     )

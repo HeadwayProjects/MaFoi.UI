@@ -4,7 +4,7 @@ import { get, getChartsBaseUrl, post } from "./request";
 export function useAuditReport(onSuccess?: any, onError?: any) {
     const { mutate: auditReport, error, isLoading: exporting } = useMutation(
         ['auditReport'],
-        async (payload: any) => await post(`${getChartsBaseUrl()}/Auditor/GetAuditReport`, payload, null, true, { responseType: 'blob' }),
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetAuditReport`, payload, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
