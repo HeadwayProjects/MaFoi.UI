@@ -35,6 +35,20 @@
     top: 0px;
 }
 
+.btn.btn-outline-primary {
+    background-color: var(--medium-gray);
+    border: none;
+    color: var(--royal-blue);
+    box-shadow: 0 0 0 1px var(--gray) inset, 0 0 0 2px rgba(206, 198, 198, 0.1) inset, 0 6px 0 0 #636262, 0 8px 8px 1px rgb(199 199 199);
+    position: relative;
+    top: -4px;
+}
+
+.btn.btn-outline-primary:active {
+    box-shadow: none;
+    top: 0px;
+}
+
 .btn.btn-secondary {
     box-shadow: 0 0 0 1px #959595 inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #636262, 0 8px 8px 1px rgb(199 199 199);
     position: relative;
