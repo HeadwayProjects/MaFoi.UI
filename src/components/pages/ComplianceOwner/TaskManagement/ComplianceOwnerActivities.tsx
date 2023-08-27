@@ -30,12 +30,12 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
     const [payload, setPayload] = useState<any>(null);
     const payloadRef: any = useRef();
     payloadRef.current = payload;
-    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, Boolean(payload));
+    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, hasFilters(null, 'fromDate'));
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
-        const company = _filters.find((x: any) => x.columnName === field);
-        return (company || {}).value;
+        const column = _filters.find((x: any) => x.columnName === field);
+        return Boolean((column || {}).value);
     }
 
     function dismissAction(refresh = false) {
@@ -79,7 +79,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
         const status = cell.getValue();
         return (
             <div className="d-flex align-items-center">
-                <FontAwesomeIcon icon={faCircle} className={`status-${status} text-md`}/>
+                <FontAwesomeIcon icon={faCircle} className={`status-${status} text-md`} />
             </div>
         )
     }

@@ -16,6 +16,11 @@
     background-color: var(--blue);
 }
 
+.btn.btn-primary.no-shadow {
+    box-shadow: none;
+    top: 0px;
+}
+
 .btn.btn-outline-secondary {
     background-color: var(--white);
     border: none;
