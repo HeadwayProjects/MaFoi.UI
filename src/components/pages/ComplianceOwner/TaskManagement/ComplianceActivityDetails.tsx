@@ -103,7 +103,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 component: componentTypes.PLAIN_TEXT,
                 name: 'vertical',
                 label: 'Vertical',
-                content: getValue(activityDetails, 'vertical.name'),
+                content: getValue(activityDetails, 'veritical.name'),
             },
             {
                 component: componentTypes.PLAIN_TEXT,

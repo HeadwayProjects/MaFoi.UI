@@ -151,9 +151,16 @@ function DepartmentUserDetails(this: any, { action, data, onClose, onSubmit }: a
     useEffect(() => {
         if (data) {
             const { user, department } = data;
+            const { vertical } = department || {};
+            const { company } = vertical || {};
             setDetails({
-                user: { value: user.id, label: user.name }
+                user: { value: user.id, label: user.name },
+                company: { value: company.id, label: company.name },
+                vertical: { value: vertical.id, label: vertical.name },
+                department: { value: department.id, label: department.name }
             });
+            setCompany({ value: company.id, label: company.name });
+            setVertical({ value: vertical.id, label: vertical.name });
         }
     }, [data]);
 

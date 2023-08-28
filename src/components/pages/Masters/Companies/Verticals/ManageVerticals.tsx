@@ -13,6 +13,8 @@ import PageLoader from "../../../../shared/PageLoader";
 import VerticalDetails from "./VerticalDetails";
 import { useExportVerticals } from "../../../../../backend/exports";
 import { downloadFileContent } from "../../../../../utils/common";
+import { hasUserAccess } from "../../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../../UserManagement/Roles/RoleConfiguration";
 
 function ManageVerticals() {
     const [t] = useState(new Date().getTime());
@@ -79,16 +81,22 @@ function ManageVerticals() {
         const row = cell.getData();
 
         return (
-            <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
-                    setVertical(row);
-                    setAction(ACTIONS.EDIT)
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                    setVertical(row);
-                    setAction(ACTIONS.DELETE)
-                }} />
-                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
+            <div className="d-flex flex-row align-items-center position-relative h-100 gap-2">
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_VERTICAL) &&
+                    <Icon type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
+                        setVertical(row);
+                        setAction(ACTIONS.EDIT)
+                    }} />
+                }
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_VERTICAL) &&
+                    <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                        setVertical(row);
+                        setAction(ACTIONS.DELETE)
+                    }} />
+                }
+                <Icon type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setVertical(row);
                     setAction(ACTIONS.VIEW)
                 }} />

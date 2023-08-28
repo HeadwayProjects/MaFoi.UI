@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Icon from "../../../common/Icon";
 import DataGrid from "./DataGrid";
 import styles from "./ComplianceOwnerDashboard.module.css";
@@ -9,11 +9,18 @@ import DashboardAdvanceFilters from "./DashboardAdvanceFilters";
 
 function ComplianceOwnerDashboard() {
     const [view, setView] = useState(DashboardView.CALENDAR);
+    const [locationFilter, setLocationFilter] = useState<any>({});
+    const lfRef = useRef<any>();
+    lfRef.current = locationFilter;
     const [filters, setFilters] = useState<any>(null);
 
     function onLocationChange(event: any) {
-        console.log(event);
+        setLocationFilter(event);
         setFilters(event);
+    }
+
+    function handleFilterChange(event: any) {
+        setFilters({...lfRef.current, ...event});
     }
 
     return (
@@ -39,9 +46,9 @@ function ComplianceOwnerDashboard() {
                 <div className="col-12">
                     <div className="d-flex flex-row m-0 pb-2 justify-content-between align-items-end">
                         <OptionalLocations onChange={onLocationChange} />
-                        <DashboardAdvanceFilters />
+                        <DashboardAdvanceFilters onChange={handleFilterChange} />
                     </div>
-                    <DataGrid filters={filters} view={view}/>
+                    <DataGrid filters={filters} view={view} />
                 </div>
             </div>
         </div>
