@@ -31,7 +31,7 @@ export default function DashboardCharts({ filters }: any) {
     const [category, setCategory] = useState(ChartCategory.ASSOCIATE_COMPANY);
     const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, pagination: null, filters: setUserDetailsInFilters([], true) });
     const [options, setOptions] = useState<any>(null);
-    const { response, isFetching } = useGetComplianceStatusByCategory(category, payload);
+    const { response, isFetching } = useGetComplianceStatusByCategory(category, payload, Boolean(payload && hasFilters()));
 
     const [defaultOption] = useState<any>({
         color: colors,
@@ -123,6 +123,12 @@ export default function DashboardCharts({ filters }: any) {
             }
         ]
     });
+
+    function hasFilters( field = 'fromDate') {
+        const _filters = (payload || {}).filters || [];
+        const filter = _filters.find((x: any) => x.columnName === field);
+        return Boolean(filter);
+    }
 
     function handleCategoryChange(event: any) {
         setCategory(event);

@@ -17,7 +17,13 @@ const keys = [
 
 export default function OverallComplianceStatusCharts({ filters }: any) {
     const [payload, setPayload] = useState<any>();
-    const { response } = useGetOverallComplianceStatus(payload, Boolean(payload));
+    const { response } = useGetOverallComplianceStatus(payload, Boolean(payload && hasFilters()));
+
+    function hasFilters( field = 'fromDate') {
+        const _filters = (payload || {}).filters || [];
+        const filter = _filters.find((x: any) => x.columnName === field);
+        return Boolean(filter);
+    }
 
     useEffect(() => {
         if (filters) {

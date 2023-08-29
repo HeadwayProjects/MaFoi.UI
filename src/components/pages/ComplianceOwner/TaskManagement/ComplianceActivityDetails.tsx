@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 
 function isEditable(status: string) {
     if (hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT)) {
-        return status === ComplianceActivityStatus.PENDING || status === ComplianceActivityStatus.REJECTED;
+        return status === ComplianceActivityStatus.PENDING || status === ComplianceActivityStatus.REJECTED || status === ComplianceActivityStatus.DUE;
     } else if (hasUserAccess(USER_PRIVILEGES.MANAGER_ACTIVITIES_REVIEW)) {
         return status === ComplianceActivityStatus.SUBMITTED;
     }

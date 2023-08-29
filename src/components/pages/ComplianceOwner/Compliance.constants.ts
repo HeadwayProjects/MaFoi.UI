@@ -70,7 +70,7 @@ export const ComplianceChartStatusMapping: any = {
     },
     [ComplianceChartStatus.LATE]: {
         value: ComplianceChartStatus.LATE,
-        label: ComplianceStatusMapping[ComplianceActivityStatus.DUE],
+        label: ComplianceStatusMapping[ComplianceActivityStatus.LATE_CLOSURE],
         color: '#FFC000'
     },
     [ComplianceChartStatus.NON_COMPLIANT]: {
