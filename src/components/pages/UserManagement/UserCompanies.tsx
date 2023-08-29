@@ -44,7 +44,7 @@ function mapData(list: any[]) {
 function UserCompanies() {
     const [breadcrumb] = useState([
         { id: 'home', label: 'Home', path: '/' },
-        { id: 'users', label: 'User Management', path: '/userManagement/users' },
+        { id: 'users', label: 'User Management', path: '/userManagement/roles' },
         { id: 'companyMapping', label: 'Company Mapping' },
     ]);
     const [user, setUser] = useState<any>(null);

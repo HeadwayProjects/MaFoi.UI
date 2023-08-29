@@ -278,6 +278,9 @@ function AssociateCompaniesList({ changeView, parent }: any) {
                 const _parentCompany = (parentCompanies || [])[0];
                 if (_parentCompany) {
                     setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
+                    if (!parentCompanyId) {
+                        setParentCompanyId( _parentCompany.id)
+                    }
                     const { search } = filterRef.current || { search: '' };
                     setFilters({ filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: _parentCompany.id }], search });
                 }

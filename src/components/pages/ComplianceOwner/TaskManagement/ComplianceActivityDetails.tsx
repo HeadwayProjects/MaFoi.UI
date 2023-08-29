@@ -5,14 +5,17 @@ import { getValue } from "../../../../utils/common";
 import { useGetComplianceActivityDocuments, useGetComplianceById, useSubmitComplianceActivity, useUpdateComplianceSchedule, useUploadDocument } from "../../../../backend/compliance";
 import styles from "./Styles.module.css";
 import Icon from "../../../common/Icon";
-import { ACTIONS, FILE_SIZE } from "../../../common/Constants";
+import { ACTIONS, FILE_SIZE, STATUS_MAPPING } from "../../../common/Constants";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
-import { ComplianceActivityStatus } from "../Compliance.constants";
+import { ComplianceActivityStatus, ComplianceStatusIconMapping } from "../Compliance.constants";
 import ConfirmModal from "../../../common/ConfirmModal";
 import { download } from "../../../../utils/common";
 import { hasUserAccess } from "../../../../backend/auth";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import dayjs from "dayjs";
 
 function isEditable(status: string) {
     if (hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT)) {
@@ -28,7 +31,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
     const [form, setForm] = useState<any>({ valid: true });
     const [formData, setFormData] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
-    const [editable] = useState(isEditable(data.status));
+    const [editable, setEditable] = useState(false);
     const [activityDetails, setActivity] = useState<any>(null);
     const [ruleCompliance, setRuleCompliance] = useState<any>(null);
     const { activity, isFetching, invalidate } = useGetComplianceById(data.id);
@@ -46,17 +49,15 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
         fields: [
             {
                 component: componentTypes.PLAIN_TEXT,
-                name: 'activity',
-                label: 'Activity',
-                content: getValue(activityDetails, 'activity.name'),
-                className: 'grid-col-100'
-            },
-            {
-                component: componentTypes.PLAIN_TEXT,
                 name: 'description',
                 label: 'Description',
                 content: getValue(activityDetails, 'activity.description'),
-                className: 'grid-col-100'
+                className: 'grid-col-100',
+                condition: {
+                    when: 'description',
+                    is: Boolean(getValue(activityDetails, 'activity.description')),
+                    then: { visible: true }
+                },
             },
             {
                 component: componentTypes.PLAIN_TEXT,
@@ -69,7 +70,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 component: componentTypes.PLAIN_TEXT,
                 name: 'dueDate',
                 label: 'Due Date',
-                content: getValue(activityDetails, 'dueDate'),
+                content: dayjs(getValue(activityDetails, 'dueDate')).format('DD-MM-YYYY'),
             },
             {
                 component: componentTypes.PLAIN_TEXT,
@@ -156,54 +157,136 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 name: 'auditType',
                 label: 'Audit Type',
                 content: getValue(ruleCompliance, 'auditType'),
+                condition: {
+                    when: 'auditType',
+                    is: () => {
+                        return !isFetching && Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'complianceNature',
                 label: 'Compliance Nature',
                 content: getValue(ruleCompliance, 'complianceNature'),
+                condition: {
+                    when: 'complianceNature',
+                    is: () => {
+                        return !isFetching && Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
+
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'risk',
                 label: 'Risk',
                 content: getValue(ruleCompliance, 'risk'),
+                condition: {
+                    when: 'risk',
+                    is: () => {
+                        return !isFetching && Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'penalty',
                 label: 'Penalty',
                 content: getValue(ruleCompliance, 'penalty'),
+                condition: {
+                    when: 'penalty',
+                    is: () => {
+                        return !isFetching && Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'maximumPenaltyAmount',
                 label: 'Max Penalty Amount',
                 content: getValue(ruleCompliance, 'maximumPenaltyAmount'),
+                condition: {
+                    when: 'maximumPenaltyAmount',
+                    is: () => {
+                        return !isFetching && Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'proofOfCompliance',
                 label: 'Proof Of Compliance',
                 content: getValue(ruleCompliance, 'proofOfCompliance'),
+                condition: {
+                    when: 'proofOfCompliance',
+                    is: () => {
+                        return !isFetching && Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'impriosonment',
-                label: 'Impriosonment',
+                label: 'Imprisonment',
                 content: getValue(ruleCompliance, 'impriosonment', 'BOOLEAN'),
+                condition: {
+                    when: 'impriosonment',
+                    is: () => {
+                        return !isFetching && Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'continuingPenalty',
                 label: 'Continuing Penalty',
                 content: getValue(ruleCompliance, 'continuingPenalty', 'BOOLEAN'),
+                condition: {
+                    when: 'continuingPenalty',
+                    is: () => {
+                        return !isFetching && Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'cancellationSuspensionOfLicense',
                 label: 'Cancellation/Suspension of License',
                 content: getValue(ruleCompliance, 'cancellationSuspensionOfLicense', 'BOOLEAN'),
+                condition: {
+                    when: 'cancellationSuspensionOfLicense',
+                    is: () => {
+                        return !isFetching && Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'complianceNotAvailable',
+                content: (
+                    <div className="d-flex py-3 align-items-center gap-3">
+                        <FontAwesomeIcon icon={faExclamationTriangle} className="text-warn" />
+                        <span className="text-appprimary fst-italic fw-bold">No compliance information available. Contact admin to add compliance details</span>
+                    </div>
+                ),
+                className: 'grid-col-100',
+                condition: {
+                    when: 'complianceNotAvailable',
+                    is: () => {
+                        return !isFetching && !Boolean(ruleCompliance);
+                    },
+                    then: { visible: true }
+                }
             },
             {
                 component: componentTypes.PLAIN_TEXT,
@@ -298,6 +381,15 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
         ]
     }
 
+    function TitleTmpl({ name, status }: any) {
+        return (
+            <div className="d-flex flex-row gap-2 mb-2">
+                <Icon name={ComplianceStatusIconMapping[status]} className={`status-${status} text-xl`} />
+                <span className={`text-xl fw-bold status-${status} ellipse`}>{name}</span>
+            </div>
+        )
+    }
+
     function debugForm(_form: any) {
         setForm(_form);
         setFormData(_form.values);
@@ -343,8 +435,8 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
             const { compliance, ruleComplianceDetail } = activity;
             setActivity(compliance);
             setRuleCompliance(ruleComplianceDetail);
+            setEditable(Boolean(ruleComplianceDetail) && isEditable(data.status));
         }
-
     }, [isFetching])
 
     return (
@@ -354,7 +446,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                     !isFetching && Boolean(activity) &&
                     <div className="card border-0 h-full w-full">
                         <div className="d-flex flex-row justify-space-between px-4 pt-4 align-items-center">
-                            <h4 className="fw-bold mb-0">Compliance Activity Details</h4>
+                            <TitleTmpl name={getValue(data, 'activity.name')} status={data.status}/>
                             <Icon name="close" action={onCancel} className="ms-auto" />
                         </div>
                         <div className={`d-flex flex-column justify-space-between p-4 ${styles.activitydetailsContainer} `}>

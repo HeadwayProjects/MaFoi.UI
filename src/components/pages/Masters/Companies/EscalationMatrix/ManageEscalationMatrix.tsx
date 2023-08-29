@@ -154,7 +154,7 @@ export default function ManageEscalationMatrix() {
 
     return (
         <>
-            <MastersLayout title="Companies - Departments" breadcrumbs={breadcrumb}>
+            <MastersLayout title="Escalation Matrix" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0">
                     <div className="card shadow d-flex flex-row justify-content-center m-3 p-3">
                         <div className="col-12">

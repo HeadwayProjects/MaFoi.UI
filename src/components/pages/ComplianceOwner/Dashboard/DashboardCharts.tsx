@@ -9,16 +9,16 @@ enum ChartCategory {
     DEPARTMENT = 'department',
     STATE = 'state',
     LOCATION = 'location',
-    ENTITY = 'associateCompany'
+    ASSOCIATE_COMPANY = 'associateCompany'
 }
 
 const colors = ['#A9D18E', '#FFC000', '#FF2D2D'];
 
 const list = [
-    { value: ChartCategory.DEPARTMENT, label: 'Department' },
+    { value: ChartCategory.ASSOCIATE_COMPANY, label: 'Associate Company' },
     { value: ChartCategory.STATE, label: 'State' },
     { value: ChartCategory.LOCATION, label: 'Location' },
-    { value: ChartCategory.ENTITY, label: 'Entity' },
+    { value: ChartCategory.DEPARTMENT, label: 'Department' }
 ]
 
 const Status: any = {
@@ -28,7 +28,7 @@ const Status: any = {
 }
 
 export default function DashboardCharts({ filters }: any) {
-    const [category, setCategory] = useState(ChartCategory.DEPARTMENT);
+    const [category, setCategory] = useState(ChartCategory.ASSOCIATE_COMPANY);
     const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, pagination: null, filters: setUserDetailsInFilters([], true) });
     const [options, setOptions] = useState<any>(null);
     const { response, isFetching } = useGetComplianceStatusByCategory(category, payload);
@@ -95,7 +95,7 @@ export default function DashboardCharts({ filters }: any) {
             {
                 seriesLayoutBy: 'row',
                 type: 'bar',
-                barWidth : 16,
+                barWidth: 16,
                 label: {
                     show: true,
                     position: 'top'
@@ -105,7 +105,7 @@ export default function DashboardCharts({ filters }: any) {
                 type: 'bar',
                 smooth: true,
                 seriesLayoutBy: 'row',
-                barWidth : 16,
+                barWidth: 16,
                 label: {
                     show: true,
                     position: 'top'
@@ -115,7 +115,7 @@ export default function DashboardCharts({ filters }: any) {
                 type: 'bar',
                 smooth: true,
                 seriesLayoutBy: 'row',
-                barWidth : 16,
+                barWidth: 16,
                 label: {
                     show: true,
                     position: 'top'

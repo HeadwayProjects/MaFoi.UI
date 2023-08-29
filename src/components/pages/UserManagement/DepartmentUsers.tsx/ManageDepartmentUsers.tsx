@@ -17,7 +17,7 @@ import DepartmentUserDetails from "./DepartmentUserDetails";
 function MangeDepartmentUsers() {
     const [breadcrumb] = useState([
         { id: 'home', label: 'Home', path: '/' },
-        { id: 'users', label: 'User Management', path: '/userManagement/users' },
+        { id: 'users', label: 'User Management', path: '/userManagement/roles' },
         { id: 'users', label: 'Manage Users' },
     ]);
     const [action, setAction] = useState(ACTIONS.NONE);

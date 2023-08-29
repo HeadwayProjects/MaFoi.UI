@@ -17,6 +17,8 @@ import { useDeleteAuditSchedule } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { hasUserAccess } from "../../../../backend/auth";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import { GetAuditScheduleBreadcrumb } from "./Companies.constants";
+import MastersLayout from "../MastersLayout";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -28,6 +30,7 @@ const SortFields: any = {
 };
 
 function AuditScheduleDetails(this: any) {
+    const [breadcrumb] = useState(GetAuditScheduleBreadcrumb('Audit Schedule Details'));
     const [activity, setActivity] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState<any>();
@@ -340,19 +343,7 @@ function AuditScheduleDetails(this: any) {
 
     return (
         <>
-            <div className="d-flex flex-column">
-                <div className="d-flex p-2 align-items-center pageHeading shadow">
-                    <h4 className="mb-0">Audit Schedule Details</h4>
-                    <div className="d-flex align-items-end h-100">
-                        <nav aria-label="breadcrumb">
-                            <ol className="breadcrumb mb-0 d-flex justify-content-end">
-                                <li className="breadcrumb-item">Home</li>
-                                <li className="breadcrumb-item fw-bold active">Audit Schedule Details</li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-
+            <MastersLayout title="Audit Schedule Details" breadcrumbs={breadcrumb}>
                 <form className="p-0 mx-3 my-2">
                     <div className="card shadow border-0 p-2 mt-2 mb-3 filters">
                         <div className="d-flex flex-row m-0 align-items-end">
@@ -375,7 +366,7 @@ function AuditScheduleDetails(this: any) {
                     </div>
                 </form>
                 <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={onSelectionChange.bind(this)} onPageNav={handlePageNav} />
-            </div>
+            </MastersLayout>
             {
                 !!alertMessage &&
                 <AlertModal message={alertMessage} onClose={(e: any) => {

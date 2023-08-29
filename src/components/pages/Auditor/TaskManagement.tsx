@@ -592,7 +592,7 @@ function TaskManagement() {
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search}
-                                    downloadReport={hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT) ? downloadReport : undefined} />
+                                    downloadReport={hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_DOWNLOAD_REPORT) ? downloadReport : undefined} />
                             </div>
                         </div>
                     </div>

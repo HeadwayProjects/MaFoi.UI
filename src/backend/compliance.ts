@@ -158,7 +158,7 @@ export function useGetComplianceByDate(payload: any, enabled = true) {
 export function useUploadDocument(onSuccess?: any, onError?: any) {
     const { mutate: uploadDocument, error, isLoading: uploading } = useMutation(
         ['uploadFile'],
-        async ({ id, formData }: any) => await post(`api/FileUpload/UploadComplianceSingleFile?complianceId=${id}`, formData, null, true),
+        async ({ id, formData }: any) => await post(`/api/FileUpload/UploadComplianceSingleFile?complianceId=${id}`, formData, null, true),
         {
             onError,
             onSuccess: (response) => {

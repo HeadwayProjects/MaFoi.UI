@@ -13,7 +13,8 @@ export enum ComplianceActivityStatus {
     REJECT = 'Rejected',
     PUBLISHED = 'Published',
     LATE_CLOSURE = 'Late',
-    ON_TIME = 'OnTime'
+    ON_TIME = 'OnTime',
+    NON_COMPLIANT = 'NonCompliant'
 }
 
 export const ComplianceStatusMapping = {
@@ -25,6 +26,15 @@ export const ComplianceStatusMapping = {
     [ComplianceActivityStatus.SUBMITTED]: 'Sumitted',
     [ComplianceActivityStatus.AUDITED]: 'Approved',
     [ComplianceActivityStatus.REJECTED]: 'Rejected'
+}
+
+export const ComplianceStatusIconMapping: any = {
+    [ComplianceActivityStatus.DUE]: 'clock',
+    [ComplianceActivityStatus.PENDING]: 'clock',
+    [ComplianceActivityStatus.NON_COMPLIANT]: 'exclamation-circle',
+    [ComplianceActivityStatus.SUBMITTED]: 'check-square',
+    [ComplianceActivityStatus.AUDITED]: 'check-circle',
+    [ComplianceActivityStatus.REJECTED]: 'times-circle',
 }
 
 

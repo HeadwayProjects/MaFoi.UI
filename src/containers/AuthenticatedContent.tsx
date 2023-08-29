@@ -165,9 +165,9 @@ function AuthenticatedContent() {
         '/complianceManagement/compliance-schedule-details': () => (
             layout(<ComplianceScheduleDetails />)
         ),
-        '/complianceManagement/blockUnblock': () => (
-            layout(<LockUnLockCompliance />)
-        ),
+        // '/complianceManagement/blockUnblock': () => (
+        //     layout(<LockUnLockCompliance />)
+        // ),
         '/complianceManagement/dashboard': () => (
             layout(<ComplianceOwnerDashboard />)
         ),
