@@ -17,7 +17,7 @@ export enum ComplianceActivityStatus {
     NON_COMPLIANT = 'NonCompliant'
 }
 
-export const ComplianceStatusMapping = {
+export const ComplianceStatusMapping: any = {
     [ComplianceActivityStatus.PENDING]: 'Pending',
     [ComplianceActivityStatus.OVERDUE]: 'Due',
     [ComplianceActivityStatus.DUE]: 'Due',
@@ -25,7 +25,8 @@ export const ComplianceStatusMapping = {
     [ComplianceActivityStatus.ON_TIME]: 'On time',
     [ComplianceActivityStatus.SUBMITTED]: 'Sumitted',
     [ComplianceActivityStatus.AUDITED]: 'Approved',
-    [ComplianceActivityStatus.REJECTED]: 'Rejected'
+    [ComplianceActivityStatus.REJECTED]: 'Rejected',
+    [ComplianceActivityStatus.NON_COMPLIANT]: 'Non-Compliant'
 }
 
 export const ComplianceStatusIconMapping: any = {
@@ -42,6 +43,7 @@ export const COMPLIANCE_ACTIVITY_ORDER = [
     ComplianceActivityStatus.REJECTED,
     ComplianceActivityStatus.OVERDUE,
     ComplianceActivityStatus.PENDING,
+    ComplianceActivityStatus.DUE,
     ComplianceActivityStatus.SUBMITTED,
     ComplianceActivityStatus.AUDITED
 ]

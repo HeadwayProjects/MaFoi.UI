@@ -93,7 +93,7 @@ export default function ManageEscalationMatrix() {
         rowHeight: 54,
         selectable: false,
         paginate: true,
-        initialSort: [{ column: 'verticalId', dir: 'asc' }]
+        initialSort: [{ column: 'days', dir: 'desc' }]
     });
 
     function formatApiResponse(params: any, list: any[], totalRecords: number) {

@@ -9,6 +9,7 @@ import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import { MONTHS_ENUM } from "../../../common/Constants";
 import dayjs from "dayjs";
 import { API_DELIMITER } from "../../../../utils/constants";
+import { ComplianceActivityStatus, ComplianceStatusMapping } from "../Compliance.constants";
 
 export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel }: any) {
     const [filter, setFilter] = useState<any>({ hideButtons: true, ...data });
@@ -63,6 +64,25 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
                     return verticalId === value;
                 }) : [],
                 disabled: !Boolean(filter.vertical)
+            },
+            {
+                component: componentTypes.SELECT,
+                name: 'status',
+                label: 'Status',
+                isMulti: true,
+                options: [
+                    ComplianceActivityStatus.PENDING,
+                    ComplianceActivityStatus.NON_COMPLIANT,
+                    ComplianceActivityStatus.SUBMITTED,
+                    ComplianceActivityStatus.OVERDUE,   
+                    ComplianceActivityStatus.APPROVE,
+                    ComplianceActivityStatus.REJECTED].map((status: any) => {
+                    return {
+                        id: status,
+                        name: ComplianceStatusMapping[status]
+                    }
+                }),
+                disabled: !Boolean(filter.vertical)
             }
         ]
     }
@@ -97,7 +117,7 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
     }
 
     function search() {
-        const { monthYear, dueDate, activityType, vertical, department } = filter;
+        const { monthYear, dueDate, activityType, vertical, department, status } = filter;
         const _payload: any = {};
         if (monthYear) {
             const date = new Date(monthYear);
@@ -130,7 +150,9 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
         if (department) {
             _payload.departmentId = department.value;
         }
-        console.log('Payload >> ', _payload);
+        if ((status ||[]).length) {
+            _payload.status = status.map((s: any) => s.value).join(API_DELIMITER);
+        }
         onSubmit({ payload: _payload, data: filter });
         onCancel();
     }

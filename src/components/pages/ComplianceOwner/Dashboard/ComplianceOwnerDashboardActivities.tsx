@@ -25,7 +25,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
         return (
             <div key={activity.status}>
                 {
-                    activity.status === ComplianceActivityStatus.PENDING &&
+                    (activity.status === ComplianceActivityStatus.PENDING || activity.status === ComplianceActivityStatus.DUE) &&
                     <>
                         <div className="fw-bold">Pending Activities: {activity.count}</div>
                         <div>Finish before the due date</div>
@@ -126,7 +126,9 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                     })
                 });
             });
-            setData(_data);
+            setData(_data.sort((a: any, b: any) => {
+                return new Date(a.date) > new Date(b.date) ? 1 : -1;
+            }));
             if (dataChanged) {
                 dataChanged({ dates, data: _data });
             }

@@ -57,6 +57,8 @@ export default function Week(this: any, props: CalendarProps) {
             const x = data.find((x: any) => x.date === _dt.id);
             if (x) {
                 _dt.status = x.activities[0].status
+            } else {
+                delete _dt.status;
             }
         });
         setDates(_dates);
