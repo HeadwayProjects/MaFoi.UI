@@ -20,6 +20,7 @@ import { Button, Dropdown, DropdownButton } from "react-bootstrap";
 import ComplianceAssignUser from "./ComplianceAssignUser";
 import MastersLayout from "../Masters/MastersLayout";
 import { GetComplianceBreadcrumb } from "./Compliance.constants";
+import { ComplianceActivityStatus } from "../ComplianceOwner/Compliance.constants";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -42,7 +43,7 @@ function ComplianceScheduleDetails(this: any) {
     const [advaceSearchFilters, setAdvanceSearchFilters] = useState<any>();
     const afRef: any = useRef();
     afRef.current = advaceSearchFilters;
-    const [statusFilters] = useState([{ columnName: 'status', value: [ACTIVITY_STATUS.PENDING, ACTIVITY_STATUS.OVERDUE].join(API_DELIMITER) }]);
+    const [statusFilters] = useState([{ columnName: 'status', value: [ComplianceActivityStatus.DUE, ComplianceActivityStatus.OVERDUE, ComplianceActivityStatus.PENDING, ComplianceActivityStatus.NON_COMPLIANT].join(API_DELIMITER) }]);
     const sfRef: any = useRef();
     sfRef.current = statusFilters;
     const [payload, setPayload] = useState<any>();
