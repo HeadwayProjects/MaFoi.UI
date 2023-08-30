@@ -460,14 +460,20 @@ table.table {
   color: var(--gray-500);
 }
 
-.status-Pending {
+.status-Pending,
+.status-Due {
   color: var(--yellow);
 }
 
 .status-Overdue,
 .status-Rejected,
-.status-non-compliance {
+.status-non-compliance,
+.status-NonCompliant {
   color: var(--red);
+}
+
+.status-NonCompliant {
+  color: var(--light-red);
 }
 
 .status-Submitted {

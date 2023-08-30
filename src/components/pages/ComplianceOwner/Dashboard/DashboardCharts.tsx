@@ -24,7 +24,7 @@ const list = [
 const Status: any = {
     'On Time': 'OnTime',
     'Late Closure': 'Late',
-    'Non-Compliance': 'NonCompliance'
+    'Non-Compliant': 'NonCompliance'
 }
 
 export default function DashboardCharts({ filters }: any) {
@@ -42,7 +42,7 @@ export default function DashboardCharts({ filters }: any) {
             }
         },
         legend: {
-            data: ['On Time', 'Late Closure', 'Non-Compliance']
+            data: ['On Time', 'Late Closure', 'Non-Compliant']
         },
         xAxis: [
             {
@@ -70,7 +70,7 @@ export default function DashboardCharts({ filters }: any) {
             },
             {
                 type: 'value',
-                name: 'Late Closure, Non-Compliance',
+                name: 'Late Closure, Non-Compliant',
                 position: 'right',
                 alignTicks: true,
                 nameRotate: 270,
@@ -148,8 +148,8 @@ export default function DashboardCharts({ filters }: any) {
 
     useEffect(() => {
         if (!isFetching && response) {
-            const source = [[category], ['On Time'], ['Late Closure'], ['Non-Compliance']];
-            const groups = ['', 'On Time', 'Late Closure', 'Non-Compliance'];
+            const source = [[category], ['On Time'], ['Late Closure'], ['Non-Compliant']];
+            const groups = ['', 'On Time', 'Late Closure', 'Non-Compliant'];
             const _options = JSON.parse(JSON.stringify(defaultOption));
             response.forEach((group: any) => {
                 source[0].push(group.name);

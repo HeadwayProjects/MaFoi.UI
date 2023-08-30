@@ -11,7 +11,7 @@ import styles from "./Styles.module.css";
 import ComplianceActivityDetails from "./ComplianceActivityDetails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
-import { setUserDetailsInFilters } from "../Compliance.constants";
+import { ComplianceStatusMapping, setUserDetailsInFilters } from "../Compliance.constants";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -70,7 +70,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
         const status = cell.getValue();
         return (
             <div className="d-flex align-items-center position-relative">
-                <span className={`status-${status} ellipse`}>{STATUS_MAPPING[status] || status}</span>
+                <span className={`status-${status} ellipse`}>{ComplianceStatusMapping[status] || status}</span>
             </div>
         )
     }

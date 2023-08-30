@@ -50,8 +50,10 @@ export const COMPLIANCE_ACTIVITY_ORDER = [
 
 export const COMPLIANCE_ACTIVITY_INDICATION: any = {
     [ComplianceActivityStatus.REJECTED]: 'var(--red)',
+    [ComplianceActivityStatus.NON_COMPLIANT]: 'var(--light-red)',
     [ComplianceActivityStatus.OVERDUE]: 'var(--light-red)',
     [ComplianceActivityStatus.PENDING]: 'var(--yellow)',
+    [ComplianceActivityStatus.DUE]: 'var(--yellow)',
     [ComplianceActivityStatus.SUBMITTED]: 'var(--light-green)',
     [ComplianceActivityStatus.AUDITED]: 'var(--dark-green)',
 }
@@ -77,7 +79,7 @@ export const ComplianceChartStatusMapping: any = {
     },
     [ComplianceChartStatus.NON_COMPLIANT]: {
         value: ComplianceChartStatus.NON_COMPLIANT,
-        label: 'Non-Compliance',
+        label: 'Non-Compliant',
         color: '#FF0000'
     },
     [ComplianceChartStatus.ON_TIME]: {

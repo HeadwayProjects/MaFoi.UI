@@ -40,6 +40,13 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                     </>
                 }
                 {
+                    activity.status === ComplianceActivityStatus.NON_COMPLIANT &&
+                    <>
+                        <div className="fw-bold">Non-Compliant Activities: {activity.count}</div>
+                        <div>Immediate action required as this is the priority.</div>
+                    </>
+                }
+                {
                     activity.status === ComplianceActivityStatus.REJECTED &&
                     <>
                         <div className="fw-bold">Rejected Activities: {activity.count}</div>
