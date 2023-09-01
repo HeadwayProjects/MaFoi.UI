@@ -3,7 +3,8 @@ import ReactECharts from "echarts-for-react";
 import NavTabs from "../../../shared/NavTabs";
 import { useGetComplianceStatusByCategory } from "../../../../backend/compliance";
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
-import { setUserDetailsInFilters } from "../Compliance.constants";
+import { setUserDetailsInFilters } from "../../../../constants/Compliance.constants";
+import { getCSSPropertyValue } from "../../../../utils/styles";
 
 enum ChartCategory {
     DEPARTMENT = 'department',
@@ -12,7 +13,8 @@ enum ChartCategory {
     ASSOCIATE_COMPANY = 'associateCompany'
 }
 
-const colors = ['#A9D18E', '#FFC000', '#FF2D2D'];
+
+const colors = ['--emarald-green', '--orange', '--medium-red'];
 
 const list = [
     { value: ChartCategory.ASSOCIATE_COMPANY, label: 'Associate Company' },
@@ -34,7 +36,7 @@ export default function DashboardCharts({ filters }: any) {
     const { response, isFetching } = useGetComplianceStatusByCategory(category, payload, Boolean(payload && hasFilters()));
 
     const [defaultOption] = useState<any>({
-        color: colors,
+        color: colors.map(color => getCSSPropertyValue(color)),
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -124,7 +126,7 @@ export default function DashboardCharts({ filters }: any) {
         ]
     });
 
-    function hasFilters( field = 'fromDate') {
+    function hasFilters(field = 'fromDate') {
         const _filters = (payload || {}).filters || [];
         const filter = _filters.find((x: any) => x.columnName === field);
         return Boolean(filter);

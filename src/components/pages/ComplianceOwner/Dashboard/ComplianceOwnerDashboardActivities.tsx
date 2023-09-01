@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CalendarType } from "../../../common/Calendar/Calendar.constants";
-import { COMPLIANCE_ACTIVITY_INDICATION, COMPLIANCE_ACTIVITY_ORDER, ComplianceActivityStatus, setUserDetailsInFilters } from "../Compliance.constants";
+import { COMPLIANCE_ACTIVITY_INDICATION, COMPLIANCE_ACTIVITY_ORDER, ComplianceActivityStatus, setUserDetailsInFilters } from "../../../../constants/Compliance.constants";
 import dayjs from "dayjs";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
@@ -25,7 +25,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
         return (
             <div key={activity.status}>
                 {
-                    (activity.status === ComplianceActivityStatus.PENDING || activity.status === ComplianceActivityStatus.DUE) &&
+                    activity.status === ComplianceActivityStatus.DUE &&
                     <>
                         <div className="fw-bold">Pending Activities: {activity.count}</div>
                         <div>Finish before the due date</div>
@@ -33,17 +33,10 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                     </>
                 }
                 {
-                    activity.status === ComplianceActivityStatus.OVERDUE &&
-                    <>
-                        <div className="fw-bold">Overdue Activities: {activity.count}</div>
-                        <div>Immediate action required as this is the priority.</div>
-                    </>
-                }
-                {
                     activity.status === ComplianceActivityStatus.NON_COMPLIANT &&
                     <>
                         <div className="fw-bold">Non-Compliant Activities: {activity.count}</div>
-                        <div>Immediate action required as this is the priority.</div>
+                        <div>These are on high priority and need immediate action.</div>
                     </>
                 }
                 {
@@ -60,9 +53,9 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                     </>
                 }
                 {
-                    activity.status === ComplianceActivityStatus.AUDITED &&
+                    activity.status === ComplianceActivityStatus.APPROVED &&
                     <>
-                        <div className="fw-bold">Audited Activities: {activity.count}</div>
+                        <div className="fw-bold">Approved Activities: {activity.count}</div>
                     </>
                 }
             </div>

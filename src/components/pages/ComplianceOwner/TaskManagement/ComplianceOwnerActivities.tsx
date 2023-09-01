@@ -11,7 +11,7 @@ import styles from "./Styles.module.css";
 import ComplianceActivityDetails from "./ComplianceActivityDetails";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircle } from "@fortawesome/free-solid-svg-icons";
-import { ComplianceStatusMapping, setUserDetailsInFilters } from "../Compliance.constants";
+import { COMPLIANCE_ACTIVITY_INDICATION, ComplianceStatusMapping, setUserDetailsInFilters } from "../../../../constants/Compliance.constants";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -62,7 +62,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
     function DueDateTmpl({ cell }: any) {
         const value = cell.getValue();
         return (
-            <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+            <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
         )
     }
 
@@ -70,7 +70,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
         const status = cell.getValue();
         return (
             <div className="d-flex align-items-center position-relative">
-                <span className={`status-${status} ellipse`}>{ComplianceStatusMapping[status] || status}</span>
+                <span className="ellipse" style={{ color: COMPLIANCE_ACTIVITY_INDICATION[status] || '' }}>{ComplianceStatusMapping[status] || status}</span>
             </div>
         )
     }
@@ -79,7 +79,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
         const status = cell.getValue();
         return (
             <div className="d-flex align-items-center">
-                <FontAwesomeIcon icon={faCircle} className={`status-${status} text-md`} />
+                <FontAwesomeIcon icon={faCircle} className="text-md" style={{ color: COMPLIANCE_ACTIVITY_INDICATION[status] || '' }} />
             </div>
         )
     }
@@ -116,8 +116,9 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
             formatter: reactFormatter(<FormIndicationTmpl />)
         },
         {
-            title: "", field: "auditted", width: 40,
-            formatter: reactFormatter(<ActivityTypeTmpl />)
+            title: "Month (Year)", field: "month", width: 120,
+            formatter: reactFormatter(<MonthTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
             title: "Manager", field: "complianceManager.name",

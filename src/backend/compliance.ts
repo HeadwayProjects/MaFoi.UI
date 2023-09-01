@@ -45,14 +45,14 @@ export function useGetAllComplianceActivities(payload: any, enabled = true) {
     return { activities: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
 }
 
-export function useGetComplianceById(id: any) {
+export function useGetComplianceById(id: any, payload = {}) {
     const queryClient = useQueryClient();
     function invalidate() {
-        queryClient.invalidateQueries(['complianceById', id])
+        queryClient.invalidateQueries(['complianceById', id, payload])
     }
     const { data, isFetching, refetch } = useQuery(
-        ['complianceById', id],
-        async () => await get(`/api/Compliance/Get/${id}`),
+        ['complianceById', id, payload],
+        async () => await get(`/api/Compliance/Get/${id}`, payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,

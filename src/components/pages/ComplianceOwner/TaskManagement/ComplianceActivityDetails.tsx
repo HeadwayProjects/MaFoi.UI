@@ -7,7 +7,7 @@ import styles from "./Styles.module.css";
 import Icon from "../../../common/Icon";
 import { ACTIONS, FILE_SIZE, STATUS_MAPPING } from "../../../common/Constants";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
-import { ComplianceActivityStatus, ComplianceStatusIconMapping } from "../Compliance.constants";
+import { COMPLIANCE_ACTIVITY_INDICATION, ComplianceActivityStatus, ComplianceStatusIconMapping, ComplianceStatusMapping } from "../../../../constants/Compliance.constants";
 import ConfirmModal from "../../../common/ConfirmModal";
 import { download } from "../../../../utils/common";
 import { hasUserAccess } from "../../../../backend/auth";
@@ -17,13 +17,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 
-function isEditable(status: string) {
-    if (hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT)) {
-        return status === ComplianceActivityStatus.PENDING || status === ComplianceActivityStatus.REJECTED || status === ComplianceActivityStatus.DUE;
-    } else if (hasUserAccess(USER_PRIVILEGES.MANAGER_ACTIVITIES_REVIEW)) {
+function isFormEditable(status: ComplianceActivityStatus) {
+    if (hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
+        return [ComplianceActivityStatus.DUE, ComplianceActivityStatus.NON_COMPLIANT, ComplianceActivityStatus.REJECTED].includes(status);
+    } else if (hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
         return status === ComplianceActivityStatus.SUBMITTED;
     }
     return false;
+}
+
+function hasEditableAccess() {
+    return hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT)
+        || hasUserAccess(USER_PRIVILEGES.MANAGER_ACTIVITIES_REVIEW);
 }
 
 export default function ComplianceActivityDetails(this: any, { data, onCancel, onSubmit }: any) {
@@ -31,12 +36,12 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
     const [form, setForm] = useState<any>({ valid: true });
     const [formData, setFormData] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
-    const [editable, setEditable] = useState(false);
+    const [editableForm, setEditable] = useState(isFormEditable(data.status));
     const [activityDetails, setActivity] = useState<any>(null);
     const [ruleCompliance, setRuleCompliance] = useState<any>(null);
-    const { activity, isFetching, invalidate } = useGetComplianceById(data.id);
+    const { activity, isFetching, invalidate } = useGetComplianceById(data.id, { t });
     const { documents, refetch } = useGetComplianceActivityDocuments({ complianceId: data.id, t });
-    const [initialValue] = useState({ hideButtons: !editable || !hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD), buttonWrapStyles: styles.btnGroup, submitBtnText: 'Upload' })
+    const [initialValue, setInitialValue] = useState({ hideButtons: !(editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD)), buttonWrapStyles: styles.btnGroup, submitBtnText: 'Upload' })
     const { uploadDocument } = useUploadDocument(refetch)
     const { submitComplianceActivity } = useSubmitComplianceActivity(onSubmit);
     const { updateComplianceSchedule } = useUpdateComplianceSchedule(() => {
@@ -76,7 +81,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 component: componentTypes.PLAIN_TEXT,
                 name: 'status',
                 label: 'Status',
-                content: getValue(activityDetails, 'status'),
+                content: ComplianceStatusMapping[getValue(activityDetails, 'status')],
             },
             {
                 component: componentTypes.WIZARD,
@@ -297,7 +302,9 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 condition: {
                     when: 'formsStatusRemarksReadOnly',
                     is: () => {
-                        return hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)
+                        const status = getValue(data, 'status');
+                        return hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) &&
+                            (status === ComplianceActivityStatus.APPROVED || status === ComplianceActivityStatus.REJECTED)
                     },
                     then: { visible: true }
                 }
@@ -318,9 +325,9 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 label: 'Upload File',
                 name: 'file',
                 type: 'file',
-                upload: editable && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD),
+                upload: editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD),
                 documents,
-                validate: editable && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD) ? [
+                validate: editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD) ? [
                     { type: validatorTypes.REQUIRED },
                     { type: 'file-size', maxSize: 25 * FILE_SIZE.MB }
                 ] : [],
@@ -335,18 +342,20 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 condition: {
                     when: 'reviewSubHeader',
                     is: () => {
-                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)
+                        const status = getValue(data, 'status');
+                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) &&
+                            status !== ComplianceActivityStatus.DUE && status !== ComplianceActivityStatus.NON_COMPLIANT
                     },
                     then: { visible: true }
                 }
             },
             {
-                component: editable ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
+                component: editableForm ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
                 name: 'status',
                 label: 'Compliance Status',
                 options: [
-                    { id: ComplianceActivityStatus.APPROVE, name: 'Approve' },
-                    { id: ComplianceActivityStatus.REJECT, name: 'Reject' }
+                    { id: ComplianceActivityStatus.APPROVED, name: 'Approve' },
+                    { id: ComplianceActivityStatus.REJECTED, name: 'Reject' }
                 ],
                 className: 'w-33',
                 content: getValue(activityDetails, 'status'),
@@ -356,13 +365,15 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 condition: {
                     when: 'status',
                     is: () => {
-                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)
+                        const status = getValue(data, 'status');
+                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) &&
+                            status !== ComplianceActivityStatus.DUE && status !== ComplianceActivityStatus.NON_COMPLIANT
                     },
                     then: { visible: true }
                 }
             },
             {
-                component: editable ? componentTypes.TEXTAREA : componentTypes.PLAIN_TEXT,
+                component: editableForm ? componentTypes.TEXTAREA : componentTypes.PLAIN_TEXT,
                 name: 'formsStatusRemarks',
                 label: 'Remarks',
                 className: 'w-33',
@@ -373,7 +384,9 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 condition: {
                     when: 'formsStatusRemarks',
                     is: () => {
-                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)
+                        const status = getValue(data, 'status');
+                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) &&
+                            status !== ComplianceActivityStatus.DUE && status !== ComplianceActivityStatus.NON_COMPLIANT
                     },
                     then: { visible: true }
                 }
@@ -384,8 +397,10 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
     function TitleTmpl({ name, status }: any) {
         return (
             <div className="d-flex flex-row gap-2 mb-2">
-                <Icon name={ComplianceStatusIconMapping[status]} className={`status-${status} text-xl`} />
-                <span className={`text-xl fw-bold status-${status} ellipse`}>{name}</span>
+                <Icon name={ComplianceStatusIconMapping[status]} className="text-xl"
+                    style={{ color: COMPLIANCE_ACTIVITY_INDICATION[status] || '', fill: COMPLIANCE_ACTIVITY_INDICATION[status] || '' }} />
+                <span className={`text-xl fw-bold ellipse`}
+                    style={{ color: COMPLIANCE_ACTIVITY_INDICATION[status] || '' }}>{name}</span>
             </div>
         )
     }
@@ -435,7 +450,13 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
             const { compliance, ruleComplianceDetail } = activity;
             setActivity(compliance);
             setRuleCompliance(ruleComplianceDetail);
-            setEditable(Boolean(ruleComplianceDetail) && isEditable(data.status));
+            const _editable = isFormEditable(compliance.status) && Boolean(ruleComplianceDetail);
+            setEditable(_editable);
+            setInitialValue({
+                hideButtons: !(_editable && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD)),
+                buttonWrapStyles: styles.btnGroup,
+                submitBtnText: 'Upload'
+            });
         }
     }, [isFetching])
 
@@ -446,7 +467,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                     !isFetching && Boolean(activity) &&
                     <div className="card border-0 h-full w-full">
                         <div className="d-flex flex-row justify-space-between px-4 pt-4 align-items-center">
-                            <TitleTmpl name={getValue(data, 'activity.name')} status={data.status}/>
+                            <TitleTmpl name={getValue(data, 'activity.name')} status={data.status} />
                             <Icon name="close" action={onCancel} className="ms-auto" />
                         </div>
                         <div className={`d-flex flex-column justify-space-between p-4 ${styles.activitydetailsContainer} `}>
@@ -478,15 +499,13 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                             }
                             <div className="d-flex justify-content-end mt-4">
                                 {
-                                    editable &&
-                                    <>
-                                        <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onCancel}>{'Cancel'}</Button>
-                                        <Button variant="primary" onClick={performSubmit} disabled={!form.valid} className="px-4 ms-3" >{'Submit'}</Button>
-                                    </>
-                                }
-                                {
-                                    !editable &&
-                                    <Button variant="primary" onClick={onCancel} className="px-4 ms-3" >{'Close'}</Button>
+                                    editableForm && hasEditableAccess() ?
+                                        <>
+                                            <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onCancel}>{'Cancel'}</Button>
+                                            <Button variant="primary" onClick={performSubmit} disabled={!form.valid} className="px-4 ms-3" >{'Submit'}</Button>
+                                        </> :
+
+                                        <Button variant="primary" onClick={onCancel} className="px-4 ms-3" >{'Close'}</Button>
                                 }
                             </div>
                         </div>

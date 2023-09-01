@@ -1,61 +1,52 @@
-import { getUserDetails, hasUserAccess } from "../../../backend/auth";
-import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import { getUserDetails, hasUserAccess } from "../backend/auth"
+import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration"
+
 
 export enum ComplianceActivityStatus {
-    PENDING = 'Pending',
-    ACTIVITY_SAVED = 'ActivitySaved',
-    OVERDUE = 'Overdue',
     DUE = 'Due',
-    REJECTED = 'Rejected',
-    AUDITED = 'Approved',
+    NON_COMPLIANT = 'NonCompliant',
     SUBMITTED = 'Submitted',
-    APPROVE = 'Approved',
-    REJECT = 'Rejected',
-    PUBLISHED = 'Published',
+    APPROVED = 'Approved',
+    REJECTED = 'Rejected',
     LATE_CLOSURE = 'Late',
     ON_TIME = 'OnTime',
-    NON_COMPLIANT = 'NonCompliant'
+    PENDING = 'Pending'
 }
 
 export const ComplianceStatusMapping: any = {
-    [ComplianceActivityStatus.PENDING]: 'Pending',
-    [ComplianceActivityStatus.OVERDUE]: 'Due',
     [ComplianceActivityStatus.DUE]: 'Due',
+    [ComplianceActivityStatus.NON_COMPLIANT]: 'Non-Compliant',
+    [ComplianceActivityStatus.SUBMITTED]: 'Submitted',
+    [ComplianceActivityStatus.APPROVED]: 'Approved',
+    [ComplianceActivityStatus.REJECTED]: 'Rejected',
     [ComplianceActivityStatus.LATE_CLOSURE]: 'Late Closure',
     [ComplianceActivityStatus.ON_TIME]: 'On time',
-    [ComplianceActivityStatus.SUBMITTED]: 'Sumitted',
-    [ComplianceActivityStatus.AUDITED]: 'Approved',
-    [ComplianceActivityStatus.REJECTED]: 'Rejected',
-    [ComplianceActivityStatus.NON_COMPLIANT]: 'Non-Compliant'
+    [ComplianceActivityStatus.PENDING]: 'Pending'
 }
 
 export const ComplianceStatusIconMapping: any = {
     [ComplianceActivityStatus.DUE]: 'clock',
-    [ComplianceActivityStatus.PENDING]: 'clock',
     [ComplianceActivityStatus.NON_COMPLIANT]: 'exclamation-circle',
     [ComplianceActivityStatus.SUBMITTED]: 'check-square',
-    [ComplianceActivityStatus.AUDITED]: 'check-circle',
+    [ComplianceActivityStatus.APPROVED]: 'check-circle',
     [ComplianceActivityStatus.REJECTED]: 'times-circle',
 }
 
 
 export const COMPLIANCE_ACTIVITY_ORDER = [
     ComplianceActivityStatus.REJECTED,
-    ComplianceActivityStatus.OVERDUE,
-    ComplianceActivityStatus.PENDING,
+    ComplianceActivityStatus.NON_COMPLIANT,
     ComplianceActivityStatus.DUE,
     ComplianceActivityStatus.SUBMITTED,
-    ComplianceActivityStatus.AUDITED
+    ComplianceActivityStatus.APPROVED
 ]
 
 export const COMPLIANCE_ACTIVITY_INDICATION: any = {
-    [ComplianceActivityStatus.REJECTED]: 'var(--red)',
-    [ComplianceActivityStatus.NON_COMPLIANT]: 'var(--light-red)',
-    [ComplianceActivityStatus.OVERDUE]: 'var(--light-red)',
-    [ComplianceActivityStatus.PENDING]: 'var(--yellow)',
     [ComplianceActivityStatus.DUE]: 'var(--yellow)',
-    [ComplianceActivityStatus.SUBMITTED]: 'var(--light-green)',
-    [ComplianceActivityStatus.AUDITED]: 'var(--dark-green)',
+    [ComplianceActivityStatus.NON_COMPLIANT]: 'var(--medium-red)',
+    [ComplianceActivityStatus.SUBMITTED]: 'var(--green)',
+    [ComplianceActivityStatus.APPROVED]: 'var(--emarald-green)',
+    [ComplianceActivityStatus.REJECTED]: 'var(--red)'
 }
 
 export enum ComplianceChartStatus {
@@ -70,27 +61,27 @@ export const ComplianceChartStatusMapping: any = {
     [ComplianceChartStatus.DUE]: {
         value: ComplianceChartStatus.DUE,
         label: ComplianceStatusMapping[ComplianceActivityStatus.DUE],
-        color: 'rgba(220, 53, 69, 0.5)'
-    },
-    [ComplianceChartStatus.LATE]: {
-        value: ComplianceChartStatus.LATE,
-        label: ComplianceStatusMapping[ComplianceActivityStatus.LATE_CLOSURE],
-        color: '#FFC000'
-    },
-    [ComplianceChartStatus.NON_COMPLIANT]: {
-        value: ComplianceChartStatus.NON_COMPLIANT,
-        label: 'Non-Compliant',
-        color: '#FF0000'
-    },
-    [ComplianceChartStatus.ON_TIME]: {
-        value: ComplianceChartStatus.ON_TIME,
-        label: ComplianceStatusMapping[ComplianceActivityStatus.ON_TIME],
-        color: '#548235'
+        color: '--yellow'
     },
     [ComplianceChartStatus.PENDING]: {
         value: ComplianceChartStatus.PENDING,
         label: ComplianceStatusMapping[ComplianceActivityStatus.PENDING],
-        color: '#FFC000'
+        color: '--orange'
+    },
+    [ComplianceChartStatus.LATE]: {
+        value: ComplianceChartStatus.LATE,
+        label: ComplianceStatusMapping[ComplianceActivityStatus.LATE_CLOSURE],
+        color: '--yellow'
+    },
+    [ComplianceChartStatus.NON_COMPLIANT]: {
+        value: ComplianceChartStatus.NON_COMPLIANT,
+        label: 'Non-Compliant',
+        color: '--medium-red'
+    },
+    [ComplianceChartStatus.ON_TIME]: {
+        value: ComplianceChartStatus.ON_TIME,
+        label: ComplianceStatusMapping[ComplianceActivityStatus.ON_TIME],
+        color: '--emarald-green'
     }
 }
 

@@ -110,7 +110,7 @@ function LockUnLockCompliance() {
     function DueDateTmpl({ cell }: any) {
         const value = cell.getValue();
         return (
-            <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+            <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
         )
     }
 

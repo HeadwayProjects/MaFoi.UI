@@ -3,8 +3,7 @@ import Icon from "../../../common/Icon";
 import DataGrid from "./DataGrid";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import OptionalLocations from "../../../common/OptionalLocations";
-import { DashboardView } from "../Compliance.constants";
-import { Button } from "react-bootstrap";
+import { DashboardView } from "../../../../constants/Compliance.constants";
 import DashboardAdvanceFilters from "./DashboardAdvanceFilters";
 
 function ComplianceOwnerDashboard() {

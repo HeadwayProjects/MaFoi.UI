@@ -3,13 +3,12 @@ import dayjs from 'dayjs';
 import { CalendarProps, CalendarType } from "./Calendar.constants";
 import styles from "./Calendar.module.css";
 import Icon from '../Icon';
-import { COMPLIANCE_ACTIVITY_INDICATION } from '../../pages/ComplianceOwner/Compliance.constants';
+import { COMPLIANCE_ACTIVITY_INDICATION } from '../../../constants/Compliance.constants';
 
 const WeekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function Month(props: CalendarProps) {
-    const { minDate, maxDate, handleChange, onDateSelection } = props;
-    const [currentMonth, setCurrentMonth] = useState<Date>(dayjs().startOf('M').toDate());
+    const { handleChange, onDateSelection } = props;
     const [selectedMonth, setSelectedMonth] = useState<Date>(dayjs().startOf('M').toDate());
     const [dateRange, setDateRange] = useState<any>();
     const [dates, setDates] = useState<any[]>([]);

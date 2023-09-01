@@ -20,7 +20,7 @@ import { Button, Dropdown, DropdownButton } from "react-bootstrap";
 import ComplianceAssignUser from "./ComplianceAssignUser";
 import MastersLayout from "../Masters/MastersLayout";
 import { GetComplianceBreadcrumb } from "./Compliance.constants";
-import { ComplianceActivityStatus } from "../ComplianceOwner/Compliance.constants";
+import { COMPLIANCE_ACTIVITY_INDICATION, ComplianceActivityStatus, ComplianceStatusMapping } from "../../../constants/Compliance.constants";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -43,7 +43,7 @@ function ComplianceScheduleDetails(this: any) {
     const [advaceSearchFilters, setAdvanceSearchFilters] = useState<any>();
     const afRef: any = useRef();
     afRef.current = advaceSearchFilters;
-    const [statusFilters] = useState([{ columnName: 'status', value: [ComplianceActivityStatus.DUE, ComplianceActivityStatus.OVERDUE, ComplianceActivityStatus.PENDING, ComplianceActivityStatus.NON_COMPLIANT].join(API_DELIMITER) }]);
+    const [statusFilters] = useState([{ columnName: 'status', value: [ComplianceActivityStatus.DUE, ComplianceActivityStatus.NON_COMPLIANT].join(API_DELIMITER) }]);
     const sfRef: any = useRef();
     sfRef.current = statusFilters;
     const [payload, setPayload] = useState<any>();
@@ -116,7 +116,7 @@ function ComplianceScheduleDetails(this: any) {
     function DueDateTmpl({ cell }: any) {
         const value = cell.getValue();
         return (
-            <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+            <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
         )
     }
 
@@ -124,7 +124,7 @@ function ComplianceScheduleDetails(this: any) {
         const status = cell.getValue();
         return (
             <div className="d-flex align-items-center position-relative">
-                <span className={`status-${status} ellipse`}>{STATUS_MAPPING[status] || status}</span>
+                <span className="ellipse" style={{color: COMPLIANCE_ACTIVITY_INDICATION[status] || ''}}>{ComplianceStatusMapping[status] || status}</span>
             </div>
         )
     }
@@ -157,11 +157,7 @@ function ComplianceScheduleDetails(this: any) {
 
     const columns = [
         {
-            title: "", field: "auditted", width: 40,
-            formatter: reactFormatter(<ActivityTypeTmpl />)
-        },
-        {
-            title: "Month & Year", field: "month", width: 140,
+            title: "Month (Year)", field: "month", width: 120,
             formatter: reactFormatter(<MonthTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },

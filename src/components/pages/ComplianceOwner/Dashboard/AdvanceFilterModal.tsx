@@ -9,7 +9,7 @@ import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import { MONTHS_ENUM } from "../../../common/Constants";
 import dayjs from "dayjs";
 import { API_DELIMITER } from "../../../../utils/constants";
-import { ComplianceActivityStatus, ComplianceStatusMapping } from "../Compliance.constants";
+import { ComplianceActivityStatus, ComplianceStatusMapping } from "../../../../constants/Compliance.constants";
 
 export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel }: any) {
     const [filter, setFilter] = useState<any>({ hideButtons: true, ...data });
@@ -71,17 +71,16 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
                 label: 'Status',
                 isMulti: true,
                 options: [
-                    ComplianceActivityStatus.PENDING,
+                    ComplianceActivityStatus.DUE,
                     ComplianceActivityStatus.NON_COMPLIANT,
                     ComplianceActivityStatus.SUBMITTED,
-                    ComplianceActivityStatus.OVERDUE,   
-                    ComplianceActivityStatus.APPROVE,
+                    ComplianceActivityStatus.APPROVED,
                     ComplianceActivityStatus.REJECTED].map((status: any) => {
-                    return {
-                        id: status,
-                        name: ComplianceStatusMapping[status]
-                    }
-                }),
+                        return {
+                            id: status,
+                            name: ComplianceStatusMapping[status]
+                        }
+                    }),
                 disabled: !Boolean(filter.vertical)
             }
         ]
@@ -150,7 +149,7 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
         if (department) {
             _payload.departmentId = department.value;
         }
-        if ((status ||[]).length) {
+        if ((status || []).length) {
             _payload.status = status.map((s: any) => s.value).join(API_DELIMITER);
         }
         onSubmit({ payload: _payload, data: filter });

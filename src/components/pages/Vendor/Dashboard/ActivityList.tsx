@@ -5,7 +5,7 @@ import { STATUS_MAPPING } from "../../../common/Constants";
 function StatusTmp({ status }: any) {
     function computeStatusColor(status: string) {
         if (status === 'Pending') {
-            return 'text-warning';
+            return 'text-warn';
         } else if (status === 'Reject' || status === 'Overdue') {
             return 'text-danger';
         } else if (status === 'Submitted') {

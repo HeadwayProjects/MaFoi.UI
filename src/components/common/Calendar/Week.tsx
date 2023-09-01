@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { CalendarProps, CalendarType } from "./Calendar.constants";
 import Icon from '../Icon';
 import styles from "./Calendar.module.css";
-import { COMPLIANCE_ACTIVITY_INDICATION } from '../../pages/ComplianceOwner/Compliance.constants';
+import { COMPLIANCE_ACTIVITY_INDICATION } from '../../../constants/Compliance.constants';
 
 export default function Week(this: any, props: CalendarProps) {
     const { minDate, maxDate, handleChange, onDateSelection } = props;

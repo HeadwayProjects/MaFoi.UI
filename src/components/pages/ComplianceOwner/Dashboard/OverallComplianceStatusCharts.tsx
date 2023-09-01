@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useGetOverallComplianceStatus } from "../../../../backend/compliance";
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
-import { ComplianceChartStatus, setUserDetailsInFilters } from "../Compliance.constants";
+import { ComplianceChartStatus, setUserDetailsInFilters } from "../../../../constants/Compliance.constants";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import ComplianceStatusChart from "./ComplianceStatusChart";
 const keys = [

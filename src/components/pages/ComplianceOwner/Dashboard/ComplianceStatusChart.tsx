@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react";
-import { ComplianceChartStatus, ComplianceChartStatusMapping } from "../Compliance.constants";
+import { ComplianceChartStatus, ComplianceChartStatusMapping } from "../../../../constants/Compliance.constants";
+import { getCSSPropertyValue } from "../../../../utils/styles";
 
 export default function ComplianceStatusChart({ data, fields }: any) {
     const [series, setSeries] = useState<any>([])
@@ -13,7 +14,7 @@ export default function ComplianceStatusChart({ data, fields }: any) {
                     value: data[key],
                     name: `${data[key]} ${_chart.label}`,
                     itemStyle: {
-                        color: _chart.color
+                        color: getCSSPropertyValue(_chart.color) || _chart.color
                     }
                 }
             });

@@ -3,7 +3,7 @@ import Calendar from "../../../common/Calendar/Calendar"
 import ComplianceOwnerDashboardActivities from "./ComplianceOwnerDashboardActivities";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import ComplianceOwnerActivities from "../TaskManagement/ComplianceOwnerActivities";
-import { DashboardView } from "../Compliance.constants";
+import { DashboardView } from "../../../../constants/Compliance.constants";
 import ComplianceDashboardCharts from "./ComplianceDashboardCharts";
 
 export default function DataGrid({ filters, view }: any) {
