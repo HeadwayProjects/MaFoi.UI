@@ -102,6 +102,7 @@ export enum USER_PRIVILEGES {
     REVIEWER_DASHBOARD = 'REVIEWER_DASHBOARD',
     OWNER_DASHBOARD = 'OWNER_DASHBOARD',
     MANAGER_DASHBOARD = 'MANAGER_DASHBOARD',
+    ESCALATION_DASHBOARD = 'ESCALATION_DASHBOARD',
     REVIEWER_ACTIVITIES = 'REVIEWER_ACTIVITIES',
     REVIEWER_ACTIVITIES_AUDIT = 'REVIEWER_ACTIVITIES_AUDIT',
     REVIEWER_ACTIVITIES_PUBLISH = 'REVIEWER_ACTIVITIES_PUBLISH',
@@ -587,6 +588,10 @@ export const PAGES_CONFIGURATION = [
                 ]
             },
             {
+                id: USER_PRIVILEGES.ESCALATION_DASHBOARD,
+                name: 'Escalation'
+            },
+            {
                 id: USER_PRIVILEGES.SUBMITTER_DASHBOARD,
                 name: 'Submitter',
             },
@@ -601,20 +606,6 @@ export const PAGES_CONFIGURATION = [
         name: 'Activities',
         isMulti: false,
         privileges: [
-            // {
-            //     id: USER_PRIVILEGES.OWNER_ACTIVITIES,
-            //     name: 'Owner',
-            //     actions: [
-            //         {
-            //             id: USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT,
-            //             name: 'Submit for Approval'
-            //         }
-            //     ]
-            // },
-            // {
-            //     id: USER_PRIVILEGES.MANAGER_ACTIVITIES,
-            //     name: 'Manager'
-            // },
             {
                 id: USER_PRIVILEGES.SUBMITTER_ACTIVITIES,
                 name: 'Submitter',

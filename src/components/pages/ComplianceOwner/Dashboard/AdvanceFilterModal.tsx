@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
+import { uniq } from "underscore";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
-import { getMaxMonthYear, getMinMonthYear } from "../../../../utils/common";
+import { getMaxMonthYear, getMinMonthYear, getValue } from "../../../../utils/common";
 import { ActivityType } from "../../Masters/Master.constants";
 import { useGetDepartmentUserMappings } from "../../../../backend/masters";
-import { getUserDetails } from "../../../../backend/auth";
+import { getUserDetails, hasUserAccess } from "../../../../backend/auth";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import { MONTHS_ENUM } from "../../../common/Constants";
 import dayjs from "dayjs";
 import { API_DELIMITER } from "../../../../utils/constants";
 import { ComplianceActivityStatus, ComplianceStatusMapping } from "../../../../constants/Compliance.constants";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 
-export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel }: any) {
+export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel, companies }: any) {
     const [filter, setFilter] = useState<any>({ hideButtons: true, ...data });
     const [verticals, setVerticals] = useState<any[]>([]);
     const [departments, setDepartments] = useState<any[]>([]);
+    const [owners, setOwners] = useState<any[]>([]);
+    const [managers, setManagers] = useState<any[]>([]);
     const { departmentUsers, isFetching } = useGetDepartmentUserMappings({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'userId', value: getUserDetails().userid }] });
+    const { departmentUsers: allDepartmentUsers, isFetching: fetchingUsers } = useGetDepartmentUserMappings({ ...DEFAULT_OPTIONS_PAYLOAD });
 
     const schema: any = {
         fields: [
@@ -82,6 +87,34 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
                         }
                     }),
                 disabled: !Boolean(filter.vertical)
+            },
+            {
+                component: componentTypes.SELECT,
+                name: 'owner',
+                label: 'Owner',
+                options: owners,
+                condition: {
+                    when: 'owner',
+                    is: () => {
+                        return hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) ||
+                            hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD);
+                    },
+                    then: { visible: true }
+                }
+            },
+            {
+                component: componentTypes.SELECT,
+                name: 'manager',
+                label: 'Manager',
+                options: managers,
+                condition: {
+                    when: 'manager',
+                    is: () => {
+                        return hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) ||
+                            hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD);
+                    },
+                    then: { visible: true }
+                }
             }
         ]
     }
@@ -116,7 +149,7 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
     }
 
     function search() {
-        const { monthYear, dueDate, activityType, vertical, department, status } = filter;
+        const { monthYear, dueDate, activityType, vertical, department, status, owner, manager } = filter;
         const _payload: any = {};
         if (monthYear) {
             const date = new Date(monthYear);
@@ -149,12 +182,44 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
         if (department) {
             _payload.departmentId = department.value;
         }
+        if (owner) {
+            _payload.complianceOwnerId = owner.value;
+        }
+        if (manager) {
+            _payload.complianceManagerId = manager.value;
+        }
         if ((status || []).length) {
             _payload.status = status.map((s: any) => s.value).join(API_DELIMITER);
         }
         onSubmit({ payload: _payload, data: filter });
         onCancel();
     }
+
+    useEffect(() => {
+        if (!fetchingUsers && allDepartmentUsers) {
+            const cids = (companies || []).map(({ value }: any) => value);
+            const _owners = allDepartmentUsers.filter(({ department, user }: any) => {
+                const companyId = getValue(department, 'vertical.company.id');
+                if (!cids.includes(companyId)) {
+                    return false;
+                }
+                const { userRoles } = user;
+                return Boolean(userRoles.find(({ pages }: any) => pages.includes(USER_PRIVILEGES.OWNER_DASHBOARD)));
+            });
+            const _managers = allDepartmentUsers.filter(({ department, user }: any) => {
+                const companyId = getValue(department, 'vertical.company.id');
+                if (!cids.includes(companyId)) {
+                    return false;
+                }
+                const { userRoles } = user;
+                return Boolean(userRoles.find(({ pages }: any) => pages.includes(USER_PRIVILEGES.MANAGER_DASHBOARD)));
+            });
+            setOwners(uniq(_owners.map(({ user }: any) => user), true, (user) => user.id));
+            setManagers(uniq(_managers.map(({ user }: any) => user), true, (user) => user.id));
+
+        }
+
+    }, [fetchingUsers]);
 
     useEffect(() => {
         if (!isFetching && departmentUsers) {

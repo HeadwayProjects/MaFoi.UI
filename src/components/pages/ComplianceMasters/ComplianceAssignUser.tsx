@@ -9,12 +9,15 @@ import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button, Modal } from "react-bootstrap";
 import { useBulkUpdateComplianceSchedule } from "../../../backend/compliance";
 import { ResponseModel } from "../../../models/responseModel";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
 
 export default function ComplianceAssignUser(this: any, { activities, onCancel }: any) {
     const [t] = useState(new Date().getTime());
     const [form, setForm] = useState<any>({});
     const [data, setData] = useState<any>({ hideButtons: true });
     const [company, setCompany] = useState<any>(null);
+    const [owners, setOwners] = useState<any[]>([]);
+    const [managers, setManagers] = useState<any[]>([]);
     const [vertical, setVertical] = useState<any>(null);
     const [department, setDepartment] = useState<any>(null);
     const { verticals } = useGetVerticals({
@@ -25,7 +28,7 @@ export default function ComplianceAssignUser(this: any, { activities, onCancel }
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'verticalId', value: (vertical || {}).value }], t
     }, Boolean(vertical));
-    const { departmentUsers } = useGetDepartmentUserMappings({
+    const { departmentUsers, isFetching } = useGetDepartmentUserMappings({
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'departmentId', value: (department || {}).value }]
     }, Boolean(department));
@@ -74,12 +77,7 @@ export default function ComplianceAssignUser(this: any, { activities, onCancel }
                 component: componentTypes.SELECT,
                 name: 'owner',
                 label: 'Owner',
-                options: (departmentUsers || []).map((x: any) => {
-                    return {
-                        id: x.userId,
-                        name: x.user.name
-                    }
-                }),
+                options: owners,
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
@@ -88,12 +86,7 @@ export default function ComplianceAssignUser(this: any, { activities, onCancel }
                 component: componentTypes.SELECT,
                 name: 'manager',
                 label: 'Manager',
-                options: (departmentUsers || []).map((x: any) => {
-                    return {
-                        id: x.userId,
-                        name: x.user.name
-                    }
-                }),
+                options: managers,
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ]
@@ -156,6 +149,26 @@ export default function ComplianceAssignUser(this: any, { activities, onCancel }
             setCompany({ value: company.id, label: company.name });
         }
     }, [activities]);
+
+    useEffect(() => {
+        if (isFetching) {
+            setOwners([]);
+            setManagers([]);
+        }
+        if (!isFetching && departmentUsers) {
+            const _owners = departmentUsers.filter(({user}: any) => {
+                const isOwner = user.userRoles.find(({pages}: any) => pages.includes(USER_PRIVILEGES.OWNER_DASHBOARD));
+                return Boolean(isOwner);
+            }).map(({user}: any) => user);
+            const _managers = departmentUsers.filter(({user}: any) => {
+                const isManager = user.userRoles.find(({pages}: any) => pages.includes(USER_PRIVILEGES.MANAGER_DASHBOARD));
+                return Boolean(isManager);
+            }).map(({user}: any) => user);
+            setOwners(_owners);
+            setManagers(_managers);
+        }
+
+    }, [isFetching]);
 
     return (
         <>

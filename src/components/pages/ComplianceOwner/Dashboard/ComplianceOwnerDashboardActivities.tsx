@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
 import { useGetComplianceByDate } from "../../../../backend/compliance";
-import { getUserDetails } from "../../../../backend/auth";
 
 type Props = {
     type: CalendarType,
@@ -88,17 +87,12 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
         if (filters) {
             const _payload = { ...DEFAULT_PAYLOAD, ...payload, pagination: null };
             const _filters = _payload.filters;
-            const fromDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'fromdate');
-            const toDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'todate');
-            let complianceOwner = _filters.find((x: any) => x.columnName.toLowerCase() === 'complianceownerid');
-            if (!complianceOwner) {
-                const _user = getUserDetails();
-                complianceOwner = { columnName: 'complianceOwnerId', value: _user.userid };
-            }
             const _fs = Object.keys(filters).map((columnName: any) => {
                 return { columnName, value: filters[columnName] }
             });
-            setPayload({ ..._payload, filters: [..._fs, fromDate, toDate, complianceOwner] });
+            const fromDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'fromdate');
+            const toDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'todate');
+            setPayload({ ..._payload, filters: setUserDetailsInFilters([..._fs, fromDate, toDate]) });
         }
     }, [filters]);
 
@@ -139,7 +133,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
         <>
             {
                 (data || []).length === 0 &&
-                <div className="card shadow align-items-center justif-content-center h-100">
+                <div className="card shadow align-items-center justify-content-center h-100">
                     <span className="fst-italic text-black-600">No data available</span>
                 </div>
             }

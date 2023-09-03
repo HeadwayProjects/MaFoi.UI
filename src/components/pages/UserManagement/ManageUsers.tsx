@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { ACTIONS } from "../../common/Constants";
+import { ACTIONS, TOOLTIP_DELAY } from "../../common/Constants";
 import { useDeleteUser, useGetUserRoles, useGetUsers } from "../../../backend/users";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import Icon from "../../common/Icon";
 import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, reactFormatter } from "../../common/Table";
 import MastersLayout from "../Masters/MastersLayout";
-import { Button } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import ConfirmModal from "../../common/ConfirmModal";
 import PageLoader from "../../shared/PageLoader";
 import UserDetails from "./UserDetails";
@@ -36,7 +36,7 @@ function MangeUsers() {
     filterRef.current = filters;
     const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
     const { users, total, isFetching, refetch } = useGetUsers(payload, Boolean(payload));
-    const { roles } = useGetUserRoles({...DEFAULT_OPTIONS_PAYLOAD});
+    const { roles } = useGetUserRoles({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { deleteUser, deleting } = useDeleteUser((response: any) => {
         toast.success(`${user.name} deleted successfully.`);
         submitCallback();
@@ -91,11 +91,19 @@ function MangeUsers() {
     }
 
     function RoleTmpl({ cell }: any) {
-        const roles = (cell.getValue() || []).map((x: any) => x.description).join(', ');
+        const roles = (cell.getValue() || []).map((x: any) => x.name).join(', ');
         return (
-            <div className="d-flex flex-row align-items-center h-100">
-                {roles}
-            </div>
+            <>
+                {
+                    !!roles &&
+                    <div className="d-flex align-items-center h-100 w-auto">
+                        <OverlayTrigger overlay={<Tooltip>{roles}</Tooltip>} rootClose={true}
+                            placement="bottom" delay={{ show: TOOLTIP_DELAY } as any}>
+                            <div className="ellipse two-lines">{roles}</div>
+                        </OverlayTrigger>
+                    </div>
+                }
+            </>
         )
     }
 

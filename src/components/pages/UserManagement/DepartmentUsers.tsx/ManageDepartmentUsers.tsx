@@ -14,11 +14,15 @@ import PageLoader from "../../../shared/PageLoader";
 import ConfirmModal from "../../../common/ConfirmModal";
 import DepartmentUserDetails from "./DepartmentUserDetails";
 
+const SortFields: any = {
+    user: 'userName'
+}
+
 function MangeDepartmentUsers() {
     const [breadcrumb] = useState([
         { id: 'home', label: 'Home', path: '/' },
         { id: 'users', label: 'User Management', path: '/userManagement/roles' },
-        { id: 'users', label: 'Manage Users' },
+        { id: 'department-user', label: 'Department User Mapping' },
     ]);
     const [action, setAction] = useState(ACTIONS.NONE);
     const [user, setUser] = useState<any>(null);
@@ -27,7 +31,7 @@ function MangeDepartmentUsers() {
     const [filters, setFilters] = useState<any>();
     const filterRef: any = useRef();
     filterRef.current = filters;
-    const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
+    const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, sort: { columnName: 'userName', order: 'asc' } });
     const { departmentUsers, total, isFetching, refetch } = useGetDepartmentUserMappings(payload, Boolean(payload));
     const { deleteDepartmentUserMapping, deleting } = useDeleteDepartmentUserMapping((response: any) => {
         toast.success(`${user.name} deleted successfully.`);
@@ -70,6 +74,24 @@ function MangeDepartmentUsers() {
                     setAction(ACTIONS.VIEW)
                 }} />
             </div>
+        )
+    }
+
+    function RoleTmpl({ cell }: any) {
+        const { user } = cell.getData();
+        const userRole = user.userRoles[0].name;
+        return (
+            <>
+                {
+                    !!userRole &&
+                    <div className="d-flex align-items-center h-100 w-auto">
+                        <OverlayTrigger overlay={<Tooltip>{userRole}</Tooltip>} rootClose={true}
+                            placement="bottom" delay={{ show: TOOLTIP_DELAY } as any}>
+                            <div className="ellipse two-lines">{userRole}</div>
+                        </OverlayTrigger>
+                    </div>
+                }
+            </>
         )
     }
 
@@ -130,10 +152,11 @@ function MangeDepartmentUsers() {
     }
 
     const columns = [
-        { title: "User", field: "user", formatter: reactFormatter(<ValueTmpl />) },
         { title: "Company", field: "company", formatter: reactFormatter(<CompanyTmpl />) },
         { title: "Vertical", field: "vertical", formatter: reactFormatter(<VerticalTmpl />) },
         { title: "Department", field: "department", formatter: reactFormatter(<ValueTmpl />) },
+        { title: "User", field: "user", formatter: reactFormatter(<ValueTmpl />) },
+        { title: "User Role", field: "userRole", formatter: reactFormatter(<RoleTmpl />), headerSort: false, },
         {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
@@ -147,7 +170,7 @@ function MangeDepartmentUsers() {
         rowHeight: 54,
         selectable: false,
         paginate: true,
-        initialSort: [{ column: 'name', dir: 'asc' }]
+        initialSort: [{ column: 'user', dir: 'asc' }]
     });
 
     function formatApiResponse(params: any, list: any, totalRecords: any) {
@@ -171,7 +194,7 @@ function MangeDepartmentUsers() {
                 pageNumber: params.page
             },
             sort: {
-                columnName: field || 'name',
+                columnName: SortFields[field] || field || 'userName',
                 order: dir || 'asc'
             }
         };

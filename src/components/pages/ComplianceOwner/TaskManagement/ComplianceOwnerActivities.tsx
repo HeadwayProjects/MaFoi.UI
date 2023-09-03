@@ -121,10 +121,18 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
+            title: "Owner", field: "complianceOwner.name",
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            widthGrow: 1, minWidth: 140,
+            visible: hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) || hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)
+        },
+        {
             title: "Manager", field: "complianceManager.name",
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />),
-            widthGrow: 1, minWidth: 140
+            widthGrow: 1, minWidth: 140,
+            visible: hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) || hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)
         },
         {
             title: "Vertical", field: "veritical.name",

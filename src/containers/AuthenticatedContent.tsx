@@ -69,9 +69,11 @@ function AuthenticatedContent() {
                 return layout(<VendorDashboard />);
             } else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_DASHBOARD)) {
                 return layout(<AuditorDashboard />);
-            } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
-                return layout(<ComplianceOwnerDashboard />);
-            } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
+            } else if (
+                auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) ||
+                auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) ||
+                auth.hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)
+            ) {
                 return layout(<ComplianceOwnerDashboard />);
             } else {
                 return layout(<Home />)

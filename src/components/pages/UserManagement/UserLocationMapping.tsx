@@ -20,7 +20,7 @@ function UserLocationMapping({ user, data, onClose, onSubmit }: any) {
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (parentCompany || {}).value }]
     }, Boolean((parentCompany || {}).value));
-    const { locations, isFetching } = useGetCompanyLocations({
+    const { locations, isFetching }: any = useGetCompanyLocations({
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'companyId', value: (associateCompany || {}).value }],
         sort: { columnName: 'locationName', order: 'asc' }

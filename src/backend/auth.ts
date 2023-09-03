@@ -6,6 +6,7 @@ import { API_DELIMITER } from "../utils/constants";
 
 const AUTH_TOKEN = 'auth-token';
 const USER_PRIVILEGES = 'user-privileges';
+const USER_ROLE = 'user-role';
 
 export function getAuthToken() {
     return Storage.getValue(AUTH_TOKEN);
@@ -16,6 +17,15 @@ export function getUserPrivileges() {
     return userPrivileges.split(API_DELIMITER);
 }
 
+export function setUserRole(role: string, privileges: string) {
+    Storage.setValue(USER_ROLE, role);
+    Storage.setValue(USER_PRIVILEGES, privileges);
+}
+
+export function getUserRole() {
+    return Storage.getValue(USER_ROLE) || '';
+}
+
 export function setAuthToken(token: string) {
     Storage.setValue(AUTH_TOKEN, token);
 }
@@ -24,20 +34,24 @@ export function clearAuthToken() {
     Storage.removeValue([AUTH_TOKEN]);
 }
 
-export function setUserSession(token: string, privileges: string) {
+export function setUserSession(token: string, privileges: string, role: string) {
     Storage.setValue(AUTH_TOKEN, token);
-    Storage.setValue(USER_PRIVILEGES, privileges);
+    setUserRole(role, privileges);
 }
 
 export function clearUserSession() {
-    Storage.removeValue([AUTH_TOKEN, USER_PRIVILEGES]);
+    Storage.removeValue([AUTH_TOKEN, USER_PRIVILEGES, USER_ROLE]);
 }
 
 export function getUserDetails(_token = ''): any {
     const token = getAuthToken();
-    if (token || _token) {
+    return parseToken(token || _token);
+}
+
+export function parseToken(token: string): any {
+    if (token) {
         try {
-            return jwtDecode(token || _token);
+            return jwtDecode(token);
         } catch (e) {
             return null;
         }

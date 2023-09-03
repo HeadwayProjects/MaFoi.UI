@@ -9,7 +9,7 @@ import { API_RESULT, ERROR_MESSAGES } from "../../../../../utils/constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../../common/FormRenderer";
 import { getValue, preventDefault } from "../../../../../utils/common";
 import PageLoader from "../../../../shared/PageLoader";
-import { useGetCompanyUsers, useGetUsers } from "../../../../../backend/users";
+import { useGetCompanyUsers } from "../../../../../backend/users";
 
 
 function EscalationMatrixDetails({ action, data, onClose, onSubmit }: any) {
@@ -18,8 +18,7 @@ function EscalationMatrixDetails({ action, data, onClose, onSubmit }: any) {
     const [matrix, setMatrix] = useState<any>({ hideButtons: true });
     const [companyId, setCompany] = useState();
     const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t }, action !== ACTIONS.VIEW);
-    // const { companyUsers } = useGetCompanyUsers(companyId);
-    const { users: companyUsers } = useGetUsers({...DEFAULT_OPTIONS_PAYLOAD});
+    const { companyUsers } = useGetCompanyUsers(companyId);
     const { createMatrix, creating } = useCreateEscalationMatrix((response: any) => {
         const { key, value } = response;
         if (key === API_RESULT.SUCCESS) {

@@ -12,6 +12,7 @@ function ComplianceOwnerDashboard() {
     const lfRef = useRef<any>();
     lfRef.current = locationFilter;
     const [filters, setFilters] = useState<any>(null);
+    const [companies, setCompanies] = useState<any>([]);
 
     function onLocationChange(event: any) {
         setLocationFilter(event);
@@ -44,8 +45,8 @@ function ComplianceOwnerDashboard() {
             <div className={`row m-0 py-2 bg-white ${styles.dashboardContainer}`}>
                 <div className="col-12">
                     <div className="d-flex flex-row m-0 pb-2 justify-content-between align-items-end">
-                        <OptionalLocations onChange={onLocationChange} />
-                        <DashboardAdvanceFilters onChange={handleFilterChange} />
+                        <OptionalLocations onChange={onLocationChange} loadCompanies={setCompanies}/>
+                        <DashboardAdvanceFilters onChange={handleFilterChange} companies={companies} />
                     </div>
                     <DataGrid filters={filters} view={view} />
                 </div>
