@@ -32,7 +32,7 @@ export default function OverallComplianceStatusCharts({ filters }: any) {
                 return { columnName, value: filters[columnName] }
             });
             setPayload({
-                ..._payload, filters: setUserDetailsInFilters(_fs, true)
+                ..._payload, filters: setUserDetailsInFilters(_fs)
             });
         }
     }, [filters]);

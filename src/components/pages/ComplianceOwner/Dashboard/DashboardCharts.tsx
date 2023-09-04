@@ -31,7 +31,7 @@ const Status: any = {
 
 export default function DashboardCharts({ filters }: any) {
     const [category, setCategory] = useState(ChartCategory.ASSOCIATE_COMPANY);
-    const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, pagination: null, filters: setUserDetailsInFilters([], true) });
+    const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, pagination: null, filters: setUserDetailsInFilters([]) });
     const [options, setOptions] = useState<any>(null);
     const { response, isFetching } = useGetComplianceStatusByCategory(category, payload, Boolean(payload && hasFilters()));
 
@@ -143,7 +143,7 @@ export default function DashboardCharts({ filters }: any) {
                 return { columnName, value: filters[columnName] }
             });
             setPayload({
-                ..._payload, filters: setUserDetailsInFilters(_fs, true)
+                ..._payload, filters: setUserDetailsInFilters(_fs)
             });
         }
     }, [filters]);

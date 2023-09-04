@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import OverallComplianceStatusCharts from "./OverallComplianceStatusCharts";
 import DashboardCharts from "./DashboardCharts";
 import { Dropdown, DropdownButton } from "react-bootstrap";
@@ -32,19 +32,16 @@ export default function ComplianceDashboardCharts({ filters }: any) {
     const [payload, setPayload] = useState<any>();
 
     function handleFYSelection(year: any) {
-        if ((fy || {}).value !== year.value) {
-            setFY(year);
-            const { from, to } = year;
-            const fromDate = new Date(`04-01-${from}`);
-            const toDate = new Date(`03-31-${to}`);
-            setQ({});
-            setPayload({ ...filters, fromDate: dayjs(fromDate).toISOString(), toDate: dayjs(toDate).toISOString() })
-        }
+        setFY(year);
+        const { from, to } = year;
+        const fromDate = new Date(`04-01-${from}`);
+        const toDate = new Date(`03-31-${to}`);
+        setQ({});
+        setPayload({ ...filters, fromDate: dayjs(fromDate).toISOString(), toDate: dayjs(toDate).toISOString() })
     }
 
     function handleQuarterSelection(q: any) {
         if (quarter.value !== q.value) {
-            const { from, to } = q;
             setQ(q);
             const fromDate = new Date(`${q.from}-${fy[q.fromYear]}`);
             const toDate = new Date(`${q.to}-${fy[q.toYear]}`);
@@ -61,7 +58,7 @@ export default function ComplianceDashboardCharts({ filters }: any) {
 
     useEffect(() => {
         if (filters) {
-            setPayload({ ...payload, ...filters });
+            handleFYSelection(fy || fys[0])
         }
     }, [filters])
 
