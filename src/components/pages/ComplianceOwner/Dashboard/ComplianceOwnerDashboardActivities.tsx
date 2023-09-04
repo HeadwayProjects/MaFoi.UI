@@ -22,13 +22,13 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
 
     function StatusTmpl({ activity }: any) {
         return (
-            <div key={activity.status}>
+            <div key={activity.status} className="mb-2">
                 {
                     activity.status === ComplianceActivityStatus.DUE &&
                     <>
                         <div className="fw-bold">Pending Activities: {activity.count}</div>
                         <div>Finish before the due date</div>
-                        <div>Days Left: {activity.diff}</div>
+                        <div className="text-md fw-bold fst-italic text-warn">Days Left: {activity.diff} {activity.diff < 1 ? 'day': 'days'}</div>
                     </>
                 }
                 {
@@ -36,6 +36,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                     <>
                         <div className="fw-bold">Non-Compliant Activities: {activity.count}</div>
                         <div>These are on high priority and need immediate action.</div>
+                        <div className="text-md fw-bold fst-italic text-error">Overdue for: {activity.diff} {activity.diff < 1 ? 'day': 'days'}</div>
                     </>
                 }
                 {
@@ -111,10 +112,14 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                 _data.push({
                     date: dayjs(date).startOf('D').toISOString(),
                     activities: activities.map((x: any) => {
-                        if (x.status === ComplianceActivityStatus.PENDING) {
+                        if (x.status === ComplianceActivityStatus.DUE) {
                             const currentDate = dayjs(new Date()).startOf('D').toDate();
                             const diff = dayjs(new Date(date)).diff(currentDate, 'd');
                             x.diff = diff;
+                        } else if (x.status === ComplianceActivityStatus.NON_COMPLIANT) {
+                            const currentDate = dayjs(new Date()).startOf('D').toDate();
+                            const diff = dayjs(new Date(date)).diff(currentDate, 'd');
+                            x.diff = diff * -1;
                         }
                         return x;
                     })
