@@ -186,7 +186,7 @@ function ComplianceSchedule(this: any) {
                     <div className="d-flex flex-row justify-content-center mb-4">
                         <div className="w-50 px-4 border-end" style={{ maxWidth: '550px' }}>
                             <div className="d-flex flex-column card shadow p-4">
-                                <div className="text-lg fw-bold">Export Audit Schedule</div>
+                                <div className="text-lg fw-bold">Export Compliance Schedule</div>
                                 <div className="d-flex flex-column h-100 justify-space-between py-2 horizontal-form col2">
                                     <FormRenderer FormTemplate={FormTemplate}
                                         initialValues={exportData}
