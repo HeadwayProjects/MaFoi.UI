@@ -29,11 +29,6 @@ export enum USER_PRIVILEGES {
     EDIT_CITY = 'EDIT_CITY',
     DELETE_CITY = 'DELETE_CITY',
     EXPORT_CITIES = 'EXPORT_CITIES',
-    VIEW_RULE_COMPLIANCE = 'VIEW_RULE_COMPLIANCE',
-    ADD_RULE_COMPLIANCE = 'ADD_RULE_COMPLIANCE',
-    EDIT_RULE_COMPLIANCE = 'EDIT_RULE_COMPLIANCE',
-    DELETE_RULE_COMPLIANCE = 'DELETE_RULE_COMPLIANCE',
-    EXPORT_RULE_COMPLIANCE = 'EXPORT_RULE_COMPLIANCE',
     VIEW_MAPPINGS = 'VIEW_MAPPINGS',
     ADD_MAPPING = 'ADD_MAPPING',
     EDIT_MAPPING = 'EDIT_MAPPING',
@@ -244,26 +239,6 @@ export const PAGES_CONFIGURATION = [
             {
                 id: USER_PRIVILEGES.EXPORT_CITIES,
                 name: 'Export Cities'
-            },
-            {
-                id: USER_PRIVILEGES.VIEW_RULE_COMPLIANCE,
-                name: 'View Rule Compliance'
-            },
-            {
-                id: USER_PRIVILEGES.ADD_RULE_COMPLIANCE,
-                name: 'Add Rule Compliance'
-            },
-            {
-                id: USER_PRIVILEGES.EDIT_RULE_COMPLIANCE,
-                name: 'Edit Rule Compliance'
-            },
-            {
-                id: USER_PRIVILEGES.DELETE_RULE_COMPLIANCE,
-                name: 'Delete Rule Compliance'
-            },
-            {
-                id: USER_PRIVILEGES.EXPORT_RULE_COMPLIANCE,
-                name: 'Export Rule Compliance'
             },
             {
                 id: USER_PRIVILEGES.VIEW_MAPPINGS,

@@ -593,77 +593,12 @@ export function useDeleteSmtp(onSuccess?: any, onError?: any) {
     return { deleteSmtp, error };
 }
 
-export function useGetRuleCompliances(payload: any, enabled = true) {
-    const { data, isFetching, refetch } = useQuery(
-        ['ruleCompliances', payload],
-        async () => await api.post(`/api/RuleComplianceDetail/GetAll`, payload),
-        {
-            refetchOnMount: false,
-            refetchOnWindowFocus: false,
-            enabled
-        }
-    );
-    return { ruleCompliances: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
+export async function getRuleMappings(payload: any) {
+    const response = await api.post(`/api/Mappings/GetActStateList`, payload);
+    return (response || {}).data || {};
 }
 
-export function useCreateRuleCompliance(onSuccess?: any, onError?: any) {
-    const { mutate: createRuleCompliance, error, isLoading: creating } = useMutation(
-        ['createRuleCompliance'],
-        async (payload) => await api.post('/api/RuleComplianceDetail/Add', payload),
-        {
-            onError,
-            onSuccess: (response) => {
-                const data = (response || {}).data || {};
-                onSuccess(data);
-            }
-        }
-    );
-    return { createRuleCompliance, error, creating };
-}
-
-export function useUpdateRuleCompliance(onSuccess?: any, onError?: any) {
-    const { mutate: updateRuleCompliance, error, isLoading: updating } = useMutation(
-        ['updateRuleCompliance'],
-        async (payload) => await api.put('/api/RuleComplianceDetail/Update', payload),
-        {
-            onError,
-            onSuccess: (response) => {
-                const data = (response || {}).data || {};
-                onSuccess(data);
-            }
-        }
-    );
-    return { updateRuleCompliance, error, updating };
-}
-
-export function useDeleteRuleCompliance(onSuccess?: any, onError?: any) {
-    const { mutate: deleteRuleCompliance, error, isLoading: deleting } = useMutation(
-        ['deleteRuleCompliance'],
-        async (id) => await api.del(`/api/RuleComplianceDetail/Delete?Id=${id}`),
-        {
-            onError,
-            onSuccess
-        }
-    );
-    return { deleteRuleCompliance, error, deleting };
-}
-
-export function useImportRuleCompliance(onSuccess?: any, onError?: any) {
-    const { mutate: importRuleCompliance, error, isLoading: uploading } = useMutation(
-        ['importRuleCompliance'],
-        async ({ formData }: any) => await api.post('/api/RuleComplianceDetail/Import', formData, null, true, { responseType: 'blob' }),
-        {
-            onError,
-            onSuccess: (response) => {
-                const data = (response || {});
-                onSuccess(data);
-            }
-        }
-    );
-    return { importRuleCompliance, error, uploading };
-}
-
-export function useStateRuleCompanyMappings(payload: any, enabled = true) {
+export function useGetRuleMappings(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['mappings', payload],
         async () => await api.post(`/api/Mappings/GetActStateList`, payload),
@@ -677,9 +612,9 @@ export function useStateRuleCompanyMappings(payload: any, enabled = true) {
     return { mappings: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
 }
 
-export function useCreateStateRuleCompanyMapping(onSuccess?: any, onError?: any) {
-    const { mutate: createStateRuleCompanyMapping, error, isLoading: creating } = useMutation(
-        ['createStateRuleCompanyMapping'],
+export function useCreateRuleMapping(onSuccess?: any, onError?: any) {
+    const { mutate: createRuleMapping, error, isLoading: creating } = useMutation(
+        ['createRuleMapping'],
         async (payload: any) => await api.post('/api/Mappings/Add', payload),
         {
             onError,
@@ -689,11 +624,11 @@ export function useCreateStateRuleCompanyMapping(onSuccess?: any, onError?: any)
             }
         }
     );
-    return { createStateRuleCompanyMapping, error, creating };
+    return { createRuleMapping, error, creating };
 }
-export function useUpdateStateRuleMapping(onSuccess?: any, onError?: any) {
-    const { mutate: updateStateRuleMapping, error, isLoading: updating } = useMutation(
-        ['updateStateRuleMapping'],
+export function useUpdateRuleMapping(onSuccess?: any, onError?: any) {
+    const { mutate: updateRuleMapping, error, isLoading: updating } = useMutation(
+        ['updateRuleMapping'],
         async (payload) => await api.post('/api/Mappings/UpdateActStateMapping', payload),
         {
             onError,
@@ -703,7 +638,7 @@ export function useUpdateStateRuleMapping(onSuccess?: any, onError?: any) {
             }
         }
     );
-    return { updateStateRuleMapping, error, updating };
+    return { updateRuleMapping, error, updating };
 }
 
 export function useUploadActStateMappingTemplate(onSuccess?: any, onError?: any) {
@@ -734,6 +669,21 @@ export function useDeleteActStateMapping(onSuccess?: any, onError?: any) {
         }
     );
     return { deleteActStateMapping, error, deleting };
+}
+
+export function useImportMappings(onSuccess?: any, onError?: any) {
+    const { mutate: importMappings, error, isLoading: uploading } = useMutation(
+        ['importMappings'],
+        async ({ formData }: any) => await api.post('/api/Mappings/BulkActStateMapping', formData, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importMappings, error, uploading };
 }
 
 export function useGetCompanyLocations(payload: any, enabled = true) {

@@ -16,7 +16,6 @@ import State from "../components/pages/Masters/State";
 import ChangePassword from "../components/pages/Authenticate/ChangePassword";
 import Login from "../components/pages/Authenticate/Login";
 import Navbar from "../components/shared/Navbar";
-import RuleCompliance from "../components/pages/Masters/RuleCompliance/RuleCompliance";
 import RuleStateCompanyMapping from "../components/pages/Masters/Mappings/RuleStateCompanyMapping";
 import MangeUsers from "../components/pages/UserManagement/ManageUsers";
 import AssociateCompanies from "../components/pages/Masters/Companies/AssociateCompanies";
@@ -33,7 +32,6 @@ import ManageVerticals from "../components/pages/Masters/Companies/Verticals/Man
 import ManageDepartments from "../components/pages/Masters/Companies/Departments/ManageDepartments";
 import ComplianceSchedule from "../components/pages/ComplianceMasters/ComplianceSchedule";
 import ComplianceScheduleDetails from "../components/pages/ComplianceMasters/ComplianceScheduleDetails";
-import LockUnLockCompliance from "../components/pages/ComplianceMasters/LockUnLockCompliance";
 import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
 import ComplianceOwnerDashboard from "../components/pages/ComplianceOwner/Dashboard/ComplianceOwnerDashboard";
 import MangeDepartmentUsers from "../components/pages/UserManagement/DepartmentUsers.tsx/ManageDepartmentUsers";
@@ -121,9 +119,6 @@ function AuthenticatedContent() {
         ),
         '/masters/location': () => (
             layout(<Location />)
-        ),
-        '/masters/compliance': () => (
-            layout(<RuleCompliance />)
         ),
         '/masters/mapping': () => (
             layout(<RuleStateCompanyMapping />)

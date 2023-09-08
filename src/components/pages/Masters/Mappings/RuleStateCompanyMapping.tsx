@@ -1,19 +1,28 @@
 import React, { useEffect, useState, useRef } from "react";
 import { ActivityType, GetMastersBreadcrumb } from "../Master.constants";
-import { useDeleteActStateMapping, useGetStates, useStateRuleCompanyMappings } from "../../../../backend/masters";
+import { useDeleteActStateMapping, useGetStates, useGetRuleMappings } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
 import Icon from "../../../common/Icon";
 import { ACTIONS, TOOLTIP_DELAY } from "../../../common/Constants";
 import Table, { CellTmpl, DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD, NameTmpl, reactFormatter } from "../../../common/Table";
 import MastersLayout from "../MastersLayout";
-import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Button, Dropdown, DropdownButton, OverlayTrigger, Tooltip } from "react-bootstrap";
 import ConfirmModal from "../../../common/ConfirmModal";
 import PageLoader from "../../../shared/PageLoader";
 import RuleStateCompanyMappingDetails from "./RuleStateCompanyMappingDetails";
 import TableFilters from "../../../common/TableFilter";
 import { download, downloadFileContent } from "../../../../utils/common";
 import { useExportActStateMappings } from "../../../../backend/exports";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import ImportMappingsModal from "./ImportMappingsModal";
+
+export enum Steps {
+    MAPPING = 1,
+    RULE_COMPLIANCE = 2,
+    DOCUMENTS = 3
+}
 
 function RuleStateCompanyMapping() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Mapping'));
@@ -24,8 +33,8 @@ function RuleStateCompanyMapping() {
     const [filters, setFilters] = useState<any>();
     const filterRef: any = useRef();
     filterRef.current = filters;
-    const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, sort: { columnName: 'act', order: 'asc' } });
-    const { mappings, total, isFetching, refetch } = useStateRuleCompanyMappings({ ...payload }, Boolean(payload));
+    const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, sort: { columnName: 'state', order: 'asc' } });
+    const { mappings, total, isFetching, refetch } = useGetRuleMappings({ ...payload }, Boolean(payload));
     const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD, includeCentral: true });
     const { deleteActStateMapping, deleting } = useDeleteActStateMapping(() => {
         toast.success(`Mapping deleted successfully.`);
@@ -58,7 +67,7 @@ function RuleStateCompanyMapping() {
                 return { value: x, label: x };
             })
         }
-    ]
+    ];
 
     function ActionColumnElements({ cell }: any) {
         const row = cell.getData();
@@ -127,11 +136,12 @@ function RuleStateCompanyMapping() {
     }
 
     const columns = [
-        { title: "Act", field: "act", formatter: reactFormatter(<NameTmpl />) },
-        { title: "Rule", field: "rule", widthGrow: 2, formatter: reactFormatter(<RuleTmpl />) },
-        { title: "Activity", field: "activity", formatter: reactFormatter(<NameTmpl />) },
         { title: "State", field: "state", formatter: reactFormatter(<NameTmpl />), headerSort: true },
+        { title: "Act", field: "act", formatter: reactFormatter(<NameTmpl />) },
+        { title: "Rule", field: "rule", formatter: reactFormatter(<RuleTmpl />) },
+        { title: "Activity", field: "activity", formatter: reactFormatter(<NameTmpl />) },
         { title: "Type", field: "type", formatter: reactFormatter(<TypeTmpl />) },
+        { title: "Risk", field: "ruleComplianceDetails.risk", formatter: reactFormatter(<CellTmpl />), width: 80 },
         { title: "Form Name", field: "formName", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 160,
@@ -145,7 +155,7 @@ function RuleStateCompanyMapping() {
         columns,
         rowHeight: 54,
         selectable: false, paginate: true,
-        initialSort: [{ column: 'act', dir: 'asc' }]
+        initialSort: [{ column: 'state', dir: 'asc' }]
     });
 
     function formatApiResponse(params: any, list: any[], totalRecords: number) {
@@ -153,9 +163,9 @@ function RuleStateCompanyMapping() {
         const { pageSize, pageNumber } = pagination || {};
 
         list = list.map(map => {
-            const { id, state, actRuleActivityMapping, fileName, filePath, formName } = map || {};
+            const { id, state, actRuleActivityMapping, fileName, filePath, formName, ruleComplianceDetailId, ruleComplianceDetails } = map || {};
             const { act, rule, activity } = actRuleActivityMapping || {};
-            return { id, act, rule, activity, state, fileName, filePath, formName }
+            return { id, act, rule, activity, state, fileName, filePath, formName, ruleComplianceDetailId, ruleComplianceDetails }
         });
         const tdata = {
             data: list,
@@ -174,7 +184,7 @@ function RuleStateCompanyMapping() {
                 pageNumber: params.page
             },
             sort: {
-                columnName: field || 'act',
+                columnName: field || 'state',
                 order: dir || 'asc'
             }
         };
@@ -187,6 +197,11 @@ function RuleStateCompanyMapping() {
         setAction(ACTIONS.NONE);
         setMapping(null);
         refetch();
+    }
+
+    function handleCancel() {
+        setAction(ACTIONS.NONE);
+        setMapping(null);
     }
 
     function handleDelete() {
@@ -230,14 +245,26 @@ function RuleStateCompanyMapping() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Act/Rule/Activity"} />
-                                <div className="d-flex">
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
-                                </div>
+                                <DropdownButton title="Actions" variant="primary">
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.ADD_MAPPING) &&
+                                        <Dropdown.Item onClick={() => setAction(ACTIONS.ADD)} className="my-1">
+                                            <Icon name={'plus'} className="me-2"></Icon>Add New
+                                        </Dropdown.Item>
+                                    }
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.EXPORT_MAPPING) &&
+                                        <Dropdown.Item onClick={handleExport} className="my-1" >
+                                            <Icon name={'download'} className="me-2"></Icon>Export
+                                        </Dropdown.Item>
+                                    }
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.ADD_MAPPING) &&
+                                        <Dropdown.Item onClick={() => setAction(ACTIONS.IMPORT)} className="my-1" >
+                                            <Icon name={'upload'} className="me-2"></Icon>Import
+                                        </Dropdown.Item>
+                                    }
+                                </DropdownButton>
                             </div>
                         </div>
                     </div>
@@ -245,15 +272,20 @@ function RuleStateCompanyMapping() {
                 </div>
             </MastersLayout>
             {
-                [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
+                [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) && (action !== ACTIONS.ADD ? Boolean(mapping) : true) &&
                 <RuleStateCompanyMappingDetails action={action} data={action !== ACTIONS.ADD ? mapping : null}
-                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={submitCallback} />
+                    onClose={handleCancel} onSubmit={submitCallback}
+                    step={action === ACTIONS.EDIT ? Steps.RULE_COMPLIANCE : Steps.MAPPING} />
             }
             {
                 action === ACTIONS.DELETE &&
-                <ConfirmModal title={'Delete Act-State-Company Mapping'} onSubmit={handleDelete} onClose={() => setAction(ACTIONS.NONE)}>
+                <ConfirmModal title={'Delete Act-State-Company Mapping'} onSubmit={handleDelete} onClose={handleCancel}>
                     <div className="text-center mb-4">Are you sure you want to delete the mapping ?</div>
                 </ConfirmModal>
+            }
+            {
+                action === ACTIONS.IMPORT &&
+                <ImportMappingsModal onSubmit={submitCallback} onClose={handleCancel} />
             }
             {
                 deleting && <PageLoader>Deleting...</PageLoader>

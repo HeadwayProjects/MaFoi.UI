@@ -669,7 +669,7 @@ export const ComponentMapper = {
 
 
 export function FormTemplate({ formFields }: any) {
-    const { handleSubmit, initialValues = { fullWidth: true }, getState } = useFormApi();
+    const { handleSubmit, onCancel, initialValues = { fullWidth: true }, getState } = useFormApi();
     const { valid, touched } = getState();
 
     return (
@@ -677,11 +677,17 @@ export function FormTemplate({ formFields }: any) {
             {formFields}
             {
                 !initialValues.hideButtons &&
-                <div className={`d-flex flex-row mt-4 ${initialValues.buttonWrapStyles || 'justify-content-center'}`}>
+                <div className={`d-flex flex-row mt-4 gap-3 ${initialValues.buttonWrapStyles || 'justify-content-center'}`}>
                     <Button variant="primary" type="submit" className={`btn btn-primary px-4 ${initialValues.fullWidth ? 'w-100' : ''}`}
                         disabled={!valid || !touched}>
                         {initialValues.submitBtnText || 'Submit'}
                     </Button>
+                    {
+                        initialValues.showCancel &&
+                        <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onCancel}>
+                            {initialValues.cancelBtnText || 'Cancel'}
+                        </Button>
+                    }
                 </div>
             }
         </form>
