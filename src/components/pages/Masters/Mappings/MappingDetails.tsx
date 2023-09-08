@@ -122,7 +122,7 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit,
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action !== ACTIONS.ADD ? getValue(mappingDetails, 'activity.label'): '',
+                content: action !== ACTIONS.ADD ? getValue(mappingDetails, 'activity.label') : '',
                 formatOptionLabel: action !== ACTIONS.VIEW ? activityOptionLabel : '',
                 defaultOptions: activities,
                 loadOptions: debounce((keyword: any, callback: any) => {
@@ -163,7 +163,7 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit,
                 { columnName: 'actId', value: act.value },
                 { columnName: 'ruleId', value: rule.value },
                 { columnName: 'activityId', value: activity.value },
-                { columnName: 'stateId', value: state.value }
+                { columnName: 'stateId', value: state ? state.value : CentralId }
             ]
             const _payload = { ...DEFAULT_PAYLOAD, filters, pagination: { pageSize: 2, pageNumber: 1 } };
             getRuleMappings(_payload).then(({ list = [] }: any) => {
@@ -195,7 +195,11 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit,
                 <Alert variant={'warning'}>This step is not editable. However, rule compliance and documents can be edited.</Alert>
             }
             <FormRenderer FormTemplate={FormTemplate}
-                initialValues={{ buttonWrapStyles: 'justify-content-start', submitBtnText: 'Next', ...mappingDetails }}
+                initialValues={{
+                    buttonWrapStyles: 'justify-content-start',
+                    submitBtnText: 'Next', ...mappingDetails,
+                    hideButtons: action === ACTIONS.VIEW
+                }}
                 componentMapper={ComponentMapper}
                 schema={schema}
                 onSubmit={handleSubmit}

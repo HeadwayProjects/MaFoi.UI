@@ -21,7 +21,8 @@ import ImportMappingsModal from "./ImportMappingsModal";
 export enum Steps {
     MAPPING = 1,
     RULE_COMPLIANCE = 2,
-    DOCUMENTS = 3
+    DOCUMENTS = 3,
+    ALL = -1
 }
 
 function RuleStateCompanyMapping() {
@@ -275,7 +276,7 @@ function RuleStateCompanyMapping() {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) && (action !== ACTIONS.ADD ? Boolean(mapping) : true) &&
                 <RuleStateCompanyMappingDetails action={action} data={action !== ACTIONS.ADD ? mapping : null}
                     onClose={handleCancel} onSubmit={submitCallback}
-                    step={action === ACTIONS.EDIT ? Steps.RULE_COMPLIANCE : Steps.MAPPING} />
+                    step={action === ACTIONS.ADD ? Steps.MAPPING : (action === ACTIONS.EDIT ? Steps.RULE_COMPLIANCE : Steps.ALL)} />
             }
             {
                 action === ACTIONS.DELETE &&

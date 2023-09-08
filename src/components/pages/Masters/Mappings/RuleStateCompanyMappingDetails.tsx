@@ -91,14 +91,14 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
             id: id ? id : undefined,
             actId: action === ACTIONS.ADD ? act.value : undefined,
             activityId: action === ACTIONS.ADD ? activity.value : undefined,
-            stateId: action === ACTIONS.ADD ? state.value : undefined,
+            stateId: action === ACTIONS.ADD ? (state ? state.value : CentralId) : undefined,
             ruleId: action === ACTIONS.ADD ? rule.value : undefined,
             formName: formName || '',
             ruleComplianceDetailId: ruleComplianceDetailId ? ruleComplianceDetailId : undefined,
             actRuleActivityMappingId: actRuleActivityMappingId ? actRuleActivityMappingId : undefined,
             complianceDescription,
             proofOfCompliance: proofOfCompliance || '',
-            penalty : penalty || '',
+            penalty: penalty || '',
             risk: risk.value,
             maximumPenaltyAmount: maximumPenaltyAmount || 0,
             impriosonment: impriosonment || false,
@@ -147,16 +147,16 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
                 <Modal.Body>
                     <Stepper>
                         <StepperItem title="1. Mapping Details" stepId={Steps.MAPPING} activeStep={activeStep}
-                            valid={activeStep > Steps.MAPPING}>
+                            valid={action === ACTIONS.ADD && activeStep > Steps.MAPPING}>
                             {
-                                activeStep === Steps.MAPPING && Boolean(mapping) &&
+                                (activeStep === Steps.MAPPING || activeStep === Steps.ALL) && Boolean(mapping) &&
                                 <MappingDetails action={action} data={mapping} onSubmit={handleMappingsSubmit} />
                             }
                         </StepperItem>
                         <StepperItem title="2. Rule Compliance" stepId={Steps.RULE_COMPLIANCE} activeStep={activeStep}
-                            valid={activeStep > Steps.RULE_COMPLIANCE}>
+                            valid={(action === ACTIONS.ADD || action === ACTIONS.EDIT) && activeStep > Steps.RULE_COMPLIANCE}>
                             {
-                                activeStep === Steps.RULE_COMPLIANCE && Boolean(mapping) &&
+                                (activeStep === Steps.RULE_COMPLIANCE || activeStep === Steps.ALL) && Boolean(mapping) &&
                                 <RuleComplianceDetails action={action} data={mapping} onSubmit={handleRuleComplianceSubmit}
                                     onCancel={() => setActiveStep(Steps.MAPPING)} />
                             }

@@ -107,6 +107,11 @@ function Rule() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
+            title: "Unique Identifier", field: "uniqueIdentifier",
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
             title: "Actions", hozAlign: "center", width: 140,
             headerSort: false, formatter: reactFormatter(<ActionColumnElements />)
         }

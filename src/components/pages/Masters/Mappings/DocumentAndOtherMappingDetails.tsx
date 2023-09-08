@@ -21,7 +21,7 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'formName',
                 label: 'Form Name',
-                content: action === ACTIONS.VIEW ? (getValue(formData, 'formName') || '-NA-'): '',
+                content: action === ACTIONS.VIEW ? (getValue(formData, 'formName') || '-NA-') : '',
             },
             {
                 component: componentTypes.FILE_UPLOAD,
@@ -61,7 +61,7 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
                     { type: validatorTypes.REQUIRED },
                     { type: 'file-type', regex: ALLOWED_FILES_REGEX },
                     { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
-                ]: [],
+                ] : [],
                 condition: {
                     when: 'formName',
                     is: () => action !== ACTIONS.ADD,
@@ -82,8 +82,8 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
         ]
     };
 
-    function debugForm({values}: any) {
-        const {formName} = values;
+    function debugForm({ values }: any) {
+        const { formName } = values;
         setUpload(action === ACTIONS.EDIT && formName && /(?!^$)([^\s])/.test(formName))
 
     }
@@ -97,7 +97,7 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
     return (
         <>
             <FormRenderer FormTemplate={FormTemplate}
-                initialValues={{ ...BtnConfig, ...formData }}
+                initialValues={{ ...BtnConfig, ...formData, hideButtons: action === ACTIONS.VIEW }}
                 componentMapper={ComponentMapper}
                 debug={debugForm}
                 schema={schema}

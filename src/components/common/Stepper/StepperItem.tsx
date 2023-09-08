@@ -7,7 +7,7 @@ export default function StepperItem({ title, children, valid, activeStep, stepId
 
     useEffect(() => {
         if (activeStep) {
-            setOpen(activeStep === stepId);
+            setOpen(activeStep === stepId || activeStep === -1);
         }
     }, [activeStep])
 

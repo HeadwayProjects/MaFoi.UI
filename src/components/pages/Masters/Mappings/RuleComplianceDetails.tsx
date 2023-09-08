@@ -120,7 +120,7 @@ function RuleComplianceDetails({ action, data, onCancel, onSubmit }: any) {
 
     return (
         <FormRenderer FormTemplate={FormTemplate}
-            initialValues={{ ...BtnConfig, ...compliance }}
+            initialValues={{ ...BtnConfig, ...compliance, hideButtons: action === ACTIONS.VIEW}}
             componentMapper={ComponentMapper}
             schema={schema}
             onSubmit={onSubmit}
