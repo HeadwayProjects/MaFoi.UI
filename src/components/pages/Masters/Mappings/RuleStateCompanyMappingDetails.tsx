@@ -20,8 +20,7 @@ import { Steps } from "./RuleStateCompanyMapping";
 const DefaultRule = RuleTypeEnum.STATE;
 
 function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose, onSubmit }: any) {
-    const [activeStep, setActiveStep] = useState(step || Steps.MAPPING);
-    const [form] = useState<any>({});
+    const [activeStep, setActiveStep] = useState(Steps.MAPPING);
     const [mapping, setMapping] = useState<any>({ type: { value: DefaultRule, label: DefaultRule } });
     const { uploadActStateMappingTemplate, uploading } = useUploadActStateMappingTemplate(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
@@ -34,11 +33,11 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
     const { createRuleMapping, creating } = useCreateRuleMapping(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Mapping created successfully.`);
-            // if (mapping.file) {
-            //     uploadTemplate(value);
-            // } else {
-            // }
-            onSubmit();
+            if (mapping.file) {
+                uploadTemplate(value);
+            } else {
+                onSubmit();
+            }
         } else {
             toast.error(value || ERROR_MESSAGES.ERROR);
         }
@@ -46,11 +45,11 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
     const { updateRuleMapping, updating } = useUpdateRuleMapping(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Mapping updated successfully.`);
-            // if (mapping.file) {
-            //     uploadTemplate(data.id);
-            // } else {
-            // }
-            onSubmit();
+            if (mapping.file) {
+                uploadTemplate(data.id);
+            } else {
+                onSubmit();
+            }
         } else {
             toast.error(value || ERROR_MESSAGES.ERROR);
         }
@@ -81,7 +80,8 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
         setActiveStep(Steps.DOCUMENTS);
     }
 
-    function handleDocumentsSubmit({ formName, sendNotification }: any) {
+    function handleDocumentsSubmit({ formName, file, sendNotification }: any) {
+        setMapping({ ...mapping, formName, file, sendNotification })
         const { id, ruleComplianceDetailId, actRuleActivityMappingId } = data || {};
         const { act, rule, activity, state, ruleComplianceDetails } = mapping;
         const { complianceDescription, proofOfCompliance, penalty, risk, maximumPenaltyAmount,
@@ -116,6 +116,12 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
             updateRuleMapping(_payload);
         }
     }
+
+    useEffect(() => {
+        if (step) {
+            setActiveStep(step);
+        }
+    }, [step]);
 
     useEffect(() => {
         if (data) {
@@ -163,8 +169,11 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
                         </StepperItem>
                         <StepperItem title="3. Documents & Others" stepId={Steps.DOCUMENTS} activeStep={activeStep}
                             valid={activeStep > Steps.DOCUMENTS}>
-                            <DocumentAndOtherMappingDetails action={action} data={data} onSubmit={handleDocumentsSubmit}
-                                onCancel={() => setActiveStep(Steps.RULE_COMPLIANCE)} />
+                            {
+                                (activeStep === Steps.DOCUMENTS || activeStep === Steps.ALL) && Boolean(mapping) &&
+                                <DocumentAndOtherMappingDetails action={action} data={mapping} onSubmit={handleDocumentsSubmit}
+                                    onCancel={() => setActiveStep(Steps.RULE_COMPLIANCE)} />
+                            }
                         </StepperItem>
                     </Stepper>
                 </Modal.Body>

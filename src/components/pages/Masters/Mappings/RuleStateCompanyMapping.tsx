@@ -142,7 +142,7 @@ function RuleStateCompanyMapping() {
         { title: "Rule", field: "rule", formatter: reactFormatter(<RuleTmpl />) },
         { title: "Activity", field: "activity", formatter: reactFormatter(<NameTmpl />) },
         { title: "Type", field: "type", formatter: reactFormatter(<TypeTmpl />) },
-        { title: "Risk", field: "ruleComplianceDetails.risk", formatter: reactFormatter(<CellTmpl />), width: 80 },
+        { title: "Risk", field: "ruleComplianceDetails.risk", formatter: reactFormatter(<CellTmpl />), width: 90 },
         { title: "Form Name", field: "formName", formatter: reactFormatter(<CellTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 160,

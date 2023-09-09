@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ACTIONS, ALLOWED_FILES_REGEX, FILE_SIZE } from "../../../common/Constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
-import { validatorTypes } from "@data-driven-forms/react-form-renderer";
-import { getValue } from "../../../../utils/common";
+import { download, getValue } from "../../../../utils/common";
+import { toast } from "react-toastify";
 
 const BtnConfig = {
     buttonWrapStyles: 'justify-content-end flex-row-reverse',
@@ -11,33 +11,15 @@ const BtnConfig = {
 }
 
 export default function DocumentAndOtherMappingDetails({ action, data, onSubmit, onCancel }: any) {
-    const [formData, setFormData] = useState({});
-    const [upload, setUpload] = useState(false);
-    const uploadRef: any = useRef();
-    uploadRef.current = false;
+    const [formData, setFormData] = useState<any>();
+    const [documents, setDocuments] = useState<{ fileName: string, filePath: string, id: string }[]>([])
     const schema = {
         fields: [
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'formName',
                 label: 'Form Name',
-                content: action === ACTIONS.VIEW ? (getValue(formData, 'formName') || '-NA-') : '',
-            },
-            {
-                component: componentTypes.FILE_UPLOAD,
-                label: 'File upload',
-                name: 'file',
-                type: 'file',
-                validate: [
-                    { type: validatorTypes.REQUIRED },
-                    { type: 'file-type', regex: ALLOWED_FILES_REGEX },
-                    { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
-                ],
-                condition: {
-                    when: 'formName',
-                    is: (value: any) => action === ACTIONS.ADD && value && /(?!^$)([^\s])/.test(value),
-                    then: { visible: true }
-                }
+                content: action === ACTIONS.VIEW ? (getValue(data, 'formName') || '-NA-') : '',
             },
             {
                 component: componentTypes.TAB_ITEM,
@@ -55,17 +37,37 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
                 label: 'Upload File',
                 name: 'uploadFile',
                 type: 'file',
-                upload: uploadRef.current,
-                documents: [],
-                validate: upload ? [
-                    { type: validatorTypes.REQUIRED },
-                    { type: 'file-type', regex: ALLOWED_FILES_REGEX },
-                    { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
-                ] : [],
+                upload: false,
+                documents,
                 condition: {
                     when: 'formName',
                     is: () => action !== ACTIONS.ADD,
                     then: { visible: true }
+                },
+                downloadDocument: ({ fileName, filePath }: any) => {
+                    download(fileName, filePath);
+                }
+            },
+            {
+                component: componentTypes.FILE_UPLOAD,
+                label: 'File upload',
+                name: 'file',
+                type: 'file',
+                validate: [
+                    { type: 'file-type', regex: ALLOWED_FILES_REGEX },
+                    { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
+                ],
+                condition: {
+                    and: [
+                        {
+                            when: 'file',
+                            is: () => action !== ACTIONS.VIEW,
+                        },
+                        {
+                            when: 'formName',
+                            pattern: /(?!^$)([^\s])/
+                        }
+                    ]
                 }
             },
             {
@@ -83,27 +85,45 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
     };
 
     function debugForm({ values }: any) {
-        const { formName } = values;
-        setUpload(action === ACTIONS.EDIT && formName && /(?!^$)([^\s])/.test(formName))
+        const { formName, file } = values;
+        setFormData({ ...(formData || {}), ...values, file: formName ? file : null })
+    }
 
+    function handleSubmit({ formName, file, sendNotification }: any) {
+        if ((formName || '').trim() && !documents.length && !file) {
+            toast.error('Please upload relevant file.');
+            return;
+        }
+        onSubmit({ formName, file, sendNotification });
     }
 
     useEffect(() => {
         if (data) {
-            setFormData({ ...formData, ...data })
+            const { fileName, filePath } = data;
+            setFormData({ ...(formData || {}), ...data });
+            if (fileName && filePath) {
+                setDocuments([{
+                    fileName,
+                    filePath,
+                    id: `${new Date().getTime()}`
+                }]);
+            }
         }
     }, [data]);
 
     return (
         <>
-            <FormRenderer FormTemplate={FormTemplate}
-                initialValues={{ ...BtnConfig, ...formData, hideButtons: action === ACTIONS.VIEW }}
-                componentMapper={ComponentMapper}
-                debug={debugForm}
-                schema={schema}
-                onSubmit={onSubmit}
-                onCancel={onCancel}
-            />
+            {
+                Boolean(formData) &&
+                <FormRenderer FormTemplate={FormTemplate}
+                    initialValues={{ ...BtnConfig, ...formData, hideButtons: action === ACTIONS.VIEW }}
+                    componentMapper={ComponentMapper}
+                    debug={debugForm}
+                    schema={schema}
+                    onSubmit={handleSubmit}
+                    onCancel={onCancel}
+                />
+            }
         </>
     )
 }

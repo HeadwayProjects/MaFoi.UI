@@ -54,25 +54,9 @@ function Act() {
             name: 'establishmentType',
             options: [
                 { value: "", label: 'Blank' },
-                { value: EstablishmentTypes[0], label: EstablishmentTypes[0] },
-                { value: EstablishmentTypes[1], label: EstablishmentTypes[1] },
-                { value: EstablishmentTypes[2], label: EstablishmentTypes[2] },
-                {
-                    value: `${EstablishmentTypes[0]}${API_DELIMITER}${EstablishmentTypes[1]}`,
-                    label: `${EstablishmentTypes[0]}${UI_DELIMITER}${EstablishmentTypes[1]}`
-                },
-                {
-                    value: `${EstablishmentTypes[0]}${API_DELIMITER}${EstablishmentTypes[2]}`,
-                    label: `${EstablishmentTypes[0]}${UI_DELIMITER}${EstablishmentTypes[2]}`
-                },
-                {
-                    value: `${EstablishmentTypes[1]}${API_DELIMITER}${EstablishmentTypes[2]}`,
-                    label: `${EstablishmentTypes[1]}${UI_DELIMITER}${EstablishmentTypes[2]}`
-                },
-                {
-                    value: `${EstablishmentTypes[0]}${API_DELIMITER}${EstablishmentTypes[1]}${API_DELIMITER}${EstablishmentTypes[2]}`,
-                    label: `${EstablishmentTypes[0]}${UI_DELIMITER}${EstablishmentTypes[1]}${UI_DELIMITER}${EstablishmentTypes[2]}`
-                }
+                ...EstablishmentTypes.map(x => {
+                    return { value: x, label: x }
+                })
             ]
         },
         {
@@ -83,15 +67,6 @@ function Act() {
             })
         }
     ]
-
-    function TypeTmpl({ cell }: any) {
-        const value = (cell.getValue() || '').replaceAll(API_DELIMITER, UI_DELIMITER);
-        return (
-            <div className="d-flex align-items-center h-100 w-auto">
-                <div className="ellipse two-lines">{value}</div>
-            </div>
-        )
-    }
 
     function ActionColumnElements({ cell }: any) {
         const row = cell.getData();
@@ -122,7 +97,7 @@ function Act() {
 
     const columns = [
         { title: "Act Name", field: "name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
-        { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<TypeTmpl />) },
+        { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<CellTmpl />) },
         { title: "Law", field: "law", formatter: reactFormatter(<NameTmpl />) },
         {
             title: "Actions", hozAlign: "center", width: 140,

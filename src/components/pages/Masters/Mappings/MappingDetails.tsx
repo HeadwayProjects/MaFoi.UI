@@ -53,7 +53,7 @@ function activityOptionLabel({ label, activity }: any) {
     )
 }
 
-export default function MappingDetails(this: any, { action, data = {}, onSubmit, onCancel }: any) {
+export default function MappingDetails(this: any, { action, data = {}, onSubmit }: any) {
     const [defaultPayload] = useState({ ...DEFAULT_OPTIONS_PAYLOAD, t: new Date().getTime() });
     const [error, setError] = useState<string>();
     const [mappingDetails, setMappingDetails] = useState({});
@@ -197,7 +197,8 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit,
             <FormRenderer FormTemplate={FormTemplate}
                 initialValues={{
                     buttonWrapStyles: 'justify-content-start',
-                    submitBtnText: 'Next', ...mappingDetails,
+                    submitBtnText: 'Next',
+                    ...mappingDetails,
                     hideButtons: action === ACTIONS.VIEW
                 }}
                 componentMapper={ComponentMapper}

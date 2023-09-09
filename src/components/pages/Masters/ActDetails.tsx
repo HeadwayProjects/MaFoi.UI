@@ -54,12 +54,11 @@ function ActDetails({ action, data, onClose, onSubmit }: any) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'establishmentType',
                 label: 'Establishment Type',
-                content: action === ACTIONS.VIEW ? (getValue(data, 'establishmentType') || '').replaceAll(API_DELIMITER, UI_DELIMITER) : '',
+                content: action === ACTIONS.VIEW ? getValue(data, 'establishmentType') : '',
                 options: EstablishmentTypes,
                 validate: [
                     { type: validatorTypes.REQUIRED }
-                ],
-                isMulti: true
+                ]
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
@@ -87,7 +86,7 @@ function ActDetails({ action, data, onClose, onSubmit }: any) {
             const request: any = {
                 name: name.trim(),
                 lawId: law.value,
-                establishmentType: establishmentType ? establishmentType.map((x: any) => x.value).sort().join(API_DELIMITER) : ''
+                establishmentType: establishmentType.value
             };
 
             if (action === ACTIONS.EDIT) {
@@ -105,12 +104,10 @@ function ActDetails({ action, data, onClose, onSubmit }: any) {
             setAct({
                 ...act,
                 ...data,
-                establishmentType: establishmentType ? establishmentType.split(API_DELIMITER).map((x: any) => {
-                    return {
-                        value: x,
-                        label: x
-                    }
-                }) : '',
+                establishmentType: {
+                    value: establishmentType,
+                    label: establishmentType
+                },
                 law: law ? { value: law.id, label: law.name } : null
             });
         }

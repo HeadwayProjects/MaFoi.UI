@@ -22,7 +22,7 @@ function ImportMappingsModal({ onSubmit, onClose }: any) {
         }
         const data = response.data;
         if (data && data.size === 0) {
-            toast.success('Acts uploaded successfully.');
+            toast.success('Mappings uploaded successfully.');
             onClose();
             onSubmit();
         } else {
