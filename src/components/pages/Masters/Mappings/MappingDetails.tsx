@@ -60,6 +60,7 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
     const [acts, setActs] = useState<any[]>([]);
     const [rules, setRules] = useState<any[]>([]);
     const [activities, setActivities] = useState<any[]>([]);
+    const [type, setType] = useState(RuleTypeEnum.STATE)
     const { states } = useGetStates({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
 
     const schema = {
@@ -72,7 +73,15 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
                     { type: validatorTypes.REQUIRED }
                 ],
                 content: action !== ACTIONS.ADD ? getValue(mappingDetails, 'type.label') : '',
-                options: RuleType
+                options: RuleType,
+                onChange: (option: any) => {
+                    const { value } = option;
+                    if (type !== value) {
+                        setType(value);
+                        setMappingDetails({ ...mappingDetails, type: option, rule: null });
+                        setRules([]);
+                    }
+                }
             },
             {
                 component: action === ACTIONS.ADD ? componentTypes.ASYNC_SELECT : componentTypes.PLAIN_TEXT,
@@ -105,7 +114,8 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
                 formatOptionLabel: action !== ACTIONS.VIEW ? ruleOptionLabel : '',
                 defaultOptions: rules,
                 loadOptions: debounce((keyword: any, callback: any) => {
-                    getRules({ ...DEFAULT_PAYLOAD, search: keyword }).then(response => {
+                    const filters = [{ columnName: 'type', value: type }]
+                    getRules({ ...DEFAULT_PAYLOAD, search: keyword, filters }).then(response => {
                         const list = ((response || {}).data || {}).list || [];
                         const _options = list.map((rule: any) => {
                             return { value: rule.id, label: rule.name, rule }
@@ -155,6 +165,10 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
         ]
     };
 
+    function debugForm({ values }: any) {
+        setMappingDetails({ ...mappingDetails, ...values });
+    }
+
     function handleSubmit(request: any) {
         if (action === ACTIONS.ADD) {
             setError(undefined);
@@ -181,6 +195,7 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
     useEffect(() => {
         if (data) {
             setMappingDetails({ ...mappingDetails, ...data });
+            setType(data.type.value);
         }
     }, [data]);
 
@@ -201,6 +216,7 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
                     ...mappingDetails,
                     hideButtons: action === ACTIONS.VIEW
                 }}
+                debug={debugForm}
                 componentMapper={ComponentMapper}
                 schema={schema}
                 onSubmit={handleSubmit}
