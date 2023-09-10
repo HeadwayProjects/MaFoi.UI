@@ -22,7 +22,7 @@ function RulesImportModal({ onSubmit, onClose }: any) {
         }
         const data = response.data;
         if (data && data.size === 0) {
-            toast.success('Activities uploaded successfully.');
+            toast.success('Rules uploaded successfully.');
             onClose();
             onSubmit();
         } else {

@@ -15,6 +15,7 @@ import { ERROR_MESSAGES } from "../../../utils/constants";
 import { useExportStates } from "../../../backend/exports";
 import { hasUserAccess } from "../../../backend/auth";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import { CentralId } from "./Master.constants";
 
 function State() {
     const [breadcrumb] = useState([
@@ -58,16 +59,22 @@ function State() {
                 {
                     hasUserAccess(USER_PRIVILEGES.EDIT_STATE) &&
                     <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
+                        if (row.id === CentralId) {
+                            return;
+                        }
                         setState(row);
                         setAction(ACTIONS.EDIT)
-                    }} />
+                    }} disabled={row.id === CentralId} />
                 }
                 {
                     hasUserAccess(USER_PRIVILEGES.DELETE_STATE) &&
                     <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                        if (row.id === CentralId) {
+                            return;
+                        }
                         setState(row);
                         setAction(ACTIONS.DELETE)
-                    }} />
+                    }} disabled={row.id === CentralId} />
                 }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setState(row);

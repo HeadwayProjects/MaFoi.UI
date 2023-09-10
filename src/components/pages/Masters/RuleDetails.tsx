@@ -17,7 +17,7 @@ function RuleDetails({ action, data, onClose, onSubmit }: any) {
     const [ruleDetails, setRuleDetails] = useState<any>({ hideButtons: true });
     const { createRule, isLoading: creatingRule } = useCreateRule(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
-            toast.success(`${ruleDetails.name} created successfully.`);
+            toast.success(`${form.values.name.trim()} created successfully.`);
             onSubmit();
         } else {
             toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Rule combination already exists.' : ERROR_MESSAGES.ERROR);
@@ -26,7 +26,7 @@ function RuleDetails({ action, data, onClose, onSubmit }: any) {
 
     const { updateRule, isLoading: updatingRule } = useUpdateRule(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
-            toast.success(`${ruleDetails.name} upated successfully.`);
+            toast.success(`${form.values.name.trim()} upated successfully.`);
             onSubmit();
         } else {
             toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Rule combination already exists.' : ERROR_MESSAGES.ERROR);

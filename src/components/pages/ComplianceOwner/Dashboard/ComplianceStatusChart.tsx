@@ -43,7 +43,9 @@ export default function ComplianceStatusChart({ data, fields }: any) {
                 label: {
                     show: true,
                     position: 'inner',
-                    formatter: "{d}%"
+                    formatter: ({percent}: any) => {
+                        return `${Math.round(percent)}%`
+                    }
                 },
                 emphasis: {
                     itemStyle: {
