@@ -126,9 +126,10 @@ function ManageEmailTemplates({ changeView }: any) {
                 {
                     hasUserAccess(USER_PRIVILEGES.DELETE_EMAIL_TEMPLATE) &&
                     <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                        if (!row.companyId) return;
                         setTemplate(row);
                         setAction(ACTIONS.DELETE)
-                    }} />
+                    }} disabled={!row.companyId}/>
                 }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     changeView(VIEWS.VIEW, { emailTemplate: row })
