@@ -67,7 +67,7 @@ function ComplianceScheduleImportModal({ onClose }: any) {
         <>
             <Modal show={true} backdrop="static" animation={false} size="lg" dialogClassName="" centered={true}>
                 <Modal.Header closeButton={true} onHide={onClose}>
-                    <Modal.Title className="bg">Import Audit Schedule</Modal.Title>
+                    <Modal.Title className="bg">Import Compliance Schedule</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="d-flex flex-column" style={{ minHeight: '200px' }}>

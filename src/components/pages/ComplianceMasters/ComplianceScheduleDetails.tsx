@@ -1,26 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFloppyDisk, faTrash, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
-import { ACTIONS, ACTIVITY_STATUS, FILTERS, STATUS_MAPPING } from "../../common/Constants";
+import { ACTIONS } from "../../common/Constants";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { useDeleteComplianceSchedule, useGetAllComplianceActivities } from "../../../backend/compliance";
 import Icon from "../../common/Icon";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../common/Table";
 import { preventDefault } from "../../../utils/common";
 import AdminLocations from "../Masters/Companies/AdminLocations";
-import AdvanceSearch from "../../common/AdvanceSearch";
 import AlertModal from "../../common/AlertModal";
 import ConfirmModal from "../../common/ConfirmModal";
 import PageLoader from "../../shared/PageLoader";
 import { hasUserAccess } from "../../../backend/auth";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
-import { Button, Dropdown, DropdownButton } from "react-bootstrap";
+import { Dropdown, DropdownButton } from "react-bootstrap";
 import ComplianceAssignUser from "./ComplianceAssignUser";
 import MastersLayout from "../Masters/MastersLayout";
 import { GetComplianceBreadcrumb } from "./Compliance.constants";
 import { COMPLIANCE_ACTIVITY_INDICATION, ComplianceActivityStatus, ComplianceStatusMapping } from "../../../constants/Compliance.constants";
+import ComplianceScheduleAdvanceFilter from "./ComplianceScheduleAdvanceFilter";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -124,7 +124,7 @@ function ComplianceScheduleDetails(this: any) {
         const status = cell.getValue();
         return (
             <div className="d-flex align-items-center position-relative">
-                <span className="ellipse" style={{color: COMPLIANCE_ACTIVITY_INDICATION[status] || ''}}>{ComplianceStatusMapping[status] || status}</span>
+                <span className="ellipse" style={{ color: COMPLIANCE_ACTIVITY_INDICATION[status] || '' }}>{ComplianceStatusMapping[status] || status}</span>
             </div>
         )
     }
@@ -385,8 +385,8 @@ function ComplianceScheduleDetails(this: any) {
                     <div className="card shadow border-0 p-2 mt-2 mb-3 filters">
                         <div className="d-flex flex-row m-0 align-items-end">
                             <AdminLocations onChange={onLocationChange} />
-                            <div >
-                                <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE, FILTERS.ACTIVITY_TYPE]} payload={getAdvanceSearchPayload()} onSubmit={search} />
+                            <div>
+                                <ComplianceScheduleAdvanceFilter onChange={search} />
                             </div>
                             <div className="d-flex flex-row align-items-center ms-auto">
                                 {

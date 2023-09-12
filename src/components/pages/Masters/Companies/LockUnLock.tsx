@@ -41,7 +41,7 @@ function getDefaultPayload() {
 }
 
 function LockUnLock() {
-    const [breadcrumb] = useState(GetAuditScheduleBreadcrumb('Block Un-Block'));
+    const [breadcrumb] = useState(GetAuditScheduleBreadcrumb('Un-Block Activities'));
     const [activity, setActivity] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState<any>();
@@ -336,7 +336,7 @@ function LockUnLock() {
 
     return (
         <>
-            <MastersLayout title="Block Un-Block" breadcrumbs={breadcrumb}>
+            <MastersLayout title="Un-Block Activities" breadcrumbs={breadcrumb}>
                 <form className="p-0 mx-3 my-2">
                     <div className="card shadow border-0 p-2 mt-2 mb-3 filters">
                         <div className="d-flex flex-row m-0 align-items-end">

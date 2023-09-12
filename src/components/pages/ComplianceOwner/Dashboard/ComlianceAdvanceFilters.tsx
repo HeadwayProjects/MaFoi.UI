@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 import AdvanceFilterModal from "./AdvanceFilterModal";
 
-export default function DashboardAdvanceFilters({ onChange, companies }: any) {
+export default function ComplianceAdvanceFilters({ onChange, companies, ignoreFilters = [] }: any) {
     const [open, setOpen] = useState(false);
     const [filters, setFilters] = useState<any>({});
     const [rawFilters, setRawFilters] = useState<any>({});
@@ -40,7 +40,10 @@ export default function DashboardAdvanceFilters({ onChange, companies }: any) {
                 }
             </Button>
             {
-                open && <AdvanceFilterModal onCancel={() => setOpen(false)} onSubmit={handleFilters} data={rawFilters} companies={companies} />
+                open &&
+                <AdvanceFilterModal onCancel={() => setOpen(false)}
+                    onSubmit={handleFilters} data={rawFilters}
+                    companies={companies} ignoreFilters={ignoreFilters}/>
             }
         </>
     )

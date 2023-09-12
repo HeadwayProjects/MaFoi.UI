@@ -10,7 +10,7 @@ import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from "../../../common/Table"
 import { DEBOUNCE_TIME } from "../../../../utils/constants";
 import { Alert } from "react-bootstrap";
 
-function ruleOptionLabel({ label, rule = {} }: any) {
+export function ruleOptionLabel({ label, rule = {} }: any) {
     return (
         <div className="d-flex flex-column">
             <div>{label}</div>
@@ -38,7 +38,7 @@ function ruleOptionLabel({ label, rule = {} }: any) {
     )
 }
 
-function activityOptionLabel({ label, activity }: any) {
+export function activityOptionLabel({ label, activity }: any) {
     return (
         <div className="d-flex flex-column">
             <div>{label}</div>

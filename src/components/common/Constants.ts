@@ -107,7 +107,10 @@ export const FILTERS = {
     DUE_DATE: 'dueDate',
     SUBMITTED_DATE: 'submittedDate',
     ACTIVITY_TYPE: 'activityType',
-    AUDIT_TYPE: 'auditType'
+    AUDIT_TYPE: 'auditType',
+    ACT: 'act',
+    RULE: 'rule',
+    ACTIVITY: 'activity'
 }
 
 export const SEARCH_FIELDS = [

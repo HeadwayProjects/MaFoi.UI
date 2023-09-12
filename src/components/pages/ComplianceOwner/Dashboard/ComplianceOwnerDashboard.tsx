@@ -4,7 +4,7 @@ import DataGrid from "./DataGrid";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import OptionalLocations from "../../../common/OptionalLocations";
 import { DashboardView } from "../../../../constants/Compliance.constants";
-import DashboardAdvanceFilters from "./DashboardAdvanceFilters";
+import ComplianceAdvanceFilters from "./ComlianceAdvanceFilters";
 
 function ComplianceOwnerDashboard() {
     const [view, setView] = useState(DashboardView.CALENDAR);
@@ -46,7 +46,7 @@ function ComplianceOwnerDashboard() {
                 <div className="col-12">
                     <div className="d-flex flex-row m-0 pb-2 justify-content-between align-items-end">
                         <OptionalLocations onChange={onLocationChange} loadCompanies={setCompanies}/>
-                        <DashboardAdvanceFilters onChange={handleFilterChange} companies={companies} />
+                        <ComplianceAdvanceFilters onChange={handleFilterChange} companies={companies} />
                     </div>
                     <DataGrid filters={filters} view={view} />
                 </div>

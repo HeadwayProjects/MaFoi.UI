@@ -64,6 +64,7 @@
 
 .sidenav-container.open .sidenav-item-icon {
     width: 44px;
+    min-width: 44px;
 }
 
 .sidenav-container.open+.main-container {

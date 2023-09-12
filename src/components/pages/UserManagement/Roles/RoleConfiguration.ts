@@ -404,7 +404,7 @@ export const PAGES_CONFIGURATION = [
             },
             {
                 id: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK,
-                name: 'View Block un-Block'
+                name: 'View Un-Block Activities'
             },
             {
                 id: USER_PRIVILEGES.AUDIT_SCHEDULE_UNBLOCK_BLOCKED,

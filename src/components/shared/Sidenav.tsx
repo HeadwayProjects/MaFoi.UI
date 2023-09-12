@@ -56,7 +56,7 @@ const SideNavMenu = [
         ]
     },
     {
-        id: 'auditSchedule', url: '/auditSchedule/importExport', icon: 'building', label: 'Audit Management',
+        id: 'auditSchedule', url: '/auditSchedule/importExport', icon: 'notes', label: 'Audit Management',
         children: [
             {
                 id: 'auditSchedule/importExport', url: '/auditSchedule/importExport',
@@ -68,12 +68,12 @@ const SideNavMenu = [
             },
             {
                 id: 'auditSchedule/blockUnblock', url: '/auditSchedule/blockUnblock',
-                label: 'Block Un-Block', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK
+                label: 'Un-Block Activities', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK
             }
         ]
     },
     {
-        id: 'complianceManagement', url: '/complianceManagement/list', icon: 'building', label: 'Compliance Management', children: [
+        id: 'complianceManagement', url: '/complianceManagement/list', icon: 'notepad', label: 'Compliance Management', children: [
             {
                 id: 'complianceManagement/complianceSchedule', url: '/complianceManagement/complianceSchedule',
                 label: 'Compliance Schedule', privilege: USER_PRIVILEGES.COMPLIANCE_SCHEDULE
