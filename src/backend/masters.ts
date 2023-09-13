@@ -545,7 +545,7 @@ export function useGetSmtpDetails(companyId: any, payload: any, enabled = true) 
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
-            enabled
+            enabled: enabled && !!companyId
         }
     );
     return { smtp: (data || {}).data || {}, isFetching, refetch, invalidate };

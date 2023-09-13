@@ -3,20 +3,8 @@ import dayjs from "dayjs";
 import { STATUS_MAPPING } from "../../../common/Constants";
 
 function StatusTmp({ status }: any) {
-    function computeStatusColor(status: string) {
-        if (status === 'Pending') {
-            return 'text-warn';
-        } else if (status === 'Reject' || status === 'Overdue') {
-            return 'text-danger';
-        } else if (status === 'Submitted') {
-            return 'text-success';
-        } else if (status === 'Audited') {
-            return 'text-success-emphasis'
-        }
-        return 'text-secondary'
-    }
     return (
-        <span className={computeStatusColor(status)}>{status}</span>
+        <span className={`status-${status}`}>{status}</span>
     )
 }
 

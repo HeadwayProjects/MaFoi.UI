@@ -7,6 +7,9 @@ import { preventDefault } from "../../../../utils/common";
 import { navigate } from "raviger";
 import { getBasePath } from "../../../../App";
 import { ACTIVITY_TYPE } from "../../../../utils/constants";
+import { useGetActivities } from "../../../../backend/masters";
+import { useGetAllActivities } from "../../../../backend/query";
+import { DEFAULT_PAYLOAD } from "../../../common/Table";
 
 const StatusTabs = [
     { value: 'Overdue', label: 'Overdue' },
@@ -20,29 +23,10 @@ function ActivitiesByStatus({ tabs, selectedCompany, selectedAssociateCompany, s
         return StatusTabs.find(status => status.value === tab);
     }));
     const [status, setStatus] = useState(tabs[0]);
-    const [activities, setActivities] = useState<any[]>([]);
     const [count, setCount] = useState<any>(null);
     const [title, setTitle] = useState<any>(null);
-
-    function updateActivities() {
-        setActivities([]);
-        setCount(null);
-        setTitle(null);
-        if (selectedCompany && selectedAssociateCompany && selectedLocation) {
-            const request = [
-                `companyid=${selectedCompany}`,
-                `associateCompanyId=${selectedAssociateCompany}`,
-                `locationId=${selectedLocation}`,
-                `status=${status}`
-            ];
-            api.get(`/api/ToDo/GetToDoByStatus?${request.join('&')}`).then(response => {
-                const length = (response.data || []).length;
-                setActivities((response.data || []).slice(0, 4));
-                setCount(length > 0 ? String(length).padStart(2, '0') : 0);
-                setTitle((StatusTabs.find(_status => _status.value === status) || {}).label);
-            });
-        }
-    }
+    const [payload, setPayload] = useState<any>(null);
+    const { activities, isFetching, total } = useGetAllActivities(payload, Boolean(payload));
 
     function viewActivities(e: any) {
         preventDefault(e);
@@ -58,16 +42,27 @@ function ActivitiesByStatus({ tabs, selectedCompany, selectedAssociateCompany, s
     }
 
     useEffect(() => {
-        if (selectedCompany && selectedAssociateCompany && selectedLocation) {
-            updateActivities();
+        if (selectedCompany && selectedAssociateCompany && selectedLocation && status) {
+            setPayload({
+                ...DEFAULT_PAYLOAD,
+                pagination: { pageSize: 4, pageNumber: 1 },
+                filters: [
+                    { columnName: 'companyId', value: selectedCompany },
+                    { columnName: 'associateCompanyId', value: selectedAssociateCompany },
+                    { columnName: 'locationId', value: selectedLocation },
+                    { columnName: 'status', value: status },
+                ],
+                sort: { columnName: "dueDate", order: "desc" }
+            });
         }
-    }, [selectedCompany, selectedAssociateCompany, selectedLocation]);
+    }, [selectedCompany, selectedAssociateCompany, selectedLocation, status]);
 
     useEffect(() => {
-        if (status) {
-            updateActivities();
+        if (!isFetching) {
+            setCount(total > 0 ? String(total).padStart(2, '0') : 0);
+            setTitle((StatusTabs.find(_status => _status.value === status) || {}).label);
         }
-    }, [status]);
+    }, [isFetching, total]);
 
     return (
         <>

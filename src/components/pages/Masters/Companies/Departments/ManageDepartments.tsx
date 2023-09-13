@@ -30,11 +30,14 @@ function ManageDepartments() {
     const [filters, setFilters] = useState<any>();
     const filterRef: any = useRef();
     filterRef.current = filters;
-    const [company, setCompany] = useState<any>(null);
-    const [vertical, setVertical] = useState<any>(null);
+    const [company, setCompany] = useState<any>(DEFAULT_OPTION);
+    const [vertical, setVertical] = useState<any>(DEFAULT_OPTION);
     const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
     const { companies, isFetching: fetchingCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t });
-    const { verticals } = useGetVerticals({ ...DEFAULT_OPTIONS_PAYLOAD, t });
+    const { verticals } = useGetVerticals({
+        ...DEFAULT_OPTIONS_PAYLOAD,
+        filters: Boolean(company) && company.value !== DEFAULT_OPTION.value ? [{ columnName: 'companyId', value: company.value }] : [], t
+    });
     const { departments, total, isFetching, refetch } = useGetDepartments(payload);
     const { deleteDepartment, deleting } = useDeleteDepartment(() => {
         toast.success(`${department.name} deleted successfully.`);
@@ -53,21 +56,21 @@ function ManageDepartments() {
     });
 
     const filterConfig = [
-        // {
-        //     label: 'Company',
-        //     name: 'companyId',
-        //     options: (companies || []).map((x: any) => {
-        //         return { value: x.id, label: x.name };
-        //     }),
-        //     value: company
-        // },
+        {
+            label: 'Company',
+            name: 'companyId',
+            options: (companies || []).map((x: any) => {
+                return { value: x.id, label: x.name };
+            }),
+            value: company
+        },
         {
             label: 'Vertical',
             name: 'verticalId',
             options: (verticals || []).map((x: any) => {
                 return { value: x.id, label: x.name };
             }),
-            // value: vertical
+            value: vertical
         }
     ]
 
@@ -209,29 +212,34 @@ function ManageDepartments() {
         exportDepartments({ ...payload, pagination: null });
     }
 
-    // useEffect(() => {
-    //     if (filters) {
-    //         const { filters: _filters, search } = filters;
-    //         setData(formatApiResponse(params, [], 0));
-    //         const _companyId = (_filters.find((x: any) => x.columnName === 'companyId') || {}).value;
-    //         const _x = [{ columnName: 'companyId', value: _companyId }];
-    //         if (_companyId && (company || {}).value !== _companyId) {
-    //             setVertical(DEFAULT_OPTION);
-    //             const { id, name } = companies.find((x: any) => x.id === _companyId) || {};
-    //             setCompany({ value: id, label: name });
-    //         }
-    //         const _verticalId = _companyId ? (_filters.find((x: any) => x.columnName === 'verticalId') || {}).value : null;
-    //         if (_verticalId) {
-    //             const { id, name } = verticals.find((x: any) => x.id === _verticalId) || {};
-    //             if (id && name) {
-    //                 setVertical({ value: id, label: name });
-    //             }
-    //             _x.push({ columnName: 'verticalId', value: _verticalId });
-    //         }
-    //         setPayload({ ...DEFAULT_PAYLOAD, ...params, filters: _x, search });
-    //     }
+    useEffect(() => {
+        if (filters) {
+            const { filters: _filters, search } = filters;
+            const _companyId = (_filters.find((x: any) => x.columnName === 'companyId') || {}).value;
+            let _verticalId = (_filters.find((x: any) => x.columnName === 'verticalId') || {}).value;
+            const _x: any[] = [];
+            if (_companyId && _companyId !== (company || {}).value) {
+                _x.push({ columnName: 'companyId', value: _companyId })
+                setVertical(DEFAULT_OPTION);
+                _verticalId = undefined;
+                const { id, name } = companies.find((x: any) => x.id === _companyId) || {};
+                setCompany({ value: id, label: name });
+            } else if (!_companyId) {
+                setCompany(DEFAULT_OPTION);
+            }
+            if (_verticalId) {
+                const { id, name } = verticals.find((x: any) => x.id === _verticalId) || {};
+                if (id && name) {
+                    setVertical({ value: id, label: name });
+                }
+                _x.push({ columnName: 'verticalId', value: _verticalId });
+            } else {
+                setVertical(DEFAULT_OPTION);
+            }
+            setPayload({ ...DEFAULT_PAYLOAD, ...params, filters: _x, search });
+        }
 
-    // }, [filters]);
+    }, [filters]);
 
     // useEffect(() => {
     //     if (!fetchingCompanies && companies) {

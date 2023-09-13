@@ -74,22 +74,28 @@ function RuleStateCompanyMapping() {
         const row = cell.getData();
 
         return (
-            <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
-                    setMapping(row);
-                    setAction(ACTIONS.EDIT)
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                    setMapping(row);
-                    setAction(ACTIONS.DELETE)
-                }} />
-                <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
+            <div className="d-flex flex-row align-items-center position-relative h-100 gap-3">
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_MAPPING) &&
+                    <Icon type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
+                        setMapping(row);
+                        setAction(ACTIONS.EDIT)
+                    }} />
+                }
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_MAPPING) &&
+                    <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                        setMapping(row);
+                        setAction(ACTIONS.DELETE)
+                    }} />
+                }
+                <Icon type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setMapping(row);
                     setAction(ACTIONS.VIEW)
                 }} />
                 {
                     row.fileName && row.filePath &&
-                    <Icon className="mx-2" type="button" name={'download'} text={'View'} data={row} action={() => {
+                    <Icon type="button" name={'download'} text={'View'} data={row} action={() => {
                         download(row.fileName, row.filePath)
                     }} />
                 }
@@ -246,26 +252,29 @@ function RuleStateCompanyMapping() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Act/Rule/Activity"} />
-                                <DropdownButton title="Actions" variant="primary">
-                                    {
-                                        hasUserAccess(USER_PRIVILEGES.ADD_MAPPING) &&
-                                        <Dropdown.Item onClick={() => setAction(ACTIONS.ADD)} className="my-1">
-                                            <Icon name={'plus'} className="me-2"></Icon>Add New
-                                        </Dropdown.Item>
-                                    }
-                                    {
-                                        hasUserAccess(USER_PRIVILEGES.EXPORT_MAPPING) &&
-                                        <Dropdown.Item onClick={handleExport} className="my-1" >
-                                            <Icon name={'download'} className="me-2"></Icon>Export
-                                        </Dropdown.Item>
-                                    }
-                                    {
-                                        hasUserAccess(USER_PRIVILEGES.ADD_MAPPING) &&
-                                        <Dropdown.Item onClick={() => setAction(ACTIONS.IMPORT)} className="my-1" >
-                                            <Icon name={'upload'} className="me-2"></Icon>Import
-                                        </Dropdown.Item>
-                                    }
-                                </DropdownButton>
+                                {
+                                    (hasUserAccess(USER_PRIVILEGES.ADD_MAPPING) || hasUserAccess(USER_PRIVILEGES.EXPORT_MAPPING) || hasUserAccess(USER_PRIVILEGES.ADD_MAPPING)) &&
+                                    <DropdownButton title="Actions" variant="primary">
+                                        {
+                                            hasUserAccess(USER_PRIVILEGES.ADD_MAPPING) &&
+                                            <Dropdown.Item onClick={() => setAction(ACTIONS.ADD)} className="my-1">
+                                                <Icon name={'plus'} className="me-2"></Icon>Add New
+                                            </Dropdown.Item>
+                                        }
+                                        {
+                                            hasUserAccess(USER_PRIVILEGES.EXPORT_MAPPING) &&
+                                            <Dropdown.Item onClick={handleExport} className="my-1" >
+                                                <Icon name={'download'} className="me-2"></Icon>Export
+                                            </Dropdown.Item>
+                                        }
+                                        {
+                                            hasUserAccess(USER_PRIVILEGES.ADD_MAPPING) &&
+                                            <Dropdown.Item onClick={() => setAction(ACTIONS.IMPORT)} className="my-1" >
+                                                <Icon name={'upload'} className="me-2"></Icon>Import
+                                            </Dropdown.Item>
+                                        }
+                                    </DropdownButton>
+                                }
                             </div>
                         </div>
                     </div>

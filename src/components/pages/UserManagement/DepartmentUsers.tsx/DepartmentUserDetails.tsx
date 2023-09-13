@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useCreateDepartmentUserMapping, useGetCompanies, useGetDepartments, useGetVerticals, useUpdateDepartmentUserMapping } from "../../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import { toast } from "react-toastify";
-import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
+import { API_RESULT, ERROR_MESSAGES, UI_DELIMITER } from "../../../../utils/constants";
 import { ACTIONS } from "../../../common/Constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
@@ -94,12 +94,12 @@ function DepartmentUserDetails(this: any, { action, data, onClose, onSubmit }: a
         ],
     };
 
-    function userOptionLabel({ label, user }: any) {
-        const { name } = user.userRoles[0];
+    function userOptionLabel({ label, user = {} }: any) {
+        const roles = (user.userRoles || []).map(({name}: any) => name);
         return (
             <div className="d-flex flex-column">
                 <div>{label}</div>
-                <div className="text-sm fw-bold fst-italic text-black-600">Role: {name}</div>
+                <div className="text-sm fw-bold fst-italic text-wrap text-black-600">Role(s): {roles.join(UI_DELIMITER)}</div>
             </div>
         )
     }

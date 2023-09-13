@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { ACTIONS, TOOLTIP_DELAY } from "../../../common/Constants";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, reactFormatter } from "../../../common/Table";
 import { toast } from "react-toastify";
-import { ERROR_MESSAGES } from "../../../../utils/constants";
+import { ERROR_MESSAGES, UI_DELIMITER } from "../../../../utils/constants";
 import { useDeleteDepartmentUserMapping, useGetDepartmentUserMappings } from "../../../../backend/masters";
 import { hasUserAccess } from "../../../../backend/auth";
 import { USER_PRIVILEGES } from "../Roles/RoleConfiguration";
@@ -79,7 +79,8 @@ function MangeDepartmentUsers() {
 
     function RoleTmpl({ cell }: any) {
         const { user } = cell.getData();
-        const userRole = user.userRoles[0].name;
+        const roles = (user.userRoles || []).map(({ name }: any) => name);
+        const userRole = roles.join(UI_DELIMITER);
         return (
             <>
                 {

@@ -32,6 +32,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
     const [performanceStatus, setPerformanceStatus] = useState<any>({});
     const [auditData, setAuditData] = useState<any>({});
     const [physicalAuditData, setPhysicalAuditData] = useState<any>({});
+    const [noAuditData, setNoAuditData] = useState<any>({});
     const [label, setLabel] = useState('');
 
     function updatePerformance() {
@@ -66,6 +67,14 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
             }).then(response => {
                 if (response && response.data) {
                     setPhysicalAuditData(response.data);
+                }
+            });
+            api.post('/api/Dashboard/GetPreviousPerformance', {
+                ...DEFAULT_PAYLOAD, filters:
+                    [...filters, { columnName: 'auditType', value: ACTIVITY_TYPE.NO_AUDIT }]
+            }).then(response => {
+                if (response && response.data) {
+                    setNoAuditData(response.data);
                 }
             });
         }
@@ -175,38 +184,31 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                         </div>
                     </div>
                     <div className="col-5">
-                        {
-                            (performanceStatus.approved > 0 || performanceStatus.rejected > 0) &&
-                            <Chart data={performanceStatus} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
-                        }
+                        <div className="text-center mt-3 dashboard-date-range-label">
+                            <strong className="text-primary">Overall Performance</strong>
+                        </div>
+                        <Chart data={performanceStatus} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
                     </div>
                 </div>
-                <div className="row m-0">
-                    {
-                        (auditData.approved > 0 || auditData.rejected > 0) &&
-                        <div className="col-5 mt-3">
-                            <div className="text-center mb-3 dashboard-date-range-label">
-                                <strong className="text-primary">Type: Audit</strong>
-                            </div>
-                            <Chart data={auditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
-
+                <div className="d-flex flex-row m-0 gap-3">
+                    <div className="col">
+                        <div className="text-center mb-3 dashboard-date-range-label">
+                            <strong className="text-primary">Type: Audit</strong>
                         </div>
-                    }
-                    {
-                        (physicalAuditData.approved > 0 || physicalAuditData.rejected > 0) &&
-                        <>
-                            {
-                                <div className="col-2"></div>
-                            }
-
-                            <div className="col-5 mt-3">
-                                <div className="text-center mb-3 dashboard-date-range-label">
-                                    <strong className="text-primary">Type: Physical Audit</strong>
-                                </div>
-                                <Chart data={physicalAuditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
-                            </div>
-                        </>
-                    }
+                        <Chart data={auditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
+                    </div>
+                    <div className="col">
+                        <div className="text-center mb-3 dashboard-date-range-label">
+                            <strong className="text-primary">Type: Physical Audit</strong>
+                        </div>
+                        <Chart data={physicalAuditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
+                    </div>
+                    <div className="col">
+                        <div className="text-center mb-3 dashboard-date-range-label">
+                            <strong className="text-primary">Type: No Audit</strong>
+                        </div>
+                        <Chart data={noAuditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
+                    </div>
                 </div>
             </div>
         </div>
