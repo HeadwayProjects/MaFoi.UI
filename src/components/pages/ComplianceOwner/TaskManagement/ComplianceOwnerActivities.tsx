@@ -19,7 +19,8 @@ const SortFields: any = {
     'activity.name': 'activityname',
     'associateCompany.name': 'associatecompanyname',
     'location.name': 'locationname',
-    'activity.type': 'activityType'
+    'activity.type': 'activityType',
+    'veritical.name': 'verticalName'
 };
 
 function ComplianceOwnerActivities({ dateRange, filters }: any) {
@@ -223,10 +224,12 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
             }
         };
         setParams(_params);
+        const _payload = { ...DEFAULT_PAYLOAD, ...payload };
+        const _filters = _payload.filters || [];
         setPayload({
             ...DEFAULT_PAYLOAD,
             ..._params,
-            filters: setUserDetailsInFilters([])
+            filters: setUserDetailsInFilters(_filters)
         });
         return Promise.resolve(formatApiResponse(params, activities, total));
     }

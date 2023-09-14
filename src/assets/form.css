@@ -125,6 +125,11 @@ input.form-check-input {
     grid-column-end: 4;
 }
 
+.horizontal-form .grid-col-66 {
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
 .horizontal-form .form-check {
     min-height: 42px;
 }

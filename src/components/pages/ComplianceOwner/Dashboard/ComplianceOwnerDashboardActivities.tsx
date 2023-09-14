@@ -28,7 +28,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                     <>
                         <div className="fw-bold">Pending Activities: {activity.count}</div>
                         <div>Finish before the due date</div>
-                        <div className="text-md fw-bold fst-italic text-warn">Days Left: {activity.diff} {activity.diff < 1 ? 'day': 'days'}</div>
+                        <div className="text-md fw-bold fst-italic text-warn">Days Left: {activity.diff} {activity.diff < 2 ? 'day' : 'days'}</div>
                     </>
                 }
                 {
@@ -36,7 +36,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                     <>
                         <div className="fw-bold">Non-Compliant Activities: {activity.count}</div>
                         <div>These are on high priority and need immediate action.</div>
-                        <div className="text-md fw-bold fst-italic text-error">Overdue for: {activity.diff} {activity.diff < 1 ? 'day': 'days'}</div>
+                        <div className="text-md fw-bold fst-italic text-error">Overdue for: {activity.diff} {activity.diff < 2 ? 'day' : 'days'}</div>
                     </>
                 }
                 {
@@ -115,11 +115,11 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                         if (x.status === ComplianceActivityStatus.DUE) {
                             const currentDate = dayjs(new Date()).startOf('D').toDate();
                             const diff = dayjs(new Date(date)).diff(currentDate, 'd');
-                            x.diff = diff;
+                            x.diff = diff + 1;
                         } else if (x.status === ComplianceActivityStatus.NON_COMPLIANT) {
                             const currentDate = dayjs(new Date()).startOf('D').toDate();
                             const diff = dayjs(new Date(date)).diff(currentDate, 'd');
-                            x.diff = diff * -1;
+                            x.diff = (diff * -1) + 1;
                         }
                         return x;
                     })

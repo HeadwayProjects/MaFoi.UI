@@ -22,12 +22,14 @@ export default function ComplianceScheduleAdvanceFilter({ onChange }: any) {
     }
 
     function getKeys() {
-        const keys = Object.keys(filters).length;
+        let keys = Object.keys(filters).length;
         if (filters.month) {
-            return keys - 1;
-        } else {
-            return keys;
+            keys = keys - 1;
         }
+        if (filters.from) {
+            keys = keys - 1;
+        }
+        return keys;
     }
 
     return (

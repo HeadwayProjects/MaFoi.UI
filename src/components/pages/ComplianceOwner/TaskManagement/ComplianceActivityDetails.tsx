@@ -13,8 +13,6 @@ import { download } from "../../../../utils/common";
 import { hasUserAccess } from "../../../../backend/auth";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 import { toast } from "react-toastify";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import dayjs from "dayjs";
 
 function isFormEditable(status: ComplianceActivityStatus) {
@@ -41,8 +39,11 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
     const [ruleCompliance, setRuleCompliance] = useState<any>(null);
     const { activity, isFetching, invalidate } = useGetComplianceById(data.id, { t });
     const { documents, refetch } = useGetComplianceActivityDocuments({ complianceId: data.id, t });
-    const [initialValue, setInitialValue] = useState({ hideButtons: !(editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD)), buttonWrapStyles: styles.btnGroup, submitBtnText: 'Upload' })
-    const { uploadDocument } = useUploadDocument(refetch)
+    const [initialValue, setInitialValue] = useState<any>({ hideButtons: !(editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD)), buttonWrapStyles: styles.btnGroup, submitBtnText: 'Upload' })
+    const { uploadDocument } = useUploadDocument(() => {
+        refetch();
+        setInitialValue({ ...initialValue, file: null });
+    })
     const { submitComplianceActivity } = useSubmitComplianceActivity(onSubmit);
     const { updateComplianceSchedule } = useUpdateComplianceSchedule(() => {
         toast.success('Compliance activity reviewed successfully.');
@@ -67,25 +68,49 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'act',
-                label: 'Act',
+                label: 'Act Name',
                 content: getValue(activityDetails, 'act.name'),
-                className: 'grid-col-100'
+                className: 'grid-col-66'
+            },
+            {
+                component: componentTypes.WIZARD,
+                name: 'emptySpace2',
             },
             {
                 component: componentTypes.PLAIN_TEXT,
-                name: 'dueDate',
-                label: 'Due Date',
-                content: dayjs(getValue(activityDetails, 'dueDate')).format('DD-MM-YYYY'),
+                name: 'lawCategory',
+                label: 'Law Category',
+                content: getValue(activityDetails, 'act.law.name') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'activityType',
+                label: 'Activity Type',
+                content: getValue(activityDetails, 'activity.type')
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'establishmentType',
+                label: 'Establishment Type',
+                content: getValue(activityDetails, 'act.establishmentType')
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'status',
                 label: 'Status',
-                content: ComplianceStatusMapping[getValue(activityDetails, 'status')],
+                content: ComplianceStatusMapping[getValue(activityDetails, 'status')]
             },
             {
-                component: componentTypes.WIZARD,
-                name: 'emptySpace1',
+                component: componentTypes.PLAIN_TEXT,
+                name: 'dueDate',
+                label: 'Due Date',
+                content: dayjs(getValue(activityDetails, 'dueDate')).format('DD-MM-YYYY')
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'periodicity',
+                label: 'Periodicity',
+                content: getValue(activityDetails, 'activity.periodicity')
             },
             {
                 component: componentTypes.PLAIN_TEXT,
@@ -144,55 +169,65 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 className: 'grid-col-100 text-lg fw-bold pb-0'
             },
             {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader11',
+                content: getValue(ruleCompliance, 'complianceDescription'),
+                className: 'grid-col-100 pb-0',
+                condition: {
+                    when: 'subHeader11',
+                    is: () => {
+                        return Boolean(getValue(ruleCompliance, 'complianceDescription'))
+                    },
+                    then: { visible: true }
+                }
+            },
+            {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'rule',
-                label: 'Rule',
-                content: getValue(activityDetails, 'rule.name'),
-                className: 'grid-col-100'
+                label: 'Rule Name',
+                content: getValue(activityDetails, 'rule.name')
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'ruleNo',
+                label: 'Rule No.',
+                content: getValue(activityDetails, 'rule.ruleNo') || '-NA-'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'rule',
+                label: 'Section No.',
+                content: getValue(activityDetails, 'rule.setionNo') || '-NA-'
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'ruleDescription',
-                label: 'Description',
+                label: 'Rule Description',
                 content: getValue(activityDetails, 'rule.description'),
                 className: 'grid-col-100'
             },
             {
                 component: componentTypes.PLAIN_TEXT,
+                name: 'risk',
+                label: 'Risk',
+                content: getValue(ruleCompliance, 'risk')
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
                 name: 'auditType',
                 label: 'Audit Type',
-                content: getValue(ruleCompliance, 'auditType'),
+                content: getValue(ruleCompliance, 'auditType')
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'statutoryAuthority',
+                label: 'Statutory Authority',
+                content: getValue(ruleCompliance, 'statutoryAuthority'),
                 condition: {
                     when: 'auditType',
                     is: () => {
-                        return !isFetching && Boolean(ruleCompliance);
-                    },
-                    then: { visible: true }
-                }
-            },
-            {
-                component: componentTypes.PLAIN_TEXT,
-                name: 'complianceNature',
-                label: 'Compliance Nature',
-                content: getValue(ruleCompliance, 'complianceNature'),
-                condition: {
-                    when: 'complianceNature',
-                    is: () => {
-                        return !isFetching && Boolean(ruleCompliance);
-                    },
-                    then: { visible: true }
-                }
-
-            },
-            {
-                component: componentTypes.PLAIN_TEXT,
-                name: 'risk',
-                label: 'Risk',
-                content: getValue(ruleCompliance, 'risk'),
-                condition: {
-                    when: 'risk',
-                    is: () => {
-                        return !isFetching && Boolean(ruleCompliance);
+                        const auditType = getValue(ruleCompliance, 'auditType');
+                        return auditType && auditType === 'Statutory';
                     },
                     then: { visible: true }
                 }
@@ -208,90 +243,45 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                         return !isFetching && Boolean(ruleCompliance);
                     },
                     then: { visible: true }
-                }
+                },
+                className: 'grid-col-66'
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'maximumPenaltyAmount',
                 label: 'Max Penalty Amount',
-                content: getValue(ruleCompliance, 'maximumPenaltyAmount'),
-                condition: {
-                    when: 'maximumPenaltyAmount',
-                    is: () => {
-                        return !isFetching && Boolean(ruleCompliance);
-                    },
-                    then: { visible: true }
-                }
+                content: getValue(ruleCompliance, 'maximumPenaltyAmount')
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'proofOfCompliance',
                 label: 'Proof Of Compliance',
-                content: getValue(ruleCompliance, 'proofOfCompliance'),
-                condition: {
-                    when: 'proofOfCompliance',
-                    is: () => {
-                        return !isFetching && Boolean(ruleCompliance);
-                    },
-                    then: { visible: true }
-                }
+                content: getValue(ruleCompliance, 'proofOfCompliance') || '-NA-',
+                className: 'grid-col-100'
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'impriosonment',
                 label: 'Imprisonment',
-                content: getValue(ruleCompliance, 'impriosonment', 'BOOLEAN'),
-                condition: {
-                    when: 'impriosonment',
-                    is: () => {
-                        return !isFetching && Boolean(ruleCompliance);
-                    },
-                    then: { visible: true }
-                }
+                content: getValue(ruleCompliance, 'impriosonment', 'BOOLEAN')
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'continuingPenalty',
                 label: 'Continuing Penalty',
-                content: getValue(ruleCompliance, 'continuingPenalty', 'BOOLEAN'),
-                condition: {
-                    when: 'continuingPenalty',
-                    is: () => {
-                        return !isFetching && Boolean(ruleCompliance);
-                    },
-                    then: { visible: true }
-                }
+                content: getValue(ruleCompliance, 'continuingPenalty', 'BOOLEAN')
             },
             {
                 component: componentTypes.PLAIN_TEXT,
                 name: 'cancellationSuspensionOfLicense',
                 label: 'Cancellation/Suspension of License',
-                content: getValue(ruleCompliance, 'cancellationSuspensionOfLicense', 'BOOLEAN'),
-                condition: {
-                    when: 'cancellationSuspensionOfLicense',
-                    is: () => {
-                        return !isFetching && Boolean(ruleCompliance);
-                    },
-                    then: { visible: true }
-                }
+                content: getValue(ruleCompliance, 'cancellationSuspensionOfLicense', 'BOOLEAN')
             },
             {
                 component: componentTypes.PLAIN_TEXT,
-                name: 'complianceNotAvailable',
-                content: (
-                    <div className="d-flex py-3 align-items-center gap-3">
-                        <FontAwesomeIcon icon={faExclamationTriangle} className="text-warn" />
-                        <span className="text-appprimary fst-italic fw-bold">No compliance information available. Contact admin to add compliance details</span>
-                    </div>
-                ),
-                className: 'grid-col-100',
-                condition: {
-                    when: 'complianceNotAvailable',
-                    is: () => {
-                        return !isFetching && !Boolean(ruleCompliance);
-                    },
-                    then: { visible: true }
-                }
+                name: 'formName',
+                label: 'Form Name',
+                content: getValue(activityDetails, 'actStateMapping.formName') || '-NA-'
             },
             {
                 component: componentTypes.PLAIN_TEXT,
@@ -329,6 +319,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 documents,
                 validate: editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD) ? [
                     { type: validatorTypes.REQUIRED },
+                    { type: 'file-size', maxSize: 5 * FILE_SIZE.MB },
                     { type: 'file-size', maxSize: 25 * FILE_SIZE.MB }
                 ] : [],
                 className: 'w-33',
@@ -397,7 +388,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
     function TitleTmpl({ name, status }: any) {
         return (
             <div className="d-flex flex-row gap-2 mb-2">
-                <Icon name={ComplianceStatusIconMapping[status]} className="text-xl"
+                <Icon name={ComplianceStatusIconMapping[status]} className="text-xl" text={ComplianceStatusMapping[status]}
                     style={{ color: COMPLIANCE_ACTIVITY_INDICATION[status] || '', fill: COMPLIANCE_ACTIVITY_INDICATION[status] || '' }} />
                 <span className={`text-xl fw-bold ellipse`}
                     style={{ color: COMPLIANCE_ACTIVITY_INDICATION[status] || '' }}>{name}</span>
@@ -447,10 +438,11 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
 
     useEffect(() => {
         if (!isFetching && activity) {
-            const { compliance, ruleComplianceDetail } = activity;
-            setActivity(compliance);
-            setRuleCompliance(ruleComplianceDetail);
-            const _editable = isFormEditable(compliance.status) && Boolean(ruleComplianceDetail);
+            const { actStateMapping } = activity;
+            const { ruleComplianceDetails } = actStateMapping;
+            setActivity(activity);
+            setRuleCompliance(ruleComplianceDetails);
+            const _editable = isFormEditable(activity.status) && Boolean(ruleComplianceDetails);
             setEditable(_editable);
             setInitialValue({
                 hideButtons: !(_editable && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD)),
@@ -497,7 +489,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                                     debug={debugForm}
                                 />
                             }
-                            <div className="d-flex justify-content-end mt-4">
+                            <div className="d-flex justify-content-end my-4">
                                 {
                                     editableForm && hasEditableAccess() ?
                                         <>

@@ -11,6 +11,7 @@ dayjs.extend(utc as any);
 const PerformanceTabs = [
     { value: '0', label: 'Today' },
     { value: '7', label: 'This Week' },
+    { value: '30', label: 'This Month' },
     { value: '1', label: ['Last', 'Month'] },
     { value: '3', label: ['3 Months'] },
     { value: '6', label: ['6 Months'] },

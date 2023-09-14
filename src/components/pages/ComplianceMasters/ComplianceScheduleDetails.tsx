@@ -28,7 +28,8 @@ const SortFields: any = {
     'activity.name': 'activityname',
     'associateCompany.name': 'associatecompanyname',
     'location.name': 'locationname',
-    'activity.type': 'activityType'
+    'activity.type': 'activityType',
+    'veritical.name': 'verticalName'
 };
 
 function ComplianceScheduleDetails(this: any) {

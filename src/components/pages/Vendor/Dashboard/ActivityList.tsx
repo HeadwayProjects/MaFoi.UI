@@ -1,6 +1,8 @@
 import React from "react";
 import dayjs from "dayjs";
 import { STATUS_MAPPING } from "../../../common/Constants";
+import Icon from "../../../common/Icon";
+import { ACTIVITY_TYPE_ICONS } from "../../../../utils/constants";
 
 function StatusTmp({ status }: any) {
     return (
@@ -16,6 +18,7 @@ function ActivityList({ list }: any) {
                     list.map((activity: any) => {
                         return (
                             <li className="list-group-item" key={activity.id} style={{ height: '40px' }}>
+                                <Icon name={ACTIVITY_TYPE_ICONS[activity.auditted]} text={activity.auditted} className="me-2" />
                                 <span>{activity.location.name}</span>
                                 <span>-</span>
                                 <StatusTmp status={STATUS_MAPPING[activity.status]} />

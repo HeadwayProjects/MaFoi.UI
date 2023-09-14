@@ -60,7 +60,7 @@ export function useGetComplianceById(id: any, payload = {}) {
         }
     );
 
-    return { activity: (data || {}).data || null, isFetching, refetch, invalidate };
+    return { activity: ((data || {}).data || null) as any, isFetching, refetch, invalidate };
 }
 
 export function useDeleteComplianceSchedule(onSuccess?: any, onError?: any) {

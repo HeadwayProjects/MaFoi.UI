@@ -8,7 +8,7 @@ import { debounce } from "underscore";
 import { getActivities, getActs, getRuleMappings, getRules, useGetStates } from "../../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from "../../../common/Table";
 import { DEBOUNCE_TIME } from "../../../../utils/constants";
-import { Alert } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 
 export function ruleOptionLabel({ label, rule = {} }: any) {
     return (
@@ -214,13 +214,19 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
                     buttonWrapStyles: 'justify-content-start',
                     submitBtnText: 'Next',
                     ...mappingDetails,
-                    hideButtons: action === ACTIONS.VIEW
+                    hideButtons: action === ACTIONS.VIEW || action === ACTIONS.EDIT
                 }}
                 debug={debugForm}
                 componentMapper={ComponentMapper}
                 schema={schema}
                 onSubmit={handleSubmit}
             />
+            {
+                action === ACTIONS.EDIT &&
+                <div className="d-flex">
+                    <Button variant="primary" onClick={handleSubmit}>Next</Button>
+                </div>
+            }
         </>
     )
 }

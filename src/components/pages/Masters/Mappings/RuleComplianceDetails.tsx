@@ -68,16 +68,22 @@ function RuleComplianceDetails({ action, data, onCancel, onSubmit }: any) {
                 }
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
                 name: 'proofOfCompliance',
                 label: 'Proof Of Compliance.',
-                content: getValue(compliance, 'proofOfCompliance') || '-NA-'
+                content: getValue(compliance, 'proofOfCompliance') || '-NA-',
+                validate: [
+                    { type: validatorTypes.MAX_LENGTH, threshold: 1000 }
+                ]
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
                 name: 'penalty',
                 label: 'Penalty',
-                content: getValue(compliance, 'penalty') || '-NA-'
+                content: getValue(compliance, 'penalty') || '-NA-',
+                validate: [
+                    { type: validatorTypes.MAX_LENGTH, threshold: 1000 }
+                ]
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,

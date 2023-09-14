@@ -90,7 +90,7 @@ export enum DashboardView {
     CHART = 'chart'
 }
 
-export function setUserDetailsInFilters(filters: any[], type = false) {
+export function setUserDetailsInFilters(filters: any[] = [], type = false) {
     filters = filters || [];
     let key = '';
     let userType = '';
