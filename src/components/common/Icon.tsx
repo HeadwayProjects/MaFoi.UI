@@ -210,6 +210,11 @@ function Icon({ className, name, action, data, style, disabled, text, type }: Ic
                     'times-circle': (
                         <FontAwesomeIcon icon={faTimesCircle} />
                     ),
+                    circle: (
+                        <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse strokeWidth="0" ry="8" rx="8" cy="8" cx="8" />
+                        </svg>
+                    ),
                     'clock': (
                         <FontAwesomeIcon icon={faClock} />
                     ),

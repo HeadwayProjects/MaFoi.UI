@@ -1,17 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
-import { ACTIONS, ACTIVITY_STATUS, STATUS_MAPPING } from "../../../common/Constants";
+import { ACTIONS } from "../../../common/Constants";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER } from "../../../../utils/constants";
 import { useGetAllComplianceActivities } from "../../../../backend/compliance";
-import { getUserDetails, hasUserAccess } from "../../../../backend/auth";
+import { hasUserAccess } from "../../../../backend/auth";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 import Icon from "../../../common/Icon";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import styles from "./Styles.module.css";
 import ComplianceActivityDetails from "./ComplianceActivityDetails";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle } from "@fortawesome/free-solid-svg-icons";
-import { COMPLIANCE_ACTIVITY_INDICATION, ComplianceStatusMapping, setUserDetailsInFilters } from "../../../../constants/Compliance.constants";
+import {
+    COMPLIANCE_ACTIVITY_INDICATION,
+    ComplianceStatusMapping, setUserDetailsInFilters
+} from "../../../../constants/Compliance.constants";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -80,7 +81,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
         const status = cell.getValue();
         return (
             <div className="d-flex align-items-center">
-                <FontAwesomeIcon icon={faCircle} className="text-md" style={{ color: COMPLIANCE_ACTIVITY_INDICATION[status] || '' }} />
+                <Icon name="circle" style={{ color: COMPLIANCE_ACTIVITY_INDICATION[status] || '' }} text={ComplianceStatusMapping[status]} />
             </div>
         )
     }

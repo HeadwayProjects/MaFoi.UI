@@ -52,7 +52,10 @@ function EscalationMatrixDetails({ action, data, onClose, onSubmit }: any) {
                     { type: validatorTypes.REQUIRED }
                 ],
                 options: companies,
-                content: action !== ACTIONS.ADD ? getValue(matrix, 'company.label') : null
+                content: action !== ACTIONS.ADD ? getValue(matrix, 'company.label') : null,
+                onChange: (company: any) => {
+                    setMatrix({ ...matrix, company, user: undefined })
+                }
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,

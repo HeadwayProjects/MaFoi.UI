@@ -16,7 +16,7 @@ function ComplianceOwnerDashboard() {
 
     function onLocationChange(event: any) {
         setLocationFilter(event);
-        setFilters(event);
+        setFilters({...(filters || []), ...event});
     }
 
     function handleFilterChange(event: any) {

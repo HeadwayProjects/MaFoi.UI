@@ -22,12 +22,14 @@ export default function ComplianceAdvanceFilters({ onChange, companies, ignoreFi
     }
 
     function getKeys() {
-        const keys = Object.keys(filters).length;
+        let keys = Object.keys(filters).length;
         if (filters.month) {
-            return keys - 1;
-        } else {
-            return keys;
+            keys = keys - 1;
         }
+        if (filters.fromDate) {
+            keys = keys - 1;
+        }
+        return keys;
     }
 
     return (
@@ -43,7 +45,7 @@ export default function ComplianceAdvanceFilters({ onChange, companies, ignoreFi
                 open &&
                 <AdvanceFilterModal onCancel={() => setOpen(false)}
                     onSubmit={handleFilters} data={rawFilters}
-                    companies={companies} ignoreFilters={ignoreFilters}/>
+                    companies={companies} ignoreFilters={ignoreFilters} />
             }
         </>
     )

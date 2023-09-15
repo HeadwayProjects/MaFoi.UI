@@ -26,7 +26,7 @@ export default function ComplianceScheduleAdvanceFilter({ onChange }: any) {
         if (filters.month) {
             keys = keys - 1;
         }
-        if (filters.from) {
+        if (filters.fromDate) {
             keys = keys - 1;
         }
         return keys;

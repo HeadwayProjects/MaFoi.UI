@@ -42,10 +42,10 @@ export const COMPLIANCE_ACTIVITY_ORDER = [
 ]
 
 export const COMPLIANCE_ACTIVITY_INDICATION: any = {
-    [ComplianceActivityStatus.DUE]: 'var(--yellow)',
+    [ComplianceActivityStatus.DUE]: 'var(--gray)',
     [ComplianceActivityStatus.NON_COMPLIANT]: 'var(--medium-red)',
-    [ComplianceActivityStatus.SUBMITTED]: 'var(--green)',
-    [ComplianceActivityStatus.APPROVED]: 'var(--emarald-green)',
+    [ComplianceActivityStatus.SUBMITTED]: 'var(--yellow)',
+    [ComplianceActivityStatus.APPROVED]: 'var(--green)',
     [ComplianceActivityStatus.REJECTED]: 'var(--red)'
 }
 
@@ -61,17 +61,17 @@ export const ComplianceChartStatusMapping: any = {
     [ComplianceChartStatus.DUE]: {
         value: ComplianceChartStatus.DUE,
         label: ComplianceStatusMapping[ComplianceActivityStatus.DUE],
-        color: '--yellow'
+        color: '--gray'
     },
     [ComplianceChartStatus.PENDING]: {
         value: ComplianceChartStatus.PENDING,
         label: ComplianceStatusMapping[ComplianceActivityStatus.PENDING],
-        color: '--orange'
+        color: '--yellow'
     },
     [ComplianceChartStatus.LATE]: {
         value: ComplianceChartStatus.LATE,
         label: ComplianceStatusMapping[ComplianceActivityStatus.LATE_CLOSURE],
-        color: '--yellow'
+        color: '--orange'
     },
     [ComplianceChartStatus.NON_COMPLIANT]: {
         value: ComplianceChartStatus.NON_COMPLIANT,
@@ -81,7 +81,7 @@ export const ComplianceChartStatusMapping: any = {
     [ComplianceChartStatus.ON_TIME]: {
         value: ComplianceChartStatus.ON_TIME,
         label: ComplianceStatusMapping[ComplianceActivityStatus.ON_TIME],
-        color: '--emarald-green'
+        color: '--green'
     }
 }
 

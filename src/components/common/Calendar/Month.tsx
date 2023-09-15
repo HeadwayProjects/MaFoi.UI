@@ -61,6 +61,7 @@ export default function Month(props: CalendarProps) {
             const x = data.find((x: any) => x.date === _dt.id);
             if (x) {
                 _dt.status = x.activities[0].status
+                _dt.count = x.activities.length;
             } else{
                 delete _dt.status;
             }
@@ -107,6 +108,12 @@ export default function Month(props: CalendarProps) {
                                 dates.map((date: any) => {
                                     return (
                                         <div className={styles.ezycompCalendarMonthDay} key={date.id}>
+                                            {
+                                                !!date.count &&
+                                                <span className="dayBadge" style={{
+                                                    backgroundColor: COMPLIANCE_ACTIVITY_INDICATION[date.status]
+                                                }}>{date.count}</span>
+                                            }
                                             <span onClick={() => handleDateSelection(date.date)}
                                                 style={{
                                                     opacity: (date.date < dateRange.from || date.date > dateRange.to) ? 0.5 : 1,
