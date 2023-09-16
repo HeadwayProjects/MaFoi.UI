@@ -15,6 +15,7 @@ import { useExportDepartments } from "../../../../../backend/exports";
 import { downloadFileContent } from "../../../../../utils/common";
 import { hasUserAccess } from "../../../../../backend/auth";
 import { USER_PRIVILEGES } from "../../../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../../../common/TableActions";
 
 function ManageDepartments() {
     const [t] = useState(new Date().getTime());
@@ -54,6 +55,20 @@ function ManageDepartments() {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const buttons: ActionButton[] = [{
+        name: 'addNew',
+        label: 'Add New',
+        icon: 'plus',
+        privilege: USER_PRIVILEGES.ADD_DEPARTMENT,
+        action: () => setAction(ACTIONS.ADD)
+    }, {
+        name: 'export',
+        label: 'Export',
+        icon: 'download',
+        privilege: USER_PRIVILEGES.EXPORT_DEPARTMENTS,
+        action: handleExport
+    }];
 
     const filterConfig = [
         {
@@ -241,21 +256,6 @@ function ManageDepartments() {
 
     }, [filters]);
 
-    // useEffect(() => {
-    //     if (!fetchingCompanies && companies) {
-    //         const { id, name } = (companies || [])[0] || {};
-    //         setCompany({ value: id, label: name });
-    //         if (id && name) {
-    //             setVertical(DEFAULT_OPTION);
-    //             const { search } = filterRef.current || { search: '' };
-    //             setFilters({
-    //                 filters: [{ columnName: 'companyId', value: id }],
-    //                 search
-    //             });
-    //         }
-    //     }
-    // }, [fetchingCompanies]);
-
     useEffect(() => {
         if (!isFetching && payload) {
             setTimeout(() => {
@@ -273,15 +273,7 @@ function ManageDepartments() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder="Search for Department" />
-                                <div className="d-flex">
-                                    <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}
-                                        disabled={!Boolean(total)}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
-                                </div>
+                                <TableActions buttons={buttons} buttonsInRow={2} />
                             </div>
                         </div>
                     </div>

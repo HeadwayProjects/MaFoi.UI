@@ -9,7 +9,7 @@ import ConfirmModal from "../../common/ConfirmModal";
 import { useDeleteAct, useGetActs, useGetLaws } from "../../../backend/masters";
 import { EstablishmentTypes, GetMastersBreadcrumb } from "./Master.constants";
 import { toast } from "react-toastify";
-import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
+import { ERROR_MESSAGES } from "../../../utils/constants";
 import PageLoader from "../../shared/PageLoader";
 import { useRef } from "react";
 import TableFilters from "../../common/TableFilter";
@@ -19,6 +19,7 @@ import ActImportModal from "./ActImportModal";
 import styles from "./Masters.module.css";
 import { hasUserAccess } from "../../../backend/auth";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../common/TableActions";
 
 function Act() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Act'));
@@ -47,6 +48,27 @@ function Act() {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const buttons: ActionButton[] = [{
+        label: 'Add New',
+        name: 'addNew',
+        privilege: USER_PRIVILEGES.ADD_ACT,
+        icon: 'plus',
+        action: () => setAction(ACTIONS.ADD)
+    }, {
+        label: 'Export',
+        name: 'export',
+        privilege: USER_PRIVILEGES.EXPORT_ACTS,
+        icon: 'download',
+        disabled: !total,
+        action: handleExport
+    }, {
+        label: 'Import',
+        name: 'import',
+        privilege: USER_PRIVILEGES.ADD_ACT,
+        icon: 'upload',
+        action: () => setAction(ACTIONS.IMPORT)
+    }];
 
     const filterConfig = [
         {
@@ -184,26 +206,7 @@ function Act() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder="Search for Act/Estblishment Type/Law" />
-                                <div className="d-flex">
-                                    {
-                                        hasUserAccess(USER_PRIVILEGES.ADD_ACT) &&
-                                        <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)}>
-                                            <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
-                                        </Button>
-                                    }
-                                    {
-                                        hasUserAccess(USER_PRIVILEGES.EXPORT_ACTS) &&
-                                        <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}>
-                                            <Icon name={'download'} className="me-2"></Icon>Export
-                                        </Button>
-                                    }
-                                    {
-                                        hasUserAccess(USER_PRIVILEGES.ADD_ACT) &&
-                                        <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                            <Icon name={'plus'} className="me-2"></Icon>Add New
-                                        </Button>
-                                    }
-                                </div>
+                                <TableActions buttons={buttons} />
                             </div>
                         </div>
                     </div>

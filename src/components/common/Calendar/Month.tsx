@@ -64,6 +64,7 @@ export default function Month(props: CalendarProps) {
                 _dt.count = x.activities.length;
             } else{
                 delete _dt.status;
+                delete _dt.count;
             }
         });
         setDates(_dates);

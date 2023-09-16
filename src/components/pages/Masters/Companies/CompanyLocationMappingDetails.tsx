@@ -64,7 +64,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 content: (associateCompany || {}).label
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action !== ACTIONS.ADD ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'state',
                 label: 'State',
                 options: states,
@@ -72,10 +72,10 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'state.label') : ''
+                content: action !== ACTIONS.ADD ? getValue(locationDetails, 'state.label') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action !== ACTIONS.ADD ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'city',
                 label: 'City',
                 options: cities,
@@ -83,7 +83,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                     { type: validatorTypes.REQUIRED }
                 ],
                 isDisabled: !locationDetails.state,
-                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'city.label') : ''
+                content: action !== ACTIONS.ADD ? getValue(locationDetails, 'city.label') : ''
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,

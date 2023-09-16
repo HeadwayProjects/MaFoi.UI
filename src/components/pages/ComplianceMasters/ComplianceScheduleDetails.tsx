@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { ACTIONS } from "../../common/Constants";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
@@ -15,12 +13,12 @@ import ConfirmModal from "../../common/ConfirmModal";
 import PageLoader from "../../shared/PageLoader";
 import { hasUserAccess } from "../../../backend/auth";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
-import { Dropdown, DropdownButton } from "react-bootstrap";
 import ComplianceAssignUser from "./ComplianceAssignUser";
 import MastersLayout from "../Masters/MastersLayout";
 import { GetComplianceBreadcrumb } from "./Compliance.constants";
 import { COMPLIANCE_ACTIVITY_INDICATION, ComplianceActivityStatus, ComplianceStatusMapping } from "../../../constants/Compliance.constants";
 import ComplianceScheduleAdvanceFilter from "./ComplianceScheduleAdvanceFilter";
+import TableActions, { ActionButton } from "../../common/TableActions";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -63,6 +61,23 @@ function ComplianceScheduleDetails(this: any) {
         }
     });
 
+    const buttons: ActionButton[] = [
+        {
+            label: 'Assign User',
+            name: 'assignUser',
+            icon: 'people',
+            disabled: !(selectedRows || []).length,
+            action: handleAssignUser,
+            privilege: USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS
+        }, {
+            label: 'Bulk Delete',
+            name: 'bulkDelete',
+            icon: 'trash',
+            disabled: !(selectedRows || []).length,
+            action: handleBulkDelete,
+            privilege: USER_PRIVILEGES.DELETE_COMPLIANCE_SCHEDULE_DETAILS
+        }
+    ];
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
@@ -389,36 +404,7 @@ function ComplianceScheduleDetails(this: any) {
                             <div>
                                 <ComplianceScheduleAdvanceFilter onChange={search} />
                             </div>
-                            <div className="d-flex flex-row align-items-center ms-auto">
-                                {
-                                    (hasUserAccess(USER_PRIVILEGES.COMPLIANCE_SCHEDULE)
-                                        || hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS)
-                                        || hasUserAccess(USER_PRIVILEGES.DELETE_COMPLIANCE_SCHEDULE_DETAILS)) &&
-                                    <DropdownButton title="Actions" variant="primary">
-                                        {/* {
-                                            hasUserAccess(USER_PRIVILEGES.COMPLIANCE_SCHEDULE) &&
-                                            <Dropdown.Item onClick={handleCopyTo}
-                                                disabled={!(selectedRows || []).length} className="my-1">
-                                                <FontAwesomeIcon icon={faFloppyDisk} className="me-2" />Copy To.
-                                            </Dropdown.Item>
-                                        } */}
-                                        {
-                                            hasUserAccess(USER_PRIVILEGES.ASSIGN_COMPLIANCE_SCHEDULE_DETAILS) &&
-                                            <Dropdown.Item onClick={handleAssignUser}
-                                                disabled={!(selectedRows || []).length} className="my-1">
-                                                <FontAwesomeIcon icon={faUsers} className="me-2" />Assign User
-                                            </Dropdown.Item>
-                                        }
-                                        {
-                                            hasUserAccess(USER_PRIVILEGES.DELETE_COMPLIANCE_SCHEDULE_DETAILS) &&
-                                            <Dropdown.Item onClick={handleBulkDelete} className="my-1"
-                                                disabled={!(selectedRows || []).length}>
-                                                <FontAwesomeIcon icon={faTrash} className="me-2" />Bulk Delete
-                                            </Dropdown.Item>
-                                        }
-                                    </DropdownButton>
-                                }
-                            </div>
+                            <TableActions buttons={buttons} />
                         </div>
                     </div>
                 </form>

@@ -60,15 +60,17 @@ function Navbar({ showUser = true }) {
     }, [notifications]);
 
     useEffect(() => {
-        const _role = auth.getUserRole();
-        setRole(_role);
-        const { role } = auth.getUserDetails();
-        if (typeof role === 'string' || role.length === 1) {
-            setRoles([]);
-        } else {
-            setRoles(role.filter((x: string) => x !== _role));
+        if (showUser) {
+            const _role = auth.getUserRole();
+            setRole(_role);
+            const { role } = auth.getUserDetails();
+            if (typeof role === 'string' || role.length === 1) {
+                setRoles([]);
+            } else {
+                setRoles(role.filter((x: string) => x !== _role));
+            }
         }
-    }, []);
+    }, [showUser]);
 
     return (
         <>

@@ -1111,17 +1111,15 @@ export function useGetAllNotifications(payload: any, enabled = true) {
     };
 }
 
-export function useUpdateNotificationStatus(onSuccess?: any, onError?: any) {
-    const { mutate: updateStatus, error, isLoading: creating } = useMutation(
-        ['updateStatus'],
-        async (payload: any) => await api.post('/api/Mappings/UpdateNotificationStatus', payload),
+export function useUpdateNotificationStatus(payload: any, enabled = false) {
+    const { data, isFetching, refetch } = useQuery(
+        ['updateStatus', payload],
+        async () => await api.post(`/api/Mappings/UpdateNotificationStatus`, payload),
         {
-            onError,
-            onSuccess: (response) => {
-                const data = (response || {}).data || {};
-                onSuccess(data);
-            }
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
-    return { updateStatus, error, creating };
+    return { data: (data || {}).data, isFetching };
 }

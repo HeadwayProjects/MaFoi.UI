@@ -2,19 +2,20 @@ import React, { useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useUpdateNotificationStatus } from "../../../backend/masters";
 import { NotificationStatus } from "./NotificationCard";
+import { API_RESULT } from "../../../utils/constants";
 
 
 function NotificationDetails({ notification, onClose, onSubmit }: any) {
-    const { updateStatus, creating } = useUpdateNotificationStatus(onSubmit);
-
+    const { id, notifyStatus } = notification || {};
+    const { data, isFetching } = useUpdateNotificationStatus({ notificationId: id, statusflag: 'Read' }, Boolean(id && notifyStatus === NotificationStatus.UNREAD));
     useEffect(() => {
-        if (notification.notifyStatus === NotificationStatus.UNREAD && !creating) {
-            updateStatus({
-                notificationId: notification.id,
-                statusflag: "Read"
-            });
+        if (!isFetching && data) {
+            const {key} = data;
+            if (key === API_RESULT.SUCCESS) {
+                onSubmit();
+            }
         }
-    }, [])
+    }, [isFetching])
 
     return (
         <>

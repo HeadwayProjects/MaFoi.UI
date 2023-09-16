@@ -15,6 +15,7 @@ import { useExportVerticals } from "../../../../../backend/exports";
 import { downloadFileContent } from "../../../../../utils/common";
 import { hasUserAccess } from "../../../../../backend/auth";
 import { USER_PRIVILEGES } from "../../../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../../../common/TableActions";
 
 function ManageVerticals() {
     const [t] = useState(new Date().getTime());
@@ -48,6 +49,20 @@ function ManageVerticals() {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const buttons: ActionButton[] = [{
+        label: 'Add New',
+        name: 'addNew',
+        icon: 'plus',
+        privilege: USER_PRIVILEGES.ADD_VERTICAL,
+        action: () => setAction(ACTIONS.ADD)
+    }, {
+        label: 'Export',
+        name: 'export',
+        icon: 'download',
+        privilege: USER_PRIVILEGES.EXPORT_VERTICALS,
+        action: handleExport
+    }];
 
     const filterConfig = [
         {
@@ -194,15 +209,7 @@ function ManageVerticals() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder="Search for Vertical" />
-                                <div className="d-flex">
-                                    <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}
-                                        disabled={!Boolean(total)}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
-                                </div>
+                                <TableActions buttons={buttons} buttonsInRow={2}/>
                             </div>
                         </div>
                     </div>

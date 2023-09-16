@@ -19,6 +19,7 @@ import RulesImportModal from "./RulesImportModal";
 import styles from "./Masters.module.css";
 import { hasUserAccess } from "../../../backend/auth";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../common/TableActions";
 
 function Rule() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Rule'));
@@ -43,6 +44,26 @@ function Rule() {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const buttons: ActionButton[] = [{
+        label: 'Add New',
+        name: 'addNew',
+        privilege: USER_PRIVILEGES.ADD_RULE,
+        icon: 'plus',
+        action: () => setAction(ACTIONS.ADD)
+    }, {
+        label: 'Export',
+        name: 'export',
+        privilege: USER_PRIVILEGES.EXPORT_RULES,
+        icon: 'download',
+        action: handleExport
+    }, {
+        label: 'Import',
+        name: 'import',
+        privilege: USER_PRIVILEGES.ADD_RULE,
+        icon: 'upload',
+        action: () => setAction(ACTIONS.IMPORT)
+    }];
 
     const filterConfig = [
         {
@@ -192,26 +213,7 @@ function Rule() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Rule/Description"} />
-                                <div className="d-flex">
-                                    {
-                                        hasUserAccess(USER_PRIVILEGES.ADD_RULE) &&
-                                        <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)}>
-                                            <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
-                                        </Button>
-                                    }
-                                    {
-                                        hasUserAccess(USER_PRIVILEGES.EXPORT_RULES) &&
-                                        <Button variant="primary" className="px-3 mx-3 text-nowrap" onClick={handleExport}>
-                                            <Icon name={'download'} className="me-2"></Icon>Export
-                                        </Button>
-                                    }
-                                    {
-                                        hasUserAccess(USER_PRIVILEGES.ADD_RULE) &&
-                                        <Button variant="primary" className="px-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                            <Icon name={'plus'} className="me-2"></Icon>Add New
-                                        </Button>
-                                    }
-                                </div>
+                                <TableActions buttons={buttons} />
                             </div>
                         </div>
                     </div>

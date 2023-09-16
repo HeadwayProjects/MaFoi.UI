@@ -46,6 +46,18 @@ export const AUDIT_STATUS = {
     NOT_APPLICABLE: 'Not-Applicable'
 }
 
+export const ActivityColorMappings = {
+    [ACTIVITY_STATUS.ACTIVITY_SAVED]: '--blue',
+    [ACTIVITY_STATUS.PENDING]: '--light-red',
+    [ACTIVITY_STATUS.OVERDUE]: '--orange',
+    [ACTIVITY_STATUS.SUBMITTED]: '--light-green',
+    [ACTIVITY_STATUS.REJECTED]: '--yellow',
+    [ACTIVITY_STATUS.AUDITED]: '--light-blue',
+    [AUDIT_STATUS.COMPLIANT]: '--medium-green',
+    [AUDIT_STATUS.NON_COMPLIANCE]: '--red',
+    [AUDIT_STATUS.NOT_APPLICABLE]: '--mild-gray',
+}
+
 export const ALLOWED_FILES_REGEX = /(\.xlsx|\.xls|\.csv|\.pdf|\.jpg|\.jpeg|\.png|\.doc|\.docx)$/i;
 export const ALLOWED_LOGO_REGEX = /(\.jpg|\.jpeg|\.png)$/i;
 export const EXCEL_FILE_REGEX = /(\.xlsx)$/i;

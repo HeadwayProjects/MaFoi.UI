@@ -1,4 +1,5 @@
 .notificationsContainer {
-    height: calc(100vh - 258px);
+    height: calc(100vh - 296px);
+    min-height: 200px;
     overflow: auto;
 }

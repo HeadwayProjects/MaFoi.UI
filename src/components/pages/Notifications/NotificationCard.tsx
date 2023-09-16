@@ -26,7 +26,7 @@ export default function NotificationCard({ notification, onSubmit }: any) {
                 <div className="p-4 py-2 d-flex justify-content-center">
                     <Avatar name={notification.fromMail} size="40" round={true} />
                 </div>
-                <div className="d-flex flex-row p-2 pe-3 pb-3 gap-3">
+                <div className="d-flex flex-row p-2 pe-3 pb-3 gap-3 w-100 justify-content-between">
                     <div className="d-flex flex-column">
                         <div className="fw-bold">{notification.subject}</div>
                         <div className="ellipse two-lines" dangerouslySetInnerHTML={{ __html: notification.mailBody || '--NA--' }}></div>

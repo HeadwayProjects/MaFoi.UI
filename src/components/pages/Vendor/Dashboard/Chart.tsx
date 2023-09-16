@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react";
+import { getCSSPropertyValue } from "../../../../utils/styles";
+import { ACTIVITY_STATUS, AUDIT_STATUS, ActivityColorMappings } from "../../../common/Constants";
 
 const CHART_MAPPING = [
-    { color: '#4EC343', label: 'Compliant', key: 'compliant' },
-    { color: '#FFC000', label: 'Non-Compliance', key: 'nonCompliant' },
-    { color: '#5B5657', label: 'Not Applicable', key: 'notApplicable' },
-    { color: '#FF2D2D', label: 'Rejected', key: 'rejected' },
+    { color: ActivityColorMappings[AUDIT_STATUS.COMPLIANT], label: 'Compliant', key: 'compliant' },
+    { color: ActivityColorMappings[AUDIT_STATUS.NON_COMPLIANCE], label: 'Non-Compliance', key: 'nonCompliant' },
+    { color: ActivityColorMappings[AUDIT_STATUS.NOT_APPLICABLE], label: 'Not Applicable', key: 'notApplicable' },
+    { color: ActivityColorMappings[ACTIVITY_STATUS.REJECTED], label: 'Rejected', key: 'rejected' },
+    { color: '--dark-green', label: 'Audit', key: 'audit' },
+    { color: '--orange', label: 'Physical Audit', key: 'physicalAudit' },
+    { color: '--gray', label: 'No Audit', key: 'noAudit' }
 ];
 
 function Chart({ data, keys }: any) {
@@ -26,14 +31,14 @@ function Chart({ data, keys }: any) {
             {
                 data: series,
                 type: 'pie',
-                center: [250, '50%'],
+                center: [275, '50%'],
                 smooth: true,
                 radius: ['30%', '70%'],
                 height: 250,
                 label: {
                     show: true,
                     position: 'inner',
-                    formatter: ({percent}: any) => {
+                    formatter: ({ percent }: any) => {
                         return `${Math.round(percent)}%`
                     }
                 },
@@ -56,7 +61,7 @@ function Chart({ data, keys }: any) {
                     value: data[key] || 0,
                     name: `${data[key] || 0} ${_chart.label}`,
                     itemStyle: {
-                        color: _chart.color
+                        color: getCSSPropertyValue(_chart.color) || _chart.color
                     }
                 }
             });

@@ -19,6 +19,8 @@ import CompanyLocationsImportModal from "./CompanyLocationsImportModal";
 import { ResponseModel } from "../../../../models/responseModel";
 import { useExportCompanyLocations } from "../../../../backend/exports";
 import { downloadFileContent } from "../../../../utils/common";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../../common/TableActions";
 
 function mapLocation(x: any) {
     return {
@@ -74,6 +76,32 @@ function CompanyLocationMappings() {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
 
+    const buttons: ActionButton[] = [
+        {
+            label: 'Add New',
+            name: 'addNew',
+            icon: 'plus',
+            disabled: !associateCompany,
+            privilege: USER_PRIVILEGES.ADD_LOCATION_MAPPING,
+            action: () => setAction(ACTIONS.ADD)
+        },
+        {
+            label: 'Export',
+            name: 'export',
+            icon: 'download',
+            disabled: !total,
+            privilege: USER_PRIVILEGES.EXPORT_LOCATION_MAPPINGS,
+            action: handleExport
+        },
+        {
+            label: 'Import',
+            name: 'import',
+            disabled: !associateCompany,
+            icon: 'upload',
+            privilege: USER_PRIVILEGES.ADD_LOCATION_MAPPING,
+            action: () => setAction(ACTIONS.IMPORT)
+        }
+    ];
 
     const filterConfig = [
         {
@@ -84,7 +112,6 @@ function CompanyLocationMappings() {
             }),
             hideAll: true,
             value: parentCompany
-
         },
         {
             label: 'Associate Company',
@@ -295,17 +322,7 @@ function CompanyLocationMappings() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Location Code/Name/Contact"} />
-                                <div className="d-flex">
-                                    <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)} disabled={!Boolean(associateCompany)}>
-                                        <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
-                                    </Button>
-                                    <Button variant="primary" className="px-3 text-nowrap ms-3" onClick={handleExport} disabled={!total}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
-                                </div>
+                                <TableActions buttons={buttons} />
                             </div>
                         </div>
                     </div>
@@ -317,7 +334,10 @@ function CompanyLocationMappings() {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <CompanyLocationDetails action={action} parentCompany={parentCompany} associateCompany={associateCompany}
                     data={companyLocation}
-                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={submitCallback} />
+                    onClose={() => {
+                        setAction(ACTIONS.NONE);
+                        setCompanyLocation(null);
+                    }} onSubmit={submitCallback} />
             }
             {
                 action === ACTIONS.DELETE &&

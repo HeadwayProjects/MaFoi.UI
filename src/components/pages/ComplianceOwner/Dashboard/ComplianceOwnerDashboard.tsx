@@ -16,11 +16,15 @@ function ComplianceOwnerDashboard() {
 
     function onLocationChange(event: any) {
         setLocationFilter(event);
-        setFilters({...(filters || []), ...event});
+        const _filters = { ...filters };
+        delete _filters.companyId;
+        delete _filters.associateCompanyId;
+        delete _filters.locationId;
+        setFilters({ ..._filters, ...event });
     }
 
     function handleFilterChange(event: any) {
-        setFilters({...lfRef.current, ...event});
+        setFilters({ ...lfRef.current, ...event });
     }
 
     return (
@@ -45,7 +49,7 @@ function ComplianceOwnerDashboard() {
             <div className={`row m-0 py-2 bg-white ${styles.dashboardContainer}`}>
                 <div className="col-12">
                     <div className="d-flex flex-row m-0 pb-2 justify-content-between align-items-end">
-                        <OptionalLocations onChange={onLocationChange} loadCompanies={setCompanies}/>
+                        <OptionalLocations onChange={onLocationChange} loadCompanies={setCompanies} />
                         <ComplianceAdvanceFilters onChange={handleFilterChange} companies={companies} />
                     </div>
                     <DataGrid filters={filters} view={view} />

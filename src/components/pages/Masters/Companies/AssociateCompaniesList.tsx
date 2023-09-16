@@ -18,6 +18,7 @@ import { useExportAssociateCompanies } from "../../../../backend/exports";
 import { downloadFileContent } from "../../../../utils/common";
 import { hasUserAccess } from "../../../../backend/auth";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../../common/TableActions";
 
 function AssociateCompaniesList({ changeView, parent }: any) {
     const [t] = useState(new Date().getTime());
@@ -47,6 +48,20 @@ function AssociateCompaniesList({ changeView, parent }: any) {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const buttons: ActionButton[] = [{
+        label: 'Add New',
+        name: 'addNew',
+        icon: 'plus',
+        privilege: USER_PRIVILEGES.ADD_ASSOCIATE_COMPANY,
+        action: () => changeView(VIEWS.ADD, { parentCompany, _t: t })
+    }, {
+        label: 'Export',
+        name: 'export',
+        icon: 'download',
+        privilege: USER_PRIVILEGES.EXPORT_ASSOCIATE_COMPANIES,
+        action: handleExport
+    }]
 
     const filterConfig = [
         {
@@ -279,7 +294,7 @@ function AssociateCompaniesList({ changeView, parent }: any) {
                 if (_parentCompany) {
                     setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
                     if (!parentCompanyId) {
-                        setParentCompanyId( _parentCompany.id)
+                        setParentCompanyId(_parentCompany.id)
                     }
                     const { search } = filterRef.current || { search: '' };
                     setFilters({ filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: _parentCompany.id }], search });
@@ -313,20 +328,7 @@ function AssociateCompaniesList({ changeView, parent }: any) {
                         <div className="d-flex justify-content-between align-items-end">
                             <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                 placeholder={"Search for Company Code/Name/Contact No./Email"} />
-                            <div className="d-flex">
-                                {
-                                    hasUserAccess(USER_PRIVILEGES.EXPORT_ASSOCIATE_COMPANIES) &&
-                                    <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                }
-                                {
-                                    hasUserAccess(USER_PRIVILEGES.ADD_ASSOCIATE_COMPANY) &&
-                                    <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD, { parentCompany, _t: t })}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
-                                }
-                            </div>
+                            <TableActions buttons={buttons} />
                         </div>
                     </div>
                 </div>

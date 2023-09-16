@@ -570,7 +570,7 @@ function ActivitiesManagement() {
                                                 <input name={btn.name} type="checkbox" className="btn-check" id={btn.name} autoComplete="off"
                                                     onChange={onFormStatusChangeHandler}
                                                     checked={checkedStatuses[btn.name]} />
-                                                <label className={`btn btn-outline-${btn.style}`} htmlFor={btn.name}>{btn.label}</label>
+                                                <label className={`btn bg-status-${btn.name}`} htmlFor={btn.name}>{btn.label}</label>
                                             </div>
                                         )
                                     })

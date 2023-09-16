@@ -6,6 +6,7 @@ import "./dashboard.css";
 import Chart from "./Chart";
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
 import { ACTIVITY_TYPE, API_DELIMITER } from "../../../../utils/constants";
+import { ACTIVITY_STATUS, ActivityColorMappings } from "../../../common/Constants";
 dayjs.extend(utc as any);
 
 const PerformanceTabs = [
@@ -19,12 +20,12 @@ const PerformanceTabs = [
 ];
 
 const Statuses = [
-    { label: 'Activities Saved', key: 'activitiesSaved', className: 'gray-bg', value: 'ActivitySaved' },
-    { label: 'Pending', key: 'pending', className: 'yellow-bg', value: 'Pending' },
-    { label: 'Over Due', key: 'overDue', className: 'medium-red-bg', value: 'Overdue' },
-    { label: 'Submitted', key: 'submitted', className: 'light-green-bg', value: 'Submitted' },
-    { label: 'Audited', key: 'approved', className: 'green-bg', value: 'Audited' },
-    { label: 'Rejected', key: 'rejected', className: 'red-bg', value: 'Rejected' }
+    { label: 'Activities Saved', key: 'activitiesSaved', color: 'gray-bg', value: 'ActivitySaved' },
+    { label: 'Pending', key: 'pending', color: 'yellow-bg', value: 'Pending' },
+    { label: 'Over Due', key: 'overDue', color: 'medium-red-bg', value: 'Overdue' },
+    { label: 'Submitted', key: 'submitted', color: 'light-green-bg', value: 'Submitted' },
+    { label: 'Audited', key: 'approved', color: ActivityColorMappings[ACTIVITY_STATUS.AUDITED], value: 'Audited' },
+    { label: 'Rejected', key: 'rejected', color: ActivityColorMappings[ACTIVITY_STATUS.REJECTED], value: 'Rejected' }
 ]
 
 function ActivityPerformance({ current, selectedCompany, selectedAssociateCompany, selectedLocation }: any) {
@@ -35,6 +36,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
     const [physicalAuditData, setPhysicalAuditData] = useState<any>({});
     const [noAuditData, setNoAuditData] = useState<any>({});
     const [label, setLabel] = useState('');
+    const [notApplicableData, setNotApplicable] = useState<any>({});
 
     function updatePerformance() {
         setLabel('');
@@ -45,54 +47,46 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                 { columnName: 'locationId', value: selectedLocation },
                 { columnName: 'frequency', value: frequency }
             ];
-            api.post('/api/Dashboard/GetPreviousPerformance', { ...DEFAULT_PAYLOAD, filters }).then(response => {
-                if (response && response.data) {
+            const overallReq = api.post('/api/Dashboard/GetPreviousPerformance', { ...DEFAULT_PAYLOAD, filters }).then(response => {
+                const data = (response || {}).data;
+                if (data) {
                     const label = frequency !== '0' ?
-                        `${dayjs(response.data.startDate).format('DD-MMM-YYYY')} - ${dayjs(response.data.endDate).format('DD-MMM-YYYY')}` :
-                        `${dayjs(response.data.startDate).format('DD-MMM-YYYY')}`;
+                        `${dayjs(data.startDate).format('DD-MMM-YYYY')} - ${dayjs(data.endDate).format('DD-MMM-YYYY')}` :
+                        `${dayjs(data.startDate).format('DD-MMM-YYYY')}`;
                     setLabel(label);
-                    setPerformanceStatus(response.data);
+                    setPerformanceStatus(data);
                 }
+                return data || {};
             });
-            api.post('/api/Dashboard/GetPreviousPerformance', {
+            const auditReq = api.post('/api/Dashboard/GetPreviousPerformance', {
                 ...DEFAULT_PAYLOAD, filters:
                     [...filters, { columnName: 'auditType', value: ACTIVITY_TYPE.AUDIT }]
             }).then(response => {
-                if (response && response.data) {
-                    setAuditData(response.data);
+                const data = (response || {}).data;
+                if (data) {
+                    setAuditData(data);
                 }
+                return data || {};
             });
-            api.post('/api/Dashboard/GetPreviousPerformance', {
+            const physicalAuditReq = api.post('/api/Dashboard/GetPreviousPerformance', {
                 ...DEFAULT_PAYLOAD, filters:
                     [...filters, { columnName: 'auditType', value: ACTIVITY_TYPE.PHYSICAL_AUDIT }]
             }).then(response => {
-                if (response && response.data) {
-                    setPhysicalAuditData(response.data);
+                const data = (response || {}).data;
+                if (data) {
+                    setPhysicalAuditData(data);
                 }
+                return data || {};
             });
-            api.post('/api/Dashboard/GetPreviousPerformance', {
-                ...DEFAULT_PAYLOAD, filters:
-                    [...filters, { columnName: 'auditType', value: ACTIVITY_TYPE.NO_AUDIT }]
-            }).then(response => {
-                if (response && response.data) {
-                    setNoAuditData(response.data);
-                }
+            Promise.all([overallReq, auditReq, physicalAuditReq]).then((
+                [{ notApplicable }, { notApplicable: audit }, { notApplicable: physicalAudit }]: any) => {
+                const noAudit = (notApplicable || 0) - (audit || 0) - (physicalAudit || 0);
+                setNotApplicable({
+                    audit, physicalAudit, noAudit
+                });
             });
         }
     }
-
-    // function viewActivities(status) {
-    //     navigate(`${getBasePath()}/dashboard/activities`, {
-    //         state: {
-    //             company: selectedCompany,
-    //             associateCompany: selectedAssociateCompany,
-    //             location: selectedLocation,
-    //             fromDate: dayjs(performanceStatus.startDate).local().format(),
-    //             toDate: dayjs(performanceStatus.endDate).local().format(),
-    //             status
-    //         }
-    //     });
-    // }
 
     function onFrequencyChange(e: any) {
         setFrequency(e.target.value)
@@ -145,71 +139,64 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                         }
                     </div>
                 </div>
-                <div className="row m-0">
-                    <div className="col-7 mt-3">
-                        <div className="d-flex flex-column justify-content-center">
-                            <div className="text-center mb-3 dashboard-date-range-label">
-                                {label && <strong className="text-primary">({label})</strong>}
-                            </div>
-                            <div className="d-flex flex-row flex-wrap">
-                                {
-                                    Statuses.map(status => {
-                                        return (
-                                            <div className="w-33 mb-3 me-3" key={status.key} style={{ width: "calc(33% - 1rem)" }}>
-                                                <div className={`card cardCount border-0 p-2 ${status.className}`}>
-                                                    <div className="card-body py-0">
-                                                        <div className="row d-flex align-items-center performance-status h-100">
-                                                            <div className="col-9 px-0 py-0 overflow-hidden">
-                                                                <label>{status.label}</label>
-                                                            </div>
-                                                            <div className="col-3 px-1 py-1">
-                                                                {
-                                                                    typeof performanceStatus[status.key] !== 'undefined' &&
-                                                                    <div className="p-0 m-0 text-lg">({performanceStatus[status.key]})</div>
-                                                                }
-                                                            </div>
-                                                            {/* <div className="col-1 px-0 py-0">
-                                                                    <span style={{ zoom: 1.5, cursor: 'pointer', background: 'transparent' }}
-                                                                        onClick={() => viewActivities(status.value)}>
-                                                                        <FontAwesomeIcon className={status.color} icon={faChevronCircleRight} />
-                                                                    </span>
-                                                                </div> */}
+                <div className="activityPerformance">
+                    <div className="w-2">
+                        <div className="text-center mb-3 dashboard-date-range-label">
+                            {label && <strong className="text-primary">({label})*</strong>}
+                        </div>
+                        <div className="d-flex flex-row flex-wrap">
+                            {
+                                Statuses.map(status => {
+                                    return (
+                                        <div className="w-33 mb-3 me-3" key={status.key} style={{ width: "calc(33% - 1rem)" }}>
+                                            <div className={`card cardCount border-0 p-2 bg-status-${status.value} `}  >
+                                                <div className="card-body py-0">
+                                                    <div className="row d-flex align-items-center fw-bold performance-status h-100">
+                                                        <div className="col-9 px-0 py-0 overflow-hidden">
+                                                            <label>{status.label}</label>
+                                                        </div>
+                                                        <div className="col-3 px-1 py-1">
+                                                            {
+                                                                typeof performanceStatus[status.key] !== 'undefined' &&
+                                                                <div className="p-0 m-0 text-lg">({performanceStatus[status.key]})</div>
+                                                            }
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        )
-                                    })
-                                }
-                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
                         </div>
                     </div>
-                    <div className="col-5">
-                        <div className="text-center mt-3 dashboard-date-range-label">
-                            <strong className="text-primary">Overall Performance</strong>
+                    <div className="chartCard border shadow">
+                        <div className="ms-4 dashboard-date-range-label">
+                            <strong className="text-primary">Overall Performance*</strong>
                         </div>
-                        <Chart data={performanceStatus} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
+                        <Chart data={performanceStatus} keys={['compliant', 'nonCompliant', 'rejected']} />
+                    </div>
+                    <div className="chartCard border shadow">
+                        <div className="ms-4 dashboard-date-range-label">
+                            <strong className="text-primary">Type: Audit*</strong>
+                        </div>
+                        <Chart data={auditData} keys={['compliant', 'nonCompliant', 'rejected']} />
+                    </div>
+                    <div className="chartCard border shadow">
+                        <div className="ms-4 dashboard-date-range-label">
+                            <strong className="text-primary">Type: Physical Audit*</strong>
+                        </div>
+                        <Chart data={physicalAuditData} keys={['compliant', 'nonCompliant', 'rejected']} />
+                    </div>
+                    <div className="chartCard border shadow">
+                        <div className="ms-4 dashboard-date-range-label">
+                            <strong className="text-black-600">Status: Not Applicable</strong>
+                        </div>
+                        <Chart data={notApplicableData} keys={['audit', 'physicalAudit', 'noAudit']} />
                     </div>
                 </div>
-                <div className="d-flex flex-row m-0 gap-3">
-                    <div className="col">
-                        <div className="text-center mb-3 dashboard-date-range-label">
-                            <strong className="text-primary">Type: Audit</strong>
-                        </div>
-                        <Chart data={auditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
-                    </div>
-                    <div className="col">
-                        <div className="text-center mb-3 dashboard-date-range-label">
-                            <strong className="text-primary">Type: Physical Audit</strong>
-                        </div>
-                        <Chart data={physicalAuditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
-                    </div>
-                    <div className="col">
-                        <div className="text-center mb-3 dashboard-date-range-label">
-                            <strong className="text-primary">Type: No Audit</strong>
-                        </div>
-                        <Chart data={noAuditData} keys={['compliant', 'nonCompliant', 'notApplicable', 'rejected']} />
-                    </div>
+                <div className="text-primary fst-italic fw-bold text-sm mt-2">
+                    **These calculations does not include "Not Applicable" activities.
                 </div>
             </div>
         </div>

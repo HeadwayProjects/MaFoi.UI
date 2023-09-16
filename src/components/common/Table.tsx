@@ -11,7 +11,7 @@ import '../shared/PageLoader.css';
 import PageLoader from "../shared/PageLoader";
 import { humanReadableNumber } from "../../utils/common";
 
-const PageNav = {
+export const PageNav = {
     FIRST: 'first',
     PREVIOUS: 'previous',
     NEXT: 'next',
@@ -112,6 +112,34 @@ export function NameTmpl({ cell }: any) {
                 </div>
             }
         </>
+    )
+}
+
+export function Pagination({ pageCounter, pageSize, handlePageSizeChange, handlePageNav, page, lastPage, paginate = true, className }: any) {
+    return (
+        <div className={`custom-tabulator-footer d-flex justify-content-between align-items-center w-100 ${className}`}>
+            <span>{pageCounter}</span>
+            {
+                paginate &&
+                <div className="d-flex align-items-center">
+                    <Select options={PAGE_OPTIONS} value={pageSize} onChange={handlePageSizeChange}
+                        menuPlacement="top" menuPosition="fixed" className="me-3 page-changer"
+                        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999, color: "var(--black-600)" }) }} />
+                    <Icon name={'double-left'} className={'page-nav-btns'} type="button"
+                        action={() => handlePageNav(PageNav.FIRST)} text={'First'}
+                        disabled={page < 2} />
+                    <Icon name={'angle-left'} className={'page-nav-btns'} type="button"
+                        action={() => handlePageNav(PageNav.PREVIOUS)} text={'Previous'}
+                        disabled={page < 2} />
+                    <Icon name={'angle-right'} className={'page-nav-btns'} type="button"
+                        action={() => handlePageNav(PageNav.NEXT)} text={'Next'}
+                        disabled={page >= lastPage} />
+                    <Icon name={'double-right'} className={'page-nav-btns'} type="button"
+                        action={() => handlePageNav(PageNav.LAST)} text={'Last'}
+                        disabled={page >= lastPage} />
+                </div>
+            }
+        </div>
     )
 }
 
@@ -320,30 +348,8 @@ function Table(props: any) {
                     id={id}
                     ref={divEle}
                     className="tabulator-sticky"></div>
-                {/* <Pagination /> */}
-                <div className="custom-tabulator-footer d-flex justify-content-between align-items-center w-100">
-                    <span>{pageCounter}</span>
-                    {
-                        paginate &&
-                        <div className="d-flex align-items-center">
-                            <Select options={PAGE_OPTIONS} value={pageSize} onChange={handlePageSizeChange}
-                                menuPlacement="top" menuPosition="fixed" className="me-3 page-changer"
-                                styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999, color: "var(--black-600)" }) }} />
-                            <Icon name={'double-left'} className={'page-nav-btns'} type="button"
-                                action={() => handlePageNav(PageNav.FIRST)} text={'First'}
-                                disabled={page < 2} />
-                            <Icon name={'angle-left'} className={'page-nav-btns'} type="button"
-                                action={() => handlePageNav(PageNav.PREVIOUS)} text={'Previous'}
-                                disabled={page < 2} />
-                            <Icon name={'angle-right'} className={'page-nav-btns'} type="button"
-                                action={() => handlePageNav(PageNav.NEXT)} text={'Next'}
-                                disabled={page >= lastPage} />
-                            <Icon name={'double-right'} className={'page-nav-btns'} type="button"
-                                action={() => handlePageNav(PageNav.LAST)} text={'Last'}
-                                disabled={page >= lastPage} />
-                        </div>
-                    }
-                </div>
+                <Pagination pageCounter={pageCounter} page={page} lastPage={lastPage} pageSize={pageSize}
+                    handlePageSizeChange={handlePageSizeChange} handlePageNav={handlePageNav} paginate={paginate} />
             </div>
             {
                 props.isLoading && <PageLoader message={'Loading...'} />

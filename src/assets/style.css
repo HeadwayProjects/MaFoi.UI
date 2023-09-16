@@ -6,10 +6,12 @@
   --royal-blue: #2965AD;
   --mid-royal-blue: #3C87C2;
   --blue: #3C93D8;
+  --light-blue: #9CC2E5;
   --pale-blue: #DEEFF9;
 
   --dark-gray: #322C2D;
   --gray: #A5A5A5;
+  --mild-gray: #BFBFBF;
   --medium-gray: #CCD0D3;
   --gray-300: rgba(50, 44, 45, 0.3);
   --gray-500: rgba(50, 44, 45, 0.5);
@@ -25,6 +27,7 @@
   --dark-green: #548235;
   --emarald-green: #0D9500;
   --green: #4EC343;
+  --medium-green: #92D050;
   --light-green: #A9D18E;
 
   --orange: #fc8403;
@@ -455,34 +458,45 @@ table.table {
   font-size: 14px;
 }
 
-.status-ActivitySaved,
-.status-not-applicable {
-  color: var(--gray-500);
+.status-ActivitySaved {
+  color: var(--blue);
+}
+
+.status-not-applicable,
+.status-Not-Applicable {
+  color: var(--mild-gray);
 }
 
 .status-Pending,
 .status-Due {
-  color: var(--yellow);
+  color: var(--light-red);
 }
 
-.status-Overdue,
-.status-Rejected,
+.status-Rejected {
+  color: var(--yellow)
+}
+
 .status-non-compliance,
 .status-NonCompliant {
   color: var(--red);
 }
 
-.status-NonCompliant {
-  color: var(--light-red);
+.status-Overdue {
+  color: var(--orange);
 }
 
 .status-Submitted {
   color: var(--light-green);
 }
 
+.status-compliant,
+.status-Compliant {
+  color: var(--medium-green);
+}
+
 .status-Approved,
-.status-compliant {
-  color: var(--dark-green);
+.status-Audited {
+  color: var(--light-blue);
 }
 
 .filters label {
@@ -548,3 +562,50 @@ table.table {
 .w-33 {
   width: 33% !important;
 }
+
+.bg-status-ActivitySaved {
+  background-color: var(--blue) !important;
+  box-shadow: 0 0 0 1px #004895 inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #3875a1, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.bg-status-Pending {
+  background-color: var(--light-red) !important;
+  box-shadow: 0 0 0 1px #f36666 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #ff7676, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.bg-status-Overdue {
+  background-color: var(--orange) !important;
+  box-shadow: 0 0 0 1px #d79a47 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #D79A34, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.bg-status-Rejected {
+  background-color: var(--yellow) !important;
+  box-shadow: 0 0 0 1px #d79a47 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #D79A34, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.bg-status-Submitted {
+  background-color: var(--light-green);
+  box-shadow: 0 0 0 1px #52c92a inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #6b9d4b, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.bg-status-Approved,
+.bg-status-Audited {
+  background-color: var(--light-blue) !important;
+  box-shadow: 0 0 0 1px #41839d inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #4991b3, 0 8px 8px 1px rgb(199 199 199);
+}
+
+/* .status-btn-group input[name="Overdue"]+.btn,
+.status-btn-group input[name="Rejected"]+.btn {
+  background-color: var(--red);
+  box-shadow: 0 0 0 1px #870101 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #8b3f3f, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.status-btn-group input[name="Submitted"]+.btn {
+  background-color: var(--light-green);
+  box-shadow: 0 0 0 1px #52c92a inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #6b9d4b, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.status-btn-group input[name="Approved"]+.btn {
+  background-color: var(--dark-green);
+  box-shadow: 0 0 0 1px #2f7119 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #3d6f1d, 0 8px 8px 1px rgb(199 199 199);
+} */
