@@ -91,6 +91,10 @@ export enum USER_PRIVILEGES {
     ADD_EMAIL_TEMPLATE = 'ADD_EMAIL_TEMPLATE',
     EDIT_EMAIL_TEMPLATE = 'EDIT_EMAIL_TEMPLATE',
     DELETE_EMAIL_TEMPLATE = 'DELETE_EMAIL_TEMPLATE',
+    VIEW_NOTIFICATION_TEMPLATES = 'VIEW_NOTIFICATION_TEMPLATES',
+    ADD_NOTIFICATION_TEMPLATE = 'ADD_NOTIFICATION_TEMPLATE',
+    EDIT_NOTIFICATION_TEMPLATE = 'EDIT_NOTIFICATION_TEMPLATE',
+    DELETE_NOTIFICATION_TEMPLATE = 'DELETE_NOTIFICATION_TEMPLATE',
     VIEW_NOTIFICATIONS = 'VIEW_NOTIFICATIONS',
     RESEND_NOTIFICATION = 'RESEND_NOTIFICATION',
     SUBMITTER_DASHBOARD = 'SUBMITTER_DASHBOARD',
@@ -504,7 +508,7 @@ export const PAGES_CONFIGURATION = [
     },
     {
         id: 'EMAIL_NOTIFICATION',
-        name: 'Emails / Notifications',
+        name: 'Emails & Notifications',
         isMulti: true,
         privileges: [
             {
@@ -530,6 +534,22 @@ export const PAGES_CONFIGURATION = [
             {
                 id: USER_PRIVILEGES.RESEND_NOTIFICATION,
                 name: 'Resend Notification'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_NOTIFICATION_TEMPLATES,
+                name: 'View Notification Templates'
+            },
+            {
+                id: USER_PRIVILEGES.ADD_NOTIFICATION_TEMPLATE,
+                name: 'Add Notification Template'
+            },
+            {
+                id: USER_PRIVILEGES.EDIT_NOTIFICATION_TEMPLATE,
+                name: 'Edit Notification Template'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_NOTIFICATION_TEMPLATE,
+                name: 'Delete Notification Template'
             }
         ]
     },

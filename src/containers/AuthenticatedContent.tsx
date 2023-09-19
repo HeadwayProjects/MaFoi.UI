@@ -38,6 +38,7 @@ import MangeDepartmentUsers from "../components/pages/UserManagement/DepartmentU
 import ComplianceOwnerActivities from "../components/pages/ComplianceOwner/TaskManagement/ComplianceOwnerActivities";
 import NotificationsCenter from "../components/pages/Notifications/NotificationsCenter";
 import ManageEscalationMatrix from "../components/pages/Masters/Companies/EscalationMatrix/ManageEscalationMatrix";
+import NotificationTemplates from "../components/pages/Notifications/NotificationTemplates";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -177,8 +178,11 @@ function AuthenticatedContent() {
         '/userManagement/userDepartment': () => (
             layout(<MangeDepartmentUsers />)
         ),
-        '/email/templates': () => (
+        '/templates/email': () => (
             layout(<EmailTemplates />)
+        ),
+        '/templates/notification': () => (
+            layout(<NotificationTemplates />)
         ),
         '/notifications': () => (
             layout(<NotificationsCenter />)

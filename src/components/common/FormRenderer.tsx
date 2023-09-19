@@ -166,7 +166,7 @@ function TextAreaField(props: any) {
             <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
             <div className="input-group">
                 <textarea id={name} className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''}`}
-                    maxLength={maxLength} {...onInput(input)} rows={3} />
+                    maxLength={maxLength} {...onInput(input)} rows={props.rows || 3} />
             </div>
             {
                 props.description &&

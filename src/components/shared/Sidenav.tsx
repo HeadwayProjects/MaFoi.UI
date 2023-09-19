@@ -101,9 +101,10 @@ const SideNavMenu = [
         ]
     },
     {
-        id: 'email', url: '/email/templates', icon: 'email', label: 'Email',
+        id: 'email', url: '/templates/email', icon: 'email', label: 'Email & Notifications',
         children: [
-            { id: 'email/templates', url: '/email/templates', label: 'Manage Templates', privilege: USER_PRIVILEGES.VIEW_EMAIL_TEMPLATES }
+            { id: 'templates/email', url: '/templates/email', label: 'Email Templates', privilege: USER_PRIVILEGES.VIEW_EMAIL_TEMPLATES },
+            { id: 'templates/notification', url: '/templates/notification', label: 'Notification Templates', privilege: USER_PRIVILEGES.VIEW_NOTIFICATION_TEMPLATES }
         ]
     },
     // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.READ_ONLY_ACTIVITIES },
