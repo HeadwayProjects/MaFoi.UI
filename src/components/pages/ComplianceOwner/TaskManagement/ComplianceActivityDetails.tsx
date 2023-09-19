@@ -5,7 +5,7 @@ import { getValue } from "../../../../utils/common";
 import { useGetComplianceActivityDocuments, useGetComplianceById, useSubmitComplianceActivity, useUpdateComplianceSchedule, useUploadDocument } from "../../../../backend/compliance";
 import styles from "./Styles.module.css";
 import Icon from "../../../common/Icon";
-import { ACTIONS, FILE_SIZE, STATUS_MAPPING } from "../../../common/Constants";
+import { ACTIONS, ALLOWED_FILES_REGEX, FILE_SIZE } from "../../../common/Constants";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { COMPLIANCE_ACTIVITY_INDICATION, ComplianceActivityStatus, ComplianceStatusIconMapping, ComplianceStatusMapping } from "../../../../constants/Compliance.constants";
 import ConfirmModal from "../../../common/ConfirmModal";
@@ -319,7 +319,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 documents,
                 validate: editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD) ? [
                     { type: validatorTypes.REQUIRED },
-                    { type: 'file-size', maxSize: 5 * FILE_SIZE.MB },
+                    { type: 'file-type', regex: ALLOWED_FILES_REGEX },
                     { type: 'file-size', maxSize: 25 * FILE_SIZE.MB }
                 ] : [],
                 className: 'w-33',

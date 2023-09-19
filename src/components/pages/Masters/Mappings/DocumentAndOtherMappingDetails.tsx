@@ -55,7 +55,7 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
                 type: 'file',
                 validate: [
                     { type: 'file-type', regex: ALLOWED_FILES_REGEX },
-                    { type: 'file-size', maxSize: 5 * FILE_SIZE.MB }
+                    { type: 'file-size', maxSize: 25 * FILE_SIZE.MB }
                 ],
                 condition: {
                     and: [
