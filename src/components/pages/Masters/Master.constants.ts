@@ -73,6 +73,7 @@ export const ActivityType = [
     'Internal Compliance',
     'Intimation',
     'Meeting',
+    'Notices',
     'Policy',
     'Registers',
     'Registration',
