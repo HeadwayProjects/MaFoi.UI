@@ -48,8 +48,8 @@ const AuditTypeFilter: any[] = [];
 function getAdvanceSearch(state: any) {
     const filters = [];
     if ((state || {}).fromDate) {
-        filters.push({ columnName: 'fromDate', value: state.fromDate })
-        filters.push({ columnName: 'toDate', value: state.toDate })
+        filters.push({ columnName: 'fromDate', value: dayjs(state.fromDate).startOf('D').toISOString() })
+        filters.push({ columnName: 'toDate', value: dayjs(state.toDate).endOf('D').toISOString() })
     }
 
     if ((state || {}).auditType) {
@@ -107,8 +107,6 @@ function ActivitiesManagement() {
     function editActivity(activity: any) {
         setActivity(activity);
     }
-
-
 
     function downloadForm(activity: any) {
         setSubmitting(true);

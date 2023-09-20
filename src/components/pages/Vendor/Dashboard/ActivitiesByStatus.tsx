@@ -35,8 +35,7 @@ function ActivitiesByStatus({ tabs, selectedCompany, selectedAssociateCompany, s
                 company: selectedCompany,
                 associateCompany: selectedAssociateCompany,
                 location: selectedLocation,
-                status,
-                auditType: ACTIVITY_TYPE.AUDIT
+                status
             }
         });
     }
