@@ -30,3 +30,7 @@
     justify-content: start !important;
     width: 33% !important;
 }
+
+.downloadIcon:hover {
+    cursor: pointer;
+}

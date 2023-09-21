@@ -39,7 +39,7 @@
 .overallChartGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    height: 250px;
+    height: 226px;
 }
 
 .qButtons {

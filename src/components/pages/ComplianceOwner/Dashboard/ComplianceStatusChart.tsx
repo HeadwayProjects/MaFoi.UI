@@ -3,7 +3,7 @@ import ReactECharts from "echarts-for-react";
 import { ComplianceChartStatus, ComplianceChartStatusMapping } from "../../../../constants/Compliance.constants";
 import { getCSSPropertyValue } from "../../../../utils/styles";
 
-export default function ComplianceStatusChart({ data, fields }: any) {
+export default function ComplianceStatusChart({ data, fields, type }: any) {
     const [series, setSeries] = useState<any>([])
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function ComplianceStatusChart({ data, fields }: any) {
             formatter: "{b}"
         },
         legend: {
-            top: '12%',
+            top: 32,
             left: 20,
             orient: 'vertical',
             icon: 'circle'
@@ -37,9 +37,9 @@ export default function ComplianceStatusChart({ data, fields }: any) {
             {
                 data: series,
                 type: 'pie',
-                center: ['50%', '50%'],
+                center: [type === 'col1' ? 260 : 200, '50%'],
                 smooth: true,
-                radius: ['40%', '70%'],
+                radius: ['30%', '70%'],
                 height: 250,
                 label: {
                     show: true,

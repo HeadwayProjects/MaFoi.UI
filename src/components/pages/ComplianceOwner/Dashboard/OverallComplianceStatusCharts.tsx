@@ -42,7 +42,7 @@ export default function OverallComplianceStatusCharts({ filters }: any) {
                 {
                     keys.map(({ id, fields }: any) => {
                         return (
-                            <ComplianceStatusChart data={response} fields={fields} key={id} />
+                            <ComplianceStatusChart data={response} fields={fields} key={id} type={id} />
                         )
                     })
                 }

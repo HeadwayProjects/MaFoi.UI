@@ -13,6 +13,9 @@ import {
     COMPLIANCE_ACTIVITY_INDICATION,
     ComplianceStatusMapping, setUserDetailsInFilters
 } from "../../../../constants/Compliance.constants";
+import { get } from "../../../../backend/request";
+import { download } from "../../../../utils/common";
+import { toast } from "react-toastify";
 
 const SortFields: any = {
     'month': 'startDate',
@@ -26,7 +29,6 @@ const SortFields: any = {
 };
 
 function ComplianceOwnerActivities({ filters }: any) {
-    const tableRef: any = useRef();
     const [activity, setActivity] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState<any>();
@@ -88,6 +90,15 @@ function ComplianceOwnerActivities({ filters }: any) {
         )
     }
 
+    function DownloadFormTmpl({ cell }: any) {
+        const row = cell.getData();
+        return (
+            <div className="d-flex align-items-center">
+                <Icon name="download" className={styles.downloadIcon} text={'Download Form'} data={row} action={downloadForm} />
+            </div>
+        )
+    }
+
     function ActionColumnElements({ cell }: any) {
         const row = cell.getData();
         const hasAccess = hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_SUBMIT) || hasUserAccess(USER_PRIVILEGES.MANAGER_ACTIVITIES_REVIEW);
@@ -115,9 +126,14 @@ function ComplianceOwnerActivities({ filters }: any) {
             formatter: reactFormatter(<ActionColumnElements />)
         },
         {
-            title: "", width: 40, field: "status",
+            title: "", width: 30, field: "status",
             headerSort: false,
             formatter: reactFormatter(<FormIndicationTmpl />)
+        },
+        {
+            title: "", width: 30, field: "download",
+            headerSort: false,
+            formatter: reactFormatter(<DownloadFormTmpl />)
         },
         {
             title: "Month (Year)", field: "month", width: 120,
@@ -257,6 +273,16 @@ function ComplianceOwnerActivities({ filters }: any) {
         }
     }
 
+    function downloadForm(activity: any) {
+        get(`/api/ActStateMapping/Get?id=${activity.actStateMappingId}`).then(response => {
+            if (response.data.filePath) {
+                download(response.data.fileName, response.data.filePath)
+            } else {
+                toast.warn('No files available');
+            }
+        });
+    }
+
     useEffect(() => {
         if (filters) {
             const _payload = { ...DEFAULT_PAYLOAD, ...payload };
@@ -278,7 +304,7 @@ function ComplianceOwnerActivities({ filters }: any) {
                 {/* <div className="mb-0 text-appprimary text-xl fw-bold">Compliance Schedule</div> */}
                 <div className={`card shadow ${styles.tableWrapper}`}>
                     <div className={styles.flexibleContainer}>
-                        <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} ref={tableRef} />
+                        <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
                     </div>
                 </div>
             </div>
