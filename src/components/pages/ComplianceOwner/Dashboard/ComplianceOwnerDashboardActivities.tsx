@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { CalendarType } from "../../../common/Calendar/Calendar.constants";
 import { COMPLIANCE_ACTIVITY_INDICATION, COMPLIANCE_ACTIVITY_ORDER, ComplianceActivityStatus, setUserDetailsInFilters } from "../../../../constants/Compliance.constants";
 import dayjs from "dayjs";
 import styles from "./ComplianceOwnerDashboard.module.css";
-import { DEFAULT_PAYLOAD } from "../../../common/Table";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import { useGetComplianceByDate } from "../../../../backend/compliance";
 
 type Props = {
@@ -18,7 +18,9 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
     const { type, dateRange, dates, dataChanged, filters } = props;
     const [data, setData] = useState<any>([]);
     const [payload, setPayload] = useState<any>(null);
-    const { groups, isFetching } = useGetComplianceByDate(payload, Boolean(payload));
+    const payloadRef = useRef<any>();
+    payloadRef.current = payload;
+    const { groups, isFetching } = useGetComplianceByDate(payload, Boolean(hasFilters('startDateFrom') && hasFilters('fromDate')));
 
     function StatusTmpl({ activity }: any) {
         return (
@@ -62,10 +64,15 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
         )
     }
 
+    function hasFilters(field = 'startDateFrom') {
+        const _filters = (payloadRef.current || {}).filters || [];
+        const column = _filters.find((x: any) => x.columnName === field);
+        return Boolean((column || {}).value);
+    }
+
     useEffect(() => {
-        if (dateRange) {
-            const _payload = { ...DEFAULT_PAYLOAD, ...payload };
-            const _filters = _payload.filters;
+        if (dateRange && filters) {
+            const _filters = [...filters];
             const fromIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'fromdate');
             const fromDate = dayjs(dateRange.from).toISOString();
             if (fromIndex === -1) {
@@ -80,22 +87,9 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
             } else {
                 _filters[toIndex].value = toDate;
             }
-            setPayload({ ..._payload, filters: setUserDetailsInFilters(_filters), pagination: null });
+            setPayload({ ...DEFAULT_OPTIONS_PAYLOAD, filters: setUserDetailsInFilters(_filters), pagination: null, sort: null });
         }
-    }, [dateRange])
-
-    useEffect(() => {
-        if (filters) {
-            const _payload = { ...DEFAULT_PAYLOAD, ...payload, pagination: null };
-            const _filters = _payload.filters;
-            const _fs = Object.keys(filters).map((columnName: any) => {
-                return { columnName, value: filters[columnName] }
-            });
-            const fromDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'fromdate');
-            const toDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'todate');
-            setPayload({ ..._payload, filters: setUserDetailsInFilters([..._fs, fromDate, toDate]) });
-        }
-    }, [filters]);
+    }, [dateRange, filters])
 
     useEffect(() => {
         if (!isFetching && groups) {

@@ -117,7 +117,6 @@ function MangeDepartmentUsers() {
 
     function CompanyTmpl({ cell }: any) {
         const row = cell.getData();
-        // console.log(row);
         const value = (((row.department || {}).vertical || {}).company || {}).name;
         return (
             <>

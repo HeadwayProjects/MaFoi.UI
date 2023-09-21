@@ -61,8 +61,10 @@ export default function Month(props: CalendarProps) {
             const x = data.find((x: any) => x.date === _dt.id);
             if (x) {
                 _dt.status = x.activities[0].status
-                _dt.count = x.activities.length;
-            } else{
+                _dt.count = x.activities.reduce((total: any, activity: any): any => {
+                    return total + activity.count;
+                }, 0);
+            } else {
                 delete _dt.status;
                 delete _dt.count;
             }

@@ -17,7 +17,6 @@ function NotificationsModal({ notifications, onDismiss, onSubmit }: any) {
     }
 
     function onClose() {
-        console.log(readNotifications);
         onDismiss();
     }
 

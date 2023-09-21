@@ -18,7 +18,7 @@ export default function DataGrid({ filters, view }: any) {
                         <ComplianceOwnerDashboardActivities {...changes} filters={filters} />
                     </div>
                     <div className={styles.dashboardGridCol2}>
-                        <ComplianceOwnerActivities {...changes} filters={filters} />
+                        <ComplianceOwnerActivities filters={filters} />
                     </div>
                 </div>
             }

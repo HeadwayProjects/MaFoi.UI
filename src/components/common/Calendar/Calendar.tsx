@@ -7,7 +7,7 @@ import styles from "./Calendar.module.css"
 import { Tab, Tabs } from 'react-bootstrap';
 
 export default function Calendar(props: CalendarProps) {
-    const { type = CalendarType.WEEK, ...otherProps } = props;
+    const { type = CalendarType.MONTH, ...otherProps } = props;
     const [selectedtype, setType] = useState(type)
     const [selectedDate, setSelectedDate] = useState<any>();
 

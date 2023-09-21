@@ -30,7 +30,8 @@ export default function ComplianceStatusChart({ data, fields }: any) {
         legend: {
             top: '12%',
             left: 20,
-            orient: 'vertical'
+            orient: 'vertical',
+            icon: 'circle'
         },
         series: [
             {
@@ -43,7 +44,7 @@ export default function ComplianceStatusChart({ data, fields }: any) {
                 label: {
                     show: true,
                     position: 'inner',
-                    formatter: ({percent}: any) => {
+                    formatter: ({ percent }: any) => {
                         return `${Math.round(percent)}%`
                     }
                 },

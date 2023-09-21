@@ -148,6 +148,7 @@ function Table(props: any) {
     const divEle = useRef(null);
     const {
         height = 500,
+        minHeight,
         paginationMode = 'remote',
         ajaxURL = '-',
         ajaxConfig,
@@ -312,6 +313,9 @@ function Table(props: any) {
                         table.rowManager._showPlaceholder();
                     }
                     updatePageCounter(_total || length);
+                    setTimeout(() => {
+                        handleResize();
+                    }, 1000);
                 } catch (e) {
                     console.error(e);
                 }
@@ -344,7 +348,7 @@ function Table(props: any) {
     return (
         <>
             <div style={{ position: 'relative' }}>
-                <div style={{ minHeight: '200px' }}
+                <div style={{ minHeight: minHeight || '200px' }}
                     id={id}
                     ref={divEle}
                     className="tabulator-sticky"></div>

@@ -515,7 +515,7 @@ table.table {
 }
 
 .filters [class*="-container"] [class*="-control"] {
-  font-size: var(--font-md);
+  font-size: var(--font-sm);
   box-shadow: none;
   border-color: var(--page-bg);
   width: auto;
@@ -537,6 +537,10 @@ table.table {
 
 .filters [class*="-container"] [class*="-control"] [class*="-indicatorContainer"] {
   padding: 0 4px;
+}
+
+.filters .date-picker [class*="-container"] input {
+  width: 100% !important;
 }
 
 .modal-dialog.modal-lg.lg-mini {

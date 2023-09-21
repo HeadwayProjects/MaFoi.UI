@@ -15,6 +15,7 @@ import {
 } from "../../../../constants/Compliance.constants";
 
 const SortFields: any = {
+    'month': 'startDate',
     'act.name': 'actname',
     'rule.name': 'rulename',
     'activity.name': 'activityname',
@@ -24,7 +25,8 @@ const SortFields: any = {
     'veritical.name': 'verticalName'
 };
 
-function ComplianceOwnerActivities({ dateRange, filters }: any) {
+function ComplianceOwnerActivities({ filters }: any) {
+    const tableRef: any = useRef();
     const [activity, setActivity] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState<any>();
@@ -32,7 +34,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
     const [payload, setPayload] = useState<any>(null);
     const payloadRef: any = useRef();
     payloadRef.current = payload;
-    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, hasFilters(null, 'fromDate'));
+    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, hasFilters(null, 'startDateFrom'));
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
@@ -193,6 +195,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
+        minHeight: '650px',
         selectable: false,
         paginate: true,
         bufferSpacing: 20,
@@ -220,12 +223,12 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
                 pageNumber: params.page
             },
             sort: {
-                columnName: SortFields[field] || field || 'month',
+                columnName: SortFields[field] || field || 'startDate',
                 order: dir || 'desc'
             }
         };
         setParams(_params);
-        const _payload = { ...DEFAULT_PAYLOAD, ...payload };
+        const _payload = { ...DEFAULT_PAYLOAD, ...payloadRef.current };
         const _filters = _payload.filters || [];
         setPayload({
             ...DEFAULT_PAYLOAD,
@@ -255,39 +258,10 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
     }
 
     useEffect(() => {
-        if (dateRange) {
-            const _payload = { ...DEFAULT_PAYLOAD, ...payload };
-            const _filters = _payload.filters;
-            const fromIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'fromdate');
-            const fromDate = dayjs(dateRange.from).toISOString();
-            if (fromIndex === -1) {
-                _filters.push({ columnName: 'fromDate', value: fromDate });
-            } else {
-                _filters[fromIndex].value = fromDate;
-            }
-            const toIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'todate');
-            const toDate = dayjs(dateRange.to).toISOString();
-            if (toIndex === -1) {
-                _filters.push({ columnName: 'toDate', value: toDate });
-            } else {
-                _filters[toIndex].value = toDate;
-            }
-            setPayload({ ..._payload, filters: setUserDetailsInFilters(_filters) });
-        }
-    }, [dateRange]);
-
-    useEffect(() => {
         if (filters) {
             const _payload = { ...DEFAULT_PAYLOAD, ...payload };
-            const _filters = _payload.filters;
-            const fromDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'fromdate');
-            const toDate = _filters.find((x: any) => x.columnName.toLowerCase() === 'todate');
-            const _fs = Object.keys(filters).map((columnName: string) => {
-                return { columnName, value: filters[columnName] }
-            });
-
             setPayload({
-                ..._payload, filters: setUserDetailsInFilters([..._fs, fromDate, toDate])
+                ..._payload, filters: setUserDetailsInFilters([...filters])
             });
         }
     }, [filters]);
@@ -304,7 +278,7 @@ function ComplianceOwnerActivities({ dateRange, filters }: any) {
                 {/* <div className="mb-0 text-appprimary text-xl fw-bold">Compliance Schedule</div> */}
                 <div className={`card shadow ${styles.tableWrapper}`}>
                     <div className={styles.flexibleContainer}>
-                        <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
+                        <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} ref={tableRef} />
                     </div>
                 </div>
             </div>

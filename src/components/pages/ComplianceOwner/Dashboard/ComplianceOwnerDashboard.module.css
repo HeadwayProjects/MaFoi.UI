@@ -19,11 +19,13 @@
     display: grid;
     grid-template-columns: 436px 1fr;
     grid-gap: 1rem;
+    min-height: 660px;
 }
 
 .dashboardGridCol1 {
     display: grid;
     grid-template-rows: auto 0px auto minmax(200px, 1fr);
+    min-height: 100%;
     height: calc(100vh - 234px);
 }
 
@@ -31,6 +33,7 @@
     display: grid;
     grid-template-rows: 1fr;
     grid-gap: 1rem;
+    min-height: 100%;
 }
 
 .overallChartGrid {

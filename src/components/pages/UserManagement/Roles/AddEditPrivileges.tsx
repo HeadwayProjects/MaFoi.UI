@@ -126,7 +126,6 @@ export default function AddEditPrivileges({ role, changeView }: any) {
             if (role.privileges) {
                 const _selected: any = {};
                 const _validKeys: string[] = Object.values(USER_PRIVILEGES);
-                console.log(role.privileges);
                 role.privileges.split(API_DELIMITER).forEach((key: string) => {
                     if (_validKeys.includes(key)) _selected[key] = true
                 });

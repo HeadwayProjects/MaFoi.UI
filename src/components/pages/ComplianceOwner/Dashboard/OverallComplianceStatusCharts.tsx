@@ -19,7 +19,7 @@ export default function OverallComplianceStatusCharts({ filters }: any) {
     const [payload, setPayload] = useState<any>();
     const { response } = useGetOverallComplianceStatus(payload, Boolean(payload && hasFilters()));
 
-    function hasFilters( field = 'fromDate') {
+    function hasFilters( field = 'startDateFrom') {
         const _filters = (payload || {}).filters || [];
         const filter = _filters.find((x: any) => x.columnName === field);
         return Boolean(filter);
@@ -28,11 +28,8 @@ export default function OverallComplianceStatusCharts({ filters }: any) {
     useEffect(() => {
         if (filters) {
             const _payload = { ...DEFAULT_PAYLOAD, ...payload };
-            const _fs = Object.keys(filters).map((columnName: string) => {
-                return { columnName, value: filters[columnName] }
-            });
             setPayload({
-                ..._payload, filters: setUserDetailsInFilters(_fs)
+                ..._payload, filters: setUserDetailsInFilters(filters)
             });
         }
     }, [filters]);
