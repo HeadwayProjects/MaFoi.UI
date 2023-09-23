@@ -347,7 +347,7 @@ function Table(props: any) {
 
     return (
         <>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative' }} className="h-100">
                 <div style={{ minHeight: minHeight || '200px' }}
                     id={id}
                     ref={divEle}

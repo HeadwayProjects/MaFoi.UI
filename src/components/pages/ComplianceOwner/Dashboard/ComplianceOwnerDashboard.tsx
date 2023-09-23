@@ -16,6 +16,7 @@ function ComplianceOwnerDashboard() {
     const compFiltersRef = useRef<any>();
     compFiltersRef.current = compFilters;
     const [filters, setFilters] = useState<any>(null);
+    const [counts, setCounts] = useState<any[]>([]);
 
     function handleFilterChanges(event: any) {
         setCompFilters(event);
@@ -49,11 +50,11 @@ function ComplianceOwnerDashboard() {
             </div>
             <div className={`row m-0 py-2 bg-white ${styles.dashboardContainer}`}>
                 <div className="col-12">
-                    <div className="d-flex flex-row m-0 pb-2 justify-content-between align-items-start">
-                        <ComplianceOwnerFilters onFilterChange={handleFilterChanges} />
+                    <div className="d-flex flex-row m-0 pb-2 justify-content-between align-items-end position-relative mb-2">
+                        <ComplianceOwnerFilters onFilterChange={handleFilterChanges} view={view} counts={counts} />
                         <ComplianceAdvanceFilters onChange={handleAdvanceFilterChanges} />
                     </div>
-                    <DataGrid filters={filters} view={view} />
+                    <DataGrid filters={filters} view={view} handleCounts={setCounts} />
                 </div>
             </div>
         </div>

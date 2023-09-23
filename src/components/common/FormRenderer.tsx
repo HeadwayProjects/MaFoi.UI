@@ -446,9 +446,9 @@ function DocumentsWithUploadField(props: any) {
                                     return (
                                         <div className="d-flex flex-row w-100 align-items-center mb-2 gap-3 justify-content-between" key={document.id}>
                                             <span className="ellipse">{document.fileName}</span>
-                                            <div className="d-flex flex-row align-items-center gap-2">
+                                            <div className="d-flex flex-row align-items-center gap-3">
                                                 {
-                                                    props.deleteDocument &&
+                                                    props.delete && props.deleteDocument &&
                                                     <Icon action={props.deleteDocument} data={document} name="trash" className="text-error text-md" />
                                                 }
                                                 <Icon action={(event: any) => props.downloadDocument ? props.downloadDocument(event) : {}}

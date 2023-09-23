@@ -6,10 +6,14 @@ import { useGetCompanies, useGetCompanyLocations, useGetDepartmentUserMappings }
 import { getUserDetails, hasUserAccess } from "../../../backend/auth";
 import DateRangeFilter from "./DateRangeFilter";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import { DashboardView } from "../../../constants/Compliance.constants";
+import ComlianceStatusCounts from "./Dashboard/ComlianceStatusCounts";
 
 type Props = {
     onFilterChange: (event: any[]) => void,
-    hiddenFilters?: any[]
+    hiddenFilters?: any[],
+    view?: DashboardView,
+    counts?: any[]
 }
 
 const DEFAULT_VALUE = 'ALL';
@@ -22,10 +26,11 @@ const DEFAUT_FILTERS = {
     department: DEFAULT_OPTION
 };
 
-export default function ComplianceOwnerFilters({ onFilterChange }: Props) {
+export default function ComplianceOwnerFilters({ onFilterChange, view, counts }: Props) {
     const [filters, setFilters] = useState<any>({ ...DEFAUT_FILTERS });
     const filtersRef = useRef<any>();
     filtersRef.current = filters;
+    const [q, setQ] = useState<any>();
     const [companies, setCompanies] = useState<any[]>([DEFAULT_OPTION]);
     const [associateCompanies, setAssociateCompanies] = useState<any[]>();
     const [locations, setLocations] = useState<any[]>();
@@ -166,6 +171,7 @@ export default function ComplianceOwnerFilters({ onFilterChange }: Props) {
             if (manager && manager.value && manager.value !== DEFAULT_VALUE) {
                 _filters.push({ columnName: 'complianceManagerId', value: manager.value });
             }
+            setQ(_filters);
             onFilterChange(_filters);
         }
     }, [filters]);
@@ -261,26 +267,26 @@ export default function ComplianceOwnerFilters({ onFilterChange }: Props) {
     return (
         <>
             <div className="d-flex flex-column ">
-                <div className="d-flex flex-row flex-wrap filters">
-                    <div className="px-2">
+                <div className="d-flex flex-row flex-wrap filters align-items-end px-2 gap-2">
+                    <div>
                         <label className="filter-label"><small>Company</small></label>
                         <Select placeholder='Company' className="select-control"
                             options={companies} onChange={handleCompanyChange}
                             value={filters.company} />
                     </div>
-                    <div className="px-2">
+                    <div>
                         <label className="filter-label"><small>Associate Company</small></label>
                         <Select placeholder={DEFAULT_LABEL} className="select-control" isDisabled={!Boolean(associateCompanies)}
                             options={associateCompanies} onChange={handleAssociateCompanyChange}
                             value={filters.associateCompany} />
                     </div>
-                    <div className="px-2">
+                    <div>
                         <label className="filter-label"><small>Location</small></label>
                         <Select placeholder={DEFAULT_LABEL} className="select-control" isDisabled={!Boolean(locations)}
                             options={locations} onChange={handleLocationChange}
                             value={filters.location} />
                     </div>
-                    <div className="px-2">
+                    <div>
                         <label className="filter-label"><small>Vertical</small></label>
                         <Select placeholder={DEFAULT_LABEL} className="select-control"
                             onChange={handleVerticalChange} value={filters.vertical}
@@ -289,7 +295,7 @@ export default function ComplianceOwnerFilters({ onFilterChange }: Props) {
                                 return company.value === DEFAULT_VALUE ? true : companyId === company.value;
                             })]} />
                     </div>
-                    <div className="px-2">
+                    <div>
                         <label className="filter-label"><small>Department</small></label>
                         <Select placeholder={DEFAULT_LABEL} className="select-control"
                             onChange={handleDepartmentChange} value={filters.department}
@@ -306,7 +312,7 @@ export default function ComplianceOwnerFilters({ onFilterChange }: Props) {
                     </div>
                     {
                         (hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) || hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)) &&
-                        <div className="px-2">
+                        <div>
                             <label className="filter-label"><small>Owner</small></label>
                             <Select placeholder={DEFAULT_LABEL} className="select-control"
                                 value={filters.owner} options={[DEFAULT_OPTION, ...owners]}
@@ -318,7 +324,7 @@ export default function ComplianceOwnerFilters({ onFilterChange }: Props) {
                     }
                     {
                         (hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) || hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)) &&
-                        <div className="px-2">
+                        <div>
                             <label className="filter-label"><small>Manager</small></label>
                             <Select placeholder={DEFAULT_LABEL} className="select-control"
                                 options={[DEFAULT_OPTION, ...managers]} value={filters.manager}
@@ -327,7 +333,12 @@ export default function ComplianceOwnerFilters({ onFilterChange }: Props) {
                                 }} />
                         </div>
                     }
+                    <div className="px-2 h-100"></div>
                     <DateRangeFilter onDateRangeChange={handleDateRangeChange} />
+                    {
+                        view === DashboardView.CALENDAR &&
+                        <ComlianceStatusCounts filters={q} counts={counts} />
+                    }
                 </div>
             </div>
         </>

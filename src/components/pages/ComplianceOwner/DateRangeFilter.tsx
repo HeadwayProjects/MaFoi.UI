@@ -99,7 +99,7 @@ export default function DateRangeFilter({ onDateRangeChange }: any) {
     }, [fys]);
 
     return (
-        <div className="d-flex flex-row mx-2 mb-3 mt-4 pt-2">
+        <div className="d-flex flex-row me-2 mt-2">
             <DropdownButton title={fy.label || 'Select'} variant="primary" className="me-3">
                 {
                     fys.map((year: any) => {

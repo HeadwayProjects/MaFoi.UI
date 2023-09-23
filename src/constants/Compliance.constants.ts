@@ -5,29 +5,27 @@ import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleCo
 export enum ComplianceActivityStatus {
     DUE = 'Due',
     NON_COMPLIANT = 'NonCompliant',
-    SUBMITTED = 'Submitted',
+    PENDING = 'Submitted',
     APPROVED = 'Approved',
     REJECTED = 'Rejected',
     LATE_CLOSURE = 'Late',
-    ON_TIME = 'OnTime',
-    PENDING = 'Pending'
+    ON_TIME = 'OnTime'
 }
 
 export const ComplianceStatusMapping: any = {
     [ComplianceActivityStatus.DUE]: 'Due',
     [ComplianceActivityStatus.NON_COMPLIANT]: 'Non-Compliant',
-    [ComplianceActivityStatus.SUBMITTED]: 'Submitted',
+    [ComplianceActivityStatus.PENDING]: 'Pending',
     [ComplianceActivityStatus.APPROVED]: 'Approved',
     [ComplianceActivityStatus.REJECTED]: 'Rejected',
     [ComplianceActivityStatus.LATE_CLOSURE]: 'Late Closure',
-    [ComplianceActivityStatus.ON_TIME]: 'On time',
-    [ComplianceActivityStatus.PENDING]: 'Pending'
+    [ComplianceActivityStatus.ON_TIME]: 'On time'
 }
 
 export const ComplianceStatusIconMapping: any = {
     [ComplianceActivityStatus.DUE]: 'clock',
     [ComplianceActivityStatus.NON_COMPLIANT]: 'exclamation-circle',
-    [ComplianceActivityStatus.SUBMITTED]: 'check-square',
+    [ComplianceActivityStatus.PENDING]: 'check-square',
     [ComplianceActivityStatus.APPROVED]: 'check-circle',
     [ComplianceActivityStatus.REJECTED]: 'times-circle',
 }
@@ -37,14 +35,14 @@ export const COMPLIANCE_ACTIVITY_ORDER = [
     ComplianceActivityStatus.REJECTED,
     ComplianceActivityStatus.NON_COMPLIANT,
     ComplianceActivityStatus.DUE,
-    ComplianceActivityStatus.SUBMITTED,
+    ComplianceActivityStatus.PENDING,
     ComplianceActivityStatus.APPROVED
 ]
 
 export const COMPLIANCE_ACTIVITY_INDICATION: any = {
     [ComplianceActivityStatus.DUE]: 'var(--gray)',
     [ComplianceActivityStatus.NON_COMPLIANT]: 'var(--medium-red)',
-    [ComplianceActivityStatus.SUBMITTED]: 'var(--yellow)',
+    [ComplianceActivityStatus.PENDING]: 'var(--yellow)',
     [ComplianceActivityStatus.APPROVED]: 'var(--green)',
     [ComplianceActivityStatus.REJECTED]: 'var(--red)'
 }

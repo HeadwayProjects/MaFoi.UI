@@ -21,7 +21,7 @@
   --yellow: #FFC000;
 
   --red: #FF0000;
-  --medium-red: #FF2D2D;
+  --medium-red: #FF5050;
   --light-red: rgba(220, 53, 69, 0.5);
 
   --dark-green: #548235;
@@ -130,6 +130,10 @@
 
 .text-black-600 {
   color: var(--black-600) !important;
+}
+
+.text-white {
+  color: var(--white) !important;
 }
 
 .bg-dashboard {
@@ -541,6 +545,7 @@ table.table {
 
 .filters .date-picker [class*="-container"] input {
   width: 100% !important;
+  font-size: var(--font-sm);
 }
 
 .modal-dialog.modal-lg.lg-mini {
@@ -567,6 +572,21 @@ table.table {
   width: 33% !important;
 }
 
+.bg-compliance-status-Due {
+  background-color: var(--gray) !important;
+  box-shadow: 0 0 0 1px #77797b inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #717477, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.bg-compliance-status-NonCompliant {
+  background-color: var(--medium-red) !important;
+  box-shadow: 0 0 0 1px #e10a0a inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #e35252, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.bg-compliance-status-Rejected {
+  background-color: var(--red) !important;
+  box-shadow: 0 0 0 1px #e10a0a inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #e35252, 0 8px 8px 1px rgb(199 199 199);
+}
+
 .bg-status-ActivitySaved {
   background-color: var(--blue) !important;
   box-shadow: 0 0 0 1px #004895 inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #3875a1, 0 8px 8px 1px rgb(199 199 199);
@@ -582,6 +602,8 @@ table.table {
   box-shadow: 0 0 0 1px #d79a47 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #D79A34, 0 8px 8px 1px rgb(199 199 199);
 }
 
+.bg-compliance-status-Submitted,
+.bg-compliance-status-Pending,
 .bg-status-Rejected {
   background-color: var(--yellow) !important;
   box-shadow: 0 0 0 1px #d79a47 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #D79A34, 0 8px 8px 1px rgb(199 199 199);
@@ -592,6 +614,7 @@ table.table {
   box-shadow: 0 0 0 1px #52c92a inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #6b9d4b, 0 8px 8px 1px rgb(199 199 199);
 }
 
+.bg-compliance-status-Approved,
 .bg-status-Approved,
 .bg-status-Audited {
   background-color: var(--light-blue) !important;

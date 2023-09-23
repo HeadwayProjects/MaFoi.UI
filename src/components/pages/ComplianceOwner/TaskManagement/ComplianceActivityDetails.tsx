@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { getValue } from "../../../../utils/common";
-import { useGetComplianceActivityDocuments, useGetComplianceById, useSubmitComplianceActivity, useUpdateComplianceSchedule, useUploadDocument } from "../../../../backend/compliance";
+import { useDeleteComplianceDocument, useGetComplianceActivityDocuments, useGetComplianceById, useSubmitComplianceActivity, useUpdateComplianceSchedule, useUploadDocument } from "../../../../backend/compliance";
 import styles from "./Styles.module.css";
 import Icon from "../../../common/Icon";
 import { ACTIONS, ALLOWED_FILES_REGEX, FILE_SIZE } from "../../../common/Constants";
@@ -19,7 +19,7 @@ function isFormEditable(status: ComplianceActivityStatus) {
     if (hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
         return [ComplianceActivityStatus.DUE, ComplianceActivityStatus.NON_COMPLIANT, ComplianceActivityStatus.REJECTED].includes(status);
     } else if (hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
-        return status === ComplianceActivityStatus.SUBMITTED;
+        return status === ComplianceActivityStatus.PENDING;
     }
     return false;
 }
@@ -36,6 +36,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
     const [action, setAction] = useState(ACTIONS.NONE);
     const [editableForm, setEditable] = useState(isFormEditable(data.status));
     const [activityDetails, setActivity] = useState<any>(null);
+    const [document, setDocument] = useState<any>();
     const [ruleCompliance, setRuleCompliance] = useState<any>(null);
     const { activity, isFetching, invalidate } = useGetComplianceById(data.id, { t });
     const { documents, refetch } = useGetComplianceActivityDocuments({ complianceId: data.id, t });
@@ -50,6 +51,11 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
         invalidate();
         onSubmit();
     });
+    const { deleteDocument } = useDeleteComplianceDocument(() => {
+        refetch();
+        setAction(ACTIONS.NONE);
+        setDocument(undefined);
+    })
 
     const schema = {
         fields: [
@@ -317,13 +323,15 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 type: 'file',
                 upload: editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD),
                 documents,
+                delete: editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD),
                 validate: editableForm && hasUserAccess(USER_PRIVILEGES.OWNER_ACTIVITIES_DOCUMENT_UPLOAD) ? [
                     { type: validatorTypes.REQUIRED },
                     { type: 'file-type', regex: ALLOWED_FILES_REGEX },
                     { type: 'file-size', maxSize: 25 * FILE_SIZE.MB }
                 ] : [],
                 className: 'w-33',
-                downloadDocument: downloadDocument.bind(this)
+                downloadDocument: downloadDocument.bind(this),
+                deleteDocument: handleDeleteDocument.bind(this)
             },
             {
                 component: componentTypes.TAB_ITEM,
@@ -419,6 +427,11 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
         }
     }
 
+    function handleDeleteDocument(_document: any) {
+        setDocument(_document);
+        setAction(ACTIONS.DELETE);
+    }
+
     function handleSubmit() {
         setAction(ACTIONS.NONE);
         submitComplianceActivity([data.id]);
@@ -512,6 +525,12 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                         <div className="text-center text-warn mb-4">There are no supporting documents uploaded to this activity!</div>
                     }
                     <div className="text-center mb-4">Are you sure you want to submit the compliance activity ?</div>
+                </ConfirmModal>
+            }
+            {
+                action === ACTIONS.DELETE && Boolean(document) &&
+                <ConfirmModal title={'Delete Document'} onSubmit={() => deleteDocument(document.id)} onClose={() => setAction(ACTIONS.NONE)}>
+                    <div className="text-center mb-4">Are you sure you want to delete document, <span className="fw-bold">{document.fileName}</span> ?</div>
                 </ConfirmModal>
             }
         </>

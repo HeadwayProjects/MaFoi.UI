@@ -28,7 +28,7 @@ const SortFields: any = {
     'veritical.name': 'verticalName'
 };
 
-function ComplianceOwnerActivities({ filters }: any) {
+function ComplianceOwnerActivities({ filters, handleCounts }: any) {
     const [activity, setActivity] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState<any>();
@@ -36,7 +36,7 @@ function ComplianceOwnerActivities({ filters }: any) {
     const [payload, setPayload] = useState<any>(null);
     const payloadRef: any = useRef();
     payloadRef.current = payload;
-    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, hasFilters(null, 'startDateFrom'));
+    const { activities, total, statusCount, isFetching, refetch } = useGetAllComplianceActivities(payload, hasFilters(null, 'startDateFrom'));
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
@@ -211,7 +211,7 @@ function ComplianceOwnerActivities({ filters }: any) {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
-        minHeight: '650px',
+        minHeight: '100%',
         selectable: false,
         paginate: true,
         bufferSpacing: 20,
@@ -285,7 +285,11 @@ function ComplianceOwnerActivities({ filters }: any) {
 
     useEffect(() => {
         if (filters) {
-            const _payload = { ...DEFAULT_PAYLOAD, ...payload };
+            const _payload = {
+                ...DEFAULT_PAYLOAD,
+                sort: { columnName: 'startDate', order: 'desc' },
+                ...payload
+            };
             setPayload({
                 ..._payload, filters: setUserDetailsInFilters([...filters])
             });
@@ -295,6 +299,7 @@ function ComplianceOwnerActivities({ filters }: any) {
     useEffect(() => {
         if (!isFetching && payload) {
             setData(formatApiResponse(params, activities, total));
+            handleCounts(statusCount);
         }
     }, [isFetching])
 

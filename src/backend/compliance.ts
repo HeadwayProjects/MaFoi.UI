@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { get, post, put } from "./request";
+import { del, get, post, put } from "./request";
 
 export function useExportComplianceSchedule(onSuccess?: any, onError?: any) {
     const { mutate: exportComplianceSchedule, error, isLoading: exporting } = useMutation(
@@ -42,7 +42,12 @@ export function useGetAllComplianceActivities(payload: any, enabled = true) {
         }
     );
 
-    return { activities: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
+    return {
+        activities: ((data || {}).data || {}).list || [],
+        total: ((data || {}).data || {}).count || 0,
+        statusCount: ((data || {}).data || {}).statusCount || [],
+        isFetching, refetch
+    };
 }
 
 export function useGetComplianceById(id: any, payload = {}) {
@@ -76,6 +81,21 @@ export function useDeleteComplianceSchedule(onSuccess?: any, onError?: any) {
         }
     );
     return { deleteComplianceSchedule, error, deleting };
+}
+
+export function useDeleteComplianceDocument(onSuccess?: any, onError?: any) {
+    const { mutate: deleteDocument, error, isLoading: deleting } = useMutation(
+        ['deleteDocument'],
+        async (id: any) => await del(`/api/ComplianceDetails/Delete?Id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteDocument, error, deleting };
 }
 
 export function useBulkUpdateComplianceSchedule(onSuccess?: any, onError?: any) {
@@ -172,8 +192,8 @@ export function useUploadDocument(onSuccess?: any, onError?: any) {
 
 export function useGetOverallComplianceStatus(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
-        ['overallComplianceStatus', payload],
-        async () => await post('/api/Compliance/GetByStatus', payload),
+        ['overallComplianceStatus', { ...payload, pagination: null }],
+        async () => await post('/api/Compliance/GetByStatus', { ...payload, pagination: null }),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,

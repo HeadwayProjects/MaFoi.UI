@@ -6,7 +6,7 @@ import ComplianceOwnerActivities from "../TaskManagement/ComplianceOwnerActiviti
 import { DashboardView } from "../../../../constants/Compliance.constants";
 import ComplianceDashboardCharts from "./ComplianceDashboardCharts";
 
-export default function DataGrid({ filters, view }: any) {
+export default function DataGrid({ filters, view, handleCounts }: any) {
     const [changes, setChanges] = useState<any>(null);
     return (
         <>
@@ -18,12 +18,12 @@ export default function DataGrid({ filters, view }: any) {
                         <ComplianceOwnerDashboardActivities {...changes} filters={filters} />
                     </div>
                     <div className={styles.dashboardGridCol2}>
-                        <ComplianceOwnerActivities filters={filters} />
+                        <ComplianceOwnerActivities filters={filters} handleCounts={handleCounts} />
                     </div>
                 </div>
             }
             {
-                view === DashboardView.CHART && <ComplianceDashboardCharts filters={filters}/>
+                view === DashboardView.CHART && <ComplianceDashboardCharts filters={filters} />
             }
         </>
     )

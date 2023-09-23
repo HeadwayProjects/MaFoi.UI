@@ -36,7 +36,7 @@ export default function ComplianceAdvanceFilters({ onChange, ignoreFilters = [] 
 
     return (
         <>
-            <div className="mt-4 pt-2">
+            <div className="mt-4 pt-2 position-absolute end-0 top-0">
                 <Button variant="primary" className="px-4 mx-2 text-nowrap" onClick={() => setOpen(true)}>
                     {'More Filters'}
                     {
