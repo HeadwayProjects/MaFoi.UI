@@ -64,7 +64,7 @@ export function useUpdateNotificationTemplate(onSuccess?: any, onError?: any) {
 export function useDeleteNotificationTemplate(onSuccess?: any, onError?: any) {
     const { mutate: deleteNotificationTemplate, error, isLoading: deleting } = useMutation(
         ['deleteNotificationTemplate'],
-        async (id) => await del(`${NOTIFICATION_BASE_URL}/DeleteTemplate?Id=${id}`),
+        async (id) => await del(`${NOTIFICATION_BASE_URL}/DeleteTemplate/Id?Id=${id}`),
         {
             onError,
             onSuccess: (response) => {

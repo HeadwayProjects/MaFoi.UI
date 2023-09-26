@@ -77,7 +77,7 @@ export default function NotificationTemplateDetails({ action, data, onSubmit, on
                     { type: validatorTypes.REQUIRED }
                 ],
                 options: companies,
-                content: action !== ACTIONS.ADD ? (getValue(notification, 'companyName') || '-NA-') : ''
+                content: action !== ACTIONS.ADD ? (getValue(notification, 'company.label') || '-NA-') : ''
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.INPUT_AS_TEXT,
@@ -141,11 +141,11 @@ export default function NotificationTemplateDetails({ action, data, onSubmit, on
 
     useEffect(() => {
         if (data) {
-            const { companyId, companyName, templateType } = data;
+            const { companyId, company, templateType } = data;
             setNotification({
                 ...notification,
                 ...data,
-                company: { value: companyId, label: companyName },
+                company: company ? { value: companyId, label: company.name } : null,
                 templateType: {
                     value: templateType.id,
                     label: templateType.name,
