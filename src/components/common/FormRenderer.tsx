@@ -152,6 +152,7 @@ function TextAreaField(props: any) {
             ...input,
             required,
             placeholder: props.placeholder || `Enter ${label}`,
+            disabled: props.disabled,
             onChange: (e: any) => {
                 input.onChange(e);
                 if (props.onChange) {
@@ -702,7 +703,7 @@ export function FormTemplate({ formFields }: any) {
 }
 
 function FormRenderer(props: any) {
-    const validatorMapper = { 'file-size': fileSizeValidator, 'file-type': fileTypeValidator };
+    const validatorMapper = { 'file-size': fileSizeValidator, 'file-type': fileTypeValidator, ...props.customValidators };
     return (
         <>
             <DDFFormRenderer validatorMapper={validatorMapper} {...props} />

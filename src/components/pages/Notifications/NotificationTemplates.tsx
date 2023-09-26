@@ -8,7 +8,6 @@ import { hasUserAccess } from "../../../backend/auth";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
 import Icon from "../../common/Icon";
 import TableFilters from "../../common/TableFilter";
-import { Button } from "react-bootstrap";
 import ConfirmModal from "../../common/ConfirmModal";
 import { getValue } from "../../../utils/common";
 import PageLoader from "../../shared/PageLoader";
@@ -19,7 +18,7 @@ import MastersLayout from "../Masters/MastersLayout";
 import TableActions, { ActionButton } from "../../common/TableActions";
 
 const SortFields: any = {
-    'template.name': 'templateType'
+    'templateType.name': 'Templatetypeid'
 };
 
 export default function NotificationTemplates() {
@@ -35,8 +34,8 @@ export default function NotificationTemplates() {
     const [filters, setFilters] = useState<any>();
     const filterRef: any = useRef();
     filterRef.current = filters;
-    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'templateType', order: 'asc' }, ...filterRef.current });
-    const { templateTypes } = useGetAllNotificationTemplateTypes(null);
+    const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'Templatetypeid', order: 'asc' }, ...filterRef.current });
+    const { templateTypes } = useGetAllNotificationTemplateTypes({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] })
     const { templates, total, isFetching, refetch } = useGetAllTemplates(payload, Boolean(payload));
     const { deleteNotificationTemplate, deleting } = useDeleteNotificationTemplate(({ key, value }: any) => {
@@ -68,7 +67,7 @@ export default function NotificationTemplates() {
     ]
 
     const columns = [
-        { title: "Template Type", field: "template.name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
+        { title: "Template Type", field: "templateType.name", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         { title: "Company", field: "company.name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Title", field: "title", widthGrow: 2, formatter: reactFormatter(<CellTmpl />) },
         {
@@ -92,7 +91,7 @@ export default function NotificationTemplates() {
         rowHeight: 54,
         selectable: false,
         paginate: true,
-        initialSort: [{ column: 'template.name', dir: 'asc' }]
+        initialSort: [{ column: 'templateType.name', dir: 'asc' }]
     });
 
     function formatApiResponse(params: any, list: any[], totalRecords: number) {
@@ -116,7 +115,7 @@ export default function NotificationTemplates() {
                 pageNumber: params.page
             },
             sort: {
-                columnName: SortFields[field] || field || 'templateType',
+                columnName: SortFields[field] || field || 'Templatetypeid',
                 order: dir || 'asc'
             }
         };
@@ -167,7 +166,8 @@ export default function NotificationTemplates() {
 
     useEffect(() => {
         if (!isFetching && payload) {
-            setData(formatApiResponse(params, templates, total));
+            setData(formatApiResponse(params, templates, templates.length));
+            // setData(formatApiResponse(params, templates, total));
         }
     }, [isFetching]);
 

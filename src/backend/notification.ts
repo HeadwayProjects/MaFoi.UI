@@ -3,14 +3,14 @@ import { del, get, post, put } from "./request";
 
 const NOTIFICATION_BASE_URL = '/api/Notification';
 
-export function useGetAllNotificationTemplateTypes(payload: any, enabled = true) {
+export function useGetAllNotificationTemplateTypes(payload: any) {
     const { data, isFetching, refetch } = useQuery(
-        ['notificationTemplateTypes', payload],
-        async () => await get(`${NOTIFICATION_BASE_URL}/GetAllTemplateTypes`, payload),
+        ['notifyTemplateTypes'],
+        async () => await get(`${NOTIFICATION_BASE_URL}/GetAllNotifyTemplateType`, payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
-            enabled
+            staleTime: Infinity
         }
     );
     return { templateTypes: (data || {}).data, isFetching, refetch };
@@ -19,7 +19,7 @@ export function useGetAllNotificationTemplateTypes(payload: any, enabled = true)
 export function useGetAllTemplates(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['notificationTemplates', payload],
-        async () => await post(`${NOTIFICATION_BASE_URL}/GetAllTemplates`, payload),
+        async () => await post(`${NOTIFICATION_BASE_URL}/GetAllNotifyTemplate`, payload),
         {
             refetchOnMount: true,
             refetchOnWindowFocus: false,

@@ -73,7 +73,7 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
                 options: [
                     ComplianceActivityStatus.DUE,
                     ComplianceActivityStatus.NON_COMPLIANT,
-                    ComplianceActivityStatus.SUBMITTED,
+                    ComplianceActivityStatus.PENDING,
                     ComplianceActivityStatus.APPROVED,
                     ComplianceActivityStatus.REJECTED].map((status: any) => {
                         return {

@@ -159,10 +159,10 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
             if (location && location.value && location.value !== DEFAULT_VALUE) {
                 _filters.push({ columnName: 'locationId', value: location.value });
             }
-            if (vertical.value !== DEFAULT_VALUE) {
-                _filters.push({ columnName: 'verticalId', value: vertical.value });
+            if (vertical && vertical.value && vertical.value !== DEFAULT_VALUE) {
+                _filters.push({ columnName: 'veriticalId', value: vertical.value });
             }
-            if (department.value !== DEFAULT_VALUE) {
+            if (department && department.value && department.value !== DEFAULT_VALUE) {
                 _filters.push({ columnName: 'departmentId', value: department.value });
             }
             if (owner && owner.value && owner.value !== DEFAULT_VALUE) {

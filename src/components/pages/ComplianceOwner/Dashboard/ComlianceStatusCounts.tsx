@@ -7,7 +7,8 @@ const STATUSES = [
     { name: ComplianceActivityStatus.DUE },
     { name: ComplianceActivityStatus.NON_COMPLIANT },
     { name: ComplianceActivityStatus.PENDING },
-    { name: ComplianceActivityStatus.REJECTED }
+    { name: ComplianceActivityStatus.REJECTED },
+    { name: ComplianceActivityStatus.APPROVED }
 ]
 
 export default function ComlianceStatusCounts({ filters, counts }: any) {

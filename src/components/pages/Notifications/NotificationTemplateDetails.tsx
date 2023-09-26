@@ -17,6 +17,7 @@ export default function NotificationTemplateDetails({ action, data, onSubmit, on
     const [form, setForm] = useState<any>({});
     const [notification, setNotification] = useState<any>({ hideButtons: true });
     const { templateTypes } = useGetAllNotificationTemplateTypes(null);
+    const [templateType, setType] = useState<any>();
     const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
     const { createNotificationTemplate, creating } = useCreateNotificationTemplate(({ key, value }: any) => {
         if (key === API_RESULT.SUCCESS) {
@@ -41,21 +42,32 @@ export default function NotificationTemplateDetails({ action, data, onSubmit, on
                 component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
                 name: 'templateType',
                 label: 'Template Type',
-                options: sortBy(templateTypes || [], 'description').map((x: any) => {
+                options: sortBy(templateTypes || [], 'name').map((x: any) => {
                     return {
-                        id: x.id, name: x.description, keys: x.keys ? x.keys.split(API_DELIMITER) : []
+                        ...x,
+                        keys: x.parameters ? x.parameters.split(API_DELIMITER).map((x: string) => x.trim()) : []
                     }
                 }),
+                onChange: (event: any) => {
+                    setType(event.templateType);
+                    setNotification({
+                        ...notification,
+                        templateType: event,
+                        templateDescription: event.templateType.description,
+                        title: null,
+                        message: null
+                    })
+                },
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action !== ACTIONS.ADD ? getValue(notification, 'templateType.name') : ''
+                content: action !== ACTIONS.ADD ? getValue(notification, 'templateType.label') : ''
             },
             {
                 component: componentTypes.PLAIN_TEXT,
-                name: 'temlateDescription',
+                name: 'templateDescription',
                 label: 'Template Description',
-                content: getValue(notification, 'templateType.description') || '-NA-'
+                content: getValue(notification, 'templateType.templateType.description') || '-NA-'
             },
             {
                 component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
@@ -65,7 +77,7 @@ export default function NotificationTemplateDetails({ action, data, onSubmit, on
                     { type: validatorTypes.REQUIRED }
                 ],
                 options: companies,
-                content: action !== ACTIONS.ADD ? getValue(notification, 'companyName') : ''
+                content: action !== ACTIONS.ADD ? (getValue(notification, 'companyName') || '-NA-') : ''
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.INPUT_AS_TEXT,
@@ -80,12 +92,15 @@ export default function NotificationTemplateDetails({ action, data, onSubmit, on
                 component: action === ACTIONS.VIEW ? componentTypes.HTML : componentTypes.TEXTAREA,
                 name: 'message',
                 label: 'Message',
-                placeholder: 'Enter Email Body...',
                 rows: 6,
+                disabled: !Boolean(getValue(notification, 'templateType')),
                 validate: [
-                    { type: validatorTypes.REQUIRED }
+                    { type: validatorTypes.REQUIRED },
+                    { type: validatorTypes.MIN_LENGTH, threshold: 10 },
+                    { type: validatorTypes.MAX_LENGTH, threshold: 1000 },
+                    { type: 'message' }
                 ],
-                description: (getValue(notification, 'templateType.keys') || []).length ? `Valid Keys: ${getValue(notification, 'templateType.keys').join(UI_DELIMITER)}` : null
+                description: (getValue(templateType, 'keys') || []).length ? `Valid Keys: ${getValue(templateType, 'keys').join(UI_DELIMITER)}` : null
             }
         ],
     };
@@ -96,11 +111,11 @@ export default function NotificationTemplateDetails({ action, data, onSubmit, on
     }
 
     function handleSubmit() {
-        const { id, company, title, templateType, messsage } = notification;
+        const { id, company, title, templateType, message } = notification;
         const payload: any = {
-            id, title, messsage,
+            id, title, message,
             companyId: company.value,
-            templateId: templateType.value
+            templateTypeId: templateType.value
         }
         if (action === ACTIONS.ADD) {
             createNotificationTemplate(payload);
@@ -109,14 +124,40 @@ export default function NotificationTemplateDetails({ action, data, onSubmit, on
         }
     }
 
+    function messageValidator() {
+        return (value: any, formData: any) => {
+            const keys = getValue(formData, 'templateType.templateType.keys') || [];
+            if (keys.length > 0) {
+                const matches = value.match(/{{.*?}}/g);
+                if (!matches) {
+                    return false;
+                }
+                const inValidKey = matches.find((key: any) => !keys.includes(key));
+                return Boolean(inValidKey) ? 'Invalid keys added.' : false;
+            }
+            return false;
+        }
+    }
+
     useEffect(() => {
         if (data) {
-            const { companyId, companyName, template } = data;
+            const { companyId, companyName, templateType } = data;
             setNotification({
                 ...notification,
                 ...data,
-                compny: { value: companyId, label: companyName },
-                templateType: { ...template, value: template.id, label: template.name, keys: (template.keys || '').split(API_DELIMITER) }
+                company: { value: companyId, label: companyName },
+                templateType: {
+                    value: templateType.id,
+                    label: templateType.name,
+                    templateType: {
+                        ...templateType,
+                        keys: templateType.parameters ? templateType.parameters.split(API_DELIMITER).map((x: string) => x.trim()) : []
+                    }
+                }
+            });
+            setType({
+                ...templateType,
+                keys: templateType.parameters ? templateType.parameters.split(API_DELIMITER).map((x: string) => x.trim()) : []
             });
         }
     }, [data]);
@@ -133,6 +174,7 @@ export default function NotificationTemplateDetails({ action, data, onSubmit, on
                         componentMapper={ComponentMapper}
                         schema={schema}
                         debug={debugForm}
+                        customValidators={{ 'message': messageValidator }}
                     />
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">

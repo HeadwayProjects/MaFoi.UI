@@ -49,7 +49,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                     </>
                 }
                 {
-                    activity.status === ComplianceActivityStatus.SUBMITTED &&
+                    activity.status === ComplianceActivityStatus.PENDING &&
                     <>
                         <div className="fw-bold">Submitted Activities: {activity.count}</div>
                     </>

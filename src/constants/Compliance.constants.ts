@@ -43,7 +43,7 @@ export const COMPLIANCE_ACTIVITY_INDICATION: any = {
     [ComplianceActivityStatus.DUE]: 'var(--gray)',
     [ComplianceActivityStatus.NON_COMPLIANT]: 'var(--medium-red)',
     [ComplianceActivityStatus.PENDING]: 'var(--yellow)',
-    [ComplianceActivityStatus.APPROVED]: 'var(--green)',
+    [ComplianceActivityStatus.APPROVED]: 'var(--light-blue)',
     [ComplianceActivityStatus.REJECTED]: 'var(--red)'
 }
 
