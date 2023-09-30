@@ -267,7 +267,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
     return (
         <>
             <div className="d-flex flex-column ">
-                <div className="d-flex flex-row flex-wrap filters align-items-end px-2 gap-2">
+                <div className="d-flex flex-row flex-wrap filters align-items-end ps-2 gap-2" style={{ paddingRight: '50px' }}>
                     <div>
                         <label className="filter-label"><small>Company</small></label>
                         <Select placeholder='Company' className="select-control"

@@ -154,6 +154,7 @@ function DepartmentUserDetails(this: any, { action, data, onClose, onSubmit }: a
             const { vertical } = department || {};
             const { company } = vertical || {};
             setDetails({
+                hideButtons: true,
                 user: { value: user.id, label: user.name },
                 company: { value: company.id, label: company.name },
                 vertical: { value: vertical.id, label: vertical.name },
