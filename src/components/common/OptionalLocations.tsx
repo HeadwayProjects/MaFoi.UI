@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import Select from 'react-select';
-import { sortBy } from "underscore";
-import { useGetCompanies, useGetCompanyLocations, useGetDepartmentUserMappings } from "../../backend/masters";
+import { useGetCompanies, useGetCompanyLocations } from "../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "./Table";
-import { getUserDetails } from "../../backend/auth";
+import { getValue } from "../../utils/common";
 const DEFAULT_VALUE = 'ALL';
 const DEFAULT_LABEL = 'All';
 const DEFAULT_OPTION = { value: DEFAULT_VALUE, label: DEFAULT_LABEL };
 
-function OptionalLocations({ onChange, loadCompanies }: any) {
-    const [companies, setCompanies] = useState<any[]>([DEFAULT_OPTION]);
-    const [associateCompanies, setAssociateCompanies] = useState<any>();
-    const [locations, setLocations] = useState<any>();
+function OptionalLocations({ onChange }: any) {
+    const [associateCompanies, setAssociateCompanies] = useState<any>(null);
+    const [locations, setLocations] = useState<any>(null);
     const [company, setCompany] = useState<any>(DEFAULT_OPTION);
-    const [associateCompany, setAssociateCompany] = useState<any>();
-    const [location, setLocation] = useState<any>();
-    const { departmentUsers, isFetching: fetchingCompanies } = useGetDepartmentUserMappings({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'userId', value: getUserDetails().userid }] });
+    const [associateCompany, setAssociateCompany] = useState<any>(DEFAULT_OPTION);
+    const [location, setLocation] = useState<any>(DEFAULT_OPTION);
+    const { companies, isFetching } = useGetCompanies({
+        ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }]
+    });
     const { companies: acs, isFetching: fetchingAcs } = useGetCompanies({
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (company || {}).value }]
@@ -28,31 +28,23 @@ function OptionalLocations({ onChange, loadCompanies }: any) {
 
     function handleCompanyChange(event: any) {
         const { value } = event;
-        setCompany(event);
-        setLocation(null);
         setLocations(null);
-        if (value === DEFAULT_VALUE) {
-            onChange({});
-            setAssociateCompany(null);
-            setAssociateCompanies(null);
-        } else {
-            onChange({ companyId: value });
-            setAssociateCompany(DEFAULT_OPTION);
-            setAssociateCompanies([DEFAULT_OPTION]);
-        }
+        setAssociateCompanies(null);
+        setCompany(event);
+        setAssociateCompany(DEFAULT_OPTION);
+        setLocation(DEFAULT_OPTION);
+        onChange(value === DEFAULT_VALUE ? {} : { companyId: value });
     }
 
     function handleAssociateCompanyChange(event: any) {
         const { value } = event;
         setAssociateCompany(event);
+        setLocation(DEFAULT_OPTION);
+        setLocations(null);
         if (value === DEFAULT_VALUE) {
             onChange({ companyId: company.value });
-            setLocation(null);
-            setLocations(null);
         } else {
             onChange({ companyId: company.value, associateCompanyId: value });
-            setLocation(DEFAULT_OPTION);
-            setLocations([DEFAULT_OPTION]);
         }
     }
 
@@ -68,65 +60,37 @@ function OptionalLocations({ onChange, loadCompanies }: any) {
 
     useEffect(() => {
         if (!fetchingLocs && locs) {
-            setLocations([DEFAULT_OPTION, ...locs.map(({ location }: any) => {
-                return { value: location.id, label: location.name }
-            })]);
+            setLocations(locs.map(({ locationId, location }: any) => ({ value: locationId, label: getValue(location, 'name') })));
         }
     }, [fetchingLocs]);
 
     useEffect(() => {
-        if (!fetchingCompanies && acs) {
-            setLocations(null);
-            setLocation(null);
-            const sorted = sortBy(acs.map(({ id, name }: any) => {
-                return { value: id, label: name }
-            }), 'label');
-            setAssociateCompanies([DEFAULT_OPTION, ...sorted]);
+        if (!fetchingAcs && acs) {
+            setAssociateCompanies(acs.map(({ id, name }: any) => ({ value: id, label: name })));
         }
     }, [fetchingAcs]);
-
-    useEffect(() => {
-        if (!fetchingCompanies && departmentUsers) {
-            const _companies: any[] = [];
-            setAssociateCompanies(null);
-            setLocations(null);
-            setAssociateCompany(null);
-            setLocation(null);
-            departmentUsers.forEach(({ department }: any) => {
-                const { vertical } = department;
-                const { company } = vertical;
-                const { id, name } = company;
-                if (!_companies.find((x: any) => x.value === id)) {
-                    _companies.push({ value: id, label: name });
-                }
-            });
-            const sorted = sortBy(_companies, 'label');
-            setCompanies([DEFAULT_OPTION, ...sorted]);
-            if (loadCompanies) {
-                loadCompanies(sorted);
-            }
-
-        }
-    }, [fetchingCompanies])
 
     return (
         <div className="d-flex flex-row filters">
             <div className="px-2">
                 <label className="filter-label"><small>Company</small></label>
                 <Select placeholder='Company' className="select-control"
-                    options={companies} onChange={handleCompanyChange}
-                    value={company} />
+                    options={[DEFAULT_OPTION, ...(companies || []).map(({ id, name }: any) => ({ value: id, label: name }))]}
+                    onChange={handleCompanyChange}
+                    value={company} isLoading={isFetching} />
             </div>
             <div className="px-2">
                 <label className="filter-label"><small>Associate Company</small></label>
-                <Select placeholder='Associate Company' className="select-control" isDisabled={!Boolean(associateCompanies)}
-                    options={associateCompanies} onChange={handleAssociateCompanyChange}
+                <Select placeholder='Associate Company' className="select-control" isDisabled={(associateCompanies || []).length === 0}
+                    options={[DEFAULT_OPTION, ...(associateCompanies || [])]}
+                    onChange={handleAssociateCompanyChange} isLoading={fetchingAcs}
                     value={associateCompany} />
             </div>
             <div className="px-2">
                 <label className="filter-label"><small>Location</small></label>
-                <Select placeholder='Location' className="select-control" isDisabled={!Boolean(locations)}
-                    options={locations} onChange={handleLocationChange}
+                <Select placeholder='Location' className="select-control" isDisabled={(locations || []).length === 0}
+                    options={[DEFAULT_OPTION, ...(locations || [])]}
+                    onChange={handleLocationChange} isLoading={fetchingLocs}
                     value={location} />
             </div>
         </div>

@@ -7,7 +7,6 @@ import { useDeleteComplianceSchedule, useGetAllComplianceActivities } from "../.
 import Icon from "../../common/Icon";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../common/Table";
 import { preventDefault } from "../../../utils/common";
-import AdminLocations from "../Masters/Companies/AdminLocations";
 import AlertModal from "../../common/AlertModal";
 import ConfirmModal from "../../common/ConfirmModal";
 import PageLoader from "../../shared/PageLoader";
@@ -19,6 +18,7 @@ import { GetComplianceBreadcrumb } from "./Compliance.constants";
 import { COMPLIANCE_ACTIVITY_INDICATION, ComplianceActivityStatus, ComplianceStatusMapping } from "../../../constants/Compliance.constants";
 import ComplianceScheduleAdvanceFilter from "./ComplianceScheduleAdvanceFilter";
 import TableActions, { ActionButton } from "../../common/TableActions";
+import OptionalLocations from "../../common/OptionalLocations";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -48,7 +48,7 @@ function ComplianceScheduleDetails(this: any) {
     const [payload, setPayload] = useState<any>();
     const payloadRef: any = useRef();
     payloadRef.current = payload;
-    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, Boolean(hasFilters(null, 'companyId')));
+    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, Boolean(payload));
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const [alertMessage, setAlertMessage] = useState<any>(null);
     const { deleteComplianceSchedule, deleting } = useDeleteComplianceSchedule(({ key, value }: any) => {
@@ -86,21 +86,8 @@ function ComplianceScheduleDetails(this: any) {
     }
 
     function onLocationChange(event: any) {
-        const { company, associateCompany, location } = event;
-        setLocationFilter([
-            {
-                columnName: 'companyId',
-                value: company
-            },
-            {
-                columnName: 'associateCompanyId',
-                value: associateCompany
-            },
-            {
-                columnName: 'locationId',
-                value: location
-            }
-        ]);
+        const keys = Object.keys(event);
+        setLocationFilter(keys.map(key => ({ columnName: key, value: event[key] })));
     }
 
     function search(event: any) {
@@ -125,7 +112,7 @@ function ComplianceScheduleDetails(this: any) {
     function MonthTmpl({ cell }: any) {
         const row = cell.getData();
         return (
-            <>{row.month} ({row.year})</>
+            <div className="ellipse two-lines">{row.month} ({row.year})</div>
         )
     }
 
@@ -173,7 +160,7 @@ function ComplianceScheduleDetails(this: any) {
 
     const columns = [
         {
-            title: "Month (Year)", field: "month", width: 120,
+            title: "Month (Year)", field: "month", width: 100,
             formatter: reactFormatter(<MonthTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
@@ -400,7 +387,7 @@ function ComplianceScheduleDetails(this: any) {
                 <form className="p-0 mx-3 my-2">
                     <div className="card shadow border-0 p-2 mt-2 mb-3 filters">
                         <div className="d-flex flex-row m-0 align-items-end">
-                            <AdminLocations onChange={onLocationChange} />
+                            <OptionalLocations onChange={onLocationChange} />
                             <div>
                                 <ComplianceScheduleAdvanceFilter onChange={search} />
                             </div>
