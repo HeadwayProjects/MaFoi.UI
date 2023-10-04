@@ -35,7 +35,7 @@ export default function NotificationTemplates() {
     const filterRef: any = useRef();
     filterRef.current = filters;
     const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'Templatetypeid', order: 'asc' }, ...filterRef.current });
-    const { templateTypes } = useGetAllNotificationTemplateTypes({ ...DEFAULT_OPTIONS_PAYLOAD });
+    const { templateTypes } = useGetAllNotificationTemplateTypes();
     const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] })
     const { templates, total, isFetching, refetch } = useGetAllTemplates(payload, Boolean(payload));
     const { deleteNotificationTemplate, deleting } = useDeleteNotificationTemplate(({ key, value }: any) => {

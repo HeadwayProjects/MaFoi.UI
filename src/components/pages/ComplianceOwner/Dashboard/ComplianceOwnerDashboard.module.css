@@ -92,7 +92,6 @@
     align-items: center;
     width: 22px;
     justify-content: center;
-    z-index: 1111111;
     border: 1px solid var(--gray);
     border-radius: 5px 0 0 5px;
     border-right: none;

@@ -3,10 +3,10 @@ import { del, get, post, put } from "./request";
 
 const NOTIFICATION_BASE_URL = '/api/Notification';
 
-export function useGetAllNotificationTemplateTypes(payload: any) {
+export function useGetAllNotificationTemplateTypes() {
     const { data, isFetching, refetch } = useQuery(
         ['notifyTemplateTypes'],
-        async () => await get(`${NOTIFICATION_BASE_URL}/GetAllNotifyTemplateType`, payload),
+        async () => await get(`${NOTIFICATION_BASE_URL}/GetAllNotifyTemplateType`),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
