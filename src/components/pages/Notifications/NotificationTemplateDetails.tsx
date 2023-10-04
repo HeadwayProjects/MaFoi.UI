@@ -16,7 +16,7 @@ import PageLoader from "../../shared/PageLoader";
 export default function NotificationTemplateDetails({ action, data, onSubmit, onClose }: any) {
     const [form, setForm] = useState<any>({});
     const [notification, setNotification] = useState<any>({ hideButtons: true });
-    const { templateTypes } = useGetAllNotificationTemplateTypes(null);
+    const { templateTypes } = useGetAllNotificationTemplateTypes();
     const [templateType, setType] = useState<any>();
     const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
     const { createNotificationTemplate, creating } = useCreateNotificationTemplate(({ key, value }: any) => {
