@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { del, get, post, put } from "./request";
+import { del, get, getChartsBaseUrl, post, put } from "./request";
 
 export function useExportComplianceSchedule(onSuccess?: any, onError?: any) {
     const { mutate: exportComplianceSchedule, error, isLoading: exporting } = useMutation(
@@ -216,4 +216,19 @@ export function useGetComplianceStatusByCategory(category: string, payload: any,
     );
 
     return { response: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useExportComplianceDashbard(onSuccess?: any, onError?: any) {
+    const { mutate: exportDashboard, error, isLoading: exporting } = useMutation(
+        ['auditReport'],
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardReport`, payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportDashboard, error, exporting };
 }

@@ -30,6 +30,7 @@ function Law() {
     const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
     const { laws, total, isFetching, refetch } = useGetLaws(payload);
     const { deleteLaw, deleting } = useDeleteLaw(() => {
+        toast.success(`Law category "${law.name}" deleted successfully.`);
         submitCallback();
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);

@@ -17,7 +17,7 @@ function LawDetails({ action, data, onClose, onSubmit }: any) {
     const [law, setLaw] = useState<any>({ hideButtons: true });
     const { createLaw, creating } = useCreateLaw(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
-            toast.success(`${law.name} created successfully.`);
+            toast.success(`Law categry "${law.name}" created successfully.`);
             onSubmit();
         } else {
             toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Law name already exists.' : ERROR_MESSAGES.ERROR);
@@ -25,7 +25,7 @@ function LawDetails({ action, data, onClose, onSubmit }: any) {
     }, errorCallback);
     const { updateLaw, updating } = useUpdateLaw(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
-            toast.success(`${law.name} updated successfully.`);
+            toast.success(`Law categor "${law.name}" updated successfully.`);
             onSubmit();
         } else {
             toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Law name already exists.' : ERROR_MESSAGES.ERROR);

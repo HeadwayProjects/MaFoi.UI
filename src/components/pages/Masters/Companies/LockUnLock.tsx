@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
-import { ACTIONS, FILTERS, STATUS_MAPPING } from "../../../common/Constants";
+import { ACTIONS, ACTIVITY_STATUS, FILTERS, STATUS_MAPPING } from "../../../common/Constants";
 import { useGetAllActivities } from "../../../../backend/query";
-import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS } from "../../../../utils/constants";
+import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER } from "../../../../utils/constants";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import AdvanceSearch from "../../../common/AdvanceSearch";
 import { preventDefault } from "../../../../utils/common";
@@ -37,6 +37,7 @@ function getDefaultPayload() {
         { columnName: 'published', value: 'false' },
         { columnName: 'fromDate', value: dayjs(new Date(fromDate)).local().format() },
         { columnName: 'toDate', value: dayjs(new Date(toDate)).local().format() },
+        { columnName: 'status', value: [ACTIVITY_STATUS.OVERDUE, ACTIVITY_STATUS.REJECTED].join(API_DELIMITER) }
     ]
 }
 

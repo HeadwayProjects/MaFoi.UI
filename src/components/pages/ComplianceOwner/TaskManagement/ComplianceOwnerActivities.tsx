@@ -14,8 +14,10 @@ import {
     ComplianceStatusMapping, setUserDetailsInFilters
 } from "../../../../constants/Compliance.constants";
 import { get } from "../../../../backend/request";
-import { download } from "../../../../utils/common";
+import { download, preventDefault } from "../../../../utils/common";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 
 const SortFields: any = {
     'month': 'startDate',
@@ -110,6 +112,20 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
         )
     }
 
+    function ActionHeaderTmpl() {
+        return (
+            <div className={`nav-item dropdown ${styles.tableActions}`}>
+                <div className="nav-link text-white" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <FontAwesomeIcon icon={faEllipsisV} />
+                </div>
+                <div className="dropdown-menu">
+                    <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
+                    <a className="dropdown-item" href="/" onClick={handleAddNotice}>Add Notice</a>
+                </div>
+            </div>
+        )
+    }
+
     function ActivityTypeTmpl({ cell }: any) {
         const value = cell.getValue() || ACTIVITY_TYPE.AUDIT;
         return (
@@ -123,7 +139,8 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
         {
             title: "", width: 40,
             headerSort: false,
-            formatter: reactFormatter(<ActionColumnElements />)
+            formatter: reactFormatter(<ActionColumnElements />),
+            // titleFormatter: reactFormatter(<ActionHeaderTmpl />)
         },
         {
             title: "", width: 30, field: "status",
@@ -273,6 +290,15 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
         }
     }
 
+    function handleExport(event: any) {
+        event.preventDefault();
+        // preventDefault(event);
+    }
+
+    function handleAddNotice(event: any) {
+        preventDefault(event);
+    }
+
     function downloadForm(activity: any) {
         get(`/api/ActStateMapping/Get?id=${activity.actStateMappingId}`).then(response => {
             if (response.data.filePath) {
@@ -308,6 +334,7 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
             <div className="d-flex flex-column overflow-hidden">
                 {/* <div className="mb-0 text-appprimary text-xl fw-bold">Compliance Schedule</div> */}
                 <div className={`card shadow ${styles.tableWrapper}`}>
+                    <ActionHeaderTmpl />
                     <div className={styles.flexibleContainer}>
                         <Table data={data} options={tableConfig} isLoading={isFetching} onPageNav={handlePageNav} />
                     </div>
