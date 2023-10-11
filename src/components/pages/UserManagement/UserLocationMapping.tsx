@@ -27,7 +27,7 @@ function UserLocationMapping({ user, data, onClose, onSubmit }: any) {
     }, Boolean(associateCompany));
     const { createUserLocationMapping, creating } = useCreateUserLocationMapping((response: any) => {
         if (response.key === API_RESULT.SUCCESS) {
-            toast.success(`${selectedLocations.length} location(s) added successsfully.`);
+            toast.success(`${selectedLocations.length} location(s) added successfully.`);
             onSubmit();
         } else {
             toast.error(response.value || ERROR_MESSAGES.ERROR);

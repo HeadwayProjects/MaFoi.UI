@@ -32,7 +32,7 @@ function City() {
     const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD });
 
     const { deleteCity } = useDeleteCity(() => {
-        toast.success(`${city.name} deleted successsfully.`);
+        toast.success(`${city.name} deleted successfully.`);
         setAction(ACTIONS.NONE);
         setCity(null);
         refetch();

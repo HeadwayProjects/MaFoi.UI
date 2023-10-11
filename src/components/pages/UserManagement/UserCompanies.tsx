@@ -57,7 +57,7 @@ function UserCompanies() {
     const [userLocations, setUserLocations] = useState<any>(null);
     const { createUserLocationMapping: deleteLocations } = useCreateUserLocationMapping((response: any) => {
         if (response.key === API_RESULT.SUCCESS) {
-            toast.success(`${userLocations.associateCompanyName} deleted successsfully.`);
+            toast.success(`${userLocations.associateCompanyName} deleted successfully.`);
             setUserLocations(null);
             refetch();
         } else {

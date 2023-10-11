@@ -23,14 +23,14 @@ function LocationDetails(this: any, { action, data, onClose, onSubmit }: any) {
     const { locations, isFetching: loadingLocations } = useGetLocations(stateId && cityId ? { stateId, cityId } : null, Boolean(stateId) && Boolean(cityId));
     const [locationDetails, setLocationDetails] = useState<any>({ hideButtons: true });
     const { updateLocation } = useUpdateLocation(() => {
-        toast.success(`${locationDetails.name} updated successsfully.`);
+        toast.success(`${locationDetails.name} updated successfully.`);
         onSubmit();
     }, errorCallback);
     const { createLocation } = useCreateLocation((response: any) => {
         if (response instanceof AxiosError) {
             errorCallback();
         } else {
-            toast.success(`${locationDetails.name} created successsfully.`);
+            toast.success(`${locationDetails.name} created successfully.`);
             onSubmit();
         }
     }, errorCallback);

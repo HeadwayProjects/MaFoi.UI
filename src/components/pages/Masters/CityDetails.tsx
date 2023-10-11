@@ -20,7 +20,7 @@ function CityDetails(this: any, { action, data, onClose, onSubmit }: any) {
     const { cities } = useGetCities(stateId ? { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'stateId', value: stateId }] } : null, Boolean(stateId));
 
     const { updateCity } = useUpdateCity(() => {
-        toast.success(`${form.values.name} updated successsfully.`);
+        toast.success(`${form.values.name} updated successfully.`);
         onSubmit();
     }, errorCallback);
 
@@ -28,7 +28,7 @@ function CityDetails(this: any, { action, data, onClose, onSubmit }: any) {
         if (response instanceof AxiosError) {
             errorCallback();
         } else {
-            toast.success(`${form.values.name} created successsfully.`);
+            toast.success(`${form.values.name} created successfully.`);
             onSubmit();
         }
     }, errorCallback);

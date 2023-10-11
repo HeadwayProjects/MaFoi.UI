@@ -24,7 +24,7 @@ function Location() {
     const [payload, setPayload] = useState<any>();
     const { locations, isFetching, refetch } = useGetLocations(null);
     const { deleteLocation } = useDeleteLocation(() => {
-        toast.success(`${location.name} deleted successsfully.`);
+        toast.success(`${location.name} deleted successfully.`);
         setAction(ACTIONS.NONE);
         setLocation(null);
         refetch();

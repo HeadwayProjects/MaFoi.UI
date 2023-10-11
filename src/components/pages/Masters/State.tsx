@@ -34,7 +34,7 @@ function State() {
     const { states, total, isFetching, refetch } = useGetStates(payload);
 
     const { deleteState } = useDeleteState(() => {
-        toast.success(`${state.name} deleted successsfully.`);
+        toast.success(`${state.name} deleted successfully.`);
         setAction(ACTIONS.NONE);
         setState(null);
         refetch();
