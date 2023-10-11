@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisV, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import Location from "../../common/Location";
@@ -14,13 +14,13 @@ import Table, { reactFormatter, CellTmpl, TitleTmpl, DEFAULT_PAYLOAD } from "../
 import { faSave } from "@fortawesome/free-regular-svg-icons";
 import AdvanceSearch from "../../common/AdvanceSearch";
 import AlertModal from "../../common/AlertModal";
-import { download, preventDefault, reduceArraytoObj } from "../../../utils/common";
+import { download, downloadFileContent, preventDefault, reduceArraytoObj } from "../../../utils/common";
 import PublishModal from "./PublishModal";
 import ActivityModal from "./ActivityModal";
 import { getUserDetails, hasUserAccess } from "../../../backend/auth";
 import { useAuditReport } from "../../../backend/exports";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
-import { useGetAllActivities } from "../../../backend/query";
+import { useExportTodos, useGetAllActivities } from "../../../backend/query";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
 
 const STATUS_BTNS = [
@@ -82,6 +82,16 @@ function TaskManagement() {
         document.body.removeChild(a);
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
+    });
+
+    const { exportTodos, exporting: exportingTodos } = useExportTodos((response: any) => {
+        downloadFileContent({
+            name: 'Audit Activities.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
     });
 
     function hasFilters(ref: any, field = 'companyId') {
@@ -262,6 +272,20 @@ function TaskManagement() {
                     <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
                 }
             </>
+        )
+    }
+
+
+    function ActionHeaderTmpl() {
+        return (
+            <div className={`nav-item dropdown todoTableActions`}>
+                <div className="nav-link text-white" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <FontAwesomeIcon icon={faEllipsisV} />
+                </div>
+                <div className="dropdown-menu">
+                    <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
+                </div>
+            </div>
         )
     }
 
@@ -490,6 +514,30 @@ function TaskManagement() {
         return _payload;
     }
 
+
+    function handleExport(event: any) {
+        event.preventDefault();
+        if (total < 1) {
+            toast.warn('There are no records available for this filter criteria.');
+            return;
+        }
+        const _payload = {
+            ...DEFAULT_PAYLOAD,
+            sort: {
+                columnName: 'month',
+                order: 'desc'
+            },
+            ...params,
+            filters: [
+                ...locationFilters,
+                ...(afRef.current || []),
+                ...(sfRef.current || [])
+            ],
+            pagination: null
+        };
+        exportTodos(_payload);
+    }
+
     useEffect(() => {
         if (locationFilters) {
             setPayload({
@@ -628,8 +676,11 @@ function TaskManagement() {
                         </div>
                     </div>
                 </form>
-
-                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                <div className="position-relative">
+                    <ActionHeaderTmpl />
+                    <Table data={data} options={tableConfig} isLoading={isFetching}
+                        onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                </div>
             </div>
 
             {

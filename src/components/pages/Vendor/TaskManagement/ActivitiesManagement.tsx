@@ -7,13 +7,13 @@ import EditActivityModal from "./EditActivityModal";
 import { toast } from 'react-toastify';
 import PageLoader from "../../../shared/PageLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave, faUpload, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faSave, faUpload, faInfoCircle, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import BulkUploadModal from "./BulkuploadModal";
 import { Link, usePath, useHistory } from "raviger";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../../common/Constants";
 import Location from "../../../common/Location";
-import { useGetAllActivities } from "../../../../backend/query";
+import { useExportTodos, useGetAllActivities } from "../../../../backend/query";
 import Icon from "../../../common/Icon";
 import { download, downloadFileContent, preventDefault, reduceArraytoObj } from "../../../../utils/common";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
@@ -23,6 +23,7 @@ import AlertModal from "../../../common/AlertModal";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
 import { useAuditReport } from "../../../../backend/exports";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import styles from "./TaskManagement.module.css";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -93,6 +94,15 @@ function ActivitiesManagement() {
         });
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
+    });
+    const { exportTodos, exporting: exportingTodos } = useExportTodos((response: any) => {
+        downloadFileContent({
+            name: 'Audit Activities.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
     });
 
     function onLocationChange(event: any) {
@@ -226,6 +236,19 @@ function ActivitiesManagement() {
         const value = cell.getValue();
         return (
             <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
+        )
+    }
+
+    function ActionHeaderTmpl() {
+        return (
+            <div className={`nav-item dropdown ${styles.tableActions}`}>
+                <div className="nav-link text-white" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <FontAwesomeIcon icon={faEllipsisV} />
+                </div>
+                <div className="dropdown-menu">
+                    <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
+                </div>
+            </div>
         )
     }
 
@@ -449,6 +472,30 @@ function ActivitiesManagement() {
         setBulkUpload(false);
     }
 
+    function handleExport(event: any) {
+        event.preventDefault();
+        if (total < 1) {
+            toast.warn('There are no records available for this filter criteria.');
+            return;
+        }
+        const _payload = {
+            ...DEFAULT_PAYLOAD,
+            sort: {
+                columnName: 'month',
+                order: 'desc'
+            },
+            ...params,
+            filters: [
+                ...locationFilters,
+                ...(afRef.current || []),
+                ...(sfRef.current || []),
+                ...AuditTypeFilter
+            ],
+            pagination: null
+        };
+        exportTodos(_payload);
+    }
+
     useEffect(() => {
         if (locationFilters) {
             setPayload({
@@ -607,7 +654,11 @@ function ActivitiesManagement() {
                         </div>
                     </div>
                 </form>
-                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                <div className="position-relative">
+                    <ActionHeaderTmpl />
+                    <Table data={data} options={tableConfig} isLoading={isFetching}
+                        onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                </div>
             </div>
 
             {
@@ -632,7 +683,7 @@ function ActivitiesManagement() {
                     setAlertMessage(null);
                 }} />
             }
-            {(submitting || exporting) && <PageLoader />}
+            {(submitting || exporting || exportingTodos) && <PageLoader />}
         </>
     );
 }

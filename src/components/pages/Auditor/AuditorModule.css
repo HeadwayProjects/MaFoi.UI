@@ -24,11 +24,23 @@
     background-color: var(--gray-300);
     box-shadow: 0 0 0 1px #959595 inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #9f9e9eb0, 0 8px 8px 1px rgb(199 199 199);
 }
+
 .cardCount.yellow-bg {
     background-color: var(--yellow);
     box-shadow: 0 0 0 1px #d79a47 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #D79A34, 0 8px 8px 1px rgb(199 199 199);
 }
+
 .cardCount.medium-red-bg {
     background-color: var(--medium-red);
     box-shadow: 0 0 0 1px #b93802 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #c114149c, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.todoTableActions {
+    position: absolute !important;
+    z-index: 1;
+    right: 0;
+}
+
+.todoTableActions .nav-link {
+    padding: 0.85rem 1.25rem;
 }

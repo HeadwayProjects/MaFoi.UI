@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
 import { ACTIONS } from "../../../common/Constants";
-import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER } from "../../../../utils/constants";
-import { useGetAllComplianceActivities } from "../../../../backend/compliance";
+import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
+import { useExportComplianceActivities, useGetAllComplianceActivities } from "../../../../backend/compliance";
 import { hasUserAccess } from "../../../../backend/auth";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 import Icon from "../../../common/Icon";
@@ -14,10 +14,11 @@ import {
     ComplianceStatusMapping, setUserDetailsInFilters
 } from "../../../../constants/Compliance.constants";
 import { get } from "../../../../backend/request";
-import { download, preventDefault } from "../../../../utils/common";
+import { download, downloadFileContent, preventDefault } from "../../../../utils/common";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import PageLoader from "../../../shared/PageLoader";
 
 const SortFields: any = {
     'month': 'startDate',
@@ -39,6 +40,15 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
     const payloadRef: any = useRef();
     payloadRef.current = payload;
     const { activities, total, statusCount, isFetching, refetch } = useGetAllComplianceActivities(payload, hasFilters(null, 'startDateFrom'));
+    const { exportComplianceActivities, exporting } = useExportComplianceActivities((response: any) => {
+        downloadFileContent({
+            name: 'Compliance Activities.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
@@ -292,7 +302,11 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
 
     function handleExport(event: any) {
         event.preventDefault();
-        // preventDefault(event);
+        if (!total) {
+            toast.warn('There are no compliance activities available for the selected filter criteria.');
+            return;
+        }
+        exportComplianceActivities({...payloadRef.current, pagination: null});
     }
 
     function handleAddNotice(event: any) {
@@ -343,6 +357,9 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
             {
                 action === ACTIONS.EDIT && Boolean(activity) &&
                 <ComplianceActivityDetails data={activity} onCancel={dismissAction} onSubmit={() => dismissAction(true)} />
+            }
+            {
+                exporting && <PageLoader />
             }
         </>
     );

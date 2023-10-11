@@ -232,3 +232,18 @@ export function useExportComplianceDashbard(onSuccess?: any, onError?: any) {
     );
     return { exportDashboard, error, exporting };
 }
+
+export function useExportComplianceActivities(onSuccess?: any, onError?: any) {
+    const { mutate: exportComplianceActivities, error, isLoading: exporting } = useMutation(
+        ['exportComplianceActivities'],
+        async (payload: any) => await post('/api/Compliance/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportComplianceActivities, error, exporting };
+}
