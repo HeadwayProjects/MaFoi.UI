@@ -130,7 +130,7 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
                 </div>
                 <div className="dropdown-menu">
                     <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
-                    <a className="dropdown-item" href="/" onClick={handleAddNotice}>Add Notice</a>
+                    {/* <a className="dropdown-item" href="/" onClick={handleAddNotice}>Add Notice</a> */}
                 </div>
             </div>
         )
@@ -231,7 +231,15 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
             formatter: reactFormatter(<FormStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         }
-    ]
+    ];
+
+    function rowFormatter(row: any) {
+        const data = row.getData();
+        const element = row.getElement();
+        if (data.isNotice) {
+            element.classList.add('notice-activity');
+        }
+    }
 
     const [tableConfig] = useState({
         paginationMode: 'remote',
@@ -242,7 +250,8 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
         selectable: false,
         paginate: true,
         bufferSpacing: 20,
-        initialSort: [{ column: 'month', dir: 'desc' }]
+        initialSort: [{ column: 'month', dir: 'desc' }],
+        rowFormatter
     });
 
     function formatApiResponse(params: any, list: any[], totalRecords: number) {
@@ -346,7 +355,6 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
     return (
         <>
             <div className="d-flex flex-column overflow-hidden">
-                {/* <div className="mb-0 text-appprimary text-xl fw-bold">Compliance Schedule</div> */}
                 <div className={`card shadow ${styles.tableWrapper}`}>
                     <ActionHeaderTmpl />
                     <div className={styles.flexibleContainer}>

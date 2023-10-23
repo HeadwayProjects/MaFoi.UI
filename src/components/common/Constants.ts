@@ -25,7 +25,8 @@ export const ACTIONS = {
     ASSIGN_SINGLE: '8',
     ASSIGN_BULK: '9',
     COPY_TO: '10',
-    CONFIRM: '11'
+    CONFIRM: '11',
+    EXPORT: '12'
 }
 
 export const ACTIVITY_STATUS = {

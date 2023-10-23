@@ -929,7 +929,7 @@ export function useDeleteEscalationMatrix(onSuccess?: any, onError?: any) {
 }
 
 export function useGetDepartmentUserMappings(payload: any, enabled = true) {
-    const { data, isFetching, refetch } = useQuery(
+    const { data, isFetching, refetch }: any = useQuery(
         ['departmentUsers', payload],
         async () => await api.post(`/api/UserDepartmentMap/GetAll`, payload),
         {

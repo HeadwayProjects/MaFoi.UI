@@ -302,7 +302,8 @@ function AsyncSelectField(props: any) {
                 }
             },
             isLoading: props.isLoading,
-            isDisabled: props.isDisabled
+            isDisabled: props.isDisabled,
+            isClearable: props.isClearable
         };
     }
 
@@ -506,6 +507,8 @@ export function DatePickerField(props: any) {
                     props.onChange(e);
                 }
             },
+            minDate: props.minDate,
+            maxDate: props.maxDate,
             disabled: props.disabled
         }
     }
@@ -532,7 +535,7 @@ export function DatePickerField(props: any) {
             }
             <div className={`input-group date-picker`}>
                 <DatePicker range={props.range || false}
-                    minDate={props.minDate} format={'DD/MM/YYYY'} maxDate={props.maxDate} {...onInput(input)} value={value}>
+                    format={'DD/MM/YYYY'} {...onInput(input)} value={value}>
                     {
                         value && props.clearable &&
                         <Button variant="link" className="mb-2" onClick={clearValue}>Clear</Button>

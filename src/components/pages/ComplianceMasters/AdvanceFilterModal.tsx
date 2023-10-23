@@ -11,7 +11,7 @@ import { API_DELIMITER, DEBOUNCE_TIME } from "../../../utils/constants";
 import { activityOptionLabel, ruleOptionLabel } from "../Masters/Mappings/MappingDetails";
 import { MONTHS_ENUM } from "../../common/Constants";
 
-export default function AdvanceFilterModal(this: any, { payload, data, onSubmit, onCancel }: any) {
+export default function AdvanceFilterModal(this: any, { payload, data, onSubmit, onCancel, filterForNotice }: any) {
     const [filter, setFilter] = useState<any>({ hideButtons: true, ...data });
     // const [verticals, setVerticals] = useState<any[]>([]);
     // const [departments, setDepartments] = useState<any[]>([]);
@@ -54,7 +54,12 @@ export default function AdvanceFilterModal(this: any, { payload, data, onSubmit,
                 name: 'activityType',
                 label: 'Activity Type',
                 options: ActivityType,
-                isMulti: true
+                isMulti: true,
+                condition: {
+                    when: 'activityType',
+                    is: () => !filterForNotice,
+                    then: { visible: true }
+                }
             },
             // {
             //     component: componentTypes.SELECT,

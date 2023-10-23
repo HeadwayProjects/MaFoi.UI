@@ -112,6 +112,7 @@ const SideNavMenu = [
     // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.OWNER_ACTIVITIES },
     // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.MANAGER_ACTIVITIES },
     { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES },
+    { id: 'notices', url: '/notices', icon: 'task', label: 'Noticies', privilege: USER_PRIVILEGES.VIEW_NOTICES },
     { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true },
     { id: 'notifications', url: '/notifications', icon: 'notification', label: 'Notifications', privilege: USER_PRIVILEGES.VIEW_USER_NOTIFICATIONS }
 ];

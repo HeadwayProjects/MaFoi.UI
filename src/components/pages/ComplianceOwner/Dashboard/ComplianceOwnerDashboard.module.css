@@ -141,3 +141,20 @@
         left: -20px;
     }
 }
+
+.downloadReportIcon {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.5rem;
+    border-radius: 50%;
+    z-index: 11;
+    padding: 10px;
+    background: var(--bs-green);
+    color: #fff;
+    opacity: 0.4;
+}
+
+.downloadReportIcon:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}

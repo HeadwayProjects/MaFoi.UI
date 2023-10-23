@@ -120,6 +120,7 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
                 name: 'act',
                 label: 'Act',
                 defaultOptions: acts,
+                isClearable: true,
                 loadOptions: debounce((keyword: any, callback: any) => {
                     getActs({ ...DEFAULT_OPTIONS_PAYLOAD, search: keyword }).then(response => {
                         const list = ((response || {}).data || {}).list || [];
@@ -137,6 +138,7 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
                 label: 'Rule',
                 defaultOptions: rules,
                 formatOptionLabel: ruleOptionLabel,
+                isClearable: true,
                 loadOptions: debounce((keyword: any, callback: any) => {
                     getRules({ ...DEFAULT_OPTIONS_PAYLOAD, search: keyword }).then(response => {
                         const list = ((response || {}).data || {}).list || [];
@@ -154,6 +156,7 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
                 label: 'Activity',
                 formatOptionLabel: activityOptionLabel,
                 defaultOptions: activities,
+                isClearable: true,
                 loadOptions: debounce((keyword: any, callback: any) => {
                     getActivities({ ...DEFAULT_OPTIONS_PAYLOAD, search: keyword }).then(response => {
                         const list = ((response || {}).data || {}).list || [];

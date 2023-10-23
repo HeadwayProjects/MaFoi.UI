@@ -39,6 +39,7 @@ import ComplianceOwnerActivities from "../components/pages/ComplianceOwner/TaskM
 import NotificationsCenter from "../components/pages/Notifications/NotificationsCenter";
 import ManageEscalationMatrix from "../components/pages/Masters/Companies/EscalationMatrix/ManageEscalationMatrix";
 import NotificationTemplates from "../components/pages/Notifications/NotificationTemplates";
+import ManageNotices from "../components/pages/Notices/ManageNotices";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -186,6 +187,9 @@ function AuthenticatedContent() {
         ),
         '/notifications': () => (
             layout(<NotificationsCenter />)
+        ),
+        '/notices': () => (
+            layout(<ManageNotices />)
         ),
         '/changePassword/:token': ({ token }: any) => (
             <>

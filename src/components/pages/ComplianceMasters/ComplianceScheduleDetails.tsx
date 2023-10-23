@@ -226,7 +226,15 @@ function ComplianceScheduleDetails(this: any) {
             formatter: reactFormatter(<ActionColumnElements />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         }
-    ]
+    ];
+
+    function rowFormatter(row: any) {
+        const data = row.getData();
+        const element = row.getElement();
+        if (data.isNotice) {
+            element.classList.add('notice-activity');
+        }
+    }
 
     const [tableConfig] = useState({
         paginationMode: 'remote',
@@ -235,7 +243,8 @@ function ComplianceScheduleDetails(this: any) {
         rowHeight: 'auto',
         selectable: true,
         paginate: true,
-        initialSort: [{ column: 'month', dir: 'desc' }]
+        initialSort: [{ column: 'month', dir: 'desc' }],
+        rowFormatter
     });
 
     function formatApiResponse(params: any, list: any[], totalRecords: number) {

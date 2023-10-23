@@ -11,7 +11,7 @@ import { DEFAULT_PAYLOAD } from "./../../../common/Table";
 import PageLoader from "../../../shared/PageLoader";
 
 export default function ComplianceDashboardCharts({ filters }: any) {
-    const { exportDashboard, exporting } = useExportComplianceDashbard((response: any) => {
+    const { exportDashboard, exporting }: any = useExportComplianceDashbard((response: any) => {
         downloadFileContent({
             name: 'ComplianceDashboard.pdf',
             type: response.headers['content-type'],

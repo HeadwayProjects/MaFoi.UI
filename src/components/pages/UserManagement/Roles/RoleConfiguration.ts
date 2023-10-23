@@ -115,7 +115,12 @@ export enum USER_PRIVILEGES {
     SUBMITTER_ACTIVITIES_SUBMIT = 'SUBMITTER_ACTIVITIES_SUBMIT',
     SUBMITTER_ACTIVITIES_UPLOAD = 'SUBMITTER_ACTIVITIES_UPLOAD',
     SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT = 'SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT',
-    VIEW_USER_NOTIFICATIONS = 'VIEW_USER_NOTIFICATIONS'
+    VIEW_USER_NOTIFICATIONS = 'VIEW_USER_NOTIFICATIONS',
+    VIEW_NOTICES = 'VIEW_NOTICES',
+    ADD_NOTICE = 'ADD_NOTICE',
+    ASSIGN_NOTICE = 'ASSIGN_NOTICE',
+    EDIT_NOTICE = 'EDIT_NOTICE',
+    DELETE_NOTICE = 'DELETE_NOTICE'
 }
 
 export const PAGES_CONFIGURATION = [
@@ -642,11 +647,37 @@ export const PAGES_CONFIGURATION = [
     {
         id: 'USER_NOTIFICATION',
         name: 'Notifications',
-        isMulti: false,
         privileges: [
             {
                 id: USER_PRIVILEGES.VIEW_USER_NOTIFICATIONS,
-                name: 'View Notifications',
+                name: 'View Notices',
+            }
+        ]
+    },
+    {
+        id: 'NOTICES',
+        name: 'Notices',
+        isMulti: true,
+        privileges: [
+            {
+                id: USER_PRIVILEGES.VIEW_NOTICES,
+                name: 'View Notices',
+            },
+            {
+                id: USER_PRIVILEGES.ADD_NOTICE,
+                name: 'Add Notices',
+            },
+            {
+                id: USER_PRIVILEGES.EDIT_NOTICE,
+                name: 'Edit Notices',
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_NOTICE,
+                name: 'Delete Notices',
+            },
+            {
+                id: USER_PRIVILEGES.ASSIGN_NOTICE,
+                name: 'Assign Notices',
             }
         ]
     }

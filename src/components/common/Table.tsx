@@ -18,7 +18,7 @@ export const PageNav = {
     LAST: 'last'
 }
 
-const DEFAULT_PAGE_SIZE = 50;
+export const DEFAULT_PAGE_SIZE = 50;
 const PAGE_OPTIONS = [
     { value: 10, label: 10 },
     { value: 25, label: 25 },

@@ -8,8 +8,8 @@ function AdminLocations({ onChange }: any) {
     const [company, setCompany] = useState<any>(null);
     const [associateCompany, setAssociateCompany] = useState<any>(null);
     const [location, setLocation] = useState<any>(null);
-    const { companies: parentCompanies, isFetching: fetchingParentCompanies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t });
-    const { companies: associateCompanies, isFetching: fetchingAssociateCompanies } = useGetCompanies({
+    const { companies: parentCompanies, isFetching: fetchingParentCompanies }: any = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }], t });
+    const { companies: associateCompanies, isFetching: fetchingAssociateCompanies }: any = useGetCompanies({
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [
             { columnName: 'isParent', value: 'false' },

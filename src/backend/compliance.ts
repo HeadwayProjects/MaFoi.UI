@@ -31,10 +31,14 @@ export function useImportComplianceSchedule(onSuccess?: any, onError?: any) {
     return { importComplianceSchedule, error, uploading };
 }
 
+export function getAllComplianceActivies(payload: any) {
+    return post('/api/Compliance/GetAll', payload)
+}
+
 export function useGetAllComplianceActivities(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['complianceActivities', payload],
-        async () => await post('/api/Compliance/GetAll', payload),
+        async () => await getAllComplianceActivies(payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
@@ -221,7 +225,7 @@ export function useGetComplianceStatusByCategory(category: string, payload: any,
 export function useExportComplianceDashbard(onSuccess?: any, onError?: any) {
     const { mutate: exportDashboard, error, isLoading: exporting } = useMutation(
         ['auditReport'],
-        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardReport`, payload, null, true, { responseType: 'blob' }),
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardChart`, payload, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
@@ -231,6 +235,21 @@ export function useExportComplianceDashbard(onSuccess?: any, onError?: any) {
         }
     );
     return { exportDashboard, error, exporting };
+}
+
+export function useExportComplianceReport(onSuccess?: any, onError?: any) {
+    const { mutate: exportReport, error, isLoading: exporting } = useMutation(
+        ['exportReport'],
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardReport`, payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportReport, error, exporting };
 }
 
 export function useExportComplianceActivities(onSuccess?: any, onError?: any) {
@@ -246,4 +265,34 @@ export function useExportComplianceActivities(onSuccess?: any, onError?: any) {
         }
     );
     return { exportComplianceActivities, error, exporting };
+}
+
+export function useAddNotice(onSuccess?: any, onError?: any) {
+    const { mutate: addNotice, error, isLoading: adding } = useMutation(
+        ['addNotice'],
+        async (payload: any) => await post('/api/Compliance/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { addNotice, error, adding };
+}
+
+export function useUpdateNotice(onSuccess?: any, onError?: any) {
+    const { mutate: updateNotice, error, isLoading: updating } = useMutation(
+        ['updateNotice'],
+        async (payload: any) => await put('/api/Compliance/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateNotice, error, updating };
 }
