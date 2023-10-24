@@ -252,3 +252,10 @@ export function checkAuditorActivityStatus(activity: any) {
     editable: false
   }
 }
+
+export function copyArray(arr: any[]) {
+  if ((arr || []).length === 0) {
+    return [];
+  }
+  return JSON.parse(JSON.stringify(arr));
+}

@@ -212,14 +212,12 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
         if (dueDate) {
             let fromDate, toDate;
             if (Array.isArray(dueDate)) {
-                fromDate = new Date(dueDate[0]);
-                toDate = new Date(dueDate[1] || dueDate[0]);
+                _payload.fromDate = dayjs(dueDate[0]).startOf('D').toISOString();
+                _payload.toDate = dayjs(dueDate[1] || dueDate[0]).endOf('D').toISOString();
             } else {
-                fromDate = new Date(dueDate);
-                toDate = new Date(dueDate);
+                _payload.fromDate = dayjs(dueDate).startOf('D').toISOString();
+                _payload.toDate = dayjs(dueDate).endOf('D').toISOString();
             }
-            _payload.fromDate = dayjs(fromDate).startOf('D').local().format();
-            _payload.toDate = dayjs(toDate).endOf('D').local().format();
         }
 
         if (activityType) {

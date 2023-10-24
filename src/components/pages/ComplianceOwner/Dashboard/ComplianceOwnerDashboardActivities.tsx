@@ -5,6 +5,8 @@ import dayjs from "dayjs";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import { useGetComplianceByDate } from "../../../../backend/compliance";
+import { copyArray } from "../../../../utils/common";
+import { sortBy } from "underscore";
 
 type Props = {
     type: CalendarType,
@@ -20,7 +22,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
     const [payload, setPayload] = useState<any>(null);
     const payloadRef = useRef<any>();
     payloadRef.current = payload;
-    const { groups, isFetching } = useGetComplianceByDate(payload, Boolean(hasFilters('startDateFrom') && hasFilters('fromDate')));
+    const { groups, isFetching } = useGetComplianceByDate(payload, Boolean(hasFilters('startDateFrom')));
 
     function StatusTmpl({ activity }: any) {
         return (
@@ -72,18 +74,18 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
 
     useEffect(() => {
         if (dateRange && filters) {
-            const _filters = [...filters];
-            const fromIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'fromdate');
+            const _filters = copyArray(filters);
+            const fromIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'startdatefrom');
             const fromDate = dayjs(dateRange.from).toISOString();
             if (fromIndex === -1) {
-                _filters.push({ columnName: 'fromDate', value: fromDate });
+                _filters.push({ columnName: 'startDateFrom', value: fromDate });
             } else {
                 _filters[fromIndex].value = fromDate;
             }
-            const toIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'todate');
+            const toIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'startdateto');
             const toDate = dayjs(dateRange.to).toISOString();
             if (toIndex === -1) {
-                _filters.push({ columnName: 'toDate', value: toDate });
+                _filters.push({ columnName: 'startDateTo', value: toDate });
             } else {
                 _filters[toIndex].value = toDate;
             }
@@ -94,9 +96,14 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
     useEffect(() => {
         if (!isFetching && groups) {
             const _data: any[] = [];
-            groups.forEach((group: any) => {
-                const _d = group.date.split('-').reverse();
-                const date = new Date(_d.join('-'));
+            const _groups = sortBy(groups.map((group: any) => {
+                const [dd, mm, yyyy] = group.date.split('-');
+                return {
+                    ...group,
+                    date: new Date(`${yyyy}-${mm}-${dd}`)
+                }
+            }), 'date');
+            _groups.forEach((group: any) => {
                 const activities = group.activities.sort((a: any, b: any) => {
                     const v1 = a.status;
                     const v2 = b.status;
@@ -104,24 +111,22 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                 })
 
                 _data.push({
-                    date: dayjs(date).startOf('D').toISOString(),
+                    date: dayjs(group.date).startOf('D').toISOString(),
                     activities: activities.map((x: any) => {
                         if (x.status === ComplianceActivityStatus.DUE) {
                             const currentDate = dayjs(new Date()).startOf('D').toDate();
-                            const diff = dayjs(new Date(date)).diff(currentDate, 'd');
+                            const diff = dayjs(group.date).diff(currentDate, 'd');
                             x.diff = diff + 1;
                         } else if (x.status === ComplianceActivityStatus.NON_COMPLIANT) {
                             const currentDate = dayjs(new Date()).startOf('D').toDate();
-                            const diff = dayjs(new Date(date)).diff(currentDate, 'd');
+                            const diff = dayjs(group.date).diff(currentDate, 'd');
                             x.diff = (diff * -1) + 1;
                         }
                         return x;
                     })
                 });
             });
-            setData(_data.sort((a: any, b: any) => {
-                return new Date(a.date) > new Date(b.date) ? 1 : -1;
-            }));
+            setData(_data);
             if (dataChanged) {
                 dataChanged({ dates, data: _data });
             }

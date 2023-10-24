@@ -1,5 +1,6 @@
 import { getUserDetails, hasUserAccess } from "../backend/auth"
 import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration"
+import { copyArray } from "../utils/common"
 
 
 export enum ComplianceActivityStatus {
@@ -89,7 +90,7 @@ export enum DashboardView {
 }
 
 export function setUserDetailsInFilters(filters: any[] = [], type = false) {
-    filters = filters || [];
+    const _filters = copyArray(filters);
     let key = '';
     let userType = '';
     if (hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
@@ -100,16 +101,16 @@ export function setUserDetailsInFilters(filters: any[] = [], type = false) {
         userType = 'manager'
     }
     if (key) {
-        const index = filters.findIndex(({ columnName }: any) => columnName === key);
+        const index = _filters.findIndex(({ columnName }: any) => columnName === key);
         if (index === -1) {
-            filters.push({ columnName: key, value: getUserDetails().userid })
+            _filters.push({ columnName: key, value: getUserDetails().userid })
         }
     }
     if (type && userType) {
-        const index = filters.findIndex(({ columnName }: any) => columnName === 'user');
+        const index = _filters.findIndex(({ columnName }: any) => columnName === 'user');
         if (index === -1) {
-            filters.push({ columnName: 'user', value: userType })
+            _filters.push({ columnName: 'user', value: userType })
         }
     }
-    return filters;
+    return _filters;
 }
