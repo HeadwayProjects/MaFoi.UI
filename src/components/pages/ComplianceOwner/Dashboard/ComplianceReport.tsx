@@ -230,7 +230,7 @@ export default function ComplianceReport({ onCancel }: any) {
         <>
             <Modal show={true} backdrop="static" animation={false} dialogClassName="drawer no-footer" size="lg">
                 <Modal.Header closeButton={true} onHide={onCancel}>
-                    <Modal.Title className="bg">Advance Filters</Modal.Title>
+                    <Modal.Title className="bg">Generate Compliance Report</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <FormRenderer FormTemplate={FormTemplate}

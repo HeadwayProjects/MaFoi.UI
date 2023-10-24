@@ -10,6 +10,7 @@ enum ChartCategory {
     DEPARTMENT = 'department',
     STATE = 'state',
     LOCATION = 'location',
+    VERTICAL = 'vertical',
     ASSOCIATE_COMPANY = 'associateCompany'
 }
 
@@ -20,6 +21,7 @@ const list = [
     { value: ChartCategory.ASSOCIATE_COMPANY, label: 'Associate Company' },
     { value: ChartCategory.STATE, label: 'State' },
     { value: ChartCategory.LOCATION, label: 'Location' },
+    { value: ChartCategory.VERTICAL, label: 'Vertical' },
     { value: ChartCategory.DEPARTMENT, label: 'Department' }
 ]
 
