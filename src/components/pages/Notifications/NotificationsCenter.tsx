@@ -8,6 +8,7 @@ import NotificationCard from "./NotificationCard";
 import { useGetAllNotifications } from "../../../backend/masters";
 import DatePicker from "react-multi-date-picker";
 import { humanReadableNumber } from "../../../utils/common";
+import MastersLayout from "../Masters/MastersLayout";
 
 const Range: any = {
     LAST_10D: 'Last 10 Days',
@@ -22,6 +23,10 @@ const Category: any = {
 }
 
 export default function NotificationsCenter() {
+    const [breadcrumb] = useState([
+        { id: 'home', label: 'Home', path: '/' },
+        { id: 'notifications', label: 'Notification Center', path: '/notifications' }
+    ]);
     const datePickerRef = useRef<any>();
     const [range, setRange] = useState(Range.LAST_10D);
     const [category, setCategory] = useState<any>();
@@ -125,10 +130,10 @@ export default function NotificationsCenter() {
             }
             setDateRange({ fromDate: _fromDate, toDate: _toDate });
             if (fromDate) {
-                fromDate.value = dayjs(_fromDate).startOf('D').local().format();
+                fromDate.value = dayjs(_fromDate).startOf('D').toISOString();
             }
             if (toDate) {
-                toDate.value = dayjs(_toDate).endOf('D').local().format();
+                toDate.value = dayjs(_toDate).endOf('D').toISOString();
             }
             setPage(1);
             setPayload({
@@ -177,69 +182,60 @@ export default function NotificationsCenter() {
 
     return (
         <>
-            <div className="d-flex flex-column" >
-                <div className="d-flex  p-2 align-items-center pageHeading shadow">
-                    <h4 className="mb-0 ps-1 me-auto">Notification Center</h4>
-                    <div className="d-flex align-items-end h-100 ms-3">
-                        <nav aria-label="breadcrumb">
-                            <ol className="breadcrumb mb-0 d-flex justify-content-end">
-                                <li className="breadcrumb-item">Home</li>
-                                <li className="breadcrumb-item">Notification Center</li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-                <div className="d-flex flex-column gap-3 m-3">
-                    <div className="d-flex flex-row gap-3">
-                        {
-                            Object.keys(Range).map((key: string, index: number) => {
-                                return (
-                                    <Button variant={range === Range[key] ? "primary" : "default"}
-                                        className={range === Range[key] ? "no-shadow" : "bg-white"}
-                                        onClick={() => handleRangeChange(Range[key])} key={index}>{Range[key]}</Button>
-                                )
-                            })
-                        }
-                        <div className="date-picker col-3">
-                            <DatePicker ref={datePickerRef} range={true}
-                                format={'DD/MM/YYYY'} value={customDate}
-                                className="date-field" placeholder="Custom Date Range"
-                                onChange={setCustomDate}>
-                                <div className="d-flex flex-row justify-content-center gap-2 mb-2">
-                                    <Button variant="link" onClick={handleClearSelection}>Clear</Button>
-                                    <Button variant="primary" onClick={handleDateRangeSelection} disabled={!customDate}>Select</Button>
-                                </div>
-                            </DatePicker>
+            <MastersLayout title="NotiNotification Centerces" breadcrumbs={breadcrumb}>
+                <div className="d-flex flex-column mx-0" >
+                    <div className="d-flex flex-column gap-3 m-3">
+                        <div className="d-flex flex-row gap-3">
+                            {
+                                Object.keys(Range).map((key: string, index: number) => {
+                                    return (
+                                        <Button variant={range === Range[key] ? "primary" : "default"}
+                                            className={range === Range[key] ? "no-shadow" : "bg-white"}
+                                            onClick={() => handleRangeChange(Range[key])} key={index}>{Range[key]}</Button>
+                                    )
+                                })
+                            }
+                            <div className="date-picker col-3">
+                                <DatePicker ref={datePickerRef} range={true}
+                                    format={'DD/MM/YYYY'} value={customDate}
+                                    className="date-field" placeholder="Custom Date Range"
+                                    onChange={setCustomDate}>
+                                    <div className="d-flex flex-row justify-content-center gap-2 mb-2">
+                                        <Button variant="link" onClick={handleClearSelection}>Clear</Button>
+                                        <Button variant="primary" onClick={handleDateRangeSelection} disabled={!customDate}>Select</Button>
+                                    </div>
+                                </DatePicker>
+                            </div>
+                        </div>
+                        <div className="d-flex flex-row gap-3">
+                            {
+                                Object.values(Category).map(({ value, label, key }: any) => {
+                                    return (
+                                        <Button variant={category === value ? "primary" : "outline-primary"}
+                                            onClick={() => handleCategoryChange(value)} key={key}>{label} ({counts[key] || 0})</Button>
+                                    )
+                                })
+                            }
                         </div>
                     </div>
-                    <div className="d-flex flex-row gap-3">
+                    <div className={`d-flex flex-column m-0 py-2 bg-white ${styles.notificationsContainer}`}>
                         {
-                            Object.values(Category).map(({ value, label, key }: any) => {
+                            (notifications || []).map((notification: any) => {
                                 return (
-                                    <Button variant={category === value ? "primary" : "outline-primary"}
-                                        onClick={() => handleCategoryChange(value)} key={key}>{label} ({counts[key] || 0})</Button>
+                                    <NotificationCard key={notification.id} notification={notification} onSubmit={refetch} />
                                 )
                             })
                         }
                     </div>
-                </div>
-                <div className={`d-flex flex-column m-0 py-2 bg-white ${styles.notificationsContainer}`}>
                     {
-                        (notifications || []).map((notification: any) => {
-                            return (
-                                <NotificationCard key={notification.id} notification={notification} onSubmit={refetch} />
-                            )
-                        })
+                        Boolean(pageCounter) &&
+                        <div className="d-flex flex-row w-100">
+                            <Pagination pageCounter={pageCounter} page={page} lastPage={lastPage} pageSize={pageSize}
+                                handlePageSizeChange={handlePageSizeChange} handlePageNav={handlePageNav} className="position-relative" />
+                        </div>
                     }
                 </div>
-                {
-                    Boolean(pageCounter) &&
-                    <div className="d-flex flex-row w-100">
-                        <Pagination pageCounter={pageCounter} page={page} lastPage={lastPage} pageSize={pageSize}
-                            handlePageSizeChange={handlePageSizeChange} handlePageNav={handlePageNav} className="position-relative" />
-                    </div>
-                }
-            </div>
+            </MastersLayout>
         </>
     )
 }

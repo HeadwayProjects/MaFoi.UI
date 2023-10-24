@@ -156,8 +156,8 @@ function ManageDepartments() {
     const columns = [
         { title: "Company", field: "companyId", formatter: reactFormatter(<CompanyTmpl />) },
         { title: "Vertical", field: "verticalId", formatter: reactFormatter(<VerticalTmpl />) },
-        { title: "Code", field: "shortCode", formatter: reactFormatter(<CellTmpl />) },
-        { title: "Name", field: "name", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Department Code", field: "shortCode", formatter: reactFormatter(<CellTmpl />) },
+        { title: "Department Name", field: "name", formatter: reactFormatter(<CellTmpl />) },
         { title: "Description", field: "description", formatter: reactFormatter(<CellTmpl />), widthGrow: 2 },
         {
             title: "Actions", hozAlign: "center", width: 140,
