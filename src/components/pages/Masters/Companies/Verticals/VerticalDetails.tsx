@@ -4,7 +4,7 @@ import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button, Modal } from "react-bootstrap";
 import { useCreateVertical, useGetCompanies, useUpdateVertical } from "../../../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../../common/Table";
-import { ACTIONS } from "../../../../common/Constants";
+import { ACTIONS, PATTERNS } from "../../../../common/Constants";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../../utils/constants";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../../common/FormRenderer";
 import { getValue, preventDefault } from "../../../../../utils/common";
@@ -55,7 +55,11 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
                 name: 'name',
                 label: 'Vertical Name',
                 validate: [
-                    { type: validatorTypes.REQUIRED }
+                    { type: validatorTypes.REQUIRED },
+                    {
+                        type: validatorTypes.PATTERN, pattern: PATTERNS.GENERIC,
+                        message: 'Should contain only  A-Z, a-z, 0-9, space, hyphen(-) and underscore(_)'
+                    }
                 ],
                 content: action === ACTIONS.VIEW ? getValue(vertical, 'name') : null
             },
@@ -66,7 +70,7 @@ function VerticalDetails({ action, data, onClose, onSubmit }: any) {
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 10 },
-                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{2,10}/, message: 'Should be alphanumeric value of length 2' }
+                    { type: validatorTypes.PATTERN, pattern: /^[a-zA-Z0-9]{2,10}$/, message: 'Should be alphanumeric value of length 2' }
                 ],
                 styleClass: 'text-uppercase',
                 content: action === ACTIONS.VIEW ? getValue(vertical, 'shortCode') : null

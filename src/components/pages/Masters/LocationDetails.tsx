@@ -57,7 +57,7 @@ function LocationDetails(this: any, { action, data, onClose, onSubmit }: any) {
                 validate: [
                     { type: validatorTypes.REQUIRED },
                     { type: validatorTypes.MAX_LENGTH, threshold: 4 },
-                    { type: validatorTypes.PATTERN, pattern: /[a-zA-Z0-9]{3,4}/, message: 'Should be alphanumeric value of length 3 or 4' }
+                    { type: validatorTypes.PATTERN, pattern: /^[a-zA-Z0-9]{3,4}$/, message: 'Should be alphanumeric value of length 3 or 4' }
                 ],
                 styleClass: 'text-uppercase',
                 content: getValue(locationDetails, 'code')
