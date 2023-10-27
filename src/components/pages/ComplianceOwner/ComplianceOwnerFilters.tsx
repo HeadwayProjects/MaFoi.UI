@@ -27,11 +27,12 @@ const DEFAUT_FILTERS = {
 };
 
 export default function ComplianceOwnerFilters({ onFilterChange, view, counts }: Props) {
+    const isEscalationManager = hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD);
     const [filters, setFilters] = useState<any>({ ...DEFAUT_FILTERS });
     const filtersRef = useRef<any>();
     filtersRef.current = filters;
     const [q, setQ] = useState<any>();
-    const [companies, setCompanies] = useState<any[]>([DEFAULT_OPTION]);
+    const [companies, setCompanies] = useState<any[]>(isEscalationManager ? [] : [DEFAULT_OPTION]);
     const [associateCompanies, setAssociateCompanies] = useState<any[]>();
     const [locations, setLocations] = useState<any[]>();
     const [verticals, setVerticals] = useState<any[]>([]);
@@ -233,7 +234,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
                 const isOwner = Boolean(user.userRoles.find(({ pages }: any) => pages.includes(USER_PRIVILEGES.OWNER_DASHBOARD)));
                 const isManager = Boolean(user.userRoles.find(({ pages }: any) => pages.includes(USER_PRIVILEGES.MANAGER_DASHBOARD)));
                 // const uniqueCode = `${company.code}-${vertical.shortCode}-${department.shortCode}-${userId}`
-                if (isOwner) {
+                if (isOwner || isEscalationManager) {
                     _owners.push({
                         value: user.id,
                         label: user.name,
@@ -244,7 +245,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
                         // code: `${company.code}-${vertical.shortCode}-${department.shortCode}`
                     });
                 }
-                if (isManager) {
+                if (isManager || isEscalationManager) {
                     _managers.push({
                         value: user.id,
                         label: user.name,
@@ -256,7 +257,19 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
                     });
                 }
             });
-            setCompanies([DEFAULT_OPTION, ...sortBy(_companies, 'label')]);
+
+            const comps: any[] = sortBy(Object.values(_companies), 'label');
+            if (isEscalationManager) {
+                setCompanies(comps);
+                if (comps.length > 0) {
+                    setFilters({
+                        ...filters,
+                        company: comps[0]
+                    });
+                }
+            } else {
+                setCompanies([DEFAULT_OPTION, ...comps]);
+            }
             setVerticals(sortBy(Object.values(_verticals), 'label'));
             setDepartments(sortBy(Object.values(_departments), 'label'));
             setOwners(sortBy(uniq(_owners.filter(({ companyId }: any) => Boolean(_companies[companyId])), true, (user) => user.id), 'label'));

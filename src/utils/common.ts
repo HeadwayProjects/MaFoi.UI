@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { hasUserAccess } from "../backend/auth";
 import { ACTIVITY_STATUS } from "../components/common/Constants";
 import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
@@ -258,4 +259,9 @@ export function copyArray(arr: any[]) {
     return [];
   }
   return JSON.parse(JSON.stringify(arr));
+}
+
+export function toBackendDateFormat(date: Date) {
+  if (!date) return null;
+  return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
 }

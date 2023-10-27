@@ -4,6 +4,8 @@ import { DEFAULT_PAYLOAD } from "../../../common/Table";
 import { ComplianceChartStatus, setUserDetailsInFilters } from "../../../../constants/Compliance.constants";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import ComplianceStatusChart from "./ComplianceStatusChart";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 const keys = [
     {
         id: 'col1',
@@ -16,8 +18,15 @@ const keys = [
 ]
 
 export default function OverallComplianceStatusCharts({ filters }: any) {
+    const isEscalationManager = hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD);
     const [payload, setPayload] = useState<any>();
-    const { response } = useGetOverallComplianceStatus(payload, Boolean(payload && hasFilters()));
+    const { response } = useGetOverallComplianceStatus(payload, enableStatusApi());
+
+    function enableStatusApi() {
+        const hasCompany = hasFilters('companyId');
+        const hasStartDate = hasFilters();
+        return isEscalationManager ? hasCompany && hasStartDate : hasStartDate;
+    }
 
     function hasFilters( field = 'startDateFrom') {
         const _filters = (payload || {}).filters || [];

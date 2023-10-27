@@ -32,6 +32,7 @@ const SortFields: any = {
 };
 
 function ComplianceOwnerActivities({ filters, handleCounts }: any) {
+    const isEscalationManager = hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD);
     const [activity, setActivity] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState<any>();
@@ -39,7 +40,7 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
     const [payload, setPayload] = useState<any>(null);
     const payloadRef: any = useRef();
     payloadRef.current = payload;
-    const { activities, total, statusCount, isFetching, refetch } = useGetAllComplianceActivities(payload, hasFilters(null, 'startDateFrom'));
+    const { activities, total, statusCount, isFetching, refetch } = useGetAllComplianceActivities(payload, enableActivities());
     const { exportComplianceActivities, exporting } = useExportComplianceActivities((response: any) => {
         downloadFileContent({
             name: 'Compliance Activities.xlsx',
@@ -49,6 +50,12 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    function enableActivities() {
+        const hasCompany = hasFilters(null);
+        const hasStartDate = hasFilters(null, 'startDateFrom');
+        return isEscalationManager ? hasCompany && hasStartDate : hasStartDate;
+    }
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { debounce } from "underscore";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
-import { getMaxMonthYear, getMinMonthYear } from "../../../../utils/common";
+import { getMaxMonthYear, getMinMonthYear, toBackendDateFormat } from "../../../../utils/common";
 import { ActivityType } from "../../Masters/Master.constants";
 import { getActivities, getActs, getRules } from "../../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
@@ -212,11 +212,11 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
         if (dueDate) {
             let fromDate, toDate;
             if (Array.isArray(dueDate)) {
-                _payload.fromDate = dayjs(dueDate[0]).startOf('D').toISOString();
-                _payload.toDate = dayjs(dueDate[1] || dueDate[0]).endOf('D').toISOString();
+                _payload.fromDate = toBackendDateFormat(dayjs(dueDate[0]).startOf('D').toDate());
+                _payload.toDate = toBackendDateFormat(dayjs(dueDate[1] || dueDate[0]).endOf('D').toDate());
             } else {
-                _payload.fromDate = dayjs(dueDate).startOf('D').toISOString();
-                _payload.toDate = dayjs(dueDate).endOf('D').toISOString();
+                _payload.fromDate = toBackendDateFormat(dayjs(dueDate).startOf('D').toDate());
+                _payload.toDate = toBackendDateFormat(dayjs(dueDate).endOf('D').toDate());
             }
         }
 

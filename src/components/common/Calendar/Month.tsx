@@ -4,6 +4,7 @@ import { CalendarProps, CalendarType } from "./Calendar.constants";
 import styles from "./Calendar.module.css";
 import Icon from '../Icon';
 import { COMPLIANCE_ACTIVITY_INDICATION } from '../../../constants/Compliance.constants';
+import { copyArray } from '../../../utils/common';
 
 const WeekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -45,7 +46,7 @@ export default function Month(props: CalendarProps) {
         while (date < endDate) {
             list.push({
                 date: dayjs(date).toDate(),
-                id: dayjs(date).toISOString()
+                id: dayjs(date).format("YYYY-MM-DD")
             });
             date.setDate(date.getDate() + 1);
         }
@@ -56,7 +57,11 @@ export default function Month(props: CalendarProps) {
     }
 
     function handleDataChange({ dates, data }: any) {
-        const _dates = [...dates];
+        const _dates = copyArray(dates).map((_dt: any) => {
+            delete _dt.status;
+            delete _dt.count;
+            return _dt;
+        });
         _dates.forEach((_dt: any) => {
             const x = data.find((x: any) => x.date === _dt.id);
             if (x) {
@@ -64,9 +69,6 @@ export default function Month(props: CalendarProps) {
                 _dt.count = x.activities.reduce((total: any, activity: any): any => {
                     return total + activity.count;
                 }, 0);
-            } else {
-                delete _dt.status;
-                delete _dt.count;
             }
         });
         setDates(_dates);

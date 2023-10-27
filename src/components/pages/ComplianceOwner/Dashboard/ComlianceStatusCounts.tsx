@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useGetOverallComplianceStatus } from "../../../../backend/compliance";
 import { ComplianceActivityStatus, ComplianceStatusMapping, setUserDetailsInFilters } from "../../../../constants/Compliance.constants";
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
 
@@ -13,7 +12,6 @@ const STATUSES = [
 
 export default function ComlianceStatusCounts({ filters, counts }: any) {
     const [payload, setPayload] = useState<any>();
-    const { response = {} } = useGetOverallComplianceStatus(payload, Boolean(payload && hasFilters()));
 
     function hasFilters(field = 'startDateFrom') {
         const _filters = (payload || {}).filters || [];

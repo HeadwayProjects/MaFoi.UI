@@ -5,8 +5,10 @@ import dayjs from "dayjs";
 import styles from "./ComplianceOwnerDashboard.module.css";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import { useGetComplianceByDate } from "../../../../backend/compliance";
-import { copyArray } from "../../../../utils/common";
+import { copyArray, toBackendDateFormat } from "../../../../utils/common";
 import { sortBy } from "underscore";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 
 type Props = {
     type: CalendarType,
@@ -17,12 +19,19 @@ type Props = {
 }
 
 export default function ComplianceOwnerDashboardActivities(props: Props) {
+    const isEscalationManager = hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD);
     const { type, dateRange, dates, dataChanged, filters } = props;
     const [data, setData] = useState<any>([]);
     const [payload, setPayload] = useState<any>(null);
     const payloadRef = useRef<any>();
     payloadRef.current = payload;
-    const { groups, isFetching } = useGetComplianceByDate(payload, Boolean(hasFilters('startDateFrom')));
+    const { groups, isFetching } = useGetComplianceByDate(payload, enableStatusApi());
+
+    function enableStatusApi() {
+        const hasCompany = hasFilters('companyId');
+        const hasStartDate = hasFilters();
+        return isEscalationManager ? hasCompany && hasStartDate : hasStartDate;
+    }
 
     function StatusTmpl({ activity }: any) {
         return (
@@ -76,14 +85,14 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
         if (dateRange && filters) {
             const _filters = copyArray(filters);
             const fromIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'startdatefrom');
-            const fromDate = dayjs(dateRange.from).toISOString();
+            const fromDate = toBackendDateFormat(dateRange.from);
             if (fromIndex === -1) {
                 _filters.push({ columnName: 'startDateFrom', value: fromDate });
             } else {
                 _filters[fromIndex].value = fromDate;
             }
             const toIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'startdateto');
-            const toDate = dayjs(dateRange.to).toISOString();
+            const toDate = toBackendDateFormat(dateRange.to);
             if (toIndex === -1) {
                 _filters.push({ columnName: 'startDateTo', value: toDate });
             } else {
@@ -96,13 +105,15 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
     useEffect(() => {
         if (!isFetching && groups) {
             const _data: any[] = [];
-            const _groups = sortBy(groups.map((group: any) => {
+            const _groups: any = groups.map((group: any) => {
                 const [dd, mm, yyyy] = group.date.split('-');
                 return {
                     ...group,
-                    date: new Date(`${yyyy}-${mm}-${dd}`)
+                    date: `${yyyy}-${mm}-${dd}`
                 }
-            }), 'date');
+            }).sort((a: any, b: any) => {
+                return new Date(a.date) > new Date(b.date) ? 1 : -1
+            });
             _groups.forEach((group: any) => {
                 const activities = group.activities.sort((a: any, b: any) => {
                     const v1 = a.status;
@@ -111,7 +122,7 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
                 })
 
                 _data.push({
-                    date: dayjs(group.date).startOf('D').toISOString(),
+                    date: group.date,
                     activities: activities.map((x: any) => {
                         if (x.status === ComplianceActivityStatus.DUE) {
                             const currentDate = dayjs(new Date()).startOf('D').toDate();

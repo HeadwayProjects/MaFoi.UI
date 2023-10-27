@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
-import { getValue } from "../../../../utils/common";
+import { getValue, toBackendDateFormat } from "../../../../utils/common";
 import { useDeleteComplianceDocument, useGetComplianceActivityDocuments, useGetComplianceById, useSubmitComplianceActivity, useUpdateComplianceSchedule, useUploadDocument } from "../../../../backend/compliance";
 import styles from "./Styles.module.css";
 import Icon from "../../../common/Icon";
@@ -422,7 +422,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 ...activityDetails,
                 status: status.value,
                 formsStatusRemarks,
-                auditedDate: new Date().toISOString()
+                auditedDate: toBackendDateFormat(new Date())
             })
         }
     }

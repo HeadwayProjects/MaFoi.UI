@@ -5,6 +5,8 @@ import { useGetComplianceStatusByCategory } from "../../../../backend/compliance
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
 import { setUserDetailsInFilters } from "../../../../constants/Compliance.constants";
 import { getCSSPropertyValue } from "../../../../utils/styles";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 
 enum ChartCategory {
     DEPARTMENT = 'department',
@@ -32,10 +34,17 @@ const Status: any = {
 }
 
 export default function DashboardCharts({ filters }: any) {
+    const isEscalationManager = hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD);
     const [category, setCategory] = useState(ChartCategory.ASSOCIATE_COMPANY);
     const [payload, setPayload] = useState<any>({ ...DEFAULT_PAYLOAD, pagination: null, filters: setUserDetailsInFilters([]) });
     const [options, setOptions] = useState<any>(null);
-    const { response, isFetching } = useGetComplianceStatusByCategory(category, payload, Boolean(payload && hasFilters()));
+    const { response, isFetching } = useGetComplianceStatusByCategory(category, payload, enableStatusApi());
+
+    function enableStatusApi() {
+        const hasCompany = hasFilters('companyId');
+        const hasStartDate = hasFilters();
+        return isEscalationManager ? hasCompany && hasStartDate : hasStartDate;
+    }
 
     const [defaultOption] = useState<any>({
         color: colors.map(color => getCSSPropertyValue(color)),

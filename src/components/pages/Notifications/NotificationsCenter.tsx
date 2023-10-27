@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import NotificationCard from "./NotificationCard";
 import { useGetAllNotifications } from "../../../backend/masters";
 import DatePicker from "react-multi-date-picker";
-import { humanReadableNumber } from "../../../utils/common";
+import { humanReadableNumber, toBackendDateFormat } from "../../../utils/common";
 import MastersLayout from "../Masters/MastersLayout";
 
 const Range: any = {
@@ -99,7 +99,10 @@ export default function NotificationsCenter() {
         } else if (range === Range.LAST_1M) {
             from.setDate(from.getMonth() - 1);
         }
-        return { fromDate: dayjs(from).startOf('D').toISOString(), toDate: dayjs(to).endOf('D').toISOString() }
+        return {
+            fromDate: toBackendDateFormat(dayjs(from).startOf('D').toDate()),
+            toDate: toBackendDateFormat(dayjs(to).endOf('D').toDate())
+        }
     }
 
     function handleCategoryChange(_category: string) {
@@ -130,10 +133,10 @@ export default function NotificationsCenter() {
             }
             setDateRange({ fromDate: _fromDate, toDate: _toDate });
             if (fromDate) {
-                fromDate.value = dayjs(_fromDate).startOf('D').toISOString();
+                fromDate.value = toBackendDateFormat(dayjs(_fromDate).startOf('D').toDate());
             }
             if (toDate) {
-                toDate.value = dayjs(_toDate).endOf('D').toISOString();
+                toDate.value = toBackendDateFormat(dayjs(_toDate).endOf('D').toDate());
             }
             setPage(1);
             setPayload({
@@ -182,7 +185,7 @@ export default function NotificationsCenter() {
 
     return (
         <>
-            <MastersLayout title="NotiNotification Centerces" breadcrumbs={breadcrumb}>
+            <MastersLayout title="Notification Center" breadcrumbs={breadcrumb}>
                 <div className="d-flex flex-column mx-0" >
                     <div className="d-flex flex-column gap-3 m-3">
                         <div className="d-flex flex-row gap-3">

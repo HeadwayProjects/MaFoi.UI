@@ -3,6 +3,7 @@ import { Button, Dropdown, DropdownButton } from "react-bootstrap";
 import styles from "./DateRangeFilter.module.css";
 import DatePicker from "react-multi-date-picker";
 import dayjs from "dayjs";
+import { toBackendDateFormat } from "../../../utils/common";
 
 function getYears() {
     const year = new Date().getFullYear();
@@ -41,7 +42,7 @@ export default function DateRangeFilter({ onDateRangeChange }: any) {
         const toDate = new Date(`03-31-${to}`);
         setMemory({ year, q: {} });
         setCustomDate(undefined);
-        onDateRangeChange({ startDateFrom: dayjs(fromDate).toISOString(), startDateTo: dayjs(toDate).toISOString() });
+        onDateRangeChange({ startDateFrom: toBackendDateFormat(fromDate), startDateTo: toBackendDateFormat(toDate) });
     }
 
     function handleQuarterSelection(q: any) {
@@ -51,7 +52,7 @@ export default function DateRangeFilter({ onDateRangeChange }: any) {
             const fromDate = new Date(`${q.from}-${fy[q.fromYear]}`);
             const toDate = new Date(`${q.to}-${fy[q.toYear]}`);
             setMemory({ ...memory, q });
-            onDateRangeChange({ startDateFrom: dayjs(fromDate).toISOString(), startDateTo: dayjs(toDate).toISOString() });
+            onDateRangeChange({ startDateFrom: toBackendDateFormat(fromDate), startDateTo: toBackendDateFormat(toDate) });
         } else {
             setQ({});
             const { from, to }: any = fy;
@@ -59,7 +60,7 @@ export default function DateRangeFilter({ onDateRangeChange }: any) {
             const toDate = new Date(`03-31-${to}`);
             setMemory({ year: fy, q: {} });
             setCustomDate(undefined);
-            onDateRangeChange({ startDateFrom: dayjs(fromDate).toISOString(), startDateTo: dayjs(toDate).toISOString() });
+            onDateRangeChange({ startDateFrom: toBackendDateFormat(fromDate), startDateTo: toBackendDateFormat(toDate) });
         }
     }
 
@@ -84,8 +85,8 @@ export default function DateRangeFilter({ onDateRangeChange }: any) {
                 _toDate = new Date(customDateRef.current);
             }
             onDateRangeChange({
-                startDateFrom: dayjs(_fromDate).startOf('D').toISOString(),
-                startDateTo: dayjs(_toDate).endOf('D').toISOString()
+                startDateFrom: toBackendDateFormat(dayjs(_fromDate).startOf('D').toDate()),
+                startDateTo: toBackendDateFormat(dayjs(_toDate).endOf('D').toDate())
             });
         }
     }
