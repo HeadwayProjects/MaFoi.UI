@@ -39,7 +39,7 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, 
                 component: componentTypes.CHECKBOX,
                 name: 'isAssociateCompany',
                 label: 'Is Associate Company',
-                disabled: Boolean(company)
+                disabled: Boolean(company) || Boolean(parentCompany)
             },
             {
                 component: componentTypes.CHECKBOX,
@@ -62,10 +62,10 @@ function CompanyDetails({ onNext, onPrevious, onSubmit, company, parentCompany, 
                     then: { visible: true }
                 },
                 options: companies,
-                validate: [
+                validate: (Boolean(company) || Boolean(parentCompany)) ? [] : [
                     { type: validatorTypes.REQUIRED }
                 ],
-                isDisabled: Boolean(company)
+                isDisabled: Boolean(company) || Boolean(parentCompany)
             },
             {
                 component: componentTypes.TEXT_FIELD,
