@@ -1,13 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "./request";
 
-export function useGetUserCompanies() {
+export function useGetUserCompanies(enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['userCompanies'],
         async () => await api.get('/api/Company/GetUserCompanies'),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 

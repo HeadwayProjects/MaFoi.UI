@@ -151,10 +151,10 @@ export function useSubmitComplianceActivity(onSuccess?: any, onError?: any) {
 export function useGetComplianceActivityDocuments(payload: any = {}) {
     const queryClient = useQueryClient();
     function invalidate() {
-        queryClient.invalidateQueries(['complianceActivityDocuments', payload.complianceId])
+        queryClient.invalidateQueries(['complianceActivityDocuments', payload])
     }
     const { data, isFetching, refetch } = useQuery(
-        ['complianceActivityDocuments', payload.complianceId],
+        ['complianceActivityDocuments', payload],
         async () => await get('/api/ComplianceDetails/GetByToDo', payload),
         {
             refetchOnMount: false,

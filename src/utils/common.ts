@@ -261,7 +261,15 @@ export function copyArray(arr: any[]) {
   return JSON.parse(JSON.stringify(arr));
 }
 
+export function copyObject(obj: any) {
+  if (!obj) {
+    return {};
+  }
+  return JSON.parse(JSON.stringify(obj));
+}
+
 export function toBackendDateFormat(date: Date) {
   if (!date) return null;
-  return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
+  // return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
+  return dayjs(date).local().toISOString();
 }

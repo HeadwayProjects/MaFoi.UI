@@ -9,7 +9,8 @@ import { useGetComplianceActivityDocuments } from "../../../backend/compliance";
 export default function NoticeDetails({ action, data, onSubmit, onCancel }: any) {
     const [t] = useState(new Date().getTime())
     const [details, setDetails] = useState<any>({});
-    const { documents } = useGetComplianceActivityDocuments({ complianceId: data.id, t});
+    const { documents } = useGetComplianceActivityDocuments({ complianceId: data.id, t });
+    const [file, setFile] = useState();
 
     const schema = {
         fields: [
@@ -125,13 +126,17 @@ export default function NoticeDetails({ action, data, onSubmit, onCancel }: any)
         ]
     };
 
-    function updateDetails(obj: any = {}) {
-        setDetails({ ...data, ...details, ...obj });
+    function debugForm({ values }: any) {
+        setFile(values.file);
+    }
+
+    function handleSubmit(values: any) {
+        onSubmit({ ...values, file });
     }
 
     useEffect(() => {
         if (data) {
-            updateDetails({ ...data, file: null });
+            setDetails({ ...data });
         }
     }, [data])
 
@@ -146,10 +151,10 @@ export default function NoticeDetails({ action, data, onSubmit, onCancel }: any)
                     cancelBtnText: 'Previous',
                     hideButtons: action === ACTIONS.VIEW
                 }}
-                // debug={debugForm}
+                debug={debugForm}
                 componentMapper={ComponentMapper}
                 schema={schema}
-                onSubmit={onSubmit}
+                onSubmit={handleSubmit}
                 onCancel={onCancel}
             />
         </>

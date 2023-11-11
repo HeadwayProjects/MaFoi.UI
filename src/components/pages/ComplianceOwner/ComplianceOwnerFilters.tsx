@@ -13,7 +13,8 @@ type Props = {
     onFilterChange: (event: any[]) => void,
     hiddenFilters?: any[],
     view?: DashboardView,
-    counts?: any[]
+    counts?: any[],
+    forNotices?: boolean
 }
 
 const DEFAULT_VALUE = 'ALL';
@@ -26,13 +27,13 @@ const DEFAUT_FILTERS = {
     department: DEFAULT_OPTION
 };
 
-export default function ComplianceOwnerFilters({ onFilterChange, view, counts }: Props) {
+export default function ComplianceOwnerFilters({ onFilterChange, view, counts, forNotices }: Props) {
     const isEscalationManager = hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD);
     const [filters, setFilters] = useState<any>({ ...DEFAUT_FILTERS });
     const filtersRef = useRef<any>();
     filtersRef.current = filters;
     const [q, setQ] = useState<any>();
-    const [companies, setCompanies] = useState<any[]>(isEscalationManager ? [] : [DEFAULT_OPTION]);
+    const [companies, setCompanies] = useState<any[]>(forNotices || isEscalationManager ? [] : [DEFAULT_OPTION]);
     const [associateCompanies, setAssociateCompanies] = useState<any[]>();
     const [locations, setLocations] = useState<any[]>();
     const [verticals, setVerticals] = useState<any[]>([]);
@@ -41,7 +42,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
     const [managers, setManagers] = useState<any[]>([]);
     const { departmentUsers, isFetching: fetchingCompanies }: any = useGetDepartmentUserMappings({
         ...DEFAULT_OPTIONS_PAYLOAD,
-        filters: []
+        filters: [{ columnName: 'userId', value: getUserDetails().userid }]
     });
     const { companies: acs, isFetching: fetchingAcs } = useGetCompanies({
         ...DEFAULT_OPTIONS_PAYLOAD,
@@ -142,7 +143,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
         if (filters) {
             const {
                 startDateFrom, startDateTo, company, associateCompany, location,
-                vertical, department, owner, manager
+                vertical, department, owner, manager, isNotice
             } = filtersRef.current;
             const _filters = [];
             if (startDateFrom) {
@@ -171,6 +172,9 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
             }
             if (manager && manager.value && manager.value !== DEFAULT_VALUE) {
                 _filters.push({ columnName: 'complianceManagerId', value: manager.value });
+            }
+            if (isNotice) {
+                _filters.push({ columnName: 'isNotice', value: 'true' });
             }
             setQ(_filters);
             onFilterChange(_filters);
@@ -234,7 +238,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
                 const isOwner = Boolean(user.userRoles.find(({ pages }: any) => pages.includes(USER_PRIVILEGES.OWNER_DASHBOARD)));
                 const isManager = Boolean(user.userRoles.find(({ pages }: any) => pages.includes(USER_PRIVILEGES.MANAGER_DASHBOARD)));
                 // const uniqueCode = `${company.code}-${vertical.shortCode}-${department.shortCode}-${userId}`
-                if (isOwner || isEscalationManager) {
+                if (isOwner || forNotices || isEscalationManager) {
                     _owners.push({
                         value: user.id,
                         label: user.name,
@@ -245,7 +249,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
                         // code: `${company.code}-${vertical.shortCode}-${department.shortCode}`
                     });
                 }
-                if (isManager || isEscalationManager) {
+                if (isManager || forNotices || isEscalationManager) {
                     _managers.push({
                         value: user.id,
                         label: user.name,
@@ -259,7 +263,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
             });
 
             const comps: any[] = sortBy(Object.values(_companies), 'label');
-            if (isEscalationManager) {
+            if (forNotices || isEscalationManager) {
                 setCompanies(comps);
                 if (comps.length > 0) {
                     setFilters({
@@ -324,7 +328,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
                             })]} />
                     </div>
                     {
-                        (hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) || hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)) &&
+                        !forNotices && (hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) || hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)) &&
                         <div>
                             <label className="filter-label"><small>Owner</small></label>
                             <Select placeholder={DEFAULT_LABEL} className="select-control"
@@ -336,7 +340,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
                         </div>
                     }
                     {
-                        (hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) || hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)) &&
+                        !forNotices && (hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) || hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)) &&
                         <div>
                             <label className="filter-label"><small>Manager</small></label>
                             <Select placeholder={DEFAULT_LABEL} className="select-control"
@@ -346,11 +350,16 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts }:
                                 }} />
                         </div>
                     }
-                    <div className="px-2 h-100"></div>
-                    <DateRangeFilter onDateRangeChange={handleDateRangeChange} />
                     {
-                        view === DashboardView.CALENDAR &&
-                        <ComlianceStatusCounts filters={q} counts={counts} />
+                        !forNotices &&
+                        <>
+                            <div className="px-2 h-100"></div>
+                            <DateRangeFilter onDateRangeChange={handleDateRangeChange} />
+                            {
+                                view === DashboardView.CALENDAR &&
+                                <ComlianceStatusCounts filters={q} counts={counts} />
+                            }
+                        </>
                     }
                 </div>
             </div>

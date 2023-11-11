@@ -56,9 +56,20 @@
     min-height: 100%;
 }
 
+.statusCharts {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+}
+
 .overallChartGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    height: 226px;
+}
+
+.noticesChartGrid {
+    display: grid;
+    grid-template-columns: 1fr;
     height: 226px;
 }
 

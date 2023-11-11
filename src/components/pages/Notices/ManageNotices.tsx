@@ -5,7 +5,7 @@ import Table, { CellTmpl, DEFAULT_PAGE_SIZE, TitleTmpl, reactFormatter } from ".
 import { useDeleteComplianceSchedule, useGetAllComplianceActivities } from "../../../backend/compliance";
 import TableActions, { ActionButton } from "../../common/TableActions";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
-import { hasUserAccess } from "../../../backend/auth";
+import { hasUserAccess, isAdmin, isComplianceUser } from "../../../backend/auth";
 import Icon from "../../common/Icon";
 import { COMPLIANCE_ACTIVITY_INDICATION, ComplianceActivityStatus, ComplianceStatusMapping } from "../../../constants/Compliance.constants";
 import MastersLayout from "../Masters/MastersLayout";
@@ -19,6 +19,8 @@ import ComplianceScheduleAdvanceFilter from "../ComplianceMasters/ComplianceSche
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
+import Location from "../../common/Location";
+import ComplianceOwnerFilters from "../ComplianceOwner/ComplianceOwnerFilters";
 
 const DEFAULT_PAYLOAD = {
     pagination: {
@@ -59,7 +61,7 @@ function ManageNotices() {
     const [payload, setPayload] = useState<any>(null);
     const payloadRef: any = useRef();
     payloadRef.current = payload;
-    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, hasFilters(null, 'isNotice'));
+    const { activities, total, isFetching, refetch } = useGetAllComplianceActivities(payload, hasFilters(null));
     const { deleteComplianceSchedule, deleting } = useDeleteComplianceSchedule(({ key, value }: any) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success('Notice deleted successfully.');
@@ -77,10 +79,19 @@ function ManageNotices() {
         action: () => setAction(ACTIONS.ADD)
     }];
 
-    function hasFilters(ref: any, field = 'companyId') {
+    function hasFilters(ref: any) {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
-        const column = _filters.find((x: any) => x.columnName === field);
-        return Boolean((column || {}).value);
+        const isNotice = _filters.find((x: any) => x.columnName === 'isNotice');
+        const hasNoticefilter = Boolean((isNotice || {}).value);
+        if (isAdmin()) {
+            return hasNoticefilter;
+        } else if (isComplianceUser()) {
+            const company = _filters.find((x: any) => x.columnName === 'companyId');
+            return hasNoticefilter && Boolean((company || {}).value);
+        } else {
+            const location = _filters.find((x: any) => x.columnName === 'locationId');
+            return hasNoticefilter && Boolean((location || {}).value);
+        }
     }
 
     function ActionColumnElements({ cell }: any) {
@@ -311,7 +322,25 @@ function ManageNotices() {
 
     function onLocationChange(event: any) {
         const keys = Object.keys(event);
-        setLocationFilter(keys.map(key => ({ columnName: key, value: event[key] })));
+        setLocationFilter(keys.map(key => ({ columnName: key, value: event[key] })).filter(({ value }: any) => !!value));
+    }
+
+    function onLocationChangeForAuditUser({company, associateCompany, location} : any) {
+        const _filters = [];
+        if (company) {
+            _filters.push({ columnName: 'companyId', value: company });
+        }
+        if (associateCompany) {
+            _filters.push({ columnName: 'associateCompanyId', value: associateCompany });
+        }
+        if (location) {
+            _filters.push({ columnName: 'locationId', value: location });
+        }
+        setLocationFilter(_filters);
+    }
+
+    function onLocationChangeForComplianceUser(event: any) {
+        setLocationFilter(event);
     }
 
     function search(event: any) {
@@ -393,7 +422,17 @@ function ManageNotices() {
                     <div className="card shadow d-flex flex-row justify-content-center m-3 p-3">
                         <div className="col-12">
                             <div className="d-flex justify-content-between align-items-end">
-                                <OptionalLocations onChange={onLocationChange} />
+                                {
+                                    isAdmin() ?
+                                        <OptionalLocations onChange={onLocationChange} /> :
+                                        <>
+                                            {
+                                                isComplianceUser() ?
+                                                    <ComplianceOwnerFilters onFilterChange={onLocationChangeForComplianceUser} forNotices={true} /> :
+                                                    <Location onChange={onLocationChangeForAuditUser} />
+                                            }
+                                        </>
+                                }
                                 <div>
                                     <ComplianceScheduleAdvanceFilter onChange={search} filterForNotice={true} />
                                 </div>

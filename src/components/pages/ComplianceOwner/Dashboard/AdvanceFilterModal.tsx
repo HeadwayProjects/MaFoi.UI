@@ -167,6 +167,15 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
                         callback(_options);
                     })
                 }, DEBOUNCE_TIME)
+            },
+            {
+                component: componentTypes.CHECKBOX,
+                name: 'notice',
+                label: 'Show Only Notices',
+                value: filter.isNotice,
+                onChange: (event: any) => {
+                    setFilter({ ...filter, isNotice: !filter.notice })
+                }
             }
         ]
     }
@@ -199,7 +208,7 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
     }
 
     function search() {
-        const { monthYear, dueDate, activityType, status, act, rule, activity } = filter;
+        const { monthYear, dueDate, activityType, status, act, rule, activity, isNotice } = filter;
         const _payload: any = {};
         if (monthYear) {
             const date = new Date(monthYear);
@@ -234,6 +243,10 @@ export default function AdvanceFilterModal(this: any, { data, onSubmit, onCancel
         }
         if ((status || []).length) {
             _payload.status = status.map((s: any) => s.value).join(API_DELIMITER);
+        }
+
+        if (isNotice) {
+            _payload.isNotice = 'true';
         }
         onSubmit({ payload: _payload, data: filter });
         onCancel();

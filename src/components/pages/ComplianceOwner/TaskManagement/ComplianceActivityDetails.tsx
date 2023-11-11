@@ -203,7 +203,7 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                 component: componentTypes.PLAIN_TEXT,
                 name: 'rule',
                 label: 'Section No.',
-                content: getValue(activityDetails, 'rule.setionNo') || '-NA-'
+                content: getValue(activityDetails, 'rule.sectionNo') || '-NA-'
             },
             {
                 component: componentTypes.PLAIN_TEXT,
@@ -393,6 +393,42 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
         ]
     }
 
+    const schema3 = {
+        fields: [
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'documentSubHeader',
+                content: 'Notice Details',
+                className: 'grid-col-100 text-lg fw-bold pb-0',
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'noticeDescription',
+                label: 'Notice Description',
+                content: getValue(activityDetails, 'noticeDescription'),
+                className: 'grid-col-100'
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'issuedAuthority',
+                label: 'Issued Authority',
+                content: getValue(activityDetails, 'noticeDescription')
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'issuedDepartment',
+                label: 'Issued Department',
+                content: getValue(activityDetails, 'issuedDepartment')
+            },
+            {
+                component: componentTypes.PLAIN_TEXT,
+                name: 'noticeDate',
+                label: 'noticeDate',
+                content: dayjs(getValue(activityDetails, 'noticeDate')).format('DD-MM-YYYY')
+            }
+        ]
+    }
+
     function TitleTmpl({ name, status }: any) {
         return (
             <div className="d-flex flex-row gap-2 mb-2">
@@ -484,6 +520,16 @@ export default function ComplianceActivityDetails(this: any, { data, onCancel, o
                                 />
 
                             </div>
+                            {
+                                getValue(activityDetails, 'isNotice') &&
+                                <div className="horizontal-form">
+                                    <FormRenderer FormTemplate={FormTemplate}
+                                        initialValues={{ hideButtons: true }}
+                                        componentMapper={ComponentMapper}
+                                        schema={schema3}
+                                    />
+                                </div>
+                            }
                             {
                                 hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) &&
                                 <FormRenderer FormTemplate={FormTemplate}

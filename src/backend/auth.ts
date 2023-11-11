@@ -3,9 +3,10 @@ import jwtDecode from "jwt-decode";
 import { get, post } from "./request";
 import { Storage } from "./storage";
 import { API_DELIMITER } from "../utils/constants";
+import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
 
 const AUTH_TOKEN = 'auth-token';
-const USER_PRIVILEGES = 'user-privileges';
+const USER_PRIVILEGES_KEY = 'user-privileges';
 const USER_ROLE = 'user-role';
 
 export function getAuthToken() {
@@ -13,13 +14,13 @@ export function getAuthToken() {
 }
 
 export function getUserPrivileges() {
-    const userPrivileges = Storage.getValue(USER_PRIVILEGES) || '';
+    const userPrivileges = Storage.getValue(USER_PRIVILEGES_KEY) || '';
     return userPrivileges.split(API_DELIMITER);
 }
 
 export function setUserRole(role: string, privileges: string) {
     Storage.setValue(USER_ROLE, role);
-    Storage.setValue(USER_PRIVILEGES, privileges);
+    Storage.setValue(USER_PRIVILEGES_KEY, privileges);
 }
 
 export function getUserRole() {
@@ -40,7 +41,7 @@ export function setUserSession(token: string, privileges: string, role: string) 
 }
 
 export function clearUserSession() {
-    Storage.removeValue([AUTH_TOKEN, USER_PRIVILEGES, USER_ROLE]);
+    Storage.removeValue([AUTH_TOKEN, USER_PRIVILEGES_KEY, USER_ROLE]);
 }
 
 export function getUserDetails(_token = ''): any {
@@ -160,6 +161,19 @@ export function useLoginWithOtp(onSuccess?: any, onError?: any) {
 }
 
 export function hasUserAccess(key: string) {
-    const privileges = (Storage.getValue(USER_PRIVILEGES) || '').split(API_DELIMITER);
+    const privileges = (Storage.getValue(USER_PRIVILEGES_KEY) || '').split(API_DELIMITER);
     return privileges.includes(key);
+}
+
+export function isAdmin() {
+    return !hasUserAccess(USER_PRIVILEGES.SUBMITTER_DASHBOARD)
+        && !hasUserAccess(USER_PRIVILEGES.REVIEWER_DASHBOARD)
+        && !hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)
+        && !hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)
+        && !hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)
+}
+
+export function isComplianceUser() {
+    return hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)
+        || hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD);
 }

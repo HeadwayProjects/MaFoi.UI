@@ -112,7 +112,8 @@ export function getNoticeData(data: any) {
         submittedDate,
         uploadNotice,
         veritical,
-        year
+        year,
+        file
     } = data;
     return {
         act: { value: act.id, label: act.name, act },
@@ -151,6 +152,7 @@ export function getNoticeData(data: any) {
             { value: RuleTypeEnum.STATE, label: RuleTypeEnum.STATE },
         uploadNotice,
         veritical: veritical ? { value: veritical.id, label: veritical.name } : null,
-        year
+        year,
+        file
     }
 }
