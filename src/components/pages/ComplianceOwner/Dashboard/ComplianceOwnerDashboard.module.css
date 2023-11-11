@@ -169,3 +169,37 @@
     cursor: pointer;
     opacity: 0.8;
 }
+
+.activityTypeTags {
+    height: 40px;
+    background: var(--tag-color);
+    position: relative;
+    color: var(--tag-text);
+    margin-right: 10px;
+    padding: 0 20px;
+    font-weight: bold;
+}
+
+.activityTypeTags:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 10px solid #fff;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+}
+
+.activityTypeTags:before {
+    content: '';
+    position: absolute;
+    right: -10px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 10px solid var(--tag-color);
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+}

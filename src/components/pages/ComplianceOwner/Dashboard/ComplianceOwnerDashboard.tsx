@@ -8,6 +8,7 @@ import ComplianceOwnerFilters from "../ComplianceOwnerFilters";
 import { sortBy } from "underscore";
 import { ACTIONS } from "../../../common/Constants";
 import ComplianceReport from "./ComplianceReport";
+import ActivityTypeStats from "./ActivityTypeStats";
 
 function ComplianceOwnerDashboard() {
     const [action, setAction] = useState(ACTIONS.NONE);
@@ -58,6 +59,7 @@ function ComplianceOwnerDashboard() {
                             <ComplianceOwnerFilters onFilterChange={handleFilterChanges} view={view} counts={counts} />
                             <ComplianceAdvanceFilters onChange={handleAdvanceFilterChanges} />
                         </div>
+                        <ActivityTypeStats filters={filters}/>
                         <DataGrid filters={filters} view={view} handleCounts={setCounts} />
                     </div>
                 </div>

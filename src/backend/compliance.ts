@@ -222,6 +222,20 @@ export function useGetComplianceStatusByCategory(category: string, payload: any,
     return { response: (data || {}).data || [], isFetching, refetch };
 }
 
+export function useGetComplianceActivityTypeStats(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['complianceActivityTypeStats',  payload],
+        async () => await post('/api/Compliance/GetComplianceActivityTypes', payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { stats: (data || {}).data || [], isFetching, refetch };
+}
+
 export function useExportComplianceDashbard(onSuccess?: any, onError?: any) {
     const { mutate: exportDashboard, error, isLoading: exporting } = useMutation(
         ['auditReport'],
