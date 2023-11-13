@@ -13,6 +13,7 @@ const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.REVIEWER_DASHBOARD },
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.OWNER_DASHBOARD },
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.MANAGER_DASHBOARD },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.ESCALATION_DASHBOARD },
     {
         id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters',
         children: [

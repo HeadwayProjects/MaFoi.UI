@@ -5,6 +5,8 @@ import { setUserDetailsInFilters } from "../../../../constants/Compliance.consta
 import { copyArray } from "../../../../utils/common";
 import styles from "./ComplianceOwnerDashboard.module.css";
 
+const colors: any = {};
+
 export default function ActivityTypeStats({ filters }: any) {
     const [payload, setPayload] = useState<any>();
     const { stats, isFetching } = useGetComplianceActivityTypeStats(payload, hasFilters());
@@ -21,7 +23,7 @@ export default function ActivityTypeStats({ filters }: any) {
         for (var i = 0; i < 6; i++) {
             color += Math.floor(Math.random() * 10);
         }
-        return { '--tag-color': color } as React.CSSProperties;
+        return color;
     }
 
     useEffect(() => {
@@ -33,19 +35,22 @@ export default function ActivityTypeStats({ filters }: any) {
     useEffect(() => {
         if (!isFetching && stats) {
             setStats(stats.map(({ key, value }: any) => {
-                return { value: value || 0, label: key, style: getTagColor() };
+                if (!colors[key]) {
+                    colors[key] = getTagColor();
+                }
+                return { value: value || 0, label: key, style: { '--tag-color': colors[key] } as React.CSSProperties };
             }));
         }
     }, [isFetching]);
 
     return (
         <>
-            <div className="d-flex flex-row gap-2 mb-3 mx-2">
+            <div className="d-flex flex-row mb-3 mx-2" style={{ gap: '0.75rem' }}>
                 {
                     activityTypeStats.map(({ value, label, style }: any) => {
                         return (
                             <div className={styles.activityTypeTags} key={label} style={style}>
-                                <div className="d-flex flex-row align-items-center gap-3 h-100">
+                                <div className="d-flex flex-row align-items-center gap-2 h-100">
                                     <label>{label}</label>
                                     <span>({value})</span>
                                 </div>

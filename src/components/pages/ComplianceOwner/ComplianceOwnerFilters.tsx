@@ -42,7 +42,7 @@ export default function ComplianceOwnerFilters({ onFilterChange, view, counts, f
     const [managers, setManagers] = useState<any[]>([]);
     const { departmentUsers, isFetching: fetchingCompanies }: any = useGetDepartmentUserMappings({
         ...DEFAULT_OPTIONS_PAYLOAD,
-        filters: [{ columnName: 'userId', value: getUserDetails().userid }]
+        filters: []
     });
     const { companies: acs, isFetching: fetchingAcs } = useGetCompanies({
         ...DEFAULT_OPTIONS_PAYLOAD,
