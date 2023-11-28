@@ -81,45 +81,27 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
         return Boolean((column || {}).value);
     }
 
-    useEffect(() => {
-        if (dateRange && filters) {
-            const _filters = copyArray(filters);
-            const fromIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'startdatefrom');
-            const fromDate = toBackendDateFormat(dateRange.from);
-            if (fromIndex === -1) {
-                _filters.push({ columnName: 'startDateFrom', value: fromDate });
-            } else {
-                _filters[fromIndex].value = fromDate;
-            }
-            const toIndex = _filters.findIndex((x: any) => x.columnName.toLowerCase() === 'startdateto');
-            const toDate = toBackendDateFormat(dateRange.to);
-            if (toIndex === -1) {
-                _filters.push({ columnName: 'startDateTo', value: toDate });
-            } else {
-                _filters[toIndex].value = toDate;
-            }
-            setPayload({ ...DEFAULT_OPTIONS_PAYLOAD, filters: setUserDetailsInFilters(_filters), pagination: null, sort: null });
-        }
-    }, [dateRange, filters])
-
-    useEffect(() => {
-        if (!isFetching && groups) {
-            const _data: any[] = [];
-            const _groups: any = groups.map((group: any) => {
+    function updateData(groups: any) {
+        if (dateRange && groups) {
+            const { from, to } = dateRange;
+            const _validGroups = groups.filter(({ date }: any) => {
+                const [dd, mm, yyyy] = date.split('-');
+                const dateObj = new Date(`${yyyy}-${mm}-${dd}`)
+                return dateObj >= from && dateObj <= to;
+            });
+            const _data: { date: any; activities: any; }[] = [];
+            _validGroups.map((group: any) => {
                 const [dd, mm, yyyy] = group.date.split('-');
                 return {
                     ...group,
                     date: `${yyyy}-${mm}-${dd}`
                 }
-            }).sort((a: any, b: any) => {
-                return new Date(a.date) > new Date(b.date) ? 1 : -1
-            });
-            _groups.forEach((group: any) => {
+            }).forEach((group: any) => {
                 const activities = group.activities.sort((a: any, b: any) => {
                     const v1 = a.status;
                     const v2 = b.status;
                     return COMPLIANCE_ACTIVITY_ORDER.indexOf(v1) > COMPLIANCE_ACTIVITY_ORDER.indexOf(v2) ? 1 : -1
-                })
+                });
 
                 _data.push({
                     date: group.date,
@@ -141,6 +123,24 @@ export default function ComplianceOwnerDashboardActivities(props: Props) {
             if (dataChanged) {
                 dataChanged({ dates, data: _data });
             }
+        }
+    }
+
+    useEffect(() => {
+        if (filters) {
+            setPayload({ ...DEFAULT_OPTIONS_PAYLOAD, filters: setUserDetailsInFilters(copyArray(filters)), pagination: null, sort: null });
+        }
+    }, [filters]);
+
+    useEffect(() => {
+        if (dateRange) {
+            updateData(groups);
+        }
+    }, [dateRange]);
+
+    useEffect(() => {
+        if (!isFetching && groups) {
+            updateData(groups);
         }
     }, [isFetching]);
 

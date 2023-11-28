@@ -224,7 +224,7 @@ export function useGetComplianceStatusByCategory(category: string, payload: any,
 
 export function useGetComplianceActivityTypeStats(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
-        ['complianceActivityTypeStats',  payload],
+        ['complianceActivityTypeStats', payload],
         async () => await post('/api/Compliance/GetComplianceActivityTypes', payload),
         {
             refetchOnMount: false,
@@ -239,12 +239,12 @@ export function useGetComplianceActivityTypeStats(payload: any, enabled = true) 
 export function useExportComplianceDashbard(onSuccess?: any, onError?: any) {
     const { mutate: exportDashboard, error, isLoading: exporting } = useMutation(
         ['auditReport'],
-        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardChart`, payload, null, true, { responseType: 'blob' }),
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardChart`, payload, null, true),
         {
             onError,
             onSuccess: (response) => {
-                const data = (response || {});
-                onSuccess(data);
+                const { data } = response || {};
+                onSuccess(data || {});
             }
         }
     );
@@ -254,12 +254,12 @@ export function useExportComplianceDashbard(onSuccess?: any, onError?: any) {
 export function useExportComplianceReport(onSuccess?: any, onError?: any) {
     const { mutate: exportReport, error, isLoading: exporting } = useMutation(
         ['exportReport'],
-        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardReport`, payload, null, true, { responseType: 'blob' }),
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardReport`, payload, null, true),
         {
             onError,
             onSuccess: (response) => {
-                const data = (response || {});
-                onSuccess(data);
+                const { data } = response || {};
+                onSuccess(data || {});
             }
         }
     );

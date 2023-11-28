@@ -28,7 +28,7 @@ export default function Month(props: CalendarProps) {
 
     function handleDateSelection(date: any) {
         if (onDateSelection) {
-            onDateSelection(date)
+            onDateSelection(new Date(date))
         }
     }
 

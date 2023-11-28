@@ -51,7 +51,6 @@ export const ROLE_MAPPING: any = {
 
 function AuthenticatedContent() {
     const [query] = useQueryParams();
-    const user = auth.getUserDetails() || {};
     const hasToken = !!auth.getAuthToken();
 
     function layout(children: any, layoutWithSidenav = true) {

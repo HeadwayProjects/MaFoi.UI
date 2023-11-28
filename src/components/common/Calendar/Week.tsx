@@ -48,7 +48,7 @@ export default function Week(this: any, props: CalendarProps) {
 
     function handleDateSelection(date: any) {
         if (onDateSelection) {
-            onDateSelection(date)
+            onDateSelection(new Date(date))
         }
     }
 

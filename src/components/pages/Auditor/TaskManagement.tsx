@@ -8,7 +8,7 @@ import Location from "../../common/Location";
 import PageLoader from "../../shared/PageLoader";
 import * as api from "../../../backend/request";
 import { toast } from 'react-toastify';
-import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../common/Constants";
+import { ACTIONS, ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../common/Constants";
 import Icon from "../../common/Icon";
 import Table, { reactFormatter, CellTmpl, TitleTmpl, DEFAULT_PAYLOAD } from "../../common/Table";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
@@ -22,6 +22,8 @@ import { useAuditReport } from "../../../backend/exports";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
 import { useExportTodos, useGetAllActivities } from "../../../backend/query";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../common/TableActions";
+import SendEmailModal from "./SendEmailModal";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -31,11 +33,6 @@ const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' },
     { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'danger' }
 ];
-
-const ACTIONS = {
-    EDIT: 1,
-    VIEW: 2
-};
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -70,16 +67,12 @@ function TaskManagement() {
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const [alertMessage, setAlertMessage] = useState<any>(null);
     const [publish, setPublish] = useState(false);
-    const { auditReport, exporting } = useAuditReport((response: any) => {
-        const blob = new Blob([response.data], { type: response.headers['content-type'] })
-        const URL = window.URL || window.webkitURL;
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = 'AuditReport.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+    const { auditReport, exporting } = useAuditReport(({ DownloadfilePath }: any) => {
+        if (DownloadfilePath) {
+            const [filePath] = DownloadfilePath.split('?');
+            const chunks = filePath.split('/');
+            download(chunks[chunks.length - 1], filePath);
+        }
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
     });
@@ -93,6 +86,17 @@ function TaskManagement() {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const buttons: ActionButton[] = [{
+        label: 'Publish',
+        name: 'publish',
+        privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES_PUBLISH,
+        action: () => publishActivity(null)
+    }, {
+        label: 'Send Report',
+        name: 'email',
+        action: () => setAction(ACTIONS.SEND_REPORT)
+    }];
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
@@ -662,17 +666,7 @@ function TaskManagement() {
                                     })
                                 }
                             </div>
-                            {
-                                hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_PUBLISH) &&
-                                <div className="d-flex">
-                                    <button className="btn btn-success" onClick={publishActivity}>
-                                        <div className="d-flex align-items-center">
-                                            <FontAwesomeIcon icon={faSave} />
-                                            <span className="ms-2">Publish</span>
-                                        </div>
-                                    </button>
-                                </div>
-                            }
+                            <TableActions buttons={buttons} />
                         </div>
                     </div>
                 </form>
@@ -700,6 +694,10 @@ function TaskManagement() {
                     onClose={() => setPublish(false)}
                     onSubmit={onPublish}
                     selectedRows={selectedRows} />
+            }
+            {
+                action === ACTIONS.SEND_REPORT &&
+                <SendEmailModal onCancel={() => setAction(ACTIONS.NONE)} />
             }
             {(submitting || exporting) && <PageLoader />}
         </>

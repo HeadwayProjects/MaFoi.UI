@@ -11,7 +11,10 @@ import { faSave, faUpload, faInfoCircle, faEllipsisV } from "@fortawesome/free-s
 import BulkUploadModal from "./BulkuploadModal";
 import { Link, usePath, useHistory } from "raviger";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
-import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../../common/Constants";
+import {
+    ACTIONS, ACTIVITY_STATUS, AUDIT_STATUS,
+    FILTERS, STATUS_MAPPING, TOOLTIP_DELAY
+} from "../../../common/Constants";
 import Location from "../../../common/Location";
 import { useExportTodos, useGetAllActivities } from "../../../../backend/query";
 import Icon from "../../../common/Icon";
@@ -24,6 +27,8 @@ import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } fro
 import { useAuditReport } from "../../../../backend/exports";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 import styles from "./TaskManagement.module.css";
+import TableActions, { ActionButton } from "../../../common/TableActions";
+import SendEmailModal from "../../Auditor/SendEmailModal";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -61,6 +66,7 @@ function getAdvanceSearch(state: any) {
 
 function ActivitiesManagement() {
     const { state }: any = useHistory();
+    const [action, setAction] = useState(ACTIONS.NONE);
     const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
     const [checkedStatuses, setCheckedStatuses] = useState<any>((state || {}).status ? { [state.status]: true } : {});
@@ -86,12 +92,12 @@ function ActivitiesManagement() {
     const { activities, total, isFetching, refetch } = useGetAllActivities(payload, Boolean(hasFilters(null, 'companyId')));
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const [alertMessage, setAlertMessage] = useState<any>(null);
-    const { auditReport, exporting } = useAuditReport((response: any) => {
-        downloadFileContent({
-            name: 'AuditReport.pdf',
-            type: response.headers['content-type'],
-            content: response.data
-        });
+    const { auditReport, exporting } = useAuditReport(({ DownloadfilePath }: any) => {
+        if (DownloadfilePath) {
+            const [filePath] = DownloadfilePath.split('?');
+            const chunks = filePath.split('/');
+            download(chunks[chunks.length - 1], filePath);
+        }
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
     });
@@ -104,6 +110,32 @@ function ActivitiesManagement() {
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const buttons: ActionButton[] = [
+        {
+            label: 'Bulk Upload',
+            name: 'bulkUpload',
+            privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD,
+            action: () => {
+                setBulkUpload(true)
+            }
+        },
+        {
+            label: 'Submit to Auditor',
+            name: 'submitToAuditor',
+            privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES_SUBMIT,
+            action: () => {
+                onSubmitToAuditor();
+            }
+        },
+        {
+            label: 'Send Report',
+            name: 'sendReport',
+            action: () => {
+                setAction(ACTIONS.SEND_REPORT);
+            }
+        }
+    ]
 
     function onLocationChange(event: any) {
         const { company, associateCompany, location } = event;
@@ -157,8 +189,7 @@ function ActivitiesManagement() {
         }).finally(() => setSubmitting(false));
     }
 
-    function onSubmitToAuditor(e: any) {
-        preventDefault(e);
+    function onSubmitToAuditor() {
         const _filter = hasFilters(afRef, 'month');
         if (!Boolean(_filter)) {
             setAlertMessage(`
@@ -623,32 +654,7 @@ function ActivitiesManagement() {
                             </div>
 
                             <div className="d-flex">
-                                {
-                                    hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD) &&
-                                    <div className="mx-2">
-                                        <button className="btn btn-primary" onClick={(e) => {
-                                            e.preventDefault();
-                                            setBulkUpload(true)
-                                        }}>
-                                            <div className="d-flex align-items-center">
-                                                <FontAwesomeIcon icon={faUpload} />
-                                                <span className="ms-2">Bulk Upload</span>
-                                            </div>
-                                        </button>
-                                    </div>
-                                }
-                                {
-                                    hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_SUBMIT) &&
-                                    <div>
-                                        <button className="btn btn-primary" onClick={onSubmitToAuditor}
-                                            disabled={activities.length === 0}>
-                                            <div className="d-flex align-items-center">
-                                                <FontAwesomeIcon icon={faSave} />
-                                                <span className="ms-2">Submit To Auditor</span>
-                                            </div>
-                                        </button>
-                                    </div>
-                                }
+                                <TableActions buttons={buttons} />
 
                             </div>
                         </div>
@@ -682,6 +688,10 @@ function ActivitiesManagement() {
                     preventDefault(e);
                     setAlertMessage(null);
                 }} />
+            }
+            {
+                action === ACTIONS.SEND_REPORT &&
+                <SendEmailModal onCancel={() => setAction(ACTIONS.NONE)} />
             }
             {(submitting || exporting || exportingTodos) && <PageLoader />}
         </>

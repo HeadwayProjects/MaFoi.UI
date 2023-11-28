@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { DEFAULT_OPTION } from "../../../common/TableFilter";
 import { useGetCompanies, useGetCompanyLocations, useGetDepartmentUserMappings } from "../../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
-import { sortBy } from "underscore";
 import { Modal } from "react-bootstrap";
 import { getUserDetails } from "../../../../backend/auth";
-import { downloadFileContent, getValue } from "../../../../utils/common";
+import { download, getValue } from "../../../../utils/common";
 import { getAllComplianceActivies, useExportComplianceReport } from "../../../../backend/compliance";
 import { MONTHS_ENUM } from "../../../common/Constants";
 import { toast } from "react-toastify";
@@ -51,13 +49,13 @@ export default function ComplianceReport({ onCancel }: any) {
         sort: { columnName: 'locationName', order: 'asc' }
     }, enableLocations());
 
-    const { exportReport, exporting } = useExportComplianceReport((response: any) => {
-        downloadFileContent({
-            name: 'ComplianceReport.pdf',
-            type: response.headers['content-type'],
-            content: response.data
-        });
-        onCancel();
+    const { exportReport, exporting } = useExportComplianceReport(({ DownloadfilePath }: any) => {
+        if (DownloadfilePath) {
+            const [filePath] = DownloadfilePath.split('?');
+            const chunks = filePath.split('/');
+            download(chunks[chunks.length - 1], filePath);
+            onCancel();
+        }
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
     })
