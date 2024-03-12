@@ -4,12 +4,12 @@ import { get, getChartsBaseUrl, post } from "./request";
 export function useAuditReport(onSuccess?: any, onError?: any) {
     const { mutate: auditReport, error, isLoading: exporting } = useMutation(
         ['auditReport'],
-        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetAuditReport`, payload, null, true),
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetAuditReport`, payload, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
-                const { data } = response || {};
-                onSuccess(data || {});
+                const data = (response || {});
+                onSuccess(data);
             }
         }
     );
@@ -238,4 +238,11 @@ export function useExportDepartments(onSuccess?: any, onError?: any) {
         }
     );
     return { exportDepartments, error, exporting };
+}
+
+export function getAuditReportFileName(row: any, contentType: string) {
+    const {company, associateCompany, location, month} = row;
+    let fileNames: string[] = ['Audit_Report', company.code, associateCompany.code, location.code, month];
+    const fileExt = contentType.split('/')[1] || 'pdf';
+    return `${fileNames.join('_')}.${fileExt}`;
 }

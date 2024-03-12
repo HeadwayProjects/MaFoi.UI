@@ -92,11 +92,13 @@ function ActivitiesManagement() {
     const { activities, total, isFetching, refetch } = useGetAllActivities(payload, Boolean(hasFilters(null, 'companyId')));
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const [alertMessage, setAlertMessage] = useState<any>(null);
-    const { auditReport, exporting } = useAuditReport(({ DownloadfilePath }: any) => {
-        if (DownloadfilePath) {
-            const [filePath] = DownloadfilePath.split('?');
-            const chunks = filePath.split('/');
-            download(chunks[chunks.length - 1], filePath);
+    const { auditReport, exporting } = useAuditReport((response: any) => {
+        if (response) {
+            downloadFileContent({
+                name: getAuditReportFileName(response.headers['content-type']),
+                type: response.headers['content-type'],
+                content: response.data
+            });
         }
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
@@ -144,6 +146,14 @@ function ActivitiesManagement() {
             { columnName: 'associateCompanyId', value: associateCompany },
             { columnName: 'locationId', value: location }
         ]);
+    }
+
+    function getAuditReportFileName(contentType: string) {
+        const {company, associateCompany, location, month} = data.data[0];
+        let fileNames: string[] = ['Audit_Report', company.code, associateCompany.code, location.code, month];
+        const fileExt = contentType.split('/')[1] || 'pdf';
+        return `${fileNames.join('_')}.${fileExt}`;
+
     }
 
     function editActivity(activity: any) {

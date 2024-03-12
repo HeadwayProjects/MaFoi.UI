@@ -18,7 +18,7 @@ import { download, downloadFileContent, preventDefault, reduceArraytoObj } from 
 import PublishModal from "./PublishModal";
 import ActivityModal from "./ActivityModal";
 import { getUserDetails, hasUserAccess } from "../../../backend/auth";
-import { useAuditReport } from "../../../backend/exports";
+import { getAuditReportFileName, useAuditReport } from "../../../backend/exports";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
 import { useExportTodos, useGetAllActivities } from "../../../backend/query";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
@@ -67,11 +67,13 @@ function TaskManagement() {
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const [alertMessage, setAlertMessage] = useState<any>(null);
     const [publish, setPublish] = useState(false);
-    const { auditReport, exporting } = useAuditReport(({ DownloadfilePath }: any) => {
-        if (DownloadfilePath) {
-            const [filePath] = DownloadfilePath.split('?');
-            const chunks = filePath.split('/');
-            download(chunks[chunks.length - 1], filePath);
+    const { auditReport, exporting } = useAuditReport((response: any) => {
+        if (response) {
+            downloadFileContent({
+                name: getAuditReportFileName(data.data[0], response.headers['content-type']),
+                type: response.headers['content-type'],
+                content: response.data
+            });
         }
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)

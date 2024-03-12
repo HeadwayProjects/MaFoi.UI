@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { preventDefault } from "../../utils/common";
-import * as auth from "../../backend/auth";
-import { useAuditReport } from "../../backend/exports";
 
 function Report({ data, onClose, payload }: any) {
     const [summary, setSummary] = useState<any>({});
