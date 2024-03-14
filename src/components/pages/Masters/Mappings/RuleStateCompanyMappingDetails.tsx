@@ -104,7 +104,7 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
             impriosonment: impriosonment || false,
             continuingPenalty: continuingPenalty || false,
             cancellationSuspensionOfLicense: cancellationSuspensionOfLicense || false,
-            statutoryAuthority: statutoryAuthority || '',
+            statutoryAuthority: auditType.value === 'Statutory' ? (statutoryAuthority || '') : '',
             complianceNature: complianceNature || '',
             auditType: auditType.value,
             sendNotification: sendNotification || false

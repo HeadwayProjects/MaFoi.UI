@@ -63,8 +63,7 @@ function RuleComplianceDetails({ action, data, onCancel, onSubmit }: any) {
                 condition: {
                     when: 'auditType',
                     is: ({ value }: any) => value === 'Statutory',
-                    then: { visible: true },
-                    else: { set: { statutoryAuthority: '' } }
+                    then: { visible: true }
                 }
             },
             {

@@ -24,7 +24,7 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import AdvanceSearch from "../../../common/AdvanceSearch";
 import AlertModal from "../../../common/AlertModal";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
-import { useAuditReport } from "../../../../backend/exports";
+import { getAuditReportFileName, useAuditReport } from "../../../../backend/exports";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 import styles from "./TaskManagement.module.css";
 import TableActions, { ActionButton } from "../../../common/TableActions";
@@ -95,7 +95,7 @@ function ActivitiesManagement() {
     const { auditReport, exporting } = useAuditReport((response: any) => {
         if (response) {
             downloadFileContent({
-                name: getAuditReportFileName(response.headers['content-type']),
+                name: getAuditReportFileName(data, response.headers['content-type']),
                 type: response.headers['content-type'],
                 content: response.data
             });
@@ -146,14 +146,6 @@ function ActivitiesManagement() {
             { columnName: 'associateCompanyId', value: associateCompany },
             { columnName: 'locationId', value: location }
         ]);
-    }
-
-    function getAuditReportFileName(contentType: string) {
-        const {company, associateCompany, location, month} = data.data[0];
-        let fileNames: string[] = ['Audit_Report', company.code, associateCompany.code, location.code, month];
-        const fileExt = contentType.split('/')[1] || 'pdf';
-        return `${fileNames.join('_')}.${fileExt}`;
-
     }
 
     function editActivity(activity: any) {
