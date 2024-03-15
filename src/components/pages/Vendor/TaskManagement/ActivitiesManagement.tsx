@@ -95,7 +95,7 @@ function ActivitiesManagement() {
     const { auditReport, exporting } = useAuditReport((response: any) => {
         if (response) {
             downloadFileContent({
-                name: getAuditReportFileName(data, response.headers['content-type']),
+                name: getAuditReportFileName(data.data[0], response.headers['content-type']),
                 type: response.headers['content-type'],
                 content: response.data
             });
