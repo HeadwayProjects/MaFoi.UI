@@ -5,7 +5,7 @@ import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Modal } from "react-bootstrap";
 import { getUserDetails } from "../../../../backend/auth";
-import { download, getValue } from "../../../../utils/common";
+import { downloadFileContent, getValue } from "../../../../utils/common";
 import { getAllComplianceActivies, useExportComplianceReport } from "../../../../backend/compliance";
 import { MONTHS_ENUM } from "../../../common/Constants";
 import { toast } from "react-toastify";
@@ -49,12 +49,38 @@ export default function ComplianceReport({ onCancel }: any) {
         sort: { columnName: 'locationName', order: 'asc' }
     }, enableLocations());
 
-    const { exportReport, exporting } = useExportComplianceReport(({ DownloadfilePath }: any) => {
-        if (DownloadfilePath) {
-            const [filePath] = DownloadfilePath.split('?');
-            const chunks = filePath.split('/');
-            download(chunks[chunks.length - 1], filePath);
-            onCancel();
+    const { exportReport, exporting } = useExportComplianceReport((response: any) => {
+        if (response) {
+            const { company, associateCompany, location, monthYear } = filters;
+            const ac = acs.find(
+              (item: any) => item.id === associateCompany.value
+            ).code;
+            const comp = getValue(
+              departmentUsers.find(
+                (item: any) =>
+                  getValue(item, "department.vertical.company.id") ===
+                  company.value
+              ) || {},
+              "department.vertical.company.code"
+            );
+            const loc = getValue(location, "location.code");
+            const fileNameChunks = [
+              "Compliance_Dashboard_Report",
+              comp,
+              ac,
+              loc,
+              MONTHS_ENUM[new Date(monthYear).getMonth()],
+              new Date(monthYear).getFullYear(),
+            ];
+            const fileExt = response.headers['content-type'].split('/')[1] || 'pdf';
+            const fileName = `${fileNameChunks.join('_')}.${fileExt}`;
+
+            console.log(fileName)
+            downloadFileContent({
+                name: fileName,
+                type: response.headers['content-type'],
+                content: response.data
+            });
         }
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)

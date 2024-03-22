@@ -254,12 +254,11 @@ export function useExportComplianceDashbard(onSuccess?: any, onError?: any) {
 export function useExportComplianceReport(onSuccess?: any, onError?: any) {
     const { mutate: exportReport, error, isLoading: exporting } = useMutation(
         ['exportReport'],
-        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardReport`, payload, null, true),
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetDashboardReport`, payload, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
-                const { data } = response || {};
-                onSuccess(data || {});
+                onSuccess(response || {});
             }
         }
     );
