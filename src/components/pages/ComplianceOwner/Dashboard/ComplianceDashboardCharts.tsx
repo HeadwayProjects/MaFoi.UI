@@ -4,7 +4,7 @@ import DashboardCharts from "./DashboardCharts";
 import { Button } from "react-bootstrap";
 import Icon from "../../../common/Icon";
 import { useExportComplianceDashbard } from "../../../../backend/compliance";
-import { copyArray, download } from "../../../../utils/common";
+import { copyArray, downloadFileContent } from "../../../../utils/common";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
 import { DEFAULT_PAYLOAD } from "./../../../common/Table";
@@ -15,12 +15,12 @@ import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 
 export default function ComplianceDashboardCharts({ filters }: any) {
     const isEscalationManager = hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD);
-    const { exportDashboard, exporting }: any = useExportComplianceDashbard(({ DownloadfilePath }: any) => {
-        if (DownloadfilePath) {
-            const [filePath] = DownloadfilePath.split('?');
-            const chunks = filePath.split('/');
-            download(chunks[chunks.length - 1], filePath);
-        }
+    const { exportDashboard, exporting }: any = useExportComplianceDashbard((response: any) => {
+        downloadFileContent({
+            name: `ComplianceDashboardCharts_${new Date().toLocaleString()}.pdf`,
+            type: response.headers['content-type'],
+            content: response.data
+        });
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
     });
