@@ -3,7 +3,7 @@ import { getAuthToken } from "./auth";
 
 function getBaseURL() {
     const { protocol, hostname } = window.location;
-    const api_url = hostname.includes('uat') ? `apiprouat.ezycomp.com`: 'apipro.ezycomp.com';
+    const api_url = hostname.includes('uat') ? `apiprouat.ezycomp.com`: 'apiprouat.ezycomp.com';
     // const api_url = 'apiprouat.ezycomp.com'
     return `${hostname === 'localhost' ? 'https:' : protocol}//${api_url}`;
 }
