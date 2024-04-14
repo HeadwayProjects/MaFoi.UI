@@ -40,6 +40,16 @@ import NotificationsCenter from "../components/pages/Notifications/Notifications
 import ManageEscalationMatrix from "../components/pages/Masters/Companies/EscalationMatrix/ManageEscalationMatrix";
 import NotificationTemplates from "../components/pages/Notifications/NotificationTemplates";
 import ManageNotices from "../components/pages/Notices/ManageNotices";
+import EmployeeMasterUpload from "../components/pages/InputModule/EmployeeMasterUpload";
+import HolidayList from "../components/pages/InputModule/HolidayList";
+import LeaveConfiguration from "../components/pages/InputModule/LeaveConfiguration";
+import LeaveMapping from "../components/pages/InputModule/LeaveMapping";
+import AttendanceConfig from "../components/pages/InputModule/AttendanceConfig";
+import StateRegisterConfiguration from "../components/pages/InputModule/StateRegisterConfiguration";
+import EmployeeLeaveCreditUpload from "../components/pages/InputModule/EmployeeLeaveCreditUpload";
+import EmployeeLeaveAvailedUpload from "../components/pages/InputModule/EmployeeLeaveAvailedUpload";
+import EmployeeAttendanceUpload from "../components/pages/InputModule/EmployeeAttendanceUpload";
+import SalaryComponents from "../components/pages/InputModule/SalaryComponents";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -100,6 +110,17 @@ function AuthenticatedContent() {
             layout(<ActivitiesManagement />)
         ),
         '/activities': () => getActivitiesByRole(),
+        '/input/holidayList': () => (layout(<HolidayList />)),
+        '/input/leaveConfiguration': () => (layout(<LeaveConfiguration />)),
+        '/input/leaveMapping': () => (layout(<LeaveMapping />)),
+        '/input/attendanceConfig': () => (layout(<AttendanceConfig />)),
+        '/input/salaryComponents': () => (layout(<SalaryComponents />)),
+        '/input/stateRegisterConfiguration': () => (layout(<StateRegisterConfiguration />)),
+        '/input/employeeMasterUpload': () => (layout(<EmployeeMasterUpload />)),
+        '/input/employeeLeaveCreditUpload': () => (layout(<EmployeeLeaveCreditUpload />)),
+        '/input/employeeLeaveAvailedUpload': () => (layout(<EmployeeLeaveAvailedUpload />)),
+        '/input/employeeAttendanceUpload': () => (layout(<EmployeeAttendanceUpload />)),
+
         '/masters/law': () => (
             layout(<Law />)
         ),

@@ -15,18 +15,18 @@ const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.MANAGER_DASHBOARD },
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.ESCALATION_DASHBOARD },
     {
-        id: 'input module', url: '/input/act', icon: 'calendar', label: 'Input Module',
+        id: 'input module', url: '/input/employeeMasterUpload', icon: 'calendar', label: 'Input Module',
         children: [
             { id: 'input/holidayList', url: '/input/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'input/leaveConfiguration', url: '/input/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_ACTS },
-            { id: 'input/leaveMapping', url: '/input/leaveMapping', label: 'Leave Mapping', privilege: USER_PRIVILEGES.VIEW_ACTIVITIES },
-            { id: 'input/attendanceConfig', url: '/input/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_RULES },
-            { id: 'input/salaryComponents', url: '/input/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_STATES },
-            { id: 'input/stateRegisterConfiguration', url: '/input/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_CITIES },
-            { id: 'input/employeeMasterUpload', url: '/input/employeeMasterUpload', label: 'Employee Master Upload', privilege: USER_PRIVILEGES.VIEW_MAPPINGS },
-            { id: 'input/employeeLeaveCreditUpload', url: '/input/employeeLeaveCreditUpload', label: 'Employee Leave Credit Upload', privilege: USER_PRIVILEGES.VIEW_MAPPINGS },
-            { id: 'input/employeeLeaveAvailedUpload', url: '/input/employeeLeaveAvailedUpload', label: 'Employee Leave Availed Upload', privilege: USER_PRIVILEGES.VIEW_MAPPINGS },
-            { id: 'input/employeeAttendanceUpload', url: '/input/employeeAttendanceUpload', label: 'Employee Attendance Upload', privilege: USER_PRIVILEGES.VIEW_MAPPINGS }
+            { id: 'input/leaveConfiguration', url: '/input/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/leaveMapping', url: '/input/leaveMapping', label: 'Leave Mapping', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/attendanceConfig', url: '/input/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/salaryComponents', url: '/input/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/stateRegisterConfiguration', url: '/input/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/employeeMasterUpload', url: '/input/employeeMasterUpload', label: 'Employee Master Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/employeeLeaveCreditUpload', url: '/input/employeeLeaveCreditUpload', label: 'Employee Leave Credit Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/employeeLeaveAvailedUpload', url: '/input/employeeLeaveAvailedUpload', label: 'Employee Leave Availed Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/employeeAttendanceUpload', url: '/input/employeeAttendanceUpload', label: 'Employee Attendance Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY }
         ]
     },
     {
