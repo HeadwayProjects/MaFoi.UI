@@ -46,6 +46,21 @@ export function useExportAct(onSuccess?: any, onError?: any) {
     return { exportAct, error, exporting };
 }
 
+export function useExportHolidayList(onSuccess?: any, onError?: any) {
+    const { mutate: exportHolidayList, error, isLoading: exporting } = useMutation(
+        ['exportHolidayList'],
+        async (payload: any) => await post('/api/Holiday/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportHolidayList, error, exporting };
+}
+
 export function useExportActivities(onSuccess?: any, onError?: any) {
     const { mutate: exportActivity, error, isLoading: exporting } = useMutation(
         ['exportActivity'],

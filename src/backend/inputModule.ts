@@ -21,4 +21,14 @@ export class InputModuleService {
         const url = `/api/Holiday/GetAll`
         return await api.post(url, data)
     }
+
+    public async deleteHoliday(id:any) {
+        const url =  `/api/Holiday/Delete?Id=${id}`
+        return await api.del(url)
+    }
+
+    public async addHoliday(data: any) {
+        const url = `/api/Holiday/Add`
+        return await api.post(url, data)
+    }
 }
