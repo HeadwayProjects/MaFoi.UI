@@ -65,7 +65,7 @@ const HolidayList = () => {
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading = exporting || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting|| editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -210,6 +210,33 @@ const HolidayList = () => {
   
   const handleChangeMonth = (event:any) => {
     setMonth(event.target.value);
+    const monthName = event.target.value
+    let monthKey:any
+    if(monthName === 'January'){
+      monthKey = 1
+    }else if(monthName === 'February'){
+      monthKey = 2
+    }else if(monthName === 'March'){
+      monthKey = 3
+    }else if(monthName === 'April'){
+      monthKey = 4
+    }else if(monthName === 'May'){
+      monthKey = 5
+    }else if(monthName === 'June'){
+      monthKey = 6
+    }else if(monthName === 'July'){
+      monthKey = 7
+    }else if(monthName === 'August'){
+      monthKey = 8
+    }else if(monthName === 'September'){
+      monthKey = 9
+    }else if(monthName === 'October'){
+      monthKey = 10
+    }else if(monthName === 'November'){
+      monthKey = 11
+    }else if(monthName === 'December'){
+      monthKey = 12
+    }
     const HolidayListPayload: any =  { 
       search: searchInput, 
       filters: [
@@ -299,20 +326,13 @@ const HolidayList = () => {
     }
   }, [associateCompany])
 
-
   useEffect(() => {
-    const HolidayListPayload: any =  { 
-      search: '', 
-      filters: [],
-      pagination: {
-        pageSize: rowsPerPage,
-        pageNumber: page+1
-      },
-      sort: { columnName: 'name', order: 'asc' },
-      "includeCentral": true
+    if(holidayListDetails.status === 'succeeded'){
+
+    }else if(holidayListDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
     }
-    dispatch(getHolidaysList(HolidayListPayload))
-  }, [rowsPerPage, page])
+  },[holidayListDetails.status])
 
   useEffect(() => {
     if(deleteHolidayDetails.status === 'succeeded'){
@@ -610,7 +630,7 @@ const HolidayList = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'date', order: type },
+      sort: { columnName: 'day', order: type },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload)) 
@@ -951,10 +971,34 @@ const HolidayList = () => {
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
+    const HolidayListPayload: any =  { 
+      search: '', 
+      filters: [],
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: newPage+1
+      },
+      sort: { columnName: 'name', order: 'asc' },
+      "includeCentral": true
+    }
+
+    dispatch(getHolidaysList(HolidayListPayload))
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const HolidayListPayload: any =  { 
+      search: '', 
+      filters: [],
+      pagination: {
+        pageSize: parseInt(event.target.value, 10),
+        pageNumber: 1
+      },
+      sort: { columnName: 'name', order: 'asc' },
+      "includeCentral": true
+    }
+
+    dispatch(getHolidaysList(HolidayListPayload))
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -977,8 +1021,6 @@ const HolidayList = () => {
     a.click();
     document.body.removeChild(a);
   }
-  
-  console.log('holiday', holiday)
 
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
@@ -1155,8 +1197,8 @@ const HolidayList = () => {
           <>
             {modalType === "View" && 
               <Box sx={{ width: '100%', padding:'20px'}}>
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px'}}>Holiday Name</Typography>
-                  <Typography color="#000000" sx={{fontSize:'22px'}} >{holiday.name}</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>Holiday Name</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{holiday.name}</Typography>
                   
                   <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>State</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.state.name}</Typography>
@@ -1571,7 +1613,7 @@ const HolidayList = () => {
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
-                                      <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> year</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Year</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'date'} direction={sortType} onClick={onClickSortDate}> Date</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Holiday Name</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'state'} direction={sortType} onClick={onClickSortState}> State</TableSortLabel></TableCell>
@@ -1587,7 +1629,7 @@ const HolidayList = () => {
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >   
                                       <TableCell >{each.year}</TableCell>
-                                      <TableCell >{`${each.day}-${each.month > 9 ? each.month : '0'+ each.month}-${each.year}`}</TableCell>
+                                      <TableCell >{`${each.day > 9 ? each.day : '0'+ each.day}-${each.month > 9 ? each.month : '0'+ each.month}-${each.year}`}</TableCell>
                                       <TableCell >{each.name}</TableCell>
                                       <TableCell >{each.state.name}</TableCell>
                                       <TableCell >{each.restricted ? 'Yes' : 'No'}</TableCell>

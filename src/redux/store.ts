@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import inputModuleSlice from './features/inputModule.slice'
 import holidayListSlice from './features/holidayList.slice'
+import leaveConfigurationSlice from './features/leaveConfiguration.slice'
 
 export const store = configureStore({
   reducer: {
     inputModule: inputModuleSlice,
-    holidayList: holidayListSlice
+    holidayList: holidayListSlice,
+    leaveConfiguration: leaveConfigurationSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

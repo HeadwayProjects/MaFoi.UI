@@ -41,4 +41,29 @@ export class InputModuleService {
         const url = `/api/Holiday/Update`
         return await api.put(url, data)
     }
+
+    public async fetchLeaveConfiguration(data: any) {
+        const url = `/api/Leave/GetAll`
+        return await api.post(url, data)
+    }
+
+    public async deleteLeaveConfiguration(id:any) {
+        const url =  `/api/Leave/Delete?Id=${id}`
+        return await api.del(url)
+    }
+
+    public async addLeaveConfiguration(data: any) {
+        const url = `/api/Leave/Add`
+        return await api.post(url, data)
+    }
+
+    public async uploadLeaveConfiguration(data: any) {
+        const url = `/api/Leave/Import`
+        return await api.post(url, data, null, true, { responseType: 'blob' })
+    }
+
+    public async editLeaveConfiguration(data: any) {
+        const url = `/api/Leave/Update`
+        return await api.put(url, data)
+    }
 }

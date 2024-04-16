@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import { InputModuleService } from '../../backend/inputModule';
 
-interface HolidayListState {
-    holidayListDetails: {
+interface LeaveConfigurationState {
+    leaveConfigurationDetails: {
         status: string,
         data: any,
         error: string | null
@@ -29,8 +29,8 @@ interface HolidayListState {
     },
 }
 
-const initialState: HolidayListState = { 
-    holidayListDetails: {
+const initialState: LeaveConfigurationState = { 
+    leaveConfigurationDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -55,35 +55,35 @@ const initialState: HolidayListState = {
         data: '',
         error: null
     },
-} as HolidayListState
+} as LeaveConfigurationState
 
-export const getHolidaysList = createAsyncThunk('holidayList/getHolidaysList', async (data: any) => {
+export const getleaveConfiguration = createAsyncThunk('leaveConfiguration/getleaveConfiguration', async (data: any) => {
     const inputModuleService = new InputModuleService();
-    return await inputModuleService.fetchHolidaysList(data);
+    return await inputModuleService.fetchLeaveConfiguration(data);
 })
 
-export const deleteHoliday = createAsyncThunk('holidayList/deleteHoliday', async (id: any) => {
+export const deleteHoliday = createAsyncThunk('leaveConfiguration/deleteHoliday', async (id: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.deleteHoliday(id);
 })
 
-export const addHoliday = createAsyncThunk('holidayList/addHoliday', async (data: any) => {
+export const addHoliday = createAsyncThunk('leaveConfiguration/addHoliday', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.addHoliday(data);
 })
 
-export const uploadHoliday = createAsyncThunk('holidayList/uploadHoliday', async (data: any) => {
+export const uploadHoliday = createAsyncThunk('leaveConfiguration/uploadHoliday', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.uploadHoliday(data);
 })
 
-export const editHoliday = createAsyncThunk('holidayList/editHoliday', async (data: any) => {
+export const editHoliday = createAsyncThunk('leaveConfiguration/editHoliday', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.editHoliday(data);
 })
 
-export const holidayListSlice = createSlice({
-    name: 'holidayList',
+export const leaveConfigurationSlice = createSlice({
+    name: 'leaveConfiguration',
     initialState,
     reducers: {
         resetDeleteHolidayDetails: (state) => {
@@ -116,21 +116,21 @@ export const holidayListSlice = createSlice({
         },
     },
     extraReducers: (builder) => builder
-        .addCase(getHolidaysList.pending, (state) => {
-            state.holidayListDetails.status = 'loading'
+        .addCase(getleaveConfiguration.pending, (state) => {
+            state.leaveConfigurationDetails.status = 'loading'
         })
-        .addCase(getHolidaysList.fulfilled, (state, action: any) => {
+        .addCase(getleaveConfiguration.fulfilled, (state, action: any) => {
             if(action.payload.data) {
-                state.holidayListDetails.status = 'succeeded'
-                state.holidayListDetails.data = action.payload.data
+                state.leaveConfigurationDetails.status = 'succeeded'
+                state.leaveConfigurationDetails.data = action.payload.data
             } else {
-                state.holidayListDetails.status = 'failed'
-                state.holidayListDetails.error = action.payload.message;
+                state.leaveConfigurationDetails.status = 'failed'
+                state.leaveConfigurationDetails.error = action.payload.message;
             }
         })
-        .addCase(getHolidaysList.rejected, (state, action: any) => {
-            state.holidayListDetails.status = 'failed'
-            state.holidayListDetails.error = action.error.message
+        .addCase(getleaveConfiguration.rejected, (state, action: any) => {
+            state.leaveConfigurationDetails.status = 'failed'
+            state.leaveConfigurationDetails.error = action.error.message
         })
         
         .addCase(deleteHoliday.pending, (state) => {
@@ -202,6 +202,6 @@ export const holidayListSlice = createSlice({
         })
 })
   
-export const {resetDeleteHolidayDetails, resetAddHolidayDetails, resetUploadHolidayDetails, resetEditHolidayDetails } = holidayListSlice.actions
+export const {resetDeleteHolidayDetails, resetAddHolidayDetails, resetUploadHolidayDetails, resetEditHolidayDetails } = leaveConfigurationSlice.actions
 
-export default holidayListSlice.reducer
+export default leaveConfigurationSlice.reducer

@@ -15,7 +15,7 @@ const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.MANAGER_DASHBOARD },
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.ESCALATION_DASHBOARD },
     {
-        id: 'input module', url: '/input/employeeMasterUpload', icon: 'calendar', label: 'Input Module',
+        id: 'input', url: '/input/employeeMasterUpload', icon: 'calendar', label: 'Input Module',
         children: [
             { id: 'input/holidayList', url: '/input/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/leaveConfiguration', url: '/input/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
