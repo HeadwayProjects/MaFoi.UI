@@ -17,6 +17,16 @@ interface HolidayListState {
         data: any,
         error: string | null
     },
+    uploadHolidayDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    editHolidayDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
 }
 
 const initialState: HolidayListState = { 
@@ -35,7 +45,16 @@ const initialState: HolidayListState = {
         data: '',
         error: null
     },
-
+    uploadHolidayDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    editHolidayDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
 } as HolidayListState
 
 export const getHolidaysList = createAsyncThunk('holidayList/getHolidaysList', async (data: any) => {
@@ -53,6 +72,16 @@ export const addHoliday = createAsyncThunk('holidayList/addHoliday', async (data
     return await inputModuleService.addHoliday(data);
 })
 
+export const uploadHoliday = createAsyncThunk('holidayList/uploadHoliday', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.uploadHoliday(data);
+})
+
+export const editHoliday = createAsyncThunk('holidayList/editHoliday', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.editHoliday(data);
+})
+
 export const holidayListSlice = createSlice({
     name: 'holidayList',
     initialState,
@@ -66,6 +95,20 @@ export const holidayListSlice = createSlice({
         },
         resetAddHolidayDetails :  (state) => {
             state.addHolidayDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetUploadHolidayDetails :  (state) => {
+            state.uploadHolidayDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetEditHolidayDetails: (state) => {
+            state.editHolidayDetails = {
                 status: 'idle',
                 data: '',
                 error: null
@@ -123,9 +166,42 @@ export const holidayListSlice = createSlice({
             state.addHolidayDetails.status = 'failed'
             state.addHolidayDetails.error = action.error.message
         })
-       
+
+        .addCase(uploadHoliday.pending, (state) => {
+            state.uploadHolidayDetails.status = 'loading'
+        })
+        .addCase(uploadHoliday.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.uploadHolidayDetails.status = 'succeeded'
+                state.uploadHolidayDetails.data = action.payload.data
+            } else {
+                state.uploadHolidayDetails.status = 'failed'
+                state.uploadHolidayDetails.error = action.payload.message;
+            }
+        })
+        .addCase(uploadHoliday.rejected, (state, action: any) => {
+            state.uploadHolidayDetails.status = 'failed'
+            state.uploadHolidayDetails.error = action.error.message
+        })
+        
+        .addCase(editHoliday.pending, (state) => {
+            state.editHolidayDetails.status = 'loading'
+        })
+        .addCase(editHoliday.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.editHolidayDetails.status = 'succeeded'
+                state.editHolidayDetails.data = action.payload.data
+            } else {
+                state.editHolidayDetails.status = 'failed'
+                state.editHolidayDetails.error = action.payload.message;
+            }
+        })
+        .addCase(editHoliday.rejected, (state, action: any) => {
+            state.editHolidayDetails.status = 'failed'
+            state.editHolidayDetails.error = action.error.message
+        })
 })
   
-export const {resetDeleteHolidayDetails, resetAddHolidayDetails } = holidayListSlice.actions
+export const {resetDeleteHolidayDetails, resetAddHolidayDetails, resetUploadHolidayDetails, resetEditHolidayDetails } = holidayListSlice.actions
 
 export default holidayListSlice.reducer

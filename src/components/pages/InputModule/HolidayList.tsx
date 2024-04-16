@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations } from '../../../redux/features/inputModule.slice';
@@ -6,12 +6,13 @@ import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButt
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
-import { addHoliday, deleteHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails } from '../../../redux/features/holidayList.slice';
+import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
 import { useExportHolidayList } from '../../../backend/exports';
-import { downloadFileContent } from '../../../utils/common';
+import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
+import { Alert } from 'react-bootstrap';
 
 
 const style = {
@@ -24,6 +25,16 @@ const style = {
   boxShadow: 24,
 };
 
+const styleUploadModal = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+};
+
 const HolidayList = () => {
 
   const dispatch = useAppDispatch();
@@ -31,6 +42,8 @@ const HolidayList = () => {
   const holidayListDetails = useAppSelector((state) => state.holidayList.holidayListDetails)
   const deleteHolidayDetails = useAppSelector((state) => state.holidayList.deleteHolidayDetails)
   const addHolidayDetails = useAppSelector((state) => state.holidayList.addHolidayDetails)
+  const uploadHolidayDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
+  const editHolidayDetails = useAppSelector((state) => state.holidayList.editHolidayDetails)
 
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
@@ -77,8 +90,15 @@ const HolidayList = () => {
   const [restrictedHoliday, setRestrictedHoliday] = React.useState(true);
 
   const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+  const [openUploadModal, setOpenUploadModal] = React.useState(false);
+  const [uploadData, setUploadData] =  React.useState<any>();
+  const [uploadError, setUploadError] = React.useState(false);
 
   const handleChangeCompany = (event:any) => {
+    setAssociateCompany('')
+    setLocation('')
+    setYear('')
+    setMonth('')
     setCompany(event.target.value);
     const HolidayListPayload: any =  { 
       search: searchInput, 
@@ -99,6 +119,9 @@ const HolidayList = () => {
   };
 
   const handleChangeAssociateCompany = (event:any) => {
+    setLocation('')
+    setYear('')
+    setMonth('')
     setAssociateCompany(event.target.value);
     const HolidayListPayload: any =  { 
       search: searchInput, 
@@ -123,6 +146,8 @@ const HolidayList = () => {
   };
 
   const handleChangeLocation = (event:any) => {
+    setYear('')
+    setMonth('')
     setLocation(event.target.value);
     const HolidayListPayload: any =  { 
       search: searchInput, 
@@ -151,6 +176,7 @@ const HolidayList = () => {
   };
   
   const handleChangeYear = (event:any) => {
+    setYear('')
     setYear(event.target.value);
     const HolidayListPayload: any =  { 
       search: searchInput, 
@@ -223,11 +249,19 @@ const HolidayList = () => {
   }
 
   const handleChangeOptionalHoliday = (event: any) => {
-    setOptionalHoliday(event.target.value)
+    if('true' === event.target.value){
+      setOptionalHoliday(true)
+    }else{
+      setOptionalHoliday(false)
+    }
   }
 
   const handleChangeRestrictedHoliday = (event: any) => {
-    setRestrictedHoliday(event.target.value)
+    if('true' === event.target.value){
+      setRestrictedHoliday(true)
+    }else{
+      setRestrictedHoliday(false)
+    }
   }
 
   useEffect(() => {
@@ -286,6 +320,17 @@ const HolidayList = () => {
       setHoliday({})
       dispatch(resetDeleteHolidayDetails())
       setOpenDeleteModal(false)
+      const HolidayListDefaultPayload: any =  { 
+        search: "",
+        filters: [],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'name', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getHolidaysList(HolidayListDefaultPayload))
     }else if(deleteHolidayDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
@@ -296,11 +341,70 @@ const HolidayList = () => {
       toast.success(`Holiday Added successfully.`)
       dispatch(resetAddHolidayDetails())
       setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
-    }else if(deleteHolidayDetails.status === 'failed'){
+      const HolidayListDefaultPayload: any =  { 
+        search: "",
+        filters: [],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'name', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getHolidaysList(HolidayListDefaultPayload))
+    }else if(addHolidayDetails.status === 'failed'){
       setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [addHolidayDetails.status])
+
+  useEffect(() => {
+    if(uploadHolidayDetails.status === 'succeeded'){
+      if(uploadHolidayDetails.data.size === 0){
+        toast.success(`Holiday List Uploaded successfully.`)
+        dispatch(resetUploadHolidayDetails())
+        setOpenUploadModal(false)
+        setUploadError(false)
+        const HolidayListDefaultPayload: any =  { 
+          search: "",
+          filters: [],
+          pagination: {
+            pageSize: 10,
+            pageNumber: 1
+          },
+          sort: { columnName: 'name', order: 'asc' },
+          "includeCentral": true
+        }
+        dispatch(getHolidaysList(HolidayListDefaultPayload))
+      }else{
+        setUploadError(true)
+      }
+    }else if(uploadHolidayDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [uploadHolidayDetails])
+
+  useEffect(() => {
+    if(editHolidayDetails.status === 'succeeded'){
+      toast.success(`Holiday Updated successfully.`)
+      dispatch(resetEditHolidayDetails())
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      const HolidayListDefaultPayload: any =  { 
+        search: "",
+        filters: [],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'name', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getHolidaysList(HolidayListDefaultPayload))
+    }else if(editHolidayDetails.status === 'failed'){
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [editHolidayDetails.status])
 
   const yearsList = []
   const currentYear = new Date().getFullYear();
@@ -509,8 +613,7 @@ const HolidayList = () => {
       sort: { columnName: 'date', order: type },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
-    
+    dispatch(getHolidaysList(HolidayListPayload)) 
   }
 
   const onClickSortName = () => {
@@ -681,7 +784,17 @@ const HolidayList = () => {
     
   }
 
-  const addButtonDisable = !name || !optionalHoliday || !company || !associateCompany || !location || !year || !month || !day || !restrictedHoliday
+  const onClickUpload = () => {
+    setOpenUploadModal(true)
+  }
+
+  const onClickSubmitUpload = () => {
+    const formData = new FormData();
+    formData.append('file', uploadData[0]);
+    dispatch(uploadHoliday(formData))
+  }
+
+  const addButtonDisable = !name || !company || !associateCompany || !location || !year || !month || !day 
 
   const onClickAdd = () => {
     setOpenModal(true)
@@ -692,7 +805,7 @@ const HolidayList = () => {
   }
 
   const onClickSubmitAdd = () => {
-    let monthKey
+    let monthKey:any
 
     if(month === 'January'){
       monthKey = 1
@@ -735,9 +848,91 @@ const HolidayList = () => {
     dispatch(addHoliday(payload))
   }
 
-  const onclickEdit = () => {
+  const onclickEdit = (holiday:any) => {
+    let monthKey:any
+    const monthNumber = holiday.month
+    if(monthNumber === 1){
+      monthKey = 'January'
+    }else if(monthNumber === 2){
+      monthKey = 'February'
+    }else if(monthNumber === 3){
+      monthKey = 'March'
+    }else if(monthNumber === 4){
+      monthKey = 'April'
+    }else if(monthNumber === 5){
+      monthKey = 'May'
+    }else if(monthNumber === 6){
+      monthKey = 'June'
+    }else if(monthNumber === 7){
+      monthKey = 'July'
+    }else if(monthNumber === 8){
+      monthKey = 'August'
+    }else if(monthNumber === 9){
+      monthKey = 'September'
+    }else if(monthNumber === 10){
+      monthKey = 'October'
+    }else if(monthNumber === 11){
+      monthKey = 'November'
+    }else if(monthNumber === 12){
+      monthKey = 'December'
+    }
     setOpenModal(true)
     setModalType('Edit')
+    setName(holiday.name)
+    setCompany(holiday.company.id)
+    setAssociateCompany(holiday.associateCompany.id)
+    setLocation(holiday.location.id+'^'+holiday.stateId)
+    setYear(holiday.year)
+    setMonth(monthKey)
+    setDay(holiday.day)
+    setOptionalHoliday(holiday.optionalHoliday)
+    setRestrictedHoliday(holiday.restricted)
+    setHoliday(holiday)
+  }
+
+  const onClickSubmitEdit = () => {
+    let monthKey:any
+
+    if(month === 'January'){
+      monthKey = 1
+    }else if(month === 'February'){
+      monthKey = 2
+    }else if(month === 'March'){
+      monthKey = 3
+    }else if(month === 'April'){
+      monthKey = 4
+    }else if(month === 'May'){
+      monthKey = 5
+    }else if(month === 'June'){
+      monthKey = 6
+    }else if(month === 'July'){
+      monthKey = 7
+    }else if(month === 'August'){
+      monthKey = 8
+    }else if(month === 'September'){
+      monthKey = 9
+    }else if(month === 'October'){
+      monthKey = 10
+    }else if(month === 'November'){
+      monthKey = 11
+    }else if(month === 'December'){
+      monthKey = 12
+    }
+    const payload = {
+      id:holiday.id,
+      name,
+      optionalHoliday,
+      companyId: company,
+      associateCompanyId: associateCompany,
+      locationId: location.split('^')[0],
+      stateId: location.split('^')[1],
+      year,
+      month: monthKey,
+      day,
+      restricted: restrictedHoliday,
+      remarks: ''
+    }
+    dispatch(editHoliday(payload))
   }
 
   const onclickView = (holiday:any) => {
@@ -764,8 +959,31 @@ const HolidayList = () => {
     setPage(0);
   };
   
+  const downloadSample = (e: any) => {
+    preventDefault(e);
+    download('Sample Holidays.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/ActsTemplate.xlsx')
+  }
+
+  const downloadErrors = (e: any) => {
+    preventDefault(e);
+    const data = uploadHolidayDetails.data;
+    const blob = new Blob([data])
+    const URL = window.URL || window.webkitURL;
+    const downloadUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = 'Errors.xlsx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+  
+  console.log('holiday', holiday)
+
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
+
+      {/*Add Edit and View Modals */}
       <Drawer anchor='right' open={openModal}>
         <Box  sx={{height:'100%',width: 500, display:'flex', flexDirection:'column'}}>
           <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
@@ -777,6 +995,7 @@ const HolidayList = () => {
             </IconButton>
           </Box>
 
+          {/*Add Modal */}
           <>
             {modalType === 'Add' && 
             <Box sx={{ width: 400, padding:'20px'}}>
@@ -932,6 +1151,7 @@ const HolidayList = () => {
             }
           </>
 
+          {/* View Modal */}
           <>
             {modalType === "View" && 
               <Box sx={{ width: '100%', padding:'20px'}}>
@@ -958,9 +1178,164 @@ const HolidayList = () => {
             }
           </>
 
+          {/*Edit Modal */}
+          <>
+            {modalType === 'Edit' && 
+            <Box sx={{ width: 400, padding:'20px'}}>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Name</FormLabel>
+                    {/* <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Name</InputLabel> */}
+                    <OutlinedInput
+                      placeholder='Name'
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                      label="Name"
+                    />
+                  </FormControl>
+
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Company</InputLabel>
+                    <Select
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
+                      value={company}
+                      label="Company"
+                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
+                    >
+                      {companies && companies.map((each:any) => {
+                          return <MenuItem value={each.id}>{each.name}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl disabled={!company} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Associate Company</InputLabel>
+                    <Select
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
+                      value={associateCompany}
+                      label="Associate Company"
+                      disabled={!company}
+                      onChange={(e) => setAssociateCompany(e.target.value)}
+                    >
+                      {associateCompanies && associateCompanies.map((each:any) => {
+                          return <MenuItem value={each.id}>{each.name}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Locations</InputLabel>
+                    <Select
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
+                      value={location}
+                      label="Locations"
+                      disabled={!associateCompany}
+                      onChange={(e) => setLocation(e.target.value)}
+                    >
+                      {locations && locations.map((each:any) => {
+                          const { id, name, code, cities }: any = each.location || {};
+                          const { state } = cities || {};
+                          return <MenuItem value={each.locationId+'^'+state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+
+                  <Box sx={{display:'flex'}}>
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
+                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Year</InputLabel>
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        value={year}
+                        label="Year"
+                        onChange={(e) => setYear(e.target.value)}
+                      >
+                        {yearsList && yearsList.map((each:any) => 
+                          <MenuItem value={each}>{each}</MenuItem>
+                        )}
+                      </Select>
+                    </FormControl>
+
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Month</InputLabel>
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        value={month}
+                        label="Month"
+                        onChange={(e) => setMonth(e.target.value)}
+                      >
+                        {monthList && monthList.map((each:any) => 
+                          <MenuItem value={each}>{each}</MenuItem>
+                        )}
+                      </Select>
+                    </FormControl>
+
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Day</InputLabel>
+                      <Select
+                        labelId="demo-select-small-label"
+                        id="demo-select-small"
+                        value={day}
+                        label="Day"
+                        onChange={(e) => setDay(e.target.value)}
+                      >
+                        {daysList && daysList.map((each:any) => 
+                          <MenuItem value={each}>{each}</MenuItem>
+                        )}
+                      </Select>
+                    </FormControl>
+
+                  </Box>
+                  
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Optional Holiday</FormLabel>
+                    <RadioGroup
+                      row
+                      aria-labelledby="demo-radio-buttons-group-label"
+                      defaultValue={true}
+                      name="radio-buttons-group"
+                      value={optionalHoliday}
+                      onChange={handleChangeOptionalHoliday}
+                    >
+                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
+                      <FormControlLabel value={false} control={<Radio />} label="No" />
+                    </RadioGroup>
+                  </FormControl>
+
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Restricted</FormLabel>
+                    <RadioGroup
+                      row
+                      aria-labelledby="demo-radio-buttons-group-label"
+                      defaultValue={true}
+                      name="radio-buttons-group"
+                      value={restrictedHoliday}
+                      onChange={handleChangeRestrictedHoliday}
+                    >
+                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
+                      <FormControlLabel value={false} control={<Radio />} label="No" />
+                    </RadioGroup>
+                  </FormControl>
+
+            </Box>
+            }
+
+            {modalType === 'Edit' && 
+            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
+              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
+              <Button variant='contained' disabled={addButtonDisable} onClick={onClickSubmitEdit}>Submit</Button>
+            </Box>
+            }
+          </>
         </Box>
       </Drawer>
 
+      {/* Delete Modal */}
       <Modal
         open={openDeleteModal}
         onClose={() => setOpenDeleteModal(false)}
@@ -987,137 +1362,197 @@ const HolidayList = () => {
         </Box>
       </Modal>
 
+      {/* Upload Modal */}
+      <Modal
+        open={openUploadModal}
+        onClose={() => setOpenUploadModal(false)}
+      >
+        <Box sx={styleUploadModal}>
+          <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Upload Holiday List</Typography>
+            <IconButton
+              onClick={() => {setOpenUploadModal(false); setUploadError(false)}}
+            >
+              <IoMdClose />
+            </IconButton>
+          </Box>
+
+          {uploadError &&
+            <Alert variant="danger" className="mx-4 my-4">
+              There are few errors identified in the file uploaded. Correct the errors and upload again. <a href="/" onClick={downloadErrors}>Click here</a> to download the errors.
+            </Alert>
+          }
+          <Box sx={{padding:'20px', backgroundColor:'#ffffff', display:'flex', justifyContent:'center'}}>
+            <Box sx={{display:'flex', flexDirection:'column'}}>
+                <Typography mb={1} color={'#0F67B1'} fontWeight={'bold'} sx={{font: 'normal normal normal 24px/28px Calibri'}}>Upload File <span style={{color:'red'}}>*</span></Typography>
+                <input
+                  style={{ border:'1px solid #0F67B1', width:'500px', height:'40px', borderRadius:'5px'}}
+                  type="file"
+                  onChange={(e) => setUploadData(e.target.files)}
+                />
+                <a href="/" style={{marginTop: '10px', width:'210px'}} onClick={downloadSample}>Dowload Sample Holiday</a>
+            </Box>
+          </Box>
+
+          <Box sx={{display:'flex', justifyContent:'center', alignItems:'center', mt:5}}>
+            <Button variant='contained' onClick={onClickSubmitUpload}>Submit</Button>
+          </Box>
+
+          <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:4}}>
+                <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenUploadModal(false); setUploadError(false)}}>Cancel</Button>
+          </Box>
+        </Box>
+      </Modal>
+
       {loading ? <PageLoader>Loading...</PageLoader> : 
       
         <div>
              <Box sx={{paddingX: '20px', paddingY:'10px',}}>
-                <div style={{backgroundColor:'#E2E3F8', padding:'10px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
+                <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
-                        <h5 style={{marginLeft:'12px', font: 'normal normal normal 32px/40px Calibri' }}>Holiday List</h5>
+                        <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Holiday List</h5>
                         <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
-                          <Button variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
+                          <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
                           <button onClick={onClickExport} disabled={!holidays} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !holidays ? '#707070': '#ffffff' , color: !holidays ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
 
-                      <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Company</InputLabel>
-                        <Select
-                          sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                          labelId="demo-select-small-label"
-                          id="demo-select-small"
-                          value={company}
-                          label="Company"
-                          onChange={handleChangeCompany}
-                        >
-                          {companies && companies.map((each:any) => {
-                              return <MenuItem value={each.id}>{each.name}</MenuItem>
-                          })}
-                        </Select>
-                      </FormControl>
+                      <Box sx={{width:'100%', mr:1}}>
+                        <Typography mb={1}>Company</Typography>
+                        <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                          <Select
+                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
+                            value={company}
+                            displayEmpty
+                            onChange={handleChangeCompany}
+                          >
+                            <MenuItem disabled sx={{display:'none'}} value="">
+                              Select Company
+                            </MenuItem>
+                            {companies && companies.map((each:any) => {
+                                return <MenuItem value={each.id}>{each.name}</MenuItem>
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Box>
 
-                      <FormControl disabled={!company} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                        <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Associate Company</InputLabel>
-                        <Select
-                          sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                          labelId="demo-select-small-label"
-                          id="demo-select-small"
-                          value={associateCompany}
-                          label="Associate Company"
-                          disabled={!company}
-                          onChange={handleChangeAssociateCompany}
-                        >
-                          {associateCompanies && associateCompanies.map((each:any) => {
+                      <Box sx={{width:'100%', mr:1}}>
+                        <Typography mb={1}>Associate Company</Typography>
+                        <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                          <Select
+                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
+                            displayEmpty
+                            value={associateCompany}
+                            disabled={!company}
+                            onChange={handleChangeAssociateCompany}
+                          >
+                            <MenuItem disabled sx={{display:'none'}} value="">
+                              Select Associate Company
+                            </MenuItem>
+                            {associateCompanies && associateCompanies.map((each:any) => {
                               return <MenuItem value={each.id}>{each.name}</MenuItem>
-                          })}
-                        </Select>
-                      </FormControl>
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Box>
 
-                      <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                        <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Locations</InputLabel>
-                        <Select
-                          sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                          labelId="demo-select-small-label"
-                          id="demo-select-small"
-                          value={location}
-                          label="Locations"
-                          disabled={!associateCompany}
-                          onChange={handleChangeLocation}
-                        >
-                          {locations && locations.map((each:any) => {
+                      <Box sx={{width:'100%', mr:1}}>
+                        <Typography mb={1}>Locations</Typography>
+                        <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                          <Select
+                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
+                            displayEmpty
+                            value={location}
+                            disabled={!associateCompany}
+                            onChange={handleChangeLocation}
+                          >
+                            <MenuItem disabled sx={{display:'none'}} value="">
+                              Select Location
+                            </MenuItem>
+                            {locations && locations.map((each:any) => {
                               const { id, name, code, cities }: any = each.location || {};
                               const { state } = cities || {};
                               return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
-                          })}
-                        </Select>
-                      </FormControl>
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Box>
 
-                      <FormControl disabled={!location} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                        <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Year</InputLabel>
-                        <Select
-                          sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                          labelId="demo-select-small-label"
-                          id="demo-select-small"
-                          value={year}
-                          label="Year"
-                          disabled={!location}
-                          onChange={handleChangeYear}
-                        >
-                          {yearsList && yearsList.map((each:any) => 
-                            <MenuItem value={each}>{each}</MenuItem>
-                          )}
-                        </Select>
-                      </FormControl>
-                      
-                      <FormControl disabled={!year} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Month</InputLabel>
-                        <Select
-                          sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                          labelId="demo-select-small-label"
-                          id="demo-select-small"
-                          value={month}
-                          label="Month"
-                          disabled={!year}
-                          onChange={handleChangeMonth}
-                        >
-                          {monthList && monthList.map((each:any) => 
-                            <MenuItem value={each}>{each}</MenuItem>
-                          )}
-                        </Select>
-                      </FormControl>
+                      <Box sx={{width:'100%', mr:1}}>
+                        <Typography mb={1}>Year</Typography>
+                        <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                          <Select
+                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
+                            displayEmpty
+                            value={year}
+                            disabled={!location}
+                            onChange={handleChangeYear}
+                          >
+                            <MenuItem disabled sx={{display:'none'}} value="">
+                              Select Year
+                            </MenuItem>
+                            {yearsList && yearsList.map((each:any) => 
+                              <MenuItem value={each}>{each}</MenuItem>
+                            )}
+                          </Select>
+                        </FormControl>
+                      </Box>
 
-                      <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
-                        <OutlinedInput
-                          value={searchInput}
-                          onChange={handleChangeSearchInput}
-                          sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                          id="outlined-adornment-search"
-                          type='text'
-                          
-                          endAdornment={
-                            <InputAdornment position="end">
-                              {searchInput && 
+                      <Box sx={{width:'100%', mr:1}}>
+                        <Typography mb={1}>Month</Typography>
+                        <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                          <Select
+                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
+                            displayEmpty
+                            value={month}
+                            disabled={!year}
+                            onChange={handleChangeMonth}
+                          >
+                            <MenuItem disabled sx={{display:'none'}} value="">
+                              Select Month
+                            </MenuItem>
+                            {monthList && monthList.map((each:any) => 
+                              <MenuItem value={each}>{each}</MenuItem>
+                            )}
+                          </Select>
+                        </FormControl>
+                      </Box>
+
+                      <Box sx={{width:'100%', mr:1}}>
+                        <Typography mb={1}>Search</Typography>
+                        <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                          <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
+                          <OutlinedInput
+                            value={searchInput}
+                            onChange={handleChangeSearchInput}
+                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
+                            id="outlined-adornment-search"
+                            type='text'
+                            
+                            endAdornment={
+                              <InputAdornment position="end">
+                                {searchInput && 
+                                  <IconButton
+                                  onClick={onClickClearSearch}
+                                  edge="end"
+                                >
+                                  <IoMdClose />
+                                </IconButton>
+                                }
                                 <IconButton
-                                onClick={onClickClearSearch}
-                                edge="end"
-                              >
-                                <IoMdClose />
-                              </IconButton>
-                              }
-                              <IconButton
-                                onClick={onClickSearch}
-                                edge="end"
-                              >
-                                <IoMdSearch />
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                          label="Search"
-                        />
-                      </FormControl>
+                                  onClick={onClickSearch}
+                                  edge="end"
+                                >
+                                  <IoMdSearch />
+                                </IconButton>
+                              </InputAdornment>
+                            }
+                            label="Search"
+                          />
+                        </FormControl>
+                      </Box>
 
                     </div>
                 </div>
@@ -1158,7 +1593,7 @@ const HolidayList = () => {
                                       <TableCell >{each.restricted ? 'Yes' : 'No'}</TableCell>
                                       <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
-                                          <Icon action={onclickEdit} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
+                                          <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
                                           <Icon action={() => onclickDelete(each)} style={{color:'#EB1010'}} type="button" name={'trash'} text={'Delete'}/>
                                           <Icon action={() => onclickView(each)}  style={{color:'#00C853'}} type="button" name={'eye'} text={'View'}/>
                                         </Box>

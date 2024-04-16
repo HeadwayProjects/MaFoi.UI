@@ -31,4 +31,14 @@ export class InputModuleService {
         const url = `/api/Holiday/Add`
         return await api.post(url, data)
     }
+
+    public async uploadHoliday(data: any) {
+        const url = `/api/Holiday/Import`
+        return await api.post(url, data, null, true, { responseType: 'blob' })
+    }
+
+    public async editHoliday(data: any) {
+        const url = `/api/Holiday/Update`
+        return await api.put(url, data)
+    }
 }

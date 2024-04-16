@@ -36,3 +36,9 @@
     transform: rotate(360deg);
   }
 }
+
+input[type="file"]::-webkit-file-upload-button{
+  height: 40px;
+  border: none;
+  margin-right: 20px;
+}
