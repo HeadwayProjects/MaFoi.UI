@@ -1086,12 +1086,12 @@ const HolidayList = () => {
                   </FormControl>
 
                   <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Locations</InputLabel>
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Location</InputLabel>
                     <Select
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={location}
-                      label="Locations"
+                      label="Location"
                       disabled={!associateCompany}
                       onChange={(e) => setLocation(e.target.value)}
                     >
@@ -1269,12 +1269,12 @@ const HolidayList = () => {
                   </FormControl>
 
                   <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Locations</InputLabel>
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Location</InputLabel>
                     <Select
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={location}
-                      label="Locations"
+                      label="Location"
                       disabled={!associateCompany}
                       onChange={(e) => setLocation(e.target.value)}
                     >
@@ -1501,7 +1501,7 @@ const HolidayList = () => {
                       </Box>
 
                       <Box sx={{width:'100%', mr:1}}>
-                        <Typography mb={1}>Locations</Typography>
+                        <Typography mb={1}>Location</Typography>
                         <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
@@ -1609,7 +1609,7 @@ const HolidayList = () => {
                 </Box>
                 : 
                 <>
-                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', height:'385px', overflowY:'scroll'}}>
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>

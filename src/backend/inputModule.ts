@@ -2,6 +2,7 @@ import * as api from "./request";
 
 export class InputModuleService {
 
+    // Companies 
     public async fetchCompaniesDetails(data: any) {
         const url = `/api/Company/GetAll`
         return await api.post(url, data);
@@ -17,6 +18,7 @@ export class InputModuleService {
         return await api.post(url, data)
     }
     
+    // Holidays list
     public async fetchHolidaysList(data: any) {
         const url = `/api/Holiday/GetAll`
         return await api.post(url, data)
@@ -42,6 +44,7 @@ export class InputModuleService {
         return await api.put(url, data)
     }
 
+    // Leave Configuration
     public async fetchLeaveConfiguration(data: any) {
         const url = `/api/Leave/GetAll`
         return await api.post(url, data)
@@ -65,5 +68,37 @@ export class InputModuleService {
     public async editLeaveConfiguration(data: any) {
         const url = `/api/Leave/Update`
         return await api.put(url, data)
+    }
+
+    // Attendance Configuration
+    public async fetchAttendanceConfiguration(data: any) {
+        const url = `/api/Attendance/GetAll`
+        return await api.post(url, data)
+    }
+
+    public async deleteAttendanceConfiguration(id:any) {
+        const url =  `/api/Attendance/Delete?Id=${id}`
+        return await api.del(url)
+    }
+
+    public async addAttendanceConfiguration(data: any) {
+        const url = `/api/Attendance/Add`
+        return await api.post(url, data)
+    }
+
+    public async uploadAttendanceConfiguration(data: any) {
+        const url = `/api/Attendance/Import`
+        return await api.post(url, data, null, true, { responseType: 'blob' })
+    }
+
+    public async editAttendanceConfiguration(data: any) {
+        const url = `/api/Attendance/Update`
+        return await api.put(url, data)
+    }
+
+    // State Register
+    public async fetchStateRegister(data: any) {
+        const url = `/api/StateRegisterConfiguration/GetAll`
+        return await api.post(url, data)
     }
 }

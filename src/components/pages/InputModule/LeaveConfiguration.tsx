@@ -13,7 +13,7 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { getleaveConfiguration } from '../../../redux/features/leaveConfiguration.slice';
+import { getLeaveConfiguration } from '../../../redux/features/leaveConfiguration.slice';
 
 
 const style = {
@@ -41,7 +41,7 @@ const LeaveConfiguration = () => {
   const dispatch = useAppDispatch();
 
   const leaveConfigurationDetails = useAppSelector((state) => state.leaveConfiguration.leaveConfigurationDetails)
-  const holidayListDetails = useAppSelector((state) => state.holidayList.holidayListDetails)
+
   const deleteHolidayDetails = useAppSelector((state) => state.holidayList.deleteHolidayDetails)
   const addHolidayDetails = useAppSelector((state) => state.holidayList.addHolidayDetails)
   const uploadHolidayDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
@@ -62,14 +62,13 @@ const LeaveConfiguration = () => {
   });
 
   const leaves = leaveConfigurationDetails.data.list
+  const leavesCount = leaveConfigurationDetails.data.count
 
-  const holidays = holidayListDetails.data.list
-  const holidaysCount = holidayListDetails.data.count
   const companies = companiesDetails.data.list
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading = exporting|| editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting|| editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || leaveConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -296,7 +295,7 @@ const LeaveConfiguration = () => {
   }
 
   useEffect(() => {
-    const leaveConfigurationSliceDefaultPayload: any =  { 
+    const leaveConfigurationDefaultPayload: any =  { 
       search: "",
       filters: [],
       pagination: {
@@ -308,7 +307,7 @@ const LeaveConfiguration = () => {
     }
 
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
-    dispatch(getleaveConfiguration(leaveConfigurationSliceDefaultPayload))
+    dispatch(getLeaveConfiguration(leaveConfigurationDefaultPayload))
     dispatch(getAllCompaniesDetails(companiesPayload))
   },[])
 
@@ -331,12 +330,12 @@ const LeaveConfiguration = () => {
   }, [associateCompany])
 
   useEffect(() => {
-    if(holidayListDetails.status === 'succeeded'){
+    if(leaveConfigurationDetails.status === 'succeeded'){
 
-    }else if(holidayListDetails.status === 'failed'){
+    }else if(leaveConfigurationDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  },[holidayListDetails.status])
+  },[leaveConfigurationDetails.status])
 
   useEffect(() => {
     if(deleteHolidayDetails.status === 'succeeded'){
@@ -569,7 +568,7 @@ const LeaveConfiguration = () => {
       sort: { columnName: 'ezycompLeave', order: type },
       "includeCentral": true
     }
-    dispatch(getleaveConfiguration(leaveConfigurationPayload))
+    dispatch(getLeaveConfiguration(leaveConfigurationPayload))
     
   }
 
@@ -1448,7 +1447,7 @@ const LeaveConfiguration = () => {
                         <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
-                          <button onClick={onClickExport} disabled={!holidays} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !holidays ? '#707070': '#ffffff' , color: !holidays ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} disabled={!leaves} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !leaves ? '#707070': '#ffffff' , color: !leaves ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
@@ -1561,7 +1560,7 @@ const LeaveConfiguration = () => {
                 </Box>
                 : 
                 <>
-                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', height:'385px', overflowY:'scroll'}}>
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
@@ -1626,7 +1625,7 @@ const LeaveConfiguration = () => {
                       }
                       rowsPerPageOptions={[10, 25, 50, 100]}
                       component="div"
-                      count={holidaysCount}
+                      count={leavesCount}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}
