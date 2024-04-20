@@ -1456,7 +1456,7 @@ const HolidayList = () => {
                         <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
-                          <button onClick={onClickExport} disabled={!holidays} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !holidays ? '#707070': '#ffffff' , color: !holidays ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} disabled={holidays && holidays.length <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (holidays && holidays.length <=0) ? '#707070': '#ffffff' , color: !holidays ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
