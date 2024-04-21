@@ -18,6 +18,11 @@ export class InputModuleService {
         return await api.post(url, data)
     }
     
+    public async getStates(data: any) {
+        const url = `/api/State/GetAll`
+        return await api.post(url, data)
+    }
+
     // Holidays list
     public async fetchHolidaysList(data: any) {
         const url = `/api/Holiday/GetAll`

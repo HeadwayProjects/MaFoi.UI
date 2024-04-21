@@ -61,6 +61,21 @@ export function useExportHolidayList(onSuccess?: any, onError?: any) {
     return { exportHolidayList, error, exporting };
 }
 
+export function useExportAttendanceConfig(onSuccess?: any, onError?: any) {
+    const { mutate: exportAttendanceConfig, error, isLoading: exporting } = useMutation(
+        ['exportAttendanceConfig'],
+        async (payload: any) => await post('/api/Attendance/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportAttendanceConfig, error, exporting };
+}
+
 export function useExportActivities(onSuccess?: any, onError?: any) {
     const { mutate: exportActivity, error, isLoading: exporting } = useMutation(
         ['exportActivity'],

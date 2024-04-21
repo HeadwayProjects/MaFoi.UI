@@ -17,6 +17,11 @@ interface InputModuleState {
         data: any,
         error: string | null
     },
+    statesDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    }
 }
 
 const initialState: InputModuleState = { 
@@ -31,6 +36,11 @@ const initialState: InputModuleState = {
         error: null
     },
     locationsDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    statesDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -50,6 +60,11 @@ export const getAssociateCompanies = createAsyncThunk('inputModule/getAssociateC
 export const getLocations = createAsyncThunk('inputModule/getLocations', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.getLocations(data);
+})
+
+export const getStates = createAsyncThunk('inputModule/getStates', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getStates(data);
 })
 
 export const inputModuleSlice = createSlice({
@@ -107,6 +122,23 @@ export const inputModuleSlice = createSlice({
         .addCase(getLocations.rejected, (state, action: any) => {
             state.locationsDetails.status = 'failed'
             state.locationsDetails.error = action.error.message
+        })
+
+        .addCase(getStates.pending, (state) => {
+            state.statesDetails.status = 'loading'
+        })
+        .addCase(getStates.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.statesDetails.status = 'succeeded'
+                state.statesDetails.data = action.payload.data
+            } else {
+                state.statesDetails.status = 'failed'
+                state.statesDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getStates.rejected, (state, action: any) => {
+            state.statesDetails.status = 'failed'
+            state.statesDetails.error = action.error.message
         })
        
 })

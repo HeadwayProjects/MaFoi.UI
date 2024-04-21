@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
-import { getAllCompaniesDetails, getAssociateCompanies, getLocations } from '../../../redux/features/inputModule.slice';
+import { getAllCompaniesDetails, getAssociateCompanies, getLocations, getStates } from '../../../redux/features/inputModule.slice';
 import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
@@ -48,6 +48,7 @@ const HolidayList = () => {
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
+  const statesDetails = useAppSelector((state) => state.inputModule.statesDetails);
 
   const { exportHolidayList, exporting } = useExportHolidayList((response: any) => {
     downloadFileContent({
@@ -59,13 +60,14 @@ const HolidayList = () => {
       toast.error(ERROR_MESSAGES.DEFAULT);
   });
 
-  const holidays = holidayListDetails.data.list
-  const holidaysCount = holidayListDetails.data.count
-  const companies = companiesDetails.data.list
-  const associateCompanies = associateCompaniesDetails.data.list
-  const locations = locationsDetails.data.list
+  const holidays = holidayListDetails && holidayListDetails.data.list
+  const holidaysCount = holidayListDetails && holidayListDetails.data.count
+  const companies = companiesDetails && companiesDetails.data.list
+  const associateCompanies = associateCompaniesDetails && associateCompaniesDetails.data.list
+  const locations = locationsDetails && locationsDetails.data.list
+  const states = statesDetails && statesDetails.data.list
 
-  const loading = exporting|| editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading' || statesDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -316,13 +318,16 @@ const HolidayList = () => {
   }, [company])
 
   useEffect(() => {
-    const payload:any ={
+    const payload:any = {
       ...DEFAULT_OPTIONS_PAYLOAD, filters: [
           { columnName: 'companyId', value: associateCompany }],
       sort: { columnName: 'locationName', order: 'asc' }
     }
+    const statesPayload = {...DEFAULT_OPTIONS_PAYLOAD} 
+
     if(associateCompany){
       dispatch(getLocations(payload))
+      dispatch(getStates(statesPayload))
     }
   }, [associateCompany])
 
@@ -583,7 +588,7 @@ const HolidayList = () => {
 
   const onClickSortDate = () => {
     let type = 'asc'
-    setActiveSort('date'); 
+    setActiveSort('day'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -694,7 +699,7 @@ const HolidayList = () => {
   
   const onClickSortState = () => {
     let type = 'asc'
-    setActiveSort('state'); 
+    setActiveSort('stateId'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -741,7 +746,7 @@ const HolidayList = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'state', order: type },
+      sort: { columnName: 'stateId', order: type },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload))
@@ -825,6 +830,11 @@ const HolidayList = () => {
   }
 
   const onClickSubmitAdd = () => {
+
+    if(addButtonDisable){
+      return toast.error(ERROR_MESSAGES.FILL_ALL);
+    }
+
     let monthKey:any
 
     if(month === 'January'){
@@ -911,6 +921,11 @@ const HolidayList = () => {
   }
 
   const onClickSubmitEdit = () => {
+
+    if(addButtonDisable){
+      return toast.error(ERROR_MESSAGES.FILL_ALL);
+    }
+
     let monthKey:any
 
     if(month === 'January'){
@@ -1188,7 +1203,7 @@ const HolidayList = () => {
             {modalType === 'Add' && 
             <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
               <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
-              <Button variant='contained' disabled={addButtonDisable} onClick={onClickSubmitAdd}>Submit</Button>
+              <Button variant='contained' onClick={onClickSubmitAdd}>Submit</Button>
             </Box>
             }
           </>
@@ -1200,16 +1215,16 @@ const HolidayList = () => {
                   <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>Holiday Name</Typography>
                   <Typography color="#000000" sx={{fontSize:'20px'}} >{holiday.name}</Typography>
                   
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>State</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>State</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.state.name}</Typography>
 
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>Date</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Date</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{`${holiday.day}-${holiday.month > 9 ? holiday.month : '0'+ holiday.month}-${holiday.year}`}</Typography>
 
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>Year</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Year</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.year}</Typography>
 
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>Restricted</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Restricted</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.restricted ? "Yes": "No"}</Typography>
               </Box>
             }
@@ -1370,7 +1385,7 @@ const HolidayList = () => {
             {modalType === 'Edit' && 
             <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
               <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
-              <Button variant='contained' disabled={addButtonDisable} onClick={onClickSubmitEdit}>Submit</Button>
+              <Button variant='contained' onClick={onClickSubmitEdit}>Submit</Button>
             </Box>
             }
           </>
@@ -1430,6 +1445,7 @@ const HolidayList = () => {
                 <input
                   style={{ border:'1px solid #0F67B1', width:'500px', height:'40px', borderRadius:'5px'}}
                   type="file"
+                  accept='.xlsx, .xls, .csv'
                   onChange={(e) => setUploadData(e.target.files)}
                 />
                 <a href="/" style={{marginTop: '10px', width:'210px'}} onClick={downloadSample}>Dowload Sample Holiday</a>
@@ -1614,9 +1630,9 @@ const HolidayList = () => {
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
                                       <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Year</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'date'} direction={sortType} onClick={onClickSortDate}> Date</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'day'} direction={sortType} onClick={onClickSortDate}> Date</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Holiday Name</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'state'} direction={sortType} onClick={onClickSortState}> State</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'stateId'} direction={sortType} onClick={onClickSortState}> State</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'restricted'} direction={sortType} onClick={onClickSortRestricted}> Restricted</TableSortLabel></TableCell>
                                       <TableCell > Actions</TableCell>
                                   </TableRow>
