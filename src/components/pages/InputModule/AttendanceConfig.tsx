@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, Drawer, FormControl, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
-import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails,  } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
 import { useExportAttendanceConfig, } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { deleteAttendance, getAttendanceConfiguration, resetDeleteAttendanceDetails, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
+import { addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
 import  Select from "react-select";
 
 
@@ -52,8 +51,8 @@ const AttendanceConfig = () => {
   const attendanceConfigurationDetails = useAppSelector((state) => state.attendanceConfiguration.attendanceConfigurationDetails)
   const uploadAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.uploadAttendanceDetails)
   const deleteAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.deleteAttendanceDetails)
-  const addHolidayDetails = useAppSelector((state) => state.holidayList.addHolidayDetails)
-  const editHolidayDetails = useAppSelector((state) => state.holidayList.editHolidayDetails)
+  const addAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.addAttendanceDetails)
+  const editAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.editAttendanceDetails)
 
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
@@ -76,21 +75,18 @@ const AttendanceConfig = () => {
   const associateCompanies = associateCompaniesDetails && associateCompaniesDetails.data.list
   const locations = locationsDetails && locationsDetails.data.list
 
-  const loading = exporting || editHolidayDetails.status === 'loading' || uploadAttendanceDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteAttendanceDetails.status === 'loading' || attendanceConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || editAttendanceDetails.status === 'loading' || uploadAttendanceDetails.status === 'loading' || addAttendanceDetails.status === 'loading' || deleteAttendanceDetails.status === 'loading' || attendanceConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
   const [location, setLocation] = React.useState('');
-  const [year, setYear] = React.useState('');
-  const [month, setMonth] =  React.useState('');
-  const [day, setDay] = React.useState('');
   const [shiftName, setShiftName] = React.useState('')
   const [sessionOneStartTime, setSessionOneStartTime] = React.useState('')
   const [sessionOneEndTime, setSessionOneEndTime] = React.useState('')
   const [sessionTwoStartTime, setSessionTwoStartTime] = React.useState('')
   const [sessionTwoEndTime, setSessionTwoEndTime] = React.useState('')
   const [workDays, setWorkDays] = React.useState('')
-  const [weekDays, setWeekDays] = React.useState('')
+  const [weekDays, setWeekDays] = React.useState([])
 
   const [searchInput, setSearchInput] = React.useState('');
   const [activeSort, setActiveSort] = React.useState('companyId')
@@ -99,13 +95,9 @@ const AttendanceConfig = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [page, setPage] = React.useState(0);
 
-  const [holiday, setHoliday] = React.useState<any>({});
   const [attendanceDetails, setAtttendanceDetails] = React.useState<any>({});
   const [openModal, setOpenModal] = React.useState(false);
   const [modalType, setModalType] = React.useState('');
-
-  const [optionalHoliday, setOptionalHoliday] = React.useState(true);
-  const [restrictedHoliday, setRestrictedHoliday] = React.useState(true);
 
   const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
@@ -195,22 +187,6 @@ const AttendanceConfig = () => {
     setWeekDays(arr)
   };
 
-  const handleChangeOptionalHoliday = (event: any) => {
-    if('true' === event.target.value){
-      setOptionalHoliday(true)
-    }else{
-      setOptionalHoliday(false)
-    }
-  }
-
-  const handleChangeRestrictedHoliday = (event: any) => {
-    if('true' === event.target.value){
-      setRestrictedHoliday(true)
-    }else{
-      setRestrictedHoliday(false)
-    }
-  }
-
   useEffect(() => {
     const attendanceConfigurationDefaultPayload: any =  { 
       search: "",
@@ -277,26 +253,26 @@ const AttendanceConfig = () => {
   }, [deleteAttendanceDetails.status])
 
   useEffect(() => {
-    if(addHolidayDetails.status === 'succeeded'){
-      toast.success(`Holiday Added successfully.`)
-      dispatch(resetAddHolidayDetails())
-      setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setShiftName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
-      const HolidayListDefaultPayload: any =  { 
+    if(addAttendanceDetails.status === 'succeeded'){
+      toast.success(`Attendance Added successfully.`)
+      dispatch(resetAddAttendanceDetails())
+      setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([]) 
+      const attendanceDefaultPayload: any =  { 
         search: "",
         filters: [],
         pagination: {
           pageSize: 10,
           pageNumber: 1
         },
-        sort: { columnName: 'name', order: 'asc' },
+        sort: { columnName: 'companyId', order: 'asc' },
         "includeCentral": true
       }
-      dispatch(getHolidaysList(HolidayListDefaultPayload))
-    }else if(addHolidayDetails.status === 'failed'){
-      setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setShiftName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      dispatch(getAttendanceConfiguration(attendanceDefaultPayload))
+    }else if(addAttendanceDetails.status === 'failed'){
+      setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([])
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  }, [addHolidayDetails.status])
+  }, [addAttendanceDetails.status])
 
   useEffect(() => {
     if(uploadAttendanceDetails.status === 'succeeded'){
@@ -325,50 +301,27 @@ const AttendanceConfig = () => {
   }, [uploadAttendanceDetails])
 
   useEffect(() => {
-    if(editHolidayDetails.status === 'succeeded'){
-      toast.success(`Holiday Updated successfully.`)
-      dispatch(resetEditHolidayDetails())
-      setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setShiftName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
-      const HolidayListDefaultPayload: any =  { 
+    if(editAttendanceDetails.status === 'succeeded'){
+      toast.success(`Attendance Updated successfully.`)
+      dispatch(resetEditAttendanceDetails())
+      setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([])
+      const attendanceDefaultPayload: any =  { 
         search: "",
         filters: [],
         pagination: {
           pageSize: 10,
           pageNumber: 1
         },
-        sort: { columnName: 'name', order: 'asc' },
+        sort: { columnName: 'companyId', order: 'asc' },
         "includeCentral": true
       }
-      dispatch(getHolidaysList(HolidayListDefaultPayload))
-    }else if(editHolidayDetails.status === 'failed'){
-      setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setShiftName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      dispatch(getAttendanceConfiguration(attendanceDefaultPayload))
+    }else if(editAttendanceDetails.status === 'failed'){
+      setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([])
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  }, [editHolidayDetails.status])
+  }, [editAttendanceDetails.status])
 
-  const yearsList = []
-  const currentYear = new Date().getFullYear();
-
-  for (let i = currentYear; i >= 1950; i--) {
-    yearsList.push(i)
-  }
-
-  const monthList = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const daysList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
 
   const values = [{ label: "Select All", value: "all" }, {label: 'Monday', value: 'Monday'}, {label: 'Tuesday', value: 'Tuesday'}, {label: 'Wednesday', value: 'Wednesday'}, {label: 'Thursday', value: 'Thursday'}, {label: 'Friday', value: 'Friday'},{label: 'Saturday', value: 'Saturday'},{label: 'Sunday', value: 'Sunday'}]
  
@@ -407,9 +360,30 @@ const AttendanceConfig = () => {
   }
 
   const onClickSearch = () => {
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+
     const attendancePayload: any =  { 
       search: searchInput, 
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
@@ -421,9 +395,30 @@ const AttendanceConfig = () => {
   }
 
   const onClickClearSearch = () => {
+    
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+
     const attendancePayload: any =  { 
       search: '', 
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
@@ -468,7 +463,7 @@ const AttendanceConfig = () => {
 
     const attendanceConfigurationDefaultPayload: any =  { 
       search: "",
-      filters: [],
+      filters,
       pagination: {
         pageSize: 10,
         pageNumber: 1
@@ -753,7 +748,7 @@ const AttendanceConfig = () => {
     dispatch(uploadAttendance(formData))
   }
 
-  const addButtonDisable = !shiftName || !company || !associateCompany || !location || !year || !month || !day 
+  const addButtonDisable = !shiftName || !company || !associateCompany || !location || !sessionOneStartTime || !sessionOneEndTime || !sessionTwoStartTime || !sessionTwoEndTime || !workDays || !weekDays
 
   const onClickAdd = () => {
     setOpenModal(true)
@@ -761,110 +756,76 @@ const AttendanceConfig = () => {
     setCompany('')
     setAssociateCompany('')
     setLocation('')
+    setSessionOneStartTime('')
+    setSessionOneEndTime('')
+    setSessionTwoStartTime('')
+    setSessionTwoEndTime('')
+    setWorkDays('')
+    setWeekDays([])
   }
 
   const onClickSubmitAdd = () => {
+    if(addButtonDisable){
+      return toast.error(ERROR_MESSAGES.FILL_ALL);
+    }
+    const nameOfWeekDays = weekDays.map((each:any) => each.value).join(', ')
 
     const payload = {
       shiftName,
-      optionalHoliday,
+      session1StartTime: sessionOneStartTime,
+      session1EndTime: sessionOneEndTime,
+      session2StartTime: sessionTwoStartTime,
+      session2EndTime: sessionTwoEndTime,
+      workDaysPerWeek: workDays,
+      nameOfWeekDays,
       companyId: company,
       associateCompanyId: associateCompany,
       locationId: location.split('^')[0],
       stateId: location.split('^')[1],
-      year,
-      day,
-      restricted:restrictedHoliday,
       remarks: ''
     }
-    dispatch(addHoliday(payload))
+    dispatch(addAttendance(payload))
   }
 
   const onclickEdit = (attendanceDetails:any) => {
-    let monthKey:any
-    const monthNumber = holiday.month
-    if(monthNumber === 1){
-      monthKey = 'January'
-    }else if(monthNumber === 2){
-      monthKey = 'February'
-    }else if(monthNumber === 3){
-      monthKey = 'March'
-    }else if(monthNumber === 4){
-      monthKey = 'April'
-    }else if(monthNumber === 5){
-      monthKey = 'May'
-    }else if(monthNumber === 6){
-      monthKey = 'June'
-    }else if(monthNumber === 7){
-      monthKey = 'July'
-    }else if(monthNumber === 8){
-      monthKey = 'August'
-    }else if(monthNumber === 9){
-      monthKey = 'September'
-    }else if(monthNumber === 10){
-      monthKey = 'October'
-    }else if(monthNumber === 11){
-      monthKey = 'November'
-    }else if(monthNumber === 12){
-      monthKey = 'December'
-    }
+    const weekdaysArray = attendanceDetails && attendanceDetails.nameOfWeekDays.split(',').map((each: any) => {return {label: each, value: each}})
     setOpenModal(true)
     setModalType('Edit')
-    setShiftName(holiday.name)
-    setCompany(holiday.company.id)
-    setAssociateCompany(holiday.associateCompany.id)
-    setLocation(holiday.location.id+'^'+holiday.stateId)
-    setYear(holiday.year)
-    setMonth(monthKey)
-    setDay(holiday.day)
-    setOptionalHoliday(holiday.optionalHoliday)
-    setRestrictedHoliday(holiday.restricted)
-    setAtttendanceDetails(holiday)
+    setShiftName(attendanceDetails.shiftName)
+    setCompany(attendanceDetails.company.id)
+    setAssociateCompany(attendanceDetails.associateCompany.id)
+    setLocation(attendanceDetails.location.id+'^'+attendanceDetails.stateId)
+    setSessionOneStartTime(attendanceDetails.session1StartTime)
+    setSessionOneEndTime(attendanceDetails.session1EndTime)
+    setSessionTwoStartTime(attendanceDetails.session2StartTime)
+    setSessionTwoEndTime(attendanceDetails.session2EndTime)
+    setWorkDays(attendanceDetails.workDaysPerWeek)
+    setWeekDays(weekdaysArray)
+    setAtttendanceDetails(attendanceDetails)
   }
 
   const onClickSubmitEdit = () => {
-    let monthKey:any
 
-    if(month === 'January'){
-      monthKey = 1
-    }else if(month === 'February'){
-      monthKey = 2
-    }else if(month === 'March'){
-      monthKey = 3
-    }else if(month === 'April'){
-      monthKey = 4
-    }else if(month === 'May'){
-      monthKey = 5
-    }else if(month === 'June'){
-      monthKey = 6
-    }else if(month === 'July'){
-      monthKey = 7
-    }else if(month === 'August'){
-      monthKey = 8
-    }else if(month === 'September'){
-      monthKey = 9
-    }else if(month === 'October'){
-      monthKey = 10
-    }else if(month === 'November'){
-      monthKey = 11
-    }else if(month === 'December'){
-      monthKey = 12
+    if(addButtonDisable){
+      return toast.error(ERROR_MESSAGES.FILL_ALL);
     }
+    const nameOfWeekDays = weekDays.map((each:any) => each.value).join(', ')
     const payload = {
-      id:holiday.id,
-      name,
-      optionalHoliday,
+      shiftName,
+      session1StartTime: sessionOneStartTime,
+      session1EndTime: sessionOneEndTime,
+      session2StartTime: sessionTwoStartTime,
+      session2EndTime: sessionTwoEndTime,
+      workDaysPerWeek: workDays,
+      nameOfWeekDays,
+      id:attendanceDetails.id,
       companyId: company,
       associateCompanyId: associateCompany,
       locationId: location.split('^')[0],
       stateId: location.split('^')[1],
-      year,
-      month: monthKey,
-      day,
-      restricted: restrictedHoliday,
       remarks: ''
     }
-    dispatch(editHoliday(payload))
+    dispatch(editAttendance(payload))
   }
 
   const onclickView = (attendanceDetails:any) => {
@@ -934,7 +895,6 @@ const AttendanceConfig = () => {
     document.body.removeChild(a);
   }
 
-  console.log('weeokdays', weekDays)
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
 
@@ -944,7 +904,7 @@ const AttendanceConfig = () => {
           <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>{modalType} Attendance</Typography>
             <IconButton
-              onClick={() => {setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setShiftName(''); setRestrictedHoliday(true); setOptionalHoliday(true); }}
+              onClick={() => {setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([]) }}
             >
               <IoMdClose />
             </IconButton>
@@ -953,9 +913,8 @@ const AttendanceConfig = () => {
           {/*Add Modal */}
           <>
             {modalType === 'Add' && 
-            <Box sx={{ width: 400, padding:'20px'}}>
+            <Box sx={{ width: 400, padding:'15px'}}>
                  
-
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                     <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Company</InputLabel>
                     <MSelect
@@ -1006,6 +965,7 @@ const AttendanceConfig = () => {
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Shift Name</FormLabel>
                     <OutlinedInput
                       sx={{
                         '& input::placeholder':{
@@ -1105,9 +1065,9 @@ const AttendanceConfig = () => {
             }
 
             {modalType === 'Add' && 
-            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:2}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName('')}}>Cancel</Button>
-              <Button variant='contained' disabled={addButtonDisable} onClick={onClickSubmitAdd}>Submit</Button>
+            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center'}}>
+              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([])}}>Cancel</Button>
+              <Button variant='contained' onClick={onClickSubmitAdd}>Submit</Button>
             </Box>
             }
           </>
@@ -1139,7 +1099,7 @@ const AttendanceConfig = () => {
               </Box>
             }
             {modalType === 'View' && 
-              <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:15}}>
+              <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center'}}>
                 <Button variant='contained' onClick={() => {setOpenModal(false); setModalType('');  setAtttendanceDetails({})}}>Cancel</Button>
               </Box>
             }
@@ -1148,19 +1108,7 @@ const AttendanceConfig = () => {
           {/*Edit Modal */}
           <>
             {modalType === 'Edit' && 
-            <Box sx={{ width: 400, padding:'20px'}}>
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Name</FormLabel>
-                    {/* <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Name</InputLabel> */}
-                    <OutlinedInput
-                      placeholder='Name'
-                      value={name}
-                      onChange={(e) => setShiftName(e.target.value)}
-                      id="outlined-adornment-name"
-                      type='text'
-                      label="Name"
-                    />
-                  </FormControl>
+            <Box sx={{ width: 400, padding:'15px'}}>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                     <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Company</InputLabel>
@@ -1211,91 +1159,110 @@ const AttendanceConfig = () => {
                     </MSelect>
                   </FormControl>
 
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Shift Name</FormLabel>
+                    <OutlinedInput
+                      sx={{
+                        '& input::placeholder':{
+                          fontSize:'14px'
+                        }
+                      }}
+                      placeholder='Shift Name'
+                      value={shiftName}
+                      onChange={(e) => setShiftName(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
+                  </FormControl>
+
                   <Box sx={{display:'flex'}}>
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Year</InputLabel>
-                      <MSelect
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={year}
-                        label="Year"
-                        onChange={(e) => setYear(e.target.value)}
-                      >
-                        {yearsList && yearsList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </MSelect>
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 Start Time</FormLabel>
+                      <OutlinedInput
+                        placeholder='Start Time'
+                        value={sessionOneStartTime}
+                        onChange={(e) => setSessionOneStartTime(e.target.value)}
+                        id="outlined-adornment-name"
+                        type='text'
+                      />
                     </FormControl>
 
                     <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Month</InputLabel>
-                      <MSelect
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={month}
-                        label="Month"
-                        onChange={(e) => setMonth(e.target.value)}
-                      >
-                        {monthList && monthList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </MSelect>
+                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 End Time</FormLabel>
+                      <OutlinedInput
+                        placeholder='End Time'
+                        value={sessionOneEndTime}
+                        onChange={(e) => setSessionOneEndTime(e.target.value)}
+                        id="outlined-adornment-name"
+                        type='text'
+                      />
+                    </FormControl>
+                  </Box> 
+
+                  <Box sx={{display:'flex'}}>
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 Start Time</FormLabel>
+                      <OutlinedInput
+                        placeholder='Start Time'
+                        value={sessionTwoStartTime}
+                        onChange={(e) => setSessionTwoStartTime(e.target.value)}
+                        id="outlined-adornment-name"
+                        type='text'
+                      />
                     </FormControl>
 
                     <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Day</InputLabel>
-                      <MSelect
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={day}
-                        label="Day"
-                        onChange={(e) => setDay(e.target.value)}
-                      >
-                        {daysList && daysList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </MSelect>
+                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 End Time</FormLabel>
+                      <OutlinedInput
+                        placeholder='End Time'
+                        value={sessionTwoEndTime}
+                        onChange={(e) => setSessionTwoEndTime(e.target.value)}
+                        id="outlined-adornment-name"
+                        type='text'
+                      />
                     </FormControl>
-
-                  </Box>
+                  </Box> 
                   
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Optional Holiday</FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue={true}
-                      name="radio-buttons-group"
-                      value={optionalHoliday}
-                      onChange={handleChangeOptionalHoliday}
-                    >
-                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
-                      <FormControlLabel value={false} control={<Radio />} label="No" />
-                    </RadioGroup>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Total Working Days Per Week</FormLabel>
+                    <OutlinedInput
+                      placeholder='Work days'
+                      value={workDays}
+                      onChange={(e) => setWorkDays(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Restricted</FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue={true}
-                      name="radio-buttons-group"
-                      value={restrictedHoliday}
-                      onChange={handleChangeRestrictedHoliday}
-                    >
-                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
-                      <FormControlLabel value={false} control={<Radio />} label="No" />
-                    </RadioGroup>
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Week Days</FormLabel>
+                    <Select
+                      options={values}
+                      isClearable={true}
+                      className="basic-multi-select"
+                      classNamePrefix="Select"
+                      placeholder='Week Days'
+                      isMulti
+                      value={weekDays}
+                      closeMenuOnSelect={false}
+                      onChange={(selected:any) => {
+                          selected.length &&
+                          selected.find((option:any) => option.value === "all")
+                          ? handleChangeWeekDays(values.slice(1))
+                          : !true
+                          ? handleChangeWeekDays((selected && selected.value) || null)
+                          : handleChangeWeekDays(selected);
+                      }}
+                      styles={customStyles}
+                    />
                   </FormControl>
-
             </Box>
             }
 
             {modalType === 'Edit' && 
-            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setShiftName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
-              <Button variant='contained' disabled={addButtonDisable} onClick={onClickSubmitEdit}>Submit</Button>
+            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center'}}>
+              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); ; setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([])}}>Cancel</Button>
+              <Button variant='contained' onClick={onClickSubmitEdit}>Submit</Button>
             </Box>
             }
           </>

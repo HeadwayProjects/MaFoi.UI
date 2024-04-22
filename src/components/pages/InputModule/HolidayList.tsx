@@ -179,7 +179,7 @@ const HolidayList = () => {
   
   const handleChangeYear = (event:any) => {
     setYear('')
-    setYear(event.target.value);
+    setYear(event.target.value.toString());
     const HolidayListPayload: any =  { 
       search: searchInput, 
       filters: [
@@ -197,7 +197,7 @@ const HolidayList = () => {
         },
         {
           columnName:'year',
-          value: event.target.value
+          value: event.target.value.toString()
         }
       ],
       pagination: {
@@ -260,7 +260,7 @@ const HolidayList = () => {
         },
         {
           columnName:'month',
-          value: event.target.value
+          value: monthKey.toString()
         }
       ],
       pagination: {
@@ -502,9 +502,42 @@ const HolidayList = () => {
   }
 
   const onClickSearch = () => {
+    
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'companyId',
+        value: month
+      })
+    }
+    
     const HolidayListPayload: any =  { 
       search: searchInput, 
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
@@ -516,9 +549,42 @@ const HolidayList = () => {
   }
 
   const onClickClearSearch = () => {
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'companyId',
+        value: month
+      })
+    }
+
     const HolidayListPayload: any =  { 
       search: '', 
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
@@ -1631,6 +1697,7 @@ const HolidayList = () => {
                                   <TableRow>
                                       <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Year</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'day'} direction={sortType} onClick={onClickSortDate}> Date</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'day'} direction={sortType} onClick={onClickSortDate}> Company</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Holiday Name</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'stateId'} direction={sortType} onClick={onClickSortState}> State</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'restricted'} direction={sortType} onClick={onClickSortRestricted}> Restricted</TableSortLabel></TableCell>
@@ -1646,6 +1713,7 @@ const HolidayList = () => {
                                   >   
                                       <TableCell >{each.year}</TableCell>
                                       <TableCell >{`${each.day > 9 ? each.day : '0'+ each.day}-${each.month > 9 ? each.month : '0'+ each.month}-${each.year}`}</TableCell>
+                                      <TableCell >{each.company.name}</TableCell>
                                       <TableCell >{each.name}</TableCell>
                                       <TableCell >{each.state.name}</TableCell>
                                       <TableCell >{each.restricted ? 'Yes' : 'No'}</TableCell>

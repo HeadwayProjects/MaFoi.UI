@@ -18,7 +18,7 @@ export class InputModuleService {
         return await api.post(url, data)
     }
     
-    public async getStates(data: any) {
+    public async getStatesDetails(data: any) {
         const url = `/api/State/GetAll`
         return await api.post(url, data)
     }

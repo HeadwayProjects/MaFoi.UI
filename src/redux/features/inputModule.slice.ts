@@ -64,7 +64,7 @@ export const getLocations = createAsyncThunk('inputModule/getLocations', async (
 
 export const getStates = createAsyncThunk('inputModule/getStates', async (data: any) => {
     const inputModuleService = new InputModuleService();
-    return await inputModuleService.getStates(data);
+    return await inputModuleService.getStatesDetails(data);
 })
 
 export const inputModuleSlice = createSlice({

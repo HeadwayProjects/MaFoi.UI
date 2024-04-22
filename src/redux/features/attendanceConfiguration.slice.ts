@@ -17,6 +17,16 @@ interface AttendanceConfigurationState {
         data: any,
         error: string | null
     },
+    addAttendanceDetails: { 
+        status: string,
+        data: any,
+        error: string | null
+    },
+    editAttendanceDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    }
 }
 
 const initialState: AttendanceConfigurationState = { 
@@ -35,6 +45,16 @@ const initialState: AttendanceConfigurationState = {
         data: '',
         error: null
     },
+    addAttendanceDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    editAttendanceDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
 } as AttendanceConfigurationState
 
 export const getAttendanceConfiguration = createAsyncThunk('attendanceConfiguration/getAttendanceConfiguration', async (data: any) => {
@@ -47,9 +67,19 @@ export const uploadAttendance = createAsyncThunk('attendanceConfiguration/upload
     return await inputModuleService.uploadAttendanceConfiguration(data);
 })
 
-export const deleteAttendance = createAsyncThunk('holidayList/deleteHoliday', async (id: any) => {
+export const deleteAttendance = createAsyncThunk('attendanceConfiguration/deleteAttendance', async (id: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.deleteAttendanceConfiguration(id);
+})
+
+export const addAttendance = createAsyncThunk('attendanceConfiguration/addAttendance', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.addAttendanceConfiguration(data);
+})
+
+export const editAttendance = createAsyncThunk('attendanceConfiguration/editAttendance', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.editAttendanceConfiguration(data);
 })
 
 export const attendanceConfigurationSlice = createSlice({
@@ -65,6 +95,20 @@ export const attendanceConfigurationSlice = createSlice({
         },
         resetDeleteAttendanceDetails: (state) => {
             state.deleteAttendanceDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetAddAttendanceDetails: (state) => {
+            state.addAttendanceDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetEditAttendanceDetails: (state) => {
+            state.editAttendanceDetails = {
                 status: 'idle',
                 data: '',
                 error: null
@@ -122,8 +166,42 @@ export const attendanceConfigurationSlice = createSlice({
             state.deleteAttendanceDetails.status = 'failed'
             state.deleteAttendanceDetails.error = action.error.message
         })
+        
+        .addCase(addAttendance.pending, (state) => {
+            state.addAttendanceDetails.status = 'loading'
+        })
+        .addCase(addAttendance.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.addAttendanceDetails.status = 'succeeded'
+                state.addAttendanceDetails.data = action.payload.data
+            } else {
+                state.addAttendanceDetails.status = 'failed'
+                state.addAttendanceDetails.error = action.payload.message;
+            }
+        })
+        .addCase(addAttendance.rejected, (state, action: any) => {
+            state.addAttendanceDetails.status = 'failed'
+            state.addAttendanceDetails.error = action.error.message
+        })
+
+        .addCase(editAttendance.pending, (state) => {
+            state.editAttendanceDetails.status = 'loading'
+        })
+        .addCase(editAttendance.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.editAttendanceDetails.status = 'succeeded'
+                state.editAttendanceDetails.data = action.payload.data
+            } else {
+                state.editAttendanceDetails.status = 'failed'
+                state.editAttendanceDetails.error = action.payload.message;
+            }
+        })
+        .addCase(editAttendance.rejected, (state, action: any) => {
+            state.editAttendanceDetails.status = 'failed'
+            state.editAttendanceDetails.error = action.error.message
+        })
 })
   
-export const { resetUploadAttendanceDetails, resetDeleteAttendanceDetails } = attendanceConfigurationSlice.actions
+export const { resetUploadAttendanceDetails, resetDeleteAttendanceDetails, resetAddAttendanceDetails, resetEditAttendanceDetails } = attendanceConfigurationSlice.actions
 
 export default attendanceConfigurationSlice.reducer
