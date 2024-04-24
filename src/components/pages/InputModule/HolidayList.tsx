@@ -1581,7 +1581,7 @@ const HolidayList = () => {
 
                       <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Company</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             value={company}
@@ -1600,7 +1600,7 @@ const HolidayList = () => {
 
                       <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Associate Company</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -1620,7 +1620,7 @@ const HolidayList = () => {
 
                       <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>States</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -1640,7 +1640,7 @@ const HolidayList = () => {
 
                       <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Location</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -1664,7 +1664,7 @@ const HolidayList = () => {
 
                       <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Year</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -1684,7 +1684,7 @@ const HolidayList = () => {
 
                       <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Month</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -1704,7 +1704,7 @@ const HolidayList = () => {
 
                       <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Search</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                           <OutlinedInput
                             value={searchInput}

@@ -15,7 +15,7 @@ import { Alert } from 'react-bootstrap';
 import { addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
 import  Select from "react-select";
 import { addLeave, deleteLeave, editLeave, getLeaveConfiguration, resetAddLeaveDetails, resetDeleteLeaveDetails, resetEditLeaveDetails, resetGetLeaveDetailsStatus, resetUploadLeavesDetails, uploadLeaves } from '../../../redux/features/leaveConfiguration.slice';
-import { EMPLOYEMENT_TYPES } from '../../common/Constants';
+import { EMPLOYEMENT_TYPES, EZYCOMP_LEAVE_TYPES } from '../../common/Constants';
 
 
 const style = {
@@ -70,6 +70,7 @@ const LeaveConfiguration = () => {
   const associateCompanies = associateCompaniesDetails && associateCompaniesDetails.data.list
   const locations = locationsDetails && locationsDetails.data.list
   const employementTypes = EMPLOYEMENT_TYPES
+  const ezycompLeaveTypes = EZYCOMP_LEAVE_TYPES
 
   const loading = exporting || editLeaveDetails.status === 'loading' || uploadLeavesDetails.status === 'loading' || addLeaveDetails.status === 'loading' || deleteLeaveDetails.status === 'loading' || leaveConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
@@ -883,14 +884,18 @@ const LeaveConfiguration = () => {
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel htmlFor="outlined-adornment-name">Ezycomp Leave</InputLabel>
-                    <OutlinedInput
-                      label='Ezycomp Leave'
+                    <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Ezycomp Leave</InputLabel>
+                    <MSelect
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
                       value={ezycompLeave}
+                      label="Employement Types"
                       onChange={(e) => setEzycompLeave(e.target.value)}
-                      id="outlined-adornment-name"
-                      type='text'
-                    />
+                    >
+                      {ezycompLeaveTypes && ezycompLeaveTypes.map((each:any) => {
+                          return <MenuItem value={each}>{each}</MenuItem>
+                      })}
+                    </MSelect>
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
@@ -1052,14 +1057,18 @@ const LeaveConfiguration = () => {
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel htmlFor="outlined-adornment-name">Ezycomp Leave</InputLabel>
-                    <OutlinedInput
-                      label='Ezycomp Leave'
+                    <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Ezycomp Leave</InputLabel>
+                    <MSelect
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
                       value={ezycompLeave}
+                      label="Employement Types"
                       onChange={(e) => setEzycompLeave(e.target.value)}
-                      id="outlined-adornment-name"
-                      type='text'
-                    />
+                    >
+                      {ezycompLeaveTypes && ezycompLeaveTypes.map((each:any) => {
+                          return <MenuItem value={each}>{each}</MenuItem>
+                      })}
+                    </MSelect>
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">

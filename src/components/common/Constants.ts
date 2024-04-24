@@ -136,4 +136,5 @@ export const SEARCH_FIELDS = [
 
 export const SMTP_PORTS = ['25', '465', '587'];
 
-export  const EMPLOYEMENT_TYPES = ['Full Time', 'Part Time', 'Contract', 'Daily workers']
+export const EMPLOYEMENT_TYPES = ['Full Time', 'Part Time', 'Contract', 'Daily workers']
+export const EZYCOMP_LEAVE_TYPES = ['PL', 'EL', 'AL', 'SL', 'CL', 'ML']
