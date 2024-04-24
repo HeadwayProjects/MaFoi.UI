@@ -1,19 +1,21 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, Drawer, FormControl, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
-import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
-import { useExportHolidayList } from '../../../backend/exports';
+import { useExportAttendanceConfig, useExportLeaveConfig, } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { getLeaveConfiguration } from '../../../redux/features/leaveConfiguration.slice';
+import { addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
+import  Select from "react-select";
+import { addLeave, deleteLeave, editLeave, getLeaveConfiguration, resetAddLeaveDetails, resetDeleteLeaveDetails, resetEditLeaveDetails, resetGetLeaveDetailsStatus, resetUploadLeavesDetails, uploadLeaves } from '../../../redux/features/leaveConfiguration.slice';
+import { EMPLOYEMENT_TYPES } from '../../common/Constants';
 
 
 const style = {
@@ -42,18 +44,18 @@ const LeaveConfiguration = () => {
 
   const leaveConfigurationDetails = useAppSelector((state) => state.leaveConfiguration.leaveConfigurationDetails)
 
-  const deleteHolidayDetails = useAppSelector((state) => state.holidayList.deleteHolidayDetails)
-  const addHolidayDetails = useAppSelector((state) => state.holidayList.addHolidayDetails)
-  const uploadHolidayDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
-  const editHolidayDetails = useAppSelector((state) => state.holidayList.editHolidayDetails)
+  const uploadLeavesDetails = useAppSelector((state) => state.leaveConfiguration.uploadLeavesDetails)
+  const deleteLeaveDetails = useAppSelector((state) => state.leaveConfiguration.deleteLeaveDetails)
+  const addLeaveDetails = useAppSelector((state) => state.leaveConfiguration.addLeaveDetails)
+  const editLeaveDetails = useAppSelector((state) => state.leaveConfiguration.editLeaveDetails)
 
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
 
-  const { exportHolidayList, exporting } = useExportHolidayList((response: any) => {
+  const { exportLeaveConfig, exporting } = useExportLeaveConfig((response: any) => {
     downloadFileContent({
-        name: 'HolidayList.xlsx',
+        name: 'Leaves.xlsx',
         type: response.headers['content-type'],
         content: response.data
     });
@@ -64,33 +66,34 @@ const LeaveConfiguration = () => {
   const leaves = leaveConfigurationDetails.data.list
   const leavesCount = leaveConfigurationDetails.data.count
 
-  const companies = companiesDetails.data.list
-  const associateCompanies = associateCompaniesDetails.data.list
-  const locations = locationsDetails.data.list
+  const companies = companiesDetails && companiesDetails.data.list
+  const associateCompanies = associateCompaniesDetails && associateCompaniesDetails.data.list
+  const locations = locationsDetails && locationsDetails.data.list
+  const employementTypes = EMPLOYEMENT_TYPES
 
-  const loading = exporting|| editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || leaveConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || editLeaveDetails.status === 'loading' || uploadLeavesDetails.status === 'loading' || addLeaveDetails.status === 'loading' || deleteLeaveDetails.status === 'loading' || leaveConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
   const [location, setLocation] = React.useState('');
-  const [year, setYear] = React.useState('');
-  const [month, setMonth] =  React.useState('');
-  const [day, setDay] = React.useState('');
-  const [name, setName] = React.useState('')
+  const [employmentType, setEmploymentType] = React.useState('');
+  const [ezycompLeave, setEzycompLeave] = React.useState('')
+
+  const [carryForward, setCarryForward] = React.useState(true);
+  const [leaveType, setLeaveType] = React.useState('')
+  const [frequency, setFrequency] = React.useState('')
+  const [totalLeaves, setTotalLeaves] = React.useState('')
 
   const [searchInput, setSearchInput] = React.useState('');
-  const [activeSort, setActiveSort] = React.useState('name')
+  const [activeSort, setActiveSort] = React.useState('companyId')
   const [sortType, setSortType] = React.useState<any>('asc')
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [page, setPage] = React.useState(0);
 
-  const [holiday, setHoliday] = React.useState<any>({});
+  const [leaveDetails, setLeaveDetails] = React.useState<any>({});
   const [openModal, setOpenModal] = React.useState(false);
   const [modalType, setModalType] = React.useState('');
-
-  const [optionalHoliday, setOptionalHoliday] = React.useState(true);
-  const [restrictedHoliday, setRestrictedHoliday] = React.useState(true);
 
   const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
@@ -99,11 +102,9 @@ const LeaveConfiguration = () => {
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany('')
-    setLocation('')
-    setYear('')
-    setMonth('')
+    setEmploymentType('')
     setCompany(event.target.value);
-    const HolidayListPayload: any =  { 
+    const leavesPayload: any =  { 
       search: searchInput, 
       filters: [
         {
@@ -115,18 +116,16 @@ const LeaveConfiguration = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
   };
 
   const handleChangeAssociateCompany = (event:any) => {
-    setLocation('')
-    setYear('')
-    setMonth('')
+    setEmploymentType('')
     setAssociateCompany(event.target.value);
-    const HolidayListPayload: any =  { 
+    const leavesPayload: any =  { 
       search: searchInput, 
       filters: [
         {
@@ -142,17 +141,15 @@ const LeaveConfiguration = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
   };
 
-  const handleChangeLocation = (event:any) => {
-    setYear('')
-    setMonth('')
-    setLocation(event.target.value);
-    const HolidayListPayload: any =  { 
+  const handleChangeEmployementType = (event:any) => {
+    setEmploymentType(event.target.value);
+    const leavesPayload: any =  { 
       search: searchInput, 
       filters: [
         {
@@ -164,7 +161,7 @@ const LeaveConfiguration = () => {
           value: associateCompany
         },
         {
-          columnName:'locationId',
+          columnName:'employeeType',
           value: event.target.value
         }
       ],
@@ -172,125 +169,21 @@ const LeaveConfiguration = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
   };
   
-  const handleChangeYear = (event:any) => {
-    setYear('')
-    setYear(event.target.value);
-    const HolidayListPayload: any =  { 
-      search: searchInput, 
-      filters: [
-        {
-          columnName:'companyId',
-          value: company
-        },
-        {
-          columnName:'associateCompanyId',
-          value: associateCompany
-        },
-        {
-          columnName:'locationId',
-          value: location
-        },
-        {
-          columnName:'year',
-          value: event.target.value
-        }
-      ],
-      pagination: {
-        pageSize: rowsPerPage,
-        pageNumber: page+1
-      },
-      sort: { columnName: 'name', order: 'asc' },
-      "includeCentral": true
-    }
-    dispatch(getHolidaysList(HolidayListPayload))
-  };
-  
-  const handleChangeMonth = (event:any) => {
-    setMonth(event.target.value);
-    const monthName = event.target.value
-    let monthKey:any
-    if(monthName === 'January'){
-      monthKey = 1
-    }else if(monthName === 'February'){
-      monthKey = 2
-    }else if(monthName === 'March'){
-      monthKey = 3
-    }else if(monthName === 'April'){
-      monthKey = 4
-    }else if(monthName === 'May'){
-      monthKey = 5
-    }else if(monthName === 'June'){
-      monthKey = 6
-    }else if(monthName === 'July'){
-      monthKey = 7
-    }else if(monthName === 'August'){
-      monthKey = 8
-    }else if(monthName === 'September'){
-      monthKey = 9
-    }else if(monthName === 'October'){
-      monthKey = 10
-    }else if(monthName === 'November'){
-      monthKey = 11
-    }else if(monthName === 'December'){
-      monthKey = 12
-    }
-    const HolidayListPayload: any =  { 
-      search: searchInput, 
-      filters: [
-        {
-          columnName:'companyId',
-          value: company
-        },
-        {
-          columnName:'associateCompanyId',
-          value: associateCompany
-        },
-        {
-          columnName:'locationId',
-          value: location
-        },
-        {
-          columnName:'year',
-          value: year
-        },
-        {
-          columnName:'month',
-          value: event.target.value
-        }
-      ],
-      pagination: {
-        pageSize: rowsPerPage,
-        pageNumber: page+1
-      },
-      sort: { columnName: 'name', order: 'asc' },
-      "includeCentral": true
-    }
-    dispatch(getHolidaysList(HolidayListPayload))
-  };
-
   const handleChangeSearchInput = (event:any) => {
     setSearchInput(event.target.value)
   }
 
-  const handleChangeOptionalHoliday = (event: any) => {
+  const handleChangeCarryForward = (event: any) => {
     if('true' === event.target.value){
-      setOptionalHoliday(true)
+      setCarryForward(true)
     }else{
-      setOptionalHoliday(false)
-    }
-  }
-
-  const handleChangeRestrictedHoliday = (event: any) => {
-    if('true' === event.target.value){
-      setRestrictedHoliday(true)
-    }else{
-      setRestrictedHoliday(false)
+      setCarryForward(false)
     }
   }
 
@@ -334,125 +227,102 @@ const LeaveConfiguration = () => {
 
     }else if(leaveConfigurationDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
+      resetGetLeaveDetailsStatus()
     }
   },[leaveConfigurationDetails.status])
 
   useEffect(() => {
-    if(deleteHolidayDetails.status === 'succeeded'){
-      toast.success(`${holiday.name} deleted successfully.`)
-      setHoliday({})
-      dispatch(resetDeleteHolidayDetails())
+    if(deleteLeaveDetails.status === 'succeeded'){
+      toast.success(`Leave deleted successfully.`)
+      setLeaveDetails({})
+      dispatch(resetDeleteLeaveDetails())
       setOpenDeleteModal(false)
-      const HolidayListDefaultPayload: any =  { 
+      const leavesPayload: any =  { 
         search: "",
         filters: [],
         pagination: {
           pageSize: 10,
           pageNumber: 1
         },
-        sort: { columnName: 'name', order: 'asc' },
+        sort: { columnName: 'ezycompLeave', order: 'asc' },
         "includeCentral": true
       }
-      dispatch(getHolidaysList(HolidayListDefaultPayload))
-    }else if(deleteHolidayDetails.status === 'failed'){
+      dispatch(getLeaveConfiguration(leavesPayload))
+    }else if(deleteLeaveDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  }, [deleteHolidayDetails.status])
+  }, [deleteLeaveDetails.status])
 
   useEffect(() => {
-    if(addHolidayDetails.status === 'succeeded'){
-      toast.success(`Holiday Added successfully.`)
-      dispatch(resetAddHolidayDetails())
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
-      const HolidayListDefaultPayload: any =  { 
+    if(addLeaveDetails.status === 'succeeded'){
+      toast.success(`Leave Added successfully.`)
+      dispatch(resetAddLeaveDetails())
+      setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)
+      const leavesPayload: any =  { 
         search: "",
         filters: [],
         pagination: {
           pageSize: 10,
           pageNumber: 1
         },
-        sort: { columnName: 'name', order: 'asc' },
+        sort: { columnName: 'ezycompLeave', order: 'asc' },
         "includeCentral": true
       }
-      dispatch(getHolidaysList(HolidayListDefaultPayload))
-    }else if(addHolidayDetails.status === 'failed'){
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      dispatch(getLeaveConfiguration(leavesPayload))
+    }else if(addLeaveDetails.status === 'failed'){
+      setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  }, [addHolidayDetails.status])
+  }, [addLeaveDetails.status])
 
   useEffect(() => {
-    if(uploadHolidayDetails.status === 'succeeded'){
-      if(uploadHolidayDetails.data.size === 0){
-        toast.success(`Holiday List Uploaded successfully.`)
-        dispatch(resetUploadHolidayDetails())
+    if(uploadLeavesDetails.status === 'succeeded'){
+      if(uploadLeavesDetails.data.size === 0){
+        toast.success(`Leaves Uploaded successfully.`)
+        dispatch(resetUploadLeavesDetails())
         setOpenUploadModal(false)
         setUploadError(false)
-        const HolidayListDefaultPayload: any =  { 
+        const leavesPayload: any =  { 
           search: "",
           filters: [],
           pagination: {
             pageSize: 10,
             pageNumber: 1
           },
-          sort: { columnName: 'name', order: 'asc' },
+          sort: { columnName: 'ezycompLeave', order: 'asc' },
           "includeCentral": true
         }
-        dispatch(getHolidaysList(HolidayListDefaultPayload))
+        dispatch(getLeaveConfiguration(leavesPayload))
       }else{
         setUploadError(true)
       }
-    }else if(uploadHolidayDetails.status === 'failed'){
+    }else if(uploadLeavesDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  }, [uploadHolidayDetails])
+  }, [uploadLeavesDetails.status])
 
   useEffect(() => {
-    if(editHolidayDetails.status === 'succeeded'){
-      toast.success(`Holiday Updated successfully.`)
-      dispatch(resetEditHolidayDetails())
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
-      const HolidayListDefaultPayload: any =  { 
+    if(editLeaveDetails.status === 'succeeded'){
+      toast.success(`Attendance Updated successfully.`)
+      dispatch(resetEditLeaveDetails())
+      setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)
+      const leavesPayload: any =  { 
         search: "",
         filters: [],
         pagination: {
           pageSize: 10,
           pageNumber: 1
         },
-        sort: { columnName: 'name', order: 'asc' },
+        sort: { columnName: 'ezycompLeave', order: 'asc' },
         "includeCentral": true
       }
-      dispatch(getHolidaysList(HolidayListDefaultPayload))
-    }else if(editHolidayDetails.status === 'failed'){
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      dispatch(getLeaveConfiguration(leavesPayload))
+    }else if(editLeaveDetails.status === 'failed'){
+      setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  }, [editHolidayDetails.status])
-
-  const yearsList = []
-  const currentYear = new Date().getFullYear();
-
-  for (let i = currentYear; i >= 1950; i--) {
-    yearsList.push(i)
-  }
-
-  const monthList = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const daysList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
-
+  }, [editLeaveDetails.status])
+ 
   const onClickExport = () => {
     const filters = []
     if(company){
@@ -467,26 +337,14 @@ const LeaveConfiguration = () => {
         value: associateCompany
       })
     }
-    if(location){
+    if(employmentType){
       filters.push({
-        columnName:'locationId',
-        value: location
-      })
-    }
-    if(year){
-      filters.push({
-        columnName:'year',
-        value: year
-      })
-    }
-    if(month){
-      filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'employeeType',
+        value: employmentType
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const leavesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
@@ -496,35 +354,77 @@ const LeaveConfiguration = () => {
       sort: { columnName: activeSort, order: sortType },
       "includeCentral": true
     }
-    exportHolidayList({ ...HolidayListPayload, pagination: null });
+    exportLeaveConfig({ ...leavesPayload, pagination: null });
   }
 
   const onClickSearch = () => {
-    const HolidayListPayload: any =  { 
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(employmentType){
+      filters.push({
+        columnName:'employeeType',
+        value: employmentType
+      })
+    }
+
+    const leavesPayload: any =  { 
       search: searchInput, 
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
   }
 
   const onClickClearSearch = () => {
-    const HolidayListPayload: any =  { 
+    
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(employmentType){
+      filters.push({
+        columnName:'employeeType',
+        value: employmentType
+      })
+    }
+
+    const leavesPayload: any =  { 
       search: '', 
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
     setSearchInput('')
   }
 
@@ -551,30 +451,30 @@ const LeaveConfiguration = () => {
         value: associateCompany
       })
     }
-    if(location){
+    if(employmentType){
       filters.push({
-        columnName:'locationId',
-        value: location
+        columnName:'employeeType',
+        value: employmentType
       })
     }
 
-    const leaveConfigurationPayload: any =  { 
-      search: searchInput, 
+    const leavesPayload: any =  { 
+      search: "",
       filters,
       pagination: {
-        pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageSize: 10,
+        pageNumber: 1
       },
       sort: { columnName: 'ezycompLeave', order: type },
       "includeCentral": true
     }
-    dispatch(getLeaveConfiguration(leaveConfigurationPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
     
   }
 
-  const onClickSortDate = () => {
+  const onClickSortLeaveType = () => {
     let type = 'asc'
-    setActiveSort('date'); 
+    setActiveSort('leaveType'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -595,41 +495,29 @@ const LeaveConfiguration = () => {
         value: associateCompany
       })
     }
-    if(location){
+    if(employmentType){
       filters.push({
-        columnName:'locationId',
-        value: location
-      })
-    }
-    if(year){
-      filters.push({
-        columnName:'year',
-        value: year
-      })
-    }
-    if(month){
-      filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'employeeType',
+        value: employmentType
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const leavesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'day', order: type },
+      sort: { columnName: 'leaveType', order: type },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload)) 
+    dispatch(getLeaveConfiguration(leavesPayload)) 
   }
 
-  const onClickSortName = () => {
+  const onClickSortCreditFrequency = () => {
     let type = 'asc'
-    setActiveSort('name'); 
+    setActiveSort('creditFrequency'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -650,42 +538,30 @@ const LeaveConfiguration = () => {
         value: associateCompany
       })
     }
-    if(location){
+    if(employmentType){
       filters.push({
-        columnName:'locationId',
-        value: location
-      })
-    }
-    if(year){
-      filters.push({
-        columnName:'year',
-        value: year
-      })
-    }
-    if(month){
-      filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'employeeType',
+        value: employmentType
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const leavesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: type },
+      sort: { columnName: 'creditFrequency', order: type },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
     
   }
   
-  const onClickSortState = () => {
+  const onClickSortTotalLeaves = () => {
     let type = 'asc'
-    setActiveSort('state'); 
+    setActiveSort('totalLeaves'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -706,42 +582,30 @@ const LeaveConfiguration = () => {
         value: associateCompany
       })
     }
-    if(location){
+    if(employmentType){
       filters.push({
-        columnName:'locationId',
-        value: location
-      })
-    }
-    if(year){
-      filters.push({
-        columnName:'year',
-        value: year
-      })
-    }
-    if(month){
-      filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'employeeType',
+        value: employmentType
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const leavesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'state', order: type },
+      sort: { columnName: 'totalLeaves', order: type },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
     
   }
-
-  const onClickSortRestricted = () => {
+  
+  const onClickSortEmployeeType = () => {
     let type = 'asc'
-    setActiveSort('restricted'); 
+    setActiveSort('employeeType'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -762,39 +626,27 @@ const LeaveConfiguration = () => {
         value: associateCompany
       })
     }
-    if(location){
+    if(employmentType){
       filters.push({
-        columnName:'locationId',
-        value: location
-      })
-    }
-    if(year){
-      filters.push({
-        columnName:'year',
-        value: year
-      })
-    }
-    if(month){
-      filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'employeeType',
+        value: employmentType
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const leavesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'restricted', order: type },
+      sort: { columnName: 'employeeType', order: type },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
     
   }
-
+  
   const onClickUpload = () => {
     setOpenUploadModal(true)
   }
@@ -802,10 +654,10 @@ const LeaveConfiguration = () => {
   const onClickSubmitUpload = () => {
     const formData = new FormData();
     formData.append('file', uploadData[0]);
-    dispatch(uploadHoliday(formData))
+    dispatch(uploadLeaves(formData))
   }
 
-  const addButtonDisable = !name || !company || !associateCompany || !location || !year || !month || !day 
+  const addButtonDisable = !ezycompLeave || !company || !associateCompany || !location || !employmentType || !leaveType || !frequency || !totalLeaves
 
   const onClickAdd = () => {
     setOpenModal(true)
@@ -813,195 +665,128 @@ const LeaveConfiguration = () => {
     setCompany('')
     setAssociateCompany('')
     setLocation('')
+    setEzycompLeave('')
+    setEmploymentType('')
+    setLeaveType('')
+    setFrequency('')
+    setTotalLeaves('')
+    setCarryForward(true)
   }
 
   const onClickSubmitAdd = () => {
-    let monthKey:any
-
-    if(month === 'January'){
-      monthKey = 1
-    }else if(month === 'February'){
-      monthKey = 2
-    }else if(month === 'March'){
-      monthKey = 3
-    }else if(month === 'April'){
-      monthKey = 4
-    }else if(month === 'May'){
-      monthKey = 5
-    }else if(month === 'June'){
-      monthKey = 6
-    }else if(month === 'July'){
-      monthKey = 7
-    }else if(month === 'August'){
-      monthKey = 8
-    }else if(month === 'September'){
-      monthKey = 9
-    }else if(month === 'October'){
-      monthKey = 10
-    }else if(month === 'November'){
-      monthKey = 11
-    }else if(month === 'December'){
-      monthKey = 12
+    if(addButtonDisable){
+      return toast.error(ERROR_MESSAGES.FILL_ALL);
     }
+
     const payload = {
-      name,
-      optionalHoliday,
+      ezycompLeave,
+      leaveType,
+      totalLeaves,
+      creditFrequency: frequency,
+      carryForward,
+      employeeType: employmentType,
       companyId: company,
       associateCompanyId: associateCompany,
       locationId: location.split('^')[0],
       stateId: location.split('^')[1],
-      year,
-      month: monthKey,
-      day,
-      restricted:restrictedHoliday,
       remarks: ''
     }
-    dispatch(addHoliday(payload))
+    dispatch(addLeave(payload))
   }
 
-  const onclickEdit = (holiday:any) => {
-    let monthKey:any
-    const monthNumber = holiday.month
-    if(monthNumber === 1){
-      monthKey = 'January'
-    }else if(monthNumber === 2){
-      monthKey = 'February'
-    }else if(monthNumber === 3){
-      monthKey = 'March'
-    }else if(monthNumber === 4){
-      monthKey = 'April'
-    }else if(monthNumber === 5){
-      monthKey = 'May'
-    }else if(monthNumber === 6){
-      monthKey = 'June'
-    }else if(monthNumber === 7){
-      monthKey = 'July'
-    }else if(monthNumber === 8){
-      monthKey = 'August'
-    }else if(monthNumber === 9){
-      monthKey = 'September'
-    }else if(monthNumber === 10){
-      monthKey = 'October'
-    }else if(monthNumber === 11){
-      monthKey = 'November'
-    }else if(monthNumber === 12){
-      monthKey = 'December'
-    }
+  const onclickEdit = (leaveDetails:any) => {
     setOpenModal(true)
     setModalType('Edit')
-    setName(holiday.name)
-    setCompany(holiday.company.id)
-    setAssociateCompany(holiday.associateCompany.id)
-    setLocation(holiday.location.id+'^'+holiday.stateId)
-    setYear(holiday.year)
-    setMonth(monthKey)
-    setDay(holiday.day)
-    setOptionalHoliday(holiday.optionalHoliday)
-    setRestrictedHoliday(holiday.restricted)
-    setHoliday(holiday)
+    setEzycompLeave(leaveDetails.ezycompLeave)
+    setCompany(leaveDetails.company.id)
+    setAssociateCompany(leaveDetails.associateCompany.id)
+    setLocation(leaveDetails.location.id+'^'+leaveDetails.stateId)
+    setEmploymentType(leaveDetails.employeeType)
+    setLeaveType(leaveDetails.leaveType)
+    setFrequency(leaveDetails.creditFrequency)
+    setTotalLeaves(leaveDetails.totalLeaves)
+    setCarryForward(leaveDetails.carryForward)
+    setLeaveDetails(leaveDetails)
   }
 
   const onClickSubmitEdit = () => {
-    let monthKey:any
 
-    if(month === 'January'){
-      monthKey = 1
-    }else if(month === 'February'){
-      monthKey = 2
-    }else if(month === 'March'){
-      monthKey = 3
-    }else if(month === 'April'){
-      monthKey = 4
-    }else if(month === 'May'){
-      monthKey = 5
-    }else if(month === 'June'){
-      monthKey = 6
-    }else if(month === 'July'){
-      monthKey = 7
-    }else if(month === 'August'){
-      monthKey = 8
-    }else if(month === 'September'){
-      monthKey = 9
-    }else if(month === 'October'){
-      monthKey = 10
-    }else if(month === 'November'){
-      monthKey = 11
-    }else if(month === 'December'){
-      monthKey = 12
+    if(addButtonDisable){
+      return toast.error(ERROR_MESSAGES.FILL_ALL);
     }
     const payload = {
-      id:holiday.id,
-      name,
-      optionalHoliday,
+      id: leaveDetails.id,
+      ezycompLeave,
+      leaveType,
+      totalLeaves,
+      creditFrequency: frequency,
+      carryForward,
+      employeeType: employmentType,
       companyId: company,
       associateCompanyId: associateCompany,
       locationId: location.split('^')[0],
       stateId: location.split('^')[1],
-      year,
-      month: monthKey,
-      day,
-      restricted: restrictedHoliday,
       remarks: ''
     }
-    dispatch(editHoliday(payload))
+    dispatch(editLeave(payload))
   }
 
-  const onclickView = (holiday:any) => {
+  const onclickView = (leaveDetails:any) => {
     setOpenModal(true)
     setModalType('View')
-    setHoliday(holiday)
+    setLeaveDetails(leaveDetails)
   }
 
-  const onclickDelete = (holiday:any) => {
-    setHoliday(holiday)
+  const onclickDelete = (leaveDetails:any) => {
+    setLeaveDetails(leaveDetails)
     setOpenDeleteModal(true)
   }
  
   const onClickConfirmDelete = () => {
-    dispatch(deleteHoliday(holiday.id))
+    dispatch(deleteLeave(leaveDetails.id))
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    const HolidayListPayload: any =  { 
+    const leavesPayload: any =  { 
       search: '', 
       filters: [],
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: newPage+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
       "includeCentral": true
     }
 
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const HolidayListPayload: any =  { 
+    const leavesPayload: any =  { 
       search: '', 
       filters: [],
       pagination: {
         pageSize: parseInt(event.target.value, 10),
         pageNumber: 1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
       "includeCentral": true
     }
 
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getLeaveConfiguration(leavesPayload))
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
   
   const downloadSample = (e: any) => {
     preventDefault(e);
-    download('Sample Holidays.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/ActsTemplate.xlsx')
+    download('Sample Leaves.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/ActsTemplate.xlsx')
   }
 
   const downloadErrors = (e: any) => {
     preventDefault(e);
-    const data = uploadHolidayDetails.data;
+    const data = uploadLeavesDetails.data;
     const blob = new Blob([data])
     const URL = window.URL || window.webkitURL;
     const downloadUrl = URL.createObjectURL(blob);
@@ -1020,9 +805,9 @@ const LeaveConfiguration = () => {
       <Drawer anchor='right' open={openModal}>
         <Box  sx={{height:'100%',width: 500, display:'flex', flexDirection:'column'}}>
           <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>{modalType} Holiday List</Typography>
+            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>{modalType} Leave</Typography>
             <IconButton
-              onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); }}
+              onClick={() => {setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)}}
             >
               <IoMdClose />
             </IconButton>
@@ -1031,38 +816,26 @@ const LeaveConfiguration = () => {
           {/*Add Modal */}
           <>
             {modalType === 'Add' && 
-            <Box sx={{ width: 400, padding:'20px'}}>
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Name</FormLabel>
-                    {/* <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Name</InputLabel> */}
-                    <OutlinedInput
-                      placeholder='Name'
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      id="outlined-adornment-name"
-                      type='text'
-                      label="Name"
-                    />
-                  </FormControl>
-
+            <Box sx={{ width: '100%', padding:'15px'}}>
+                 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                     <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Company</InputLabel>
-                    <Select
+                    <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={company}
                       label="Company"
-                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
+                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setEmploymentType('')}}
                     >
                       {companies && companies.map((each:any) => {
                           return <MenuItem value={each.id}>{each.name}</MenuItem>
                       })}
-                    </Select>
+                    </MSelect>
                   </FormControl>
 
                   <FormControl disabled={!company} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
                     <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Associate Company</InputLabel>
-                    <Select
+                    <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={associateCompany}
@@ -1073,16 +846,16 @@ const LeaveConfiguration = () => {
                       {associateCompanies && associateCompanies.map((each:any) => {
                           return <MenuItem value={each.id}>{each.name}</MenuItem>
                       })}
-                    </Select>
+                    </MSelect>
                   </FormControl>
 
                   <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Locations</InputLabel>
-                    <Select
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Location</InputLabel>
+                    <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={location}
-                      label="Locations"
+                      label="Location"
                       disabled={!associateCompany}
                       onChange={(e) => setLocation(e.target.value)}
                     >
@@ -1091,95 +864,90 @@ const LeaveConfiguration = () => {
                           const { state } = cities || {};
                           return <MenuItem value={each.locationId+'^'+state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                       })}
-                    </Select>
+                    </MSelect>
                   </FormControl>
 
-                  <Box sx={{display:'flex'}}>
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Year</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={year}
-                        label="Year"
-                        onChange={(e) => setYear(e.target.value)}
-                      >
-                        {yearsList && yearsList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Employement Types</InputLabel>
+                    <MSelect
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
+                      value={employmentType}
+                      label="Employement Types"
+                      onChange={(e) => setEmploymentType(e.target.value)}
+                    >
+                      {employementTypes && employementTypes.map((each:any) => {
+                          return <MenuItem value={each}>{each}</MenuItem>
+                      })}
+                    </MSelect>
+                  </FormControl>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Month</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={month}
-                        label="Month"
-                        onChange={(e) => setMonth(e.target.value)}
-                      >
-                        {monthList && monthList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <InputLabel htmlFor="outlined-adornment-name">Ezycomp Leave</InputLabel>
+                    <OutlinedInput
+                      label='Ezycomp Leave'
+                      value={ezycompLeave}
+                      onChange={(e) => setEzycompLeave(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
+                  </FormControl>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Day</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={day}
-                        label="Day"
-                        onChange={(e) => setDay(e.target.value)}
-                      >
-                        {daysList && daysList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <InputLabel htmlFor="outlined-adornment-name">Leave Type</InputLabel>
+                    <OutlinedInput
+                      label='Leave Type'
+                      value={leaveType}
+                      onChange={(e) => setLeaveType(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
+                  </FormControl>
 
-                  </Box>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <InputLabel htmlFor="outlined-adornment-name">Frequency</InputLabel>
+                    <OutlinedInput
+                      label='Frequency'
+                      value={frequency}
+                      onChange={(e) => setFrequency(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
+                  </FormControl>
+
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <InputLabel htmlFor="outlined-adornment-name">Total Leaves</InputLabel>
+                    <OutlinedInput
+                      label='Total Leaves'
+                      value={totalLeaves}
+                      onChange={(e) => setTotalLeaves(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
+                  </FormControl>
                   
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Optional Holiday</FormLabel>
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Carry Forward</FormLabel>
                     <RadioGroup
                       row
                       aria-labelledby="demo-radio-buttons-group-label"
                       defaultValue="true"
                       name="radio-buttons-group"
-                      value={optionalHoliday}
-                      onChange={handleChangeOptionalHoliday}
+                      value={carryForward}
+                      onChange={handleChangeCarryForward}
                     >
                       <FormControlLabel value="true" control={<Radio />} label="Yes" />
                       <FormControlLabel value="false" control={<Radio />} label="No" />
                     </RadioGroup>
                   </FormControl>
 
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Restricted</FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue="true"
-                      name="radio-buttons-group"
-                      value={restrictedHoliday}
-                      onChange={handleChangeRestrictedHoliday}
-                    >
-                      <FormControlLabel value="true" control={<Radio />} label="Yes" />
-                      <FormControlLabel value="false" control={<Radio />} label="No" />
-                    </RadioGroup>
-                  </FormControl>
-
-                  
             </Box>
             }
 
             {modalType === 'Add' && 
-            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
-              <Button variant='contained' disabled={addButtonDisable} onClick={onClickSubmitAdd}>Submit</Button>
+            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center'}}>
+              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)}}>Cancel</Button>
+              <Button variant='contained' onClick={onClickSubmitAdd}>Submit</Button>
             </Box>
             }
           </>
@@ -1188,25 +956,28 @@ const LeaveConfiguration = () => {
           <>
             {modalType === "View" && 
               <Box sx={{ width: '100%', padding:'20px'}}>
-                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>Holiday Name</Typography>
-                  <Typography color="#000000" sx={{fontSize:'20px'}} >{holiday.name}</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>Ezycomp Leave</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{leaveDetails.ezycompLeave}</Typography>
                   
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>State</Typography>
-                  <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.state.name}</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Leave Type</Typography>
+                  <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.leaveType}</Typography>
 
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>Date</Typography>
-                  <Typography color="#000000" sx={{fontSize:'22px'}}>{`${holiday.day}-${holiday.month > 9 ? holiday.month : '0'+ holiday.month}-${holiday.year}`}</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Frequency</Typography>
+                  <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.creditFrequency}</Typography>
 
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>Year</Typography>
-                  <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.year}</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Total Leaves</Typography>
+                  <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.totalLeaves}</Typography>
 
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>Restricted</Typography>
-                  <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.restricted ? "Yes": "No"}</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Employement Type</Typography>
+                  <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.employeeType}</Typography>
+
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Carry Forward</Typography>
+                  <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.carryForward ? "Yes" : "No"}</Typography>
               </Box>
             }
             {modalType === 'View' && 
-              <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:15}}>
-                <Button variant='contained' onClick={() => {setOpenModal(false); setModalType('');  setHoliday({})}}>Cancel</Button>
+              <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:6}}>
+                <Button variant='contained' onClick={() => {setOpenModal(false); setModalType('');  setLeaveDetails({})}}>Cancel</Button>
               </Box>
             }
           </>
@@ -1214,38 +985,26 @@ const LeaveConfiguration = () => {
           {/*Edit Modal */}
           <>
             {modalType === 'Edit' && 
-            <Box sx={{ width: 400, padding:'20px'}}>
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Name</FormLabel>
-                    {/* <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Name</InputLabel> */}
-                    <OutlinedInput
-                      placeholder='Name'
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      id="outlined-adornment-name"
-                      type='text'
-                      label="Name"
-                    />
-                  </FormControl>
+            <Box sx={{ width: 400, padding:'15px'}}>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                     <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Company</InputLabel>
-                    <Select
+                    <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={company}
                       label="Company"
-                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
+                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setEmploymentType('')}}
                     >
                       {companies && companies.map((each:any) => {
                           return <MenuItem value={each.id}>{each.name}</MenuItem>
                       })}
-                    </Select>
+                    </MSelect>
                   </FormControl>
 
                   <FormControl disabled={!company} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
                     <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Associate Company</InputLabel>
-                    <Select
+                    <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={associateCompany}
@@ -1256,16 +1015,16 @@ const LeaveConfiguration = () => {
                       {associateCompanies && associateCompanies.map((each:any) => {
                           return <MenuItem value={each.id}>{each.name}</MenuItem>
                       })}
-                    </Select>
+                    </MSelect>
                   </FormControl>
 
                   <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Locations</InputLabel>
-                    <Select
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Location</InputLabel>
+                    <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={location}
-                      label="Locations"
+                      label="Location"
                       disabled={!associateCompany}
                       onChange={(e) => setLocation(e.target.value)}
                     >
@@ -1274,84 +1033,80 @@ const LeaveConfiguration = () => {
                           const { state } = cities || {};
                           return <MenuItem value={each.locationId+'^'+state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                       })}
-                    </Select>
+                    </MSelect>
                   </FormControl>
 
-                  <Box sx={{display:'flex'}}>
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Year</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={year}
-                        label="Year"
-                        onChange={(e) => setYear(e.target.value)}
-                      >
-                        {yearsList && yearsList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Employement Types</InputLabel>
+                    <MSelect
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
+                      value={employmentType}
+                      label="Employement Types"
+                      onChange={(e) => setEmploymentType(e.target.value)}
+                    >
+                      {employementTypes && employementTypes.map((each:any) => {
+                          return <MenuItem value={each}>{each}</MenuItem>
+                      })}
+                    </MSelect>
+                  </FormControl>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Month</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={month}
-                        label="Month"
-                        onChange={(e) => setMonth(e.target.value)}
-                      >
-                        {monthList && monthList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <InputLabel htmlFor="outlined-adornment-name">Ezycomp Leave</InputLabel>
+                    <OutlinedInput
+                      label='Ezycomp Leave'
+                      value={ezycompLeave}
+                      onChange={(e) => setEzycompLeave(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
+                  </FormControl>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Day</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={day}
-                        label="Day"
-                        onChange={(e) => setDay(e.target.value)}
-                      >
-                        {daysList && daysList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <InputLabel htmlFor="outlined-adornment-name">Leave Type</InputLabel>
+                    <OutlinedInput
+                      label='Leave Type'
+                      value={leaveType}
+                      onChange={(e) => setLeaveType(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
+                  </FormControl>
 
-                  </Box>
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <InputLabel htmlFor="outlined-adornment-name">Frequency</InputLabel>
+                    <OutlinedInput
+                      label='Frequency'
+                      value={frequency}
+                      onChange={(e) => setFrequency(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
+                  </FormControl>
+
+                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <InputLabel htmlFor="outlined-adornment-name">Total Leaves</InputLabel>
+                    <OutlinedInput
+                      label='Total Leaves'
+                      value={totalLeaves}
+                      onChange={(e) => setTotalLeaves(e.target.value)}
+                      id="outlined-adornment-name"
+                      type='text'
+                    />
+                  </FormControl>
                   
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Optional Holiday</FormLabel>
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Carry Forward</FormLabel>
                     <RadioGroup
                       row
                       aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue={true}
+                      defaultValue="true"
                       name="radio-buttons-group"
-                      value={optionalHoliday}
-                      onChange={handleChangeOptionalHoliday}
+                      value={carryForward}
+                      onChange={handleChangeCarryForward}
                     >
-                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
-                      <FormControlLabel value={false} control={<Radio />} label="No" />
-                    </RadioGroup>
-                  </FormControl>
-
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Restricted</FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue={true}
-                      name="radio-buttons-group"
-                      value={restrictedHoliday}
-                      onChange={handleChangeRestrictedHoliday}
-                    >
-                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
-                      <FormControlLabel value={false} control={<Radio />} label="No" />
+                      <FormControlLabel value="true" control={<Radio />} label="Yes" />
+                      <FormControlLabel value="false" control={<Radio />} label="No" />
                     </RadioGroup>
                   </FormControl>
 
@@ -1359,9 +1114,9 @@ const LeaveConfiguration = () => {
             }
 
             {modalType === 'Edit' && 
-            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
-              <Button variant='contained' disabled={addButtonDisable} onClick={onClickSubmitEdit}>Submit</Button>
+            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center'}}>
+              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); ; setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)}}>Cancel</Button>
+              <Button variant='contained' onClick={onClickSubmitEdit}>Submit</Button>
             </Box>
             }
           </>
@@ -1375,7 +1130,7 @@ const LeaveConfiguration = () => {
       >
         <Box sx={style}>
           <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Delete Holiday List</Typography>
+            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Delete Leave</Typography>
             <IconButton
               onClick={() => setOpenDeleteModal(false)}
             >
@@ -1384,8 +1139,7 @@ const LeaveConfiguration = () => {
           </Box>
           <Box sx={{padding:'20px', backgroundColor:'#ffffff'}}>
             <Box sx={{display:'flex', alignItems:'center'}}>
-              <Typography >Are you sure you want to delete the Holiday, &nbsp;</Typography>
-              <Typography variant='h5'>{holiday && holiday.name}</Typography>
+              <Typography >Are you sure you want to delete the Leave</Typography>
             </Box>
             <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center', mt:2}}>
               <Button variant='outlined' color="error" onClick={() => setOpenDeleteModal(false)}>No</Button>
@@ -1402,7 +1156,7 @@ const LeaveConfiguration = () => {
       >
         <Box sx={styleUploadModal}>
           <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Upload Holiday List</Typography>
+            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Upload Leaves</Typography>
             <IconButton
               onClick={() => {setOpenUploadModal(false); setUploadError(false)}}
             >
@@ -1415,15 +1169,17 @@ const LeaveConfiguration = () => {
               There are few errors identified in the file uploaded. Correct the errors and upload again. <a href="/" onClick={downloadErrors}>Click here</a> to download the errors.
             </Alert>
           }
+
           <Box sx={{padding:'20px', backgroundColor:'#ffffff', display:'flex', justifyContent:'center'}}>
             <Box sx={{display:'flex', flexDirection:'column'}}>
                 <Typography mb={1} color={'#0F67B1'} fontWeight={'bold'} sx={{font: 'normal normal normal 24px/28px Calibri'}}>Upload File <span style={{color:'red'}}>*</span></Typography>
                 <input
                   style={{ border:'1px solid #0F67B1', width:'500px', height:'40px', borderRadius:'5px'}}
                   type="file"
+                  accept='.xlsx, .xls, .csv'
                   onChange={(e) => setUploadData(e.target.files)}
                 />
-                <a href="/" style={{marginTop: '10px', width:'210px'}} onClick={downloadSample}>Dowload Sample Holiday</a>
+                <a href="/" style={{marginTop: '10px', width:'210px'}} onClick={downloadSample}>Dowload Sample Leaves</a>
             </Box>
           </Box>
 
@@ -1447,7 +1203,7 @@ const LeaveConfiguration = () => {
                         <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
-                          <button onClick={onClickExport} disabled={!leaves} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !leaves ? '#707070': '#ffffff' , color: !leaves ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} disabled={leaves && leaves <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (leaves && leaves <=0) ? '#707070': '#ffffff' , color: (leaves && leaves <=0) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
@@ -1455,7 +1211,7 @@ const LeaveConfiguration = () => {
                       <Box sx={{ mr:1}}>
                         <Typography mb={1}>Company</Typography>
                         <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                          <Select
+                          <MSelect
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             value={company}
                             displayEmpty
@@ -1465,16 +1221,16 @@ const LeaveConfiguration = () => {
                               Select Company
                             </MenuItem>
                             {companies && companies.map((each:any) => {
-                                return <MenuItem value={each.id}>{each.name}</MenuItem>
+                                return <MenuItem  sx={{width:'240px', whiteSpace:'initial'}} value={each.id}>{each.name}</MenuItem>
                             })}
-                          </Select>
+                          </MSelect>
                         </FormControl>
                       </Box>
 
                       <Box sx={{ mr:1}}>
                         <Typography mb={1}>Associate Company</Typography>
                         <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                          <Select
+                          <MSelect
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
                             value={associateCompany}
@@ -1487,29 +1243,27 @@ const LeaveConfiguration = () => {
                             {associateCompanies && associateCompanies.map((each:any) => {
                               return <MenuItem value={each.id}>{each.name}</MenuItem>
                             })}
-                          </Select>
+                          </MSelect>
                         </FormControl>
                       </Box>
 
                       <Box sx={{ mr:1}}>
-                        <Typography mb={1}>Employee Type</Typography>
+                        <Typography mb={1}>Employment Types</Typography>
                         <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                          <Select
+                          <MSelect
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
-                            value={location}
+                            value={employmentType}
                             disabled={!associateCompany}
-                            onChange={handleChangeLocation}
+                            onChange={handleChangeEmployementType}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
-                              Select Location
+                              Select Employment Type
                             </MenuItem>
-                            {locations && locations.map((each:any) => {
-                              const { id, name, code, cities }: any = each.location || {};
-                              const { state } = cities || {};
-                              return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                            {employementTypes && employementTypes.map((each:any) => {
+                              return <MenuItem value={each}>{each}</MenuItem>
                             })}
-                          </Select>
+                          </MSelect>
                         </FormControl>
                       </Box>
 
@@ -1551,7 +1305,7 @@ const LeaveConfiguration = () => {
                 </div>
              </Box>
 
-            <Box sx={{paddingX: '20px'}}>
+             <Box sx={{paddingX: '20px'}}>
               {
                 leaves && leaves.length <= 0 ? 
 
@@ -1565,10 +1319,10 @@ const LeaveConfiguration = () => {
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
                                       <TableCell > <TableSortLabel active={activeSort === 'ezycompLeave'} direction={sortType} onClick={onClickSortEzycompLeave}> Ezycomp Leave</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'leaveType'} direction={sortType} onClick={onClickSortDate}> Leave Type</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'creditFrequency'} direction={sortType} onClick={onClickSortName}> Frequency</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'totalLeaves'} direction={sortType} onClick={onClickSortState}> Total Leaves</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'employeeType'} direction={sortType} onClick={onClickSortRestricted}> Employee Type</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'leaveType'} direction={sortType} onClick={onClickSortLeaveType}> Leave Type</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'creditFrequency'} direction={sortType} onClick={onClickSortCreditFrequency}> Frequency</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'totalLeaves'} direction={sortType} onClick={onClickSortTotalLeaves}> Total Leaves</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'employeeType'} direction={sortType} onClick={onClickSortEmployeeType}> Employee Type</TableSortLabel></TableCell>
                                       <TableCell > Actions</TableCell>
                                   </TableRow>
                               </TableHead>

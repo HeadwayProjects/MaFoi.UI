@@ -135,3 +135,5 @@ export const SEARCH_FIELDS = [
 ]
 
 export const SMTP_PORTS = ['25', '465', '587'];
+
+export  const EMPLOYEMENT_TYPES = ['Full Time', 'Part Time', 'Contract', 'Daily workers']

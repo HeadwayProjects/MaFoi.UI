@@ -12,7 +12,7 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
+import { addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetGetAttendanceDetailsStatus, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
 import  Select from "react-select";
 
 
@@ -227,6 +227,7 @@ const AttendanceConfig = () => {
 
     }else if(attendanceConfigurationDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
+      resetGetAttendanceDetailsStatus()
     }
   },[attendanceConfigurationDetails.status])
 
@@ -298,7 +299,7 @@ const AttendanceConfig = () => {
     }else if(uploadAttendanceDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  }, [uploadAttendanceDetails])
+  }, [uploadAttendanceDetails.status])
 
   useEffect(() => {
     if(editAttendanceDetails.status === 'succeeded'){
@@ -1349,7 +1350,7 @@ const AttendanceConfig = () => {
                         <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
-                          <button onClick={onClickExport} disabled={attendance && attendance <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (attendance && attendance <=0) ? '#707070': '#ffffff' , color: !attendance ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} disabled={attendance && attendance <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (attendance && attendance <=0) ? '#707070': '#ffffff' , color: (attendance && attendance <=0) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
@@ -1367,7 +1368,7 @@ const AttendanceConfig = () => {
                               Select Company
                             </MenuItem>
                             {companies && companies.map((each:any) => {
-                                return <MenuItem value={each.id}>{each.name}</MenuItem>
+                                return <MenuItem  sx={{width:'240px', whiteSpace:'initial'}} value={each.id}>{each.name}</MenuItem>
                             })}
                           </MSelect>
                         </FormControl>

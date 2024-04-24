@@ -76,6 +76,21 @@ export function useExportAttendanceConfig(onSuccess?: any, onError?: any) {
     return { exportAttendanceConfig, error, exporting };
 }
 
+export function useExportLeaveConfig(onSuccess?: any, onError?: any) {
+    const { mutate: exportLeaveConfig, error, isLoading: exporting } = useMutation(
+        ['exportLeaveConfig'],
+        async (payload: any) => await post('/api/Leave/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportLeaveConfig, error, exporting };
+}
+
 export function useExportActivities(onSuccess?: any, onError?: any) {
     const { mutate: exportActivity, error, isLoading: exporting } = useMutation(
         ['exportActivity'],

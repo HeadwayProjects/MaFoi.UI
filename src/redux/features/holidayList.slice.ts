@@ -86,6 +86,9 @@ export const holidayListSlice = createSlice({
     name: 'holidayList',
     initialState,
     reducers: {
+        resetGetHolidayDetailsStatus: (state) => {
+            state.holidayListDetails.status = 'idle'
+        },
         resetDeleteHolidayDetails: (state) => {
             state.deleteHolidayDetails = {
                 status: 'idle',
@@ -202,6 +205,6 @@ export const holidayListSlice = createSlice({
         })
 })
   
-export const {resetDeleteHolidayDetails, resetAddHolidayDetails, resetUploadHolidayDetails, resetEditHolidayDetails } = holidayListSlice.actions
+export const {resetGetHolidayDetailsStatus, resetDeleteHolidayDetails, resetAddHolidayDetails, resetUploadHolidayDetails, resetEditHolidayDetails } = holidayListSlice.actions
 
 export default holidayListSlice.reducer

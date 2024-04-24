@@ -6,7 +6,7 @@ import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButt
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
-import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
+import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetGetHolidayDetailsStatus, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
 import { useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
@@ -65,15 +65,26 @@ const HolidayList = () => {
   const companies = companiesDetails && companiesDetails.data.list
   const associateCompanies = associateCompaniesDetails && associateCompaniesDetails.data.list
   const locations = locationsDetails && locationsDetails.data.list
-  const states = statesDetails && statesDetails.data.list
+  let states = locations && locations.map((each:any) => {
+    const { id, name, code, cities }: any = each.location || {};
+    const { state } = cities || {};
+    return {name: state.name, id: state.id}
+  })
 
+  states = states && states.filter((each:any, index:any, self:any) => {
+    if(index === self.findIndex((t:any) => t.id === each.id)){
+      return each
+    }
+  })
+  
   const loading = exporting || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading' || statesDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
+  const [stateName, setStateName] = React.useState('');
   const [location, setLocation] = React.useState('');
   const [year, setYear] = React.useState('');
-  const [month, setMonth] =  React.useState('');
+  const [month, setMonth] =  React.useState<any>('');
   const [day, setDay] = React.useState('');
   const [name, setName] = React.useState('')
 
@@ -147,6 +158,37 @@ const HolidayList = () => {
     dispatch(getHolidaysList(HolidayListPayload))
   };
 
+  const handleChangeStateName = (event:any) => {
+    setYear('')
+    setMonth('')
+    setLocation('')
+    setStateName(event.target.value);
+    const HolidayListPayload: any =  { 
+      search: searchInput, 
+      filters: [
+        {
+          columnName:'companyId',
+          value: company
+        },
+        {
+          columnName:'associateCompanyId',
+          value: associateCompany
+        },
+        {
+          columnName:'stateId',
+          value: event.target.value
+        }
+      ],
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'name', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getHolidaysList(HolidayListPayload))
+  }
+
   const handleChangeLocation = (event:any) => {
     setYear('')
     setMonth('')
@@ -161,6 +203,10 @@ const HolidayList = () => {
         {
           columnName:'associateCompanyId',
           value: associateCompany
+        },
+        {
+          columnName:'stateId',
+          value: stateName
         },
         {
           columnName:'locationId',
@@ -192,6 +238,10 @@ const HolidayList = () => {
           value: associateCompany
         },
         {
+          columnName:'stateId',
+          value: stateName
+        },
+        {
           columnName:'locationId',
           value: location
         },
@@ -211,34 +261,9 @@ const HolidayList = () => {
   };
   
   const handleChangeMonth = (event:any) => {
+    const monthKey = (monthList.findIndex((each) => each === event.target.value) + 1).toString()
     setMonth(event.target.value);
-    const monthName = event.target.value
-    let monthKey:any
-    if(monthName === 'January'){
-      monthKey = 1
-    }else if(monthName === 'February'){
-      monthKey = 2
-    }else if(monthName === 'March'){
-      monthKey = 3
-    }else if(monthName === 'April'){
-      monthKey = 4
-    }else if(monthName === 'May'){
-      monthKey = 5
-    }else if(monthName === 'June'){
-      monthKey = 6
-    }else if(monthName === 'July'){
-      monthKey = 7
-    }else if(monthName === 'August'){
-      monthKey = 8
-    }else if(monthName === 'September'){
-      monthKey = 9
-    }else if(monthName === 'October'){
-      monthKey = 10
-    }else if(monthName === 'November'){
-      monthKey = 11
-    }else if(monthName === 'December'){
-      monthKey = 12
-    }
+
     const HolidayListPayload: any =  { 
       search: searchInput, 
       filters: [
@@ -251,6 +276,10 @@ const HolidayList = () => {
           value: associateCompany
         },
         {
+          columnName:'stateId',
+          value: stateName
+        },
+        {
           columnName:'locationId',
           value: location
         },
@@ -260,7 +289,7 @@ const HolidayList = () => {
         },
         {
           columnName:'month',
-          value: monthKey.toString()
+          value: monthKey
         }
       ],
       pagination: {
@@ -336,6 +365,7 @@ const HolidayList = () => {
 
     }else if(holidayListDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
+      resetGetHolidayDetailsStatus()
     }
   },[holidayListDetails.status])
 
@@ -365,7 +395,7 @@ const HolidayList = () => {
     if(addHolidayDetails.status === 'succeeded'){
       toast.success(`Holiday Added successfully.`)
       dispatch(resetAddHolidayDetails())
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
       const HolidayListDefaultPayload: any =  { 
         search: "",
         filters: [],
@@ -378,7 +408,7 @@ const HolidayList = () => {
       }
       dispatch(getHolidaysList(HolidayListDefaultPayload))
     }else if(addHolidayDetails.status === 'failed'){
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [addHolidayDetails.status])
@@ -407,13 +437,13 @@ const HolidayList = () => {
     }else if(uploadHolidayDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  }, [uploadHolidayDetails])
+  }, [uploadHolidayDetails.status])
 
   useEffect(() => {
     if(editHolidayDetails.status === 'succeeded'){
       toast.success(`Holiday Updated successfully.`)
       dispatch(resetEditHolidayDetails())
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
       const HolidayListDefaultPayload: any =  { 
         search: "",
         filters: [],
@@ -426,7 +456,7 @@ const HolidayList = () => {
       }
       dispatch(getHolidaysList(HolidayListDefaultPayload))
     }else if(editHolidayDetails.status === 'failed'){
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [editHolidayDetails.status])
@@ -469,6 +499,12 @@ const HolidayList = () => {
         value: associateCompany
       })
     }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
     if(location){
       filters.push({
         columnName:'locationId',
@@ -483,8 +519,8 @@ const HolidayList = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString() 
       })
     }
 
@@ -502,7 +538,6 @@ const HolidayList = () => {
   }
 
   const onClickSearch = () => {
-    
     const filters = []
     if(company){
       filters.push({
@@ -514,6 +549,12 @@ const HolidayList = () => {
       filters.push({
         columnName:'associateCompanyId',
         value: associateCompany
+      })
+    }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
       })
     }
     if(location){
@@ -530,8 +571,8 @@ const HolidayList = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
       })
     }
     
@@ -563,6 +604,12 @@ const HolidayList = () => {
         value: associateCompany
       })
     }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
     if(location){
       filters.push({
         columnName:'locationId',
@@ -577,8 +624,8 @@ const HolidayList = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
       })
     }
 
@@ -619,6 +666,12 @@ const HolidayList = () => {
         value: associateCompany
       })
     }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
     if(location){
       filters.push({
         columnName:'locationId',
@@ -634,7 +687,7 @@ const HolidayList = () => {
     if(month){
       filters.push({
         columnName:'companyId',
-        value: month
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
       })
     }
 
@@ -675,6 +728,12 @@ const HolidayList = () => {
         value: associateCompany
       })
     }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
     if(location){
       filters.push({
         columnName:'locationId',
@@ -689,8 +748,8 @@ const HolidayList = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
       })
     }
 
@@ -730,6 +789,12 @@ const HolidayList = () => {
         value: associateCompany
       })
     }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
     if(location){
       filters.push({
         columnName:'locationId',
@@ -744,8 +809,8 @@ const HolidayList = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
       })
     }
 
@@ -786,6 +851,12 @@ const HolidayList = () => {
         value: associateCompany
       })
     }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
     if(location){
       filters.push({
         columnName:'locationId',
@@ -800,8 +871,8 @@ const HolidayList = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
       })
     }
 
@@ -842,6 +913,12 @@ const HolidayList = () => {
         value: associateCompany
       })
     }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
     if(location){
       filters.push({
         columnName:'locationId',
@@ -856,8 +933,8 @@ const HolidayList = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
-        value: month
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
       })
     }
 
@@ -892,6 +969,7 @@ const HolidayList = () => {
     setModalType('Add')
     setCompany('')
     setAssociateCompany('')
+    setStateName('')
     setLocation('')
   }
 
@@ -900,43 +978,16 @@ const HolidayList = () => {
     if(addButtonDisable){
       return toast.error(ERROR_MESSAGES.FILL_ALL);
     }
-
-    let monthKey:any
-
-    if(month === 'January'){
-      monthKey = 1
-    }else if(month === 'February'){
-      monthKey = 2
-    }else if(month === 'March'){
-      monthKey = 3
-    }else if(month === 'April'){
-      monthKey = 4
-    }else if(month === 'May'){
-      monthKey = 5
-    }else if(month === 'June'){
-      monthKey = 6
-    }else if(month === 'July'){
-      monthKey = 7
-    }else if(month === 'August'){
-      monthKey = 8
-    }else if(month === 'September'){
-      monthKey = 9
-    }else if(month === 'October'){
-      monthKey = 10
-    }else if(month === 'November'){
-      monthKey = 11
-    }else if(month === 'December'){
-      monthKey = 12
-    }
+    
     const payload = {
       name,
       optionalHoliday,
       companyId: company,
       associateCompanyId: associateCompany,
-      locationId: location.split('^')[0],
-      stateId: location.split('^')[1],
+      locationId: location,
+      stateId: stateName,
       year,
-      month: monthKey,
+      month: (monthList.findIndex((each) => each === month) + 1).toString(),
       day,
       restricted:restrictedHoliday,
       remarks: ''
@@ -945,90 +996,39 @@ const HolidayList = () => {
   }
 
   const onclickEdit = (holiday:any) => {
-    let monthKey:any
     const monthNumber = holiday.month
-    if(monthNumber === 1){
-      monthKey = 'January'
-    }else if(monthNumber === 2){
-      monthKey = 'February'
-    }else if(monthNumber === 3){
-      monthKey = 'March'
-    }else if(monthNumber === 4){
-      monthKey = 'April'
-    }else if(monthNumber === 5){
-      monthKey = 'May'
-    }else if(monthNumber === 6){
-      monthKey = 'June'
-    }else if(monthNumber === 7){
-      monthKey = 'July'
-    }else if(monthNumber === 8){
-      monthKey = 'August'
-    }else if(monthNumber === 9){
-      monthKey = 'September'
-    }else if(monthNumber === 10){
-      monthKey = 'October'
-    }else if(monthNumber === 11){
-      monthKey = 'November'
-    }else if(monthNumber === 12){
-      monthKey = 'December'
-    }
+    
     setOpenModal(true)
     setModalType('Edit')
     setName(holiday.name)
     setCompany(holiday.company.id)
     setAssociateCompany(holiday.associateCompany.id)
-    setLocation(holiday.location.id+'^'+holiday.stateId)
+    setLocation(holiday.location.id)
+    setStateName(holiday.stateId)
     setYear(holiday.year)
-    setMonth(monthKey)
+    setMonth((monthList.find((each, i) => i === (monthNumber-1))))
     setDay(holiday.day)
     setOptionalHoliday(holiday.optionalHoliday)
     setRestrictedHoliday(holiday.restricted)
     setHoliday(holiday)
   }
 
-  const onClickSubmitEdit = () => {
+  const onClickSubmitEdit = () => { 
 
     if(addButtonDisable){
       return toast.error(ERROR_MESSAGES.FILL_ALL);
     }
 
-    let monthKey:any
-
-    if(month === 'January'){
-      monthKey = 1
-    }else if(month === 'February'){
-      monthKey = 2
-    }else if(month === 'March'){
-      monthKey = 3
-    }else if(month === 'April'){
-      monthKey = 4
-    }else if(month === 'May'){
-      monthKey = 5
-    }else if(month === 'June'){
-      monthKey = 6
-    }else if(month === 'July'){
-      monthKey = 7
-    }else if(month === 'August'){
-      monthKey = 8
-    }else if(month === 'September'){
-      monthKey = 9
-    }else if(month === 'October'){
-      monthKey = 10
-    }else if(month === 'November'){
-      monthKey = 11
-    }else if(month === 'December'){
-      monthKey = 12
-    }
     const payload = {
       id:holiday.id,
       name,
       optionalHoliday,
       companyId: company,
       associateCompanyId: associateCompany,
-      locationId: location.split('^')[0],
-      stateId: location.split('^')[1],
+      locationId: location,
+      stateId: stateName,
       year,
-      month: monthKey,
+      month: (monthList.findIndex((each) => each === month) + 1).toString(),
       day,
       restricted: restrictedHoliday,
       remarks: ''
@@ -1112,7 +1112,7 @@ const HolidayList = () => {
           <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>{modalType} Holiday List</Typography>
             <IconButton
-              onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); }}
+              onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); }}
             >
               <IoMdClose />
             </IconButton>
@@ -1165,21 +1165,39 @@ const HolidayList = () => {
                       })}
                     </Select>
                   </FormControl>
-
+                      
                   <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>States</InputLabel>
+                    <Select
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
+                      value={stateName}
+                      label="States"
+                      disabled={!associateCompany}
+                      onChange={(e) => setStateName(e.target.value)}
+                    >
+                      {states && states.map((each:any) => {
+                        return <MenuItem value={each.id}>{each.name}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl disabled={!stateName} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
                     <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Location</InputLabel>
                     <Select
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={location}
                       label="Location"
-                      disabled={!associateCompany}
+                      disabled={!stateName}
                       onChange={(e) => setLocation(e.target.value)}
                     >
                       {locations && locations.map((each:any) => {
                           const { id, name, code, cities }: any = each.location || {};
                           const { state } = cities || {};
-                          return <MenuItem value={each.locationId+'^'+state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                          if(state.id === stateName){
+                            return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                          }
                       })}
                     </Select>
                   </FormControl>
@@ -1268,7 +1286,7 @@ const HolidayList = () => {
 
             {modalType === 'Add' && 
             <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
+              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
               <Button variant='contained' onClick={onClickSubmitAdd}>Submit</Button>
             </Box>
             }
@@ -1350,19 +1368,37 @@ const HolidayList = () => {
                   </FormControl>
 
                   <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>States</InputLabel>
+                    <Select
+                      labelId="demo-select-small-label"
+                      id="demo-select-small"
+                      value={stateName}
+                      label="States"
+                      disabled={!associateCompany}
+                      onChange={(e) => setStateName(e.target.value)}
+                    >
+                      {states && states.map((each:any) => {
+                        return <MenuItem value={each.id}>{each.name}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl disabled={!stateName} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
                     <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Location</InputLabel>
                     <Select
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={location}
                       label="Location"
-                      disabled={!associateCompany}
+                      disabled={!stateName}
                       onChange={(e) => setLocation(e.target.value)}
                     >
                       {locations && locations.map((each:any) => {
                           const { id, name, code, cities }: any = each.location || {};
                           const { state } = cities || {};
-                          return <MenuItem value={each.locationId+'^'+state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                          if(state.id === stateName){
+                            return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                          }
                       })}
                     </Select>
                   </FormControl>
@@ -1450,7 +1486,7 @@ const HolidayList = () => {
 
             {modalType === 'Edit' && 
             <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
+              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
               <Button variant='contained' onClick={onClickSubmitEdit}>Submit</Button>
             </Box>
             }
@@ -1538,7 +1574,7 @@ const HolidayList = () => {
                         <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
-                          <button onClick={onClickExport} disabled={holidays && holidays.length <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (holidays && holidays.length <=0) ? '#707070': '#ffffff' , color: !holidays ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} disabled={holidays && holidays.length <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (holidays && holidays.length <=0) ? '#707070': '#ffffff' , color: (holidays && holidays.length <=0) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
@@ -1556,7 +1592,7 @@ const HolidayList = () => {
                               Select Company
                             </MenuItem>
                             {companies && companies.map((each:any) => {
-                                return <MenuItem value={each.id}>{each.name}</MenuItem>
+                                return <MenuItem sx={{width:'240px', whiteSpace:'initial'}} value={each.id}>{each.name}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
@@ -1583,13 +1619,33 @@ const HolidayList = () => {
                       </Box>
 
                       <Box sx={{width:'100%', mr:1}}>
+                        <Typography mb={1}>States</Typography>
+                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                          <Select
+                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
+                            displayEmpty
+                            value={stateName}
+                            disabled={!associateCompany}
+                            onChange={handleChangeStateName}
+                          >
+                            <MenuItem disabled sx={{display:'none'}} value="">
+                              Select State
+                            </MenuItem>
+                            {states && states.map((each:any) => {
+                              return <MenuItem value={each.id}>{each.name}</MenuItem>
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Box>
+
+                      <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Location</Typography>
                         <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
                             value={location}
-                            disabled={!associateCompany}
+                            disabled={!stateName}
                             onChange={handleChangeLocation}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
@@ -1598,7 +1654,9 @@ const HolidayList = () => {
                             {locations && locations.map((each:any) => {
                               const { id, name, code, cities }: any = each.location || {};
                               const { state } = cities || {};
-                              return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                              if(state.id === stateName){
+                                return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                              }
                             })}
                           </Select>
                         </FormControl>

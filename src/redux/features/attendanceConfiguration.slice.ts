@@ -86,6 +86,9 @@ export const attendanceConfigurationSlice = createSlice({
     name: 'attendanceConfiguration',
     initialState,
     reducers: {
+        resetGetAttendanceDetailsStatus: (state) => {
+            state.attendanceConfigurationDetails.status = 'idle'
+        },
         resetUploadAttendanceDetails :  (state) => {
             state.uploadAttendanceDetails = {
                 status: 'idle',
@@ -202,6 +205,6 @@ export const attendanceConfigurationSlice = createSlice({
         })
 })
   
-export const { resetUploadAttendanceDetails, resetDeleteAttendanceDetails, resetAddAttendanceDetails, resetEditAttendanceDetails } = attendanceConfigurationSlice.actions
+export const { resetGetAttendanceDetailsStatus, resetUploadAttendanceDetails, resetDeleteAttendanceDetails, resetAddAttendanceDetails, resetEditAttendanceDetails } = attendanceConfigurationSlice.actions
 
 export default attendanceConfigurationSlice.reducer
