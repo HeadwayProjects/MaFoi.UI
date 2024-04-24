@@ -15,11 +15,11 @@ const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.MANAGER_DASHBOARD },
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.ESCALATION_DASHBOARD },
     {
-        id: 'input', url: '/input/employeeMasterUpload', icon: 'calendar', label: 'Input Module',
+        id: 'input', url: '/input', icon: 'calendar', label: 'Input Module',
         children: [
+            { id: 'input/dashboard', url: '/input/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/holidayList', url: '/input/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/leaveConfiguration', url: '/input/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'input/leaveMapping', url: '/input/leaveMapping', label: 'Leave Mapping', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/attendanceConfig', url: '/input/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/salaryComponents', url: '/input/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/stateRegisterConfiguration', url: '/input/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
