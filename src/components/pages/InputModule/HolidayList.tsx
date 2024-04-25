@@ -109,6 +109,7 @@ const HolidayList = () => {
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany('')
+    setStateName('')
     setLocation('')
     setYear('')
     setMonth('')
@@ -132,6 +133,7 @@ const HolidayList = () => {
   };
 
   const handleChangeAssociateCompany = (event:any) => {
+    setStateName('')
     setLocation('')
     setYear('')
     setMonth('')

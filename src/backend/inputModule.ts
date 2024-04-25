@@ -23,6 +23,23 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
+    // Dashboard
+    public async getEmployeeDashboardCounts(data: any) {
+        const url = `/api/Dashboard/EmployeeDashboardCounts`
+        return await api.post(url, data)
+    }
+
+    public async getEmployeeInputDashboard(data: any) {
+        const url = `/api/Dashboard/EmployeeInputDashboard`
+        return await api.post(url, data)
+    }
+
+    public async getEmployeeBackendCount(data: any) {
+        const url = `/api/Dashboard/EmployeeBackendCount`
+        return await api.post(url, data)
+    }
+
+
     // Holidays list
     public async fetchHolidaysList(data: any) {
         const url = `/api/Holiday/GetAll`
