@@ -139,4 +139,15 @@ export class InputModuleService {
         const url = `/api/StateRegisterConfiguration/GetAll`
         return await api.post(url, data)
     }
+    
+    //Employee Master
+    public async getEmployees(data: any) {
+        const url = `/api/Employee/GetAll`
+        return await api.post(url, data)
+    }
+
+    public async employeeUpload(data: any) {
+        const url = `/api/Configuration/UploadEmployeeMaster`
+        return await api.post(url, data, null, true)
+    }
 }

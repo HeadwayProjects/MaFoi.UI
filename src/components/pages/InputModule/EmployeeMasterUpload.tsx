@@ -13,6 +13,7 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
+import { employeeUpload, getEmployees } from '../../../redux/features/employeeMaster.slice';
 
 
 const style = {
@@ -39,6 +40,8 @@ const EmployeeMasterUpload = () => {
 
   const dispatch = useAppDispatch();
 
+  const employeeDetails = useAppSelector((state) => state.employeeMaster.employeesDetails)
+
   const holidayListDetails = useAppSelector((state) => state.holidayList.holidayListDetails)
   const deleteHolidayDetails = useAppSelector((state) => state.holidayList.deleteHolidayDetails)
   const addHolidayDetails = useAppSelector((state) => state.holidayList.addHolidayDetails)
@@ -58,6 +61,10 @@ const EmployeeMasterUpload = () => {
   }, () => {
       toast.error(ERROR_MESSAGES.DEFAULT);
   });
+
+  const employees = employeeDetails.data.list
+  const employeesCount = employeeDetails.data.count 
+  console.log("employees", employees, 'employeesCount', employeesCount)
 
   const holidays = holidayListDetails.data.list
   const holidaysCount = holidayListDetails.data.count
@@ -100,7 +107,7 @@ const EmployeeMasterUpload = () => {
     setYear('')
     setMonth('')
     setCompany(event.target.value);
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters: [
         {
@@ -115,7 +122,7 @@ const EmployeeMasterUpload = () => {
       sort: { columnName: 'name', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
   };
 
   const handleChangeAssociateCompany = (event:any) => {
@@ -123,7 +130,7 @@ const EmployeeMasterUpload = () => {
     setYear('')
     setMonth('')
     setAssociateCompany(event.target.value);
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters: [
         {
@@ -142,14 +149,14 @@ const EmployeeMasterUpload = () => {
       sort: { columnName: 'name', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
   };
 
   const handleChangeLocation = (event:any) => {
     setYear('')
     setMonth('')
     setLocation(event.target.value);
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters: [
         {
@@ -162,7 +169,7 @@ const EmployeeMasterUpload = () => {
         },
         {
           columnName:'locationId',
-          value: event.target.value
+          value: event.target.value.split('^')[0]
         }
       ],
       pagination: {
@@ -172,13 +179,13 @@ const EmployeeMasterUpload = () => {
       sort: { columnName: 'name', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
   };
   
   const handleChangeYear = (event:any) => {
     setYear('')
     setYear(event.target.value);
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters: [
         {
@@ -205,7 +212,7 @@ const EmployeeMasterUpload = () => {
       sort: { columnName: 'name', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
   };
   
   const handleChangeMonth = (event:any) => {
@@ -237,7 +244,7 @@ const EmployeeMasterUpload = () => {
     }else if(monthName === 'December'){
       monthKey = 12
     }
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters: [
         {
@@ -268,7 +275,7 @@ const EmployeeMasterUpload = () => {
       sort: { columnName: 'name', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
   };
 
   const handleChangeSearchInput = (event:any) => {
@@ -292,7 +299,7 @@ const EmployeeMasterUpload = () => {
   }
 
   useEffect(() => {
-    const HolidayListDefaultPayload: any =  { 
+    const employeesPayload: any =  { 
       search: "",
       filters: [],
       pagination: {
@@ -303,8 +310,8 @@ const EmployeeMasterUpload = () => {
       "includeCentral": true
     }
 
+    dispatch(getEmployees(employeesPayload))
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
-    dispatch(getHolidaysList(HolidayListDefaultPayload))
     dispatch(getAllCompaniesDetails(companiesPayload))
   },[])
 
@@ -805,13 +812,27 @@ const EmployeeMasterUpload = () => {
   }
 
   const onClickUpload = () => {
-    setOpenUploadModal(true)
+    if(!company || !associateCompany || !location || !year || !month ){
+      return toast.error(ERROR_MESSAGES.FILL_ALL);
+    }else{
+      setOpenUploadModal(true)
+    }
   }
 
   const onClickSubmitUpload = () => {
     const formData = new FormData();
     formData.append('file', uploadData[0]);
-    dispatch(uploadHoliday(formData))
+    formData.append('Remarks', 'NA')
+    formData.append('Year', year)
+    formData.append('Month', month)
+    formData.append('Mapped', 'false')
+    formData.append('ConfigurationType', 'Employee')
+    formData.append('CompanyId', company)
+    formData.append('AssociateCompanyId', associateCompany)
+    formData.append('LocationId', location.split('^')[0])
+    formData.append('StateId', location.split('^')[1])
+
+    dispatch(employeeUpload(formData))
   }
 
   const addButtonDisable = !name || !company || !associateCompany || !location || !year || !month || !day 
@@ -1021,70 +1042,6 @@ const EmployeeMasterUpload = () => {
     a.click();
     document.body.removeChild(a);
   }
-
-  const dummyData = [{
-    name: 'Ananya',
-    code: 'EZY002',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },
-  {
-    name: 'Anaisha',
-    code: 'EZY002',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },{
-    name: 'Ishana',
-    code: 'EZY003',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },{
-    name: 'Kashvi',
-    code: 'EZY004',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },{
-    name: 'Kimaya',
-    code: 'EZY005',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },{
-    name: 'Larisa',
-    code: 'EZY006',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },{
-    name: 'Rebecca',
-    code: 'EZY007',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },{
-    name: 'Taara',
-    code: 'EZY008',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },{
-    name: 'Anant',
-    code: 'EZY009',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },{
-    name: 'Ishank',
-    code: 'EZY010',
-    doj: '01-12-2021',
-    pan: 'ABCSK12345',
-    adhar: '123456789123',
-  },
-]
 
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
@@ -1580,7 +1537,7 @@ const EmployeeMasterUpload = () => {
                             {locations && locations.map((each:any) => {
                               const { id, name, code, cities }: any = each.location || {};
                               const { state } = cities || {};
-                              return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                              return <MenuItem value={each.locationId+'^'+ state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
@@ -1666,7 +1623,7 @@ const EmployeeMasterUpload = () => {
 
             <Box sx={{paddingX: '20px'}}>
               {
-                holidays && holidays.length <= 0 ? 
+                employees && employees.length <= 0 ? 
 
                 <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
                   <Typography variant='h5'>No Records Found</Typography>
@@ -1680,23 +1637,23 @@ const EmployeeMasterUpload = () => {
                                       <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Name</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'date'} direction={sortType} onClick={onClickSortDate}> Code</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> DOJ</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'state'} direction={sortType} onClick={onClickSortState}> PAN n0.</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'state'} direction={sortType} onClick={onClickSortState}> PAN no.</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'restricted'} direction={sortType} onClick={onClickSortRestricted}> Aadhar no.</TableSortLabel></TableCell>
                                       <TableCell > Actions</TableCell>
                                   </TableRow>
                               </TableHead>
 
                               <TableBody>
-                              {dummyData && dummyData.map((each: any, index: number) => (
+                              {employees && employees.map((each: any, index: number) => (
                                   <TableRow
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >   
                                       <TableCell >{each.name}</TableCell>
                                       <TableCell >{each.code}</TableCell>
-                                      <TableCell >{each.doj}</TableCell>
-                                      <TableCell >{each.pan}</TableCell>
-                                      <TableCell >{each.adhar}</TableCell>
+                                      <TableCell >{each.dateOfJoining}</TableCell>
+                                      <TableCell >{each.panNumber}</TableCell>
+                                      <TableCell >{each.aadharNumber}</TableCell>
                                       <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>

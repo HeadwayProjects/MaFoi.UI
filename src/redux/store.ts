@@ -5,6 +5,7 @@ import leaveConfigurationSlice from './features/leaveConfiguration.slice'
 import attendanceConfigurationSlice from './features/attendanceConfiguration.slice'
 import stateRegisterSlice from './features/stateRegister.slice'
 import inputDashboardSlice from './features/dashboard.slice'
+import employeeMasterSlice from './features/employeeMaster.slice'
 
 export const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ export const store = configureStore({
     leaveConfiguration: leaveConfigurationSlice,
     attendanceConfiguration: attendanceConfigurationSlice,
     stateRegister: stateRegisterSlice,
-    inputDashboard: inputDashboardSlice
+    inputDashboard: inputDashboardSlice,
+    employeeMaster: employeeMasterSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
