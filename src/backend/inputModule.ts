@@ -23,6 +23,22 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
+    //Config Upload
+    public async configUpload(data: any) {
+        const url = `/api/Configuration/upload`
+        return await api.post(url, data, null, true)
+    }
+
+    public async getColumns(type:string) {
+        const url = `/api/Configuration/GetColumns?configurationType=${type}`
+        return await api.get(url)
+    }
+
+    public async callExcelHeaderToDbColumns(data: any) {
+        const url = `/api/Configuration/ExcelHeaderToDBColumns`
+        return await api.post(url, data)
+    }
+
     // Dashboard
     public async getEmployeeDashboardCounts(data: any) {
         const url = `/api/Dashboard/EmployeeDashboardCounts`

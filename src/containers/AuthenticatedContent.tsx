@@ -51,6 +51,7 @@ import EmployeeLeaveAvailedUpload from "../components/pages/InputModule/Employee
 import EmployeeAttendanceUpload from "../components/pages/InputModule/EmployeeAttendanceUpload";
 import SalaryComponents from "../components/pages/InputModule/SalaryComponents";
 import Dashboard from "../components/pages/InputModule/Dashboard";
+import Configurations from "../components/pages/InputModule/Configurations";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -112,6 +113,7 @@ function AuthenticatedContent() {
         ),
         '/activities': () => getActivitiesByRole(),
         '/input/dashboard': () => (layout(<Dashboard />)),
+        '/input/configurations': () => (layout(<Configurations />)),
         '/input/holidayList': () => (layout(<HolidayList />)),
         '/input/leaveConfiguration': () => (layout(<LeaveConfiguration />)),
         '/input/attendanceConfig': () => (layout(<AttendanceConfig />)),

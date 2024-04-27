@@ -65,7 +65,7 @@ const EmployeeMasterUpload = () => {
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading = exporting|| editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');

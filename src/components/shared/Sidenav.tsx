@@ -18,6 +18,7 @@ const SideNavMenu = [
         id: 'input', url: '/input', icon: 'calendar', label: 'Input Module',
         children: [
             { id: 'input/dashboard', url: '/input/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/configurations', url: '/input/configurations', label: 'Configurations', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/holidayList', url: '/input/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/leaveConfiguration', url: '/input/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/attendanceConfig', url: '/input/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },

@@ -21,6 +21,21 @@ interface InputModuleState {
         status: string,
         data: any,
         error: string | null
+    },
+    configUploadDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    getColumnsDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    excelHeaderToDbColumnsDetails: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -45,6 +60,21 @@ const initialState: InputModuleState = {
         data: '',
         error: null
     },
+    configUploadDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    getColumnsDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    excelHeaderToDbColumnsDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    }
 } as InputModuleState
 
 export const getAllCompaniesDetails = createAsyncThunk('inputModule/getAllCompaniesDetails', async (data: any) => {
@@ -67,10 +97,46 @@ export const getStates = createAsyncThunk('inputModule/getStates', async (data: 
     return await inputModuleService.getStatesDetails(data);
 })
 
+export const configUpload = createAsyncThunk('inputModule/configUpload', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.configUpload(data);
+})
+
+export const getColumns = createAsyncThunk('inputModule/getColumns', async (type: string) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getColumns(type);
+})
+
+export const callExcelHeaderToDbColumns = createAsyncThunk('inputModule/callExcelHeaderToDbColumns', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.callExcelHeaderToDbColumns(data);
+})
+
 export const inputModuleSlice = createSlice({
     name: 'inputModule',
     initialState,
     reducers: {
+        resetConfigUploadDetails: (state) => {
+            state.configUploadDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetGetColumnsDetails: (state) => {
+            state.getColumnsDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetExcelHeaderToDbColumnsDetails: (state) => {
+            state.excelHeaderToDbColumnsDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        }
     },
     extraReducers: (builder) => builder
         .addCase(getAllCompaniesDetails.pending, (state) => {
@@ -141,8 +207,58 @@ export const inputModuleSlice = createSlice({
             state.statesDetails.error = action.error.message
         })
        
+        .addCase(configUpload.pending, (state) => {
+            state.configUploadDetails.status = 'loading'
+        })
+        .addCase(configUpload.fulfilled, (state, action: any) => {
+            if(action.payload.data.status === 'SUCCESS') {
+                state.configUploadDetails.status = 'succeeded'
+                state.configUploadDetails.data = action.payload.data
+            } else {
+                state.configUploadDetails.status = 'failed'
+                state.configUploadDetails.error = action.payload.message;
+            }
+        })
+        .addCase(configUpload.rejected, (state, action: any) => {
+            state.configUploadDetails.status = 'failed'
+            state.configUploadDetails.error = action.error.message
+        })
+
+        .addCase(getColumns.pending, (state) => {
+            state.getColumnsDetails.status = 'loading'
+        })
+        .addCase(getColumns.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.getColumnsDetails.status = 'succeeded'
+                state.getColumnsDetails.data = action.payload.data
+            } else {
+                state.getColumnsDetails.status = 'failed'
+                state.getColumnsDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getColumns.rejected, (state, action: any) => {
+            state.getColumnsDetails.status = 'failed'
+            state.getColumnsDetails.error = action.error.message
+        })
+        
+        .addCase(callExcelHeaderToDbColumns.pending, (state) => {
+            state.excelHeaderToDbColumnsDetails.status = 'loading'
+        })
+        .addCase(callExcelHeaderToDbColumns.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.excelHeaderToDbColumnsDetails.status = 'succeeded'
+                state.excelHeaderToDbColumnsDetails.data = action.payload.data
+            } else {
+                state.excelHeaderToDbColumnsDetails.status = 'failed'
+                state.excelHeaderToDbColumnsDetails.error = action.payload.message;
+            }
+        })
+        .addCase(callExcelHeaderToDbColumns.rejected, (state, action: any) => {
+            state.excelHeaderToDbColumnsDetails.status = 'failed'
+            state.excelHeaderToDbColumnsDetails.error = action.error.message
+        })
 })
   
-export const { } = inputModuleSlice.actions
+export const { resetConfigUploadDetails, resetGetColumnsDetails, resetExcelHeaderToDbColumnsDetails } = inputModuleSlice.actions
 
 export default inputModuleSlice.reducer

@@ -1299,13 +1299,13 @@ const AttendanceConfig = () => {
       {/* Upload Modal */}
       <Modal
         open={openUploadModal}
-        onClose={() => setOpenUploadModal(false)}
+        onClose={() => {setOpenUploadModal(false); setUploadError(false); setUploadData(null)}}
       >
         <Box sx={styleUploadModal}>
           <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Upload Attendance</Typography>
             <IconButton
-              onClick={() => {setOpenUploadModal(false); setUploadError(false)}}
+              onClick={() => {setOpenUploadModal(false); setUploadError(false); setUploadData(null)}}
             >
               <IoMdClose />
             </IconButton>
@@ -1331,11 +1331,11 @@ const AttendanceConfig = () => {
           </Box>
 
           <Box sx={{display:'flex', justifyContent:'center', alignItems:'center', mt:5}}>
-            <Button variant='contained' onClick={onClickSubmitUpload}>Submit</Button>
+            <Button variant='contained' disabled={!uploadData} onClick={onClickSubmitUpload}>Submit</Button>
           </Box>
 
           <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:4}}>
-                <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenUploadModal(false); setUploadError(false)}}>Cancel</Button>
+                <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenUploadModal(false); setUploadError(false); setUploadData(null)}}>Cancel</Button>
           </Box>
         </Box>
       </Modal>
