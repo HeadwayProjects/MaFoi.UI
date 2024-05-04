@@ -18,12 +18,12 @@ const SideNavMenu = [
         id: 'input', url: '/input', icon: 'calendar', label: 'Input Module',
         children: [
             { id: 'input/dashboard', url: '/input/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'input/configurations', url: '/input/configurations', label: 'Configurations', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/holidayList', url: '/input/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/leaveConfiguration', url: '/input/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/attendanceConfig', url: '/input/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/salaryComponents', url: '/input/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/stateRegisterConfiguration', url: '/input/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/inputModuleUploads', url: '/input/inputModuleUploads', label: 'Input Module Uploads', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/employeeMasterUpload', url: '/input/employeeMasterUpload', label: 'Employee Master Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/employeeLeaveCreditUpload', url: '/input/employeeLeaveCreditUpload', label: 'Employee Leave Credit Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/employeeLeaveAvailedUpload', url: '/input/employeeLeaveAvailedUpload', label: 'Employee Leave Availed Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },

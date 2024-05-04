@@ -1574,8 +1574,8 @@ const HolidayList = () => {
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
                         <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Holiday List</h5>
                         <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
+                          <Button onClick={onClickUpload} title='Import Data' variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
-                          <Button onClick={onClickUpload} title='Import Data' variant='contained' style={{padding:'10px',backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /></Button>
                           <button onClick={onClickExport} title='Export Data' disabled={holidays && holidays.length <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (holidays && holidays.length <=0) ? '#707070': '#ffffff' , color: (holidays && holidays.length <=0) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>

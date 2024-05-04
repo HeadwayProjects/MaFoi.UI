@@ -7,6 +7,11 @@ interface LeaveConfigurationState {
         data: any,
         error: string | null
     },
+    stateConfigureDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
 }
 
 const initialState: LeaveConfigurationState = { 
@@ -14,12 +19,22 @@ const initialState: LeaveConfigurationState = {
         status: 'idle',
         data: '',
         error: null
-    }
+    },
+    stateConfigureDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
 } as LeaveConfigurationState
 
 export const getStateRegister = createAsyncThunk('stateRegister/getleaveConfiguration', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.fetchStateRegister(data);
+})
+
+export const getStateConfigurationDetails = createAsyncThunk('inputModule/getStateConfigurationDetails', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getStateConfigurationDetails(data)
 })
 
 export const stateRegisterSlice = createSlice({
@@ -46,6 +61,22 @@ export const stateRegisterSlice = createSlice({
             state.stateRegisterDetails.error = action.error.message
         })
         
+        .addCase(getStateConfigurationDetails.pending, (state) => {
+            state.stateConfigureDetails.status = 'loading'
+        })
+        .addCase(getStateConfigurationDetails.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.stateConfigureDetails.status = 'succeeded'
+                state.stateConfigureDetails.data = action.payload.data
+            } else {
+                state.stateConfigureDetails.status = 'failed'
+                state.stateConfigureDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getStateConfigurationDetails.rejected, (state, action: any) => {
+            state.stateConfigureDetails.status = 'failed'
+            state.stateConfigureDetails.error = action.error.message
+        })
 })
   
 export const { } = stateRegisterSlice.actions

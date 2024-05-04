@@ -8,12 +8,12 @@ import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
-import { useExportHolidayList } from '../../../backend/exports';
+import { useExportEmployees, useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { employeeUpload, getEmployees } from '../../../redux/features/employeeMaster.slice';
+import { getEmployees } from '../../../redux/features/employeeMaster.slice';
 
 
 const style = {
@@ -52,9 +52,9 @@ const EmployeeMasterUpload = () => {
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
 
-  const { exportHolidayList, exporting } = useExportHolidayList((response: any) => {
+  const { exportEmployees, exporting } = useExportEmployees((response: any) => {
     downloadFileContent({
-        name: 'HolidayList.xlsx',
+        name: 'Employees.xlsx',
         type: response.headers['content-type'],
         content: response.data
     });
@@ -72,7 +72,7 @@ const EmployeeMasterUpload = () => {
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading = exporting || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || employeeDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -83,7 +83,7 @@ const EmployeeMasterUpload = () => {
   const [name, setName] = React.useState('')
 
   const [searchInput, setSearchInput] = React.useState('');
-  const [activeSort, setActiveSort] = React.useState('name')
+  const [activeSort, setActiveSort] = React.useState('code')
   const [sortType, setSortType] = React.useState<any>('asc')
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
@@ -102,11 +102,7 @@ const EmployeeMasterUpload = () => {
   const [uploadError, setUploadError] = React.useState(false);
 
   const handleChangeCompany = (event:any) => {
-    setAssociateCompany('')
-    setLocation('')
-    setYear('')
-    setMonth('')
-    setCompany(event.target.value);
+    setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setCompany(event.target.value);
     const employeesPayload: any =  { 
       search: searchInput, 
       filters: [
@@ -119,7 +115,7 @@ const EmployeeMasterUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
@@ -146,7 +142,7 @@ const EmployeeMasterUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
@@ -176,7 +172,7 @@ const EmployeeMasterUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
@@ -209,7 +205,7 @@ const EmployeeMasterUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
@@ -272,7 +268,7 @@ const EmployeeMasterUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
@@ -334,12 +330,12 @@ const EmployeeMasterUpload = () => {
   }, [associateCompany])
 
   useEffect(() => {
-    if(holidayListDetails.status === 'succeeded'){
+    if(employeeDetails.status === 'succeeded'){
 
-    }else if(holidayListDetails.status === 'failed'){
+    }else if(employeeDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  },[holidayListDetails.status])
+  },[employeeDetails.status])
 
   useEffect(() => {
     if(deleteHolidayDetails.status === 'succeeded'){
@@ -485,12 +481,12 @@ const EmployeeMasterUpload = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
+        columnName:'month',
         value: month
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
@@ -500,41 +496,41 @@ const EmployeeMasterUpload = () => {
       sort: { columnName: activeSort, order: sortType },
       "includeCentral": true
     }
-    exportHolidayList({ ...HolidayListPayload, pagination: null });
+    exportEmployees({ ...employeesPayload, pagination: null });
   }
 
   const onClickSearch = () => {
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters: [],
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
   }
 
   const onClickClearSearch = () => {
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: '', 
       filters: [],
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
     setSearchInput('')
   }
 
-  const onClickSortYear = () => {
+  const onClickSortCode = () => {
     let type = 'asc'
-    setActiveSort('year'); 
+    setActiveSort('code'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -569,78 +565,22 @@ const EmployeeMasterUpload = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
+        columnName:'month',
         value: month
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'year', order: type },
+      sort: { columnName: 'code', order: type },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
-    
-  }
-
-  const onClickSortDate = () => {
-    let type = 'asc'
-    setActiveSort('date'); 
-    if(sortType === 'asc'){
-      setSortType('desc')
-      type = 'desc'
-    }else{
-      setSortType('asc')
-    }
-
-    const filters = []
-    if(company){
-      filters.push({
-        columnName:'companyId',
-        value: company
-      })
-    }
-    if(associateCompany){
-      filters.push({
-        columnName:'associateCompanyId',
-        value: associateCompany
-      })
-    }
-    if(location){
-      filters.push({
-        columnName:'locationId',
-        value: location
-      })
-    }
-    if(year){
-      filters.push({
-        columnName:'year',
-        value: year
-      })
-    }
-    if(month){
-      filters.push({
-        columnName:'companyId',
-        value: month
-      })
-    }
-
-    const HolidayListPayload: any =  { 
-      search: searchInput, 
-      filters,
-      pagination: {
-        pageSize: rowsPerPage,
-        pageNumber: page+1
-      },
-      sort: { columnName: 'day', order: type },
-      "includeCentral": true
-    }
-    dispatch(getHolidaysList(HolidayListPayload)) 
+    dispatch(getEmployees(employeesPayload))
   }
 
   const onClickSortName = () => {
@@ -680,12 +620,12 @@ const EmployeeMasterUpload = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
+        columnName:'month',
         value: month
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
@@ -695,13 +635,179 @@ const EmployeeMasterUpload = () => {
       sort: { columnName: 'name', order: type },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
+    
+  }
+
+  const onClickSortDOB = () => {
+    let type = 'asc'
+    setActiveSort('dateOfBirth'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
+
+    const employeesPayload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'dateOfBirth', order: type },
+      "includeCentral": true
+    }
+    dispatch(getEmployees(employeesPayload)) 
+  }
+
+  const onClickSortDOJ = () => {
+    let type = 'asc'
+    setActiveSort('dateOfJoining'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
+
+    const employeesPayload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'dateOfJoining', order: type },
+      "includeCentral": true
+    }
+    dispatch(getEmployees(employeesPayload)) 
+  }
+
+  const onClickSortGender = () => {
+    let type = 'asc'
+    setActiveSort('gender'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
+
+    const employeesPayload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'gender', order: type },
+      "includeCentral": true
+    }
+    dispatch(getEmployees(employeesPayload))
     
   }
   
-  const onClickSortState = () => {
+  const onClickSortDesignation = () => {
     let type = 'asc'
-    setActiveSort('state'); 
+    setActiveSort('designation'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -736,28 +842,28 @@ const EmployeeMasterUpload = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
+        columnName:'month',
         value: month
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'state', order: type },
+      sort: { columnName: 'designation', order: type },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
     
   }
 
-  const onClickSortRestricted = () => {
+  const onClickSortPan = () => {
     let type = 'asc'
-    setActiveSort('restricted'); 
+    setActiveSort('panNumber'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -792,22 +898,78 @@ const EmployeeMasterUpload = () => {
     }
     if(month){
       filters.push({
-        columnName:'companyId',
+        columnName:'month',
         value: month
       })
     }
 
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'restricted', order: type },
+      sort: { columnName: 'panNumber', order: type },
       "includeCentral": true
     }
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
+    
+  }
+
+  const onClickSortAdhar = () => {
+    let type = 'asc'
+    setActiveSort('aadharNumber'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
+
+    const employeesPayload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'aadharNumber', order: type },
+      "includeCentral": true
+    }
+    dispatch(getEmployees(employeesPayload))
     
   }
 
@@ -832,7 +994,7 @@ const EmployeeMasterUpload = () => {
     formData.append('LocationId', location.split('^')[0])
     formData.append('StateId', location.split('^')[1])
 
-    dispatch(employeeUpload(formData))
+    // dispatch(employeeUpload(formData))
   }
 
   const addButtonDisable = !name || !company || !associateCompany || !location || !year || !month || !day 
@@ -992,480 +1154,41 @@ const EmployeeMasterUpload = () => {
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: '', 
-      filters: [],
+      filters: [
+      ],
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: newPage+1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
 
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const HolidayListPayload: any =  { 
+    const employeesPayload: any =  { 
       search: '', 
       filters: [],
       pagination: {
         pageSize: parseInt(event.target.value, 10),
         pageNumber: 1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
 
-    dispatch(getHolidaysList(HolidayListPayload))
+    dispatch(getEmployees(employeesPayload))
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  
-  const downloadSample = (e: any) => {
-    preventDefault(e);
-    download('Sample Holidays.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/ActsTemplate.xlsx')
-  }
-
-  const downloadErrors = (e: any) => {
-    preventDefault(e);
-    const data = uploadHolidayDetails.data;
-    const blob = new Blob([data])
-    const URL = window.URL || window.webkitURL;
-    const downloadUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = downloadUrl;
-    a.download = 'Errors.xlsx';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
 
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
-
-      {/*Add Edit and View Modals */}
-      <Drawer anchor='right' open={openModal}>
-        <Box  sx={{height:'100%',width: 500, display:'flex', flexDirection:'column'}}>
-          <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>{modalType} Holiday List</Typography>
-            <IconButton
-              onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); }}
-            >
-              <IoMdClose />
-            </IconButton>
-          </Box>
-
-          {/*Add Modal */}
-          <>
-            {modalType === 'Add' && 
-            <Box sx={{ width: 400, padding:'20px'}}>
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Name</FormLabel>
-                    {/* <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Name</InputLabel> */}
-                    <OutlinedInput
-                      placeholder='Name'
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      id="outlined-adornment-name"
-                      type='text'
-                      label="Name"
-                    />
-                  </FormControl>
-
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Company</InputLabel>
-                    <Select
-                      labelId="demo-select-small-label"
-                      id="demo-select-small"
-                      value={company}
-                      label="Company"
-                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
-                    >
-                      {companies && companies.map((each:any) => {
-                          return <MenuItem value={each.id}>{each.name}</MenuItem>
-                      })}
-                    </Select>
-                  </FormControl>
-
-                  <FormControl disabled={!company} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Associate Company</InputLabel>
-                    <Select
-                      labelId="demo-select-small-label"
-                      id="demo-select-small"
-                      value={associateCompany}
-                      label="Associate Company"
-                      disabled={!company}
-                      onChange={(e) => setAssociateCompany(e.target.value)}
-                    >
-                      {associateCompanies && associateCompanies.map((each:any) => {
-                          return <MenuItem value={each.id}>{each.name}</MenuItem>
-                      })}
-                    </Select>
-                  </FormControl>
-
-                  <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Location</InputLabel>
-                    <Select
-                      labelId="demo-select-small-label"
-                      id="demo-select-small"
-                      value={location}
-                      label="Location"
-                      disabled={!associateCompany}
-                      onChange={(e) => setLocation(e.target.value)}
-                    >
-                      {locations && locations.map((each:any) => {
-                          const { id, name, code, cities }: any = each.location || {};
-                          const { state } = cities || {};
-                          return <MenuItem value={each.locationId+'^'+state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
-                      })}
-                    </Select>
-                  </FormControl>
-
-                  <Box sx={{display:'flex'}}>
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Year</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={year}
-                        label="Year"
-                        onChange={(e) => setYear(e.target.value)}
-                      >
-                        {yearsList && yearsList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
-
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Month</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={month}
-                        label="Month"
-                        onChange={(e) => setMonth(e.target.value)}
-                      >
-                        {monthList && monthList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
-
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Day</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={day}
-                        label="Day"
-                        onChange={(e) => setDay(e.target.value)}
-                      >
-                        {daysList && daysList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
-
-                  </Box>
-                  
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Optional Holiday</FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue="true"
-                      name="radio-buttons-group"
-                      value={optionalHoliday}
-                      onChange={handleChangeOptionalHoliday}
-                    >
-                      <FormControlLabel value="true" control={<Radio />} label="Yes" />
-                      <FormControlLabel value="false" control={<Radio />} label="No" />
-                    </RadioGroup>
-                  </FormControl>
-
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Restricted</FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue="true"
-                      name="radio-buttons-group"
-                      value={restrictedHoliday}
-                      onChange={handleChangeRestrictedHoliday}
-                    >
-                      <FormControlLabel value="true" control={<Radio />} label="Yes" />
-                      <FormControlLabel value="false" control={<Radio />} label="No" />
-                    </RadioGroup>
-                  </FormControl>
-
-                  
-            </Box>
-            }
-
-            {modalType === 'Add' && 
-            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
-              <Button variant='contained' disabled={addButtonDisable} onClick={onClickSubmitAdd}>Submit</Button>
-            </Box>
-            }
-          </>
-
-          {/* View Modal */}
-          <>
-            {modalType === "View" && 
-              <Box sx={{ width: '100%', padding:'20px'}}>
-                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>Holiday Name</Typography>
-                  <Typography color="#000000" sx={{fontSize:'20px'}} >{holiday.name}</Typography>
-                  
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>State</Typography>
-                  <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.state.name}</Typography>
-
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>Date</Typography>
-                  <Typography color="#000000" sx={{fontSize:'22px'}}>{`${holiday.day}-${holiday.month > 9 ? holiday.month : '0'+ holiday.month}-${holiday.year}`}</Typography>
-
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>Year</Typography>
-                  <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.year}</Typography>
-
-                  <Typography variant='h5' color='#0F105E' sx={{fontSize:'24px', mt:2}}>Restricted</Typography>
-                  <Typography color="#000000" sx={{fontSize:'22px'}}>{holiday.restricted ? "Yes": "No"}</Typography>
-              </Box>
-            }
-            {modalType === 'View' && 
-              <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:15}}>
-                <Button variant='contained' onClick={() => {setOpenModal(false); setModalType('');  setHoliday({})}}>Cancel</Button>
-              </Box>
-            }
-          </>
-
-          {/*Edit Modal */}
-          <>
-            {modalType === 'Edit' && 
-            <Box sx={{ width: 400, padding:'20px'}}>
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Name</FormLabel>
-                    {/* <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Name</InputLabel> */}
-                    <OutlinedInput
-                      placeholder='Name'
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      id="outlined-adornment-name"
-                      type='text'
-                      label="Name"
-                    />
-                  </FormControl>
-
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Company</InputLabel>
-                    <Select
-                      labelId="demo-select-small-label"
-                      id="demo-select-small"
-                      value={company}
-                      label="Company"
-                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
-                    >
-                      {companies && companies.map((each:any) => {
-                          return <MenuItem value={each.id}>{each.name}</MenuItem>
-                      })}
-                    </Select>
-                  </FormControl>
-
-                  <FormControl disabled={!company} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Associate Company</InputLabel>
-                    <Select
-                      labelId="demo-select-small-label"
-                      id="demo-select-small"
-                      value={associateCompany}
-                      label="Associate Company"
-                      disabled={!company}
-                      onChange={(e) => setAssociateCompany(e.target.value)}
-                    >
-                      {associateCompanies && associateCompanies.map((each:any) => {
-                          return <MenuItem value={each.id}>{each.name}</MenuItem>
-                      })}
-                    </Select>
-                  </FormControl>
-
-                  <FormControl disabled={!associateCompany} sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Location</InputLabel>
-                    <Select
-                      labelId="demo-select-small-label"
-                      id="demo-select-small"
-                      value={location}
-                      label="Location"
-                      disabled={!associateCompany}
-                      onChange={(e) => setLocation(e.target.value)}
-                    >
-                      {locations && locations.map((each:any) => {
-                          const { id, name, code, cities }: any = each.location || {};
-                          const { state } = cities || {};
-                          return <MenuItem value={each.locationId+'^'+state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
-                      })}
-                    </Select>
-                  </FormControl>
-
-                  <Box sx={{display:'flex'}}>
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Year</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={year}
-                        label="Year"
-                        onChange={(e) => setYear(e.target.value)}
-                      >
-                        {yearsList && yearsList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
-
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Month</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={month}
-                        label="Month"
-                        onChange={(e) => setMonth(e.target.value)}
-                      >
-                        {monthList && monthList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
-
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Day</InputLabel>
-                      <Select
-                        labelId="demo-select-small-label"
-                        id="demo-select-small"
-                        value={day}
-                        label="Day"
-                        onChange={(e) => setDay(e.target.value)}
-                      >
-                        {daysList && daysList.map((each:any) => 
-                          <MenuItem value={each}>{each}</MenuItem>
-                        )}
-                      </Select>
-                    </FormControl>
-
-                  </Box>
-                  
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Optional Holiday</FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue={true}
-                      name="radio-buttons-group"
-                      value={optionalHoliday}
-                      onChange={handleChangeOptionalHoliday}
-                    >
-                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
-                      <FormControlLabel value={false} control={<Radio />} label="No" />
-                    </RadioGroup>
-                  </FormControl>
-
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Restricted</FormLabel>
-                    <RadioGroup
-                      row
-                      aria-labelledby="demo-radio-buttons-group-label"
-                      defaultValue={true}
-                      name="radio-buttons-group"
-                      value={restrictedHoliday}
-                      onChange={handleChangeRestrictedHoliday}
-                    >
-                      <FormControlLabel value={true} control={<Radio />} label="Yes" />
-                      <FormControlLabel value={false} control={<Radio />} label="No" />
-                    </RadioGroup>
-                  </FormControl>
-
-            </Box>
-            }
-
-            {modalType === 'Edit' && 
-            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
-              <Button variant='contained' disabled={addButtonDisable} onClick={onClickSubmitEdit}>Submit</Button>
-            </Box>
-            }
-          </>
-        </Box>
-      </Drawer>
-
-      {/* Delete Modal */}
-      <Modal
-        open={openDeleteModal}
-        onClose={() => setOpenDeleteModal(false)}
-      >
-        <Box sx={style}>
-          <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Delete Holiday List</Typography>
-            <IconButton
-              onClick={() => setOpenDeleteModal(false)}
-            >
-              <IoMdClose />
-            </IconButton>
-          </Box>
-          <Box sx={{padding:'20px', backgroundColor:'#ffffff'}}>
-            <Box sx={{display:'flex', alignItems:'center'}}>
-              <Typography >Are you sure you want to delete the Holiday, &nbsp;</Typography>
-              <Typography variant='h5'>{holiday && holiday.name}</Typography>
-            </Box>
-            <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center', mt:2}}>
-              <Button variant='outlined' color="error" onClick={() => setOpenDeleteModal(false)}>No</Button>
-              <Button variant='contained' onClick={onClickConfirmDelete}>Yes</Button>
-            </Box>
-          </Box>
-        </Box>
-      </Modal>
-
-      {/* Upload Modal */}
-      <Modal
-        open={openUploadModal}
-        onClose={() => setOpenUploadModal(false)}
-      >
-        <Box sx={styleUploadModal}>
-          <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-            <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Upload Holiday List</Typography>
-            <IconButton
-              onClick={() => {setOpenUploadModal(false); setUploadError(false)}}
-            >
-              <IoMdClose />
-            </IconButton>
-          </Box>
-
-          {uploadError &&
-            <Alert variant="danger" className="mx-4 my-4">
-              There are few errors identified in the file uploaded. Correct the errors and upload again. <a href="/" onClick={downloadErrors}>Click here</a> to download the errors.
-            </Alert>
-          }
-          <Box sx={{padding:'20px', backgroundColor:'#ffffff', display:'flex', justifyContent:'center'}}>
-            <Box sx={{display:'flex', flexDirection:'column'}}>
-                <Typography mb={1} color={'#0F67B1'} fontWeight={'bold'} sx={{font: 'normal normal normal 24px/28px Calibri'}}>Upload File <span style={{color:'red'}}>*</span></Typography>
-                <input
-                  style={{ border:'1px solid #0F67B1', width:'500px', height:'40px', borderRadius:'5px'}}
-                  type="file"
-                  onChange={(e) => setUploadData(e.target.files)}
-                />
-                <a href="/" style={{marginTop: '10px', width:'210px'}} onClick={downloadSample}>Dowload Sample Holiday</a>
-            </Box>
-          </Box>
-
-          <Box sx={{display:'flex', justifyContent:'center', alignItems:'center', mt:5}}>
-            <Button variant='contained' onClick={onClickSubmitUpload}>Submit</Button>
-          </Box>
-
-          <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:4}}>
-                <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenUploadModal(false); setUploadError(false)}}>Cancel</Button>
-          </Box>
-        </Box>
-      </Modal>
 
       {loading ? <PageLoader>Loading...</PageLoader> : 
       
@@ -1474,11 +1197,7 @@ const EmployeeMasterUpload = () => {
                 <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
                         <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Master</h5>
-                        <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
-                          <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
-                          <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
-                          <button onClick={onClickExport} disabled={!holidays} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !holidays ? '#707070': '#ffffff' , color: !holidays ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
-                        </div>
+                        <button onClick={onClickExport} disabled={!employees} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employees ? '#707070': '#ffffff' , color: !employees ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                     </div>
                     <div style={{display:'flex'}}>
 
@@ -1634,12 +1353,15 @@ const EmployeeMasterUpload = () => {
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
-                                      <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Name</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'date'} direction={sortType} onClick={onClickSortDate}> Code</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> DOJ</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'state'} direction={sortType} onClick={onClickSortState}> PAN no.</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'restricted'} direction={sortType} onClick={onClickSortRestricted}> Aadhar no.</TableSortLabel></TableCell>
-                                      <TableCell > Actions</TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}> Code</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB}> DOB</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender}> Gender</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'designation'} direction={sortType} onClick={onClickSortDesignation}> Designation</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'dateOfJoining'} direction={sortType} onClick={onClickSortDOJ}> DOJ</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'panNumber'} direction={sortType} onClick={onClickSortPan}> PAN no.</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}> Aadhar no.</TableSortLabel></TableCell>
+                                      {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
 
@@ -1649,18 +1371,21 @@ const EmployeeMasterUpload = () => {
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >   
-                                      <TableCell >{each.name}</TableCell>
                                       <TableCell >{each.code}</TableCell>
-                                      <TableCell >{each.dateOfJoining}</TableCell>
+                                      <TableCell >{each.name}</TableCell>
+                                      <TableCell >{new Date(each.dateOfBirth).toLocaleDateString()}</TableCell>
+                                      <TableCell >{each.gender}</TableCell>
+                                      <TableCell >{each.designation}</TableCell>
+                                      <TableCell >{new Date(each.dateOfJoining).toLocaleDateString()}</TableCell>
                                       <TableCell >{each.panNumber}</TableCell>
                                       <TableCell >{each.aadharNumber}</TableCell>
-                                      <TableCell >
+                                      {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
                                           <Icon action={() => onclickDelete(each)} style={{color:'#EB1010'}} type="button" name={'trash'} text={'Delete'}/>
                                           <Icon action={() => onclickView(each)}  style={{color:'#00C853'}} type="button" name={'eye'} text={'View'}/>
                                         </Box>
-                                      </TableCell>
+                                      </TableCell> */}
                                   </TableRow>
                               ))}
                               </TableBody>
@@ -1694,7 +1419,7 @@ const EmployeeMasterUpload = () => {
                       }
                       rowsPerPageOptions={[10, 25, 50, 100]}
                       component="div"
-                      count={holidaysCount}
+                      count={employeesCount}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}

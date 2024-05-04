@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
-import { callExcelHeaderToDbColumns, configUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, Select as MSelect, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { callExcelHeaderToDbColumns, configUpload, employeeUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
+import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, Select as MSelect, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
@@ -10,6 +10,7 @@ import { IoMdClose } from 'react-icons/io';
 import { Alert } from 'react-bootstrap';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { FaUpload } from 'react-icons/fa';
+import Select from "react-select";
 
 const styleUploadModal = {
   position: 'absolute' as 'absolute',
@@ -20,6 +21,15 @@ const styleUploadModal = {
   bgcolor: 'background.paper',
   boxShadow: 24,
 };
+
+const customStyles = {
+  control: (base:any) => ({
+    ...base,
+    maxHeight: 150,
+    overflow:"auto"
+  })
+};
+
 
 const Configurations = () => {
 
@@ -47,11 +57,12 @@ const Configurations = () => {
   const configUploadDetails = useAppSelector((state) => state.inputModule.configUploadDetails);
   const getColumnsDetails = useAppSelector((state) => state.inputModule.getColumnsDetails);
   const excelHeaderToDbColumnsDetails = useAppSelector((state) => state.inputModule.excelHeaderToDbColumnsDetails);
+  const employeeUploadDetails = useAppSelector((state) => state.inputModule.employeeUploadDetails);
 
   const configurationList = configUploadDetails && configUploadDetails.data.list
   const columnsList = getColumnsDetails && getColumnsDetails.data
 
-  const loading = configUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || excelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = employeeUploadDetails.status === 'loading' || configUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || excelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -67,63 +78,72 @@ const Configurations = () => {
   
   const [tableData, setTableData] = React.useState<any>([])
 
+  const handleChangeConfigType = (event:any) => {
+    setCompany('')
+    setAssociateCompany('')
+    setStateName('')
+    setLocation('')
+    setYear('')
+    setMonth('')
+    resetDataValues()
+    setConfigType(event.target.value)
+  }
+
   const handleChangeCompany = (event:any) => {
     setAssociateCompany('')
     setStateName('')
     setLocation('')
     setYear('')
     setMonth('')
-    setConfigType('')
+    resetDataValues()
     setCompany(event.target.value);
   };
 
   const handleChangeAssociateCompany = (event:any) => {
+    setStateName('')
     setLocation('')
     setYear('')
     setMonth('')
-    setConfigType('')
+    resetDataValues()
     setAssociateCompany(event.target.value);
   };
 
   const handleChangeStateName = (event:any) => {
+    setLocation('')
     setYear('')
     setMonth('')
-    setLocation('')
-    setConfigType('')
+    resetDataValues()
     setStateName(event.target.value);
   }
 
   const handleChangeLocation = (event:any) => {
     setYear('')
     setMonth('')
-    setConfigType('')
+    resetDataValues()
     setLocation(event.target.value);
   };
   
   const handleChangeYear = (event:any) => {
     setMonth('')
-    setConfigType('')
+    resetDataValues()
     setYear(event.target.value.toString());
   };
   
   const handleChangeMonth = (event:any) => {
-    setConfigType('')
+    resetDataValues()
     setMonth(event.target.value);
   };
 
-  const handleChangeConfigType = (event:any) => {
-    setConfigType(event.target.value)
-  }
-
   const handleChangeEzycompField = (event:any, fieldData: any) => {
-    const fieldValue = event.target.value
+    console.log('eve',event)
     const newTableData = tableData.map((each:any) => {
       if(each.id === fieldData.id){
-        return {...each, employeeFieldName: fieldValue}
+        return {...each, employeeFieldName: event.value, mapped: true}
       }else{
         return each
       }
     })
+    console.log('new tb', newTableData)
     setTableData(newTableData)
   }
 
@@ -151,12 +171,35 @@ const Configurations = () => {
   }, [associateCompany])
 
   useEffect(() => {
+    if(employeeUploadDetails.status === 'succeeded'){
+      if(employeeUploadDetails.data.key === 'FAILURE'){
+        const formData = new FormData();
+        const data = uploadData ? uploadData[0] : []
+        formData.append('file', data);
+        formData.append('Remarks', 'NA')
+        formData.append('Year', year)
+        formData.append('Month', month)
+        formData.append('Mapped', 'false')
+        formData.append('ConfigurationType', configType)
+        formData.append('CompanyId', company)
+        formData.append('AssociateCompanyId', associateCompany)
+        formData.append('LocationId', location)
+        formData.append('StateId', stateName)
+        dispatch(configUpload(formData))
+      }else{
+        resetStateValues()
+        toast.success(`Upload Successfull`)
+      }
+    }else if (employeeUploadDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [employeeUploadDetails.status])
+
+  useEffect(() => {
     if(configUploadDetails.status === 'succeeded'){
       setTableData(configUploadDetails.data.list)
       dispatch(getColumns(configType))
       setOpenUploadModal(false)
-      setUploadData(null)
-      setUploadError(false)
     }else if (configUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
@@ -164,13 +207,21 @@ const Configurations = () => {
 
   useEffect(() => {
     if(excelHeaderToDbColumnsDetails.status === 'succeeded'){
-      dispatch(resetConfigUploadDetails())
-      dispatch(resetGetColumnsDetails())
-      dispatch(resetExcelHeaderToDbColumnsDetails())
-      setCompany(''), setAssociateCompany(''), setStateName(''), setLocation(''), setYear(''), setMonth(''), setConfigType(''), setTableData([])
-      toast.success(`Configuration Successfull`)
+      const formData = new FormData();
+      const data = uploadData ? uploadData[0] : []
+      formData.append('file', data);
+      formData.append('Remarks', 'NA')
+      formData.append('Year', year)
+      formData.append('Month', month)
+      formData.append('Mapped', 'false')
+      formData.append('ConfigurationType', configType)
+      formData.append('CompanyId', company)
+      formData.append('AssociateCompanyId', associateCompany)
+      formData.append('LocationId', location)
+      formData.append('StateId', stateName)
+      dispatch(employeeUpload(formData))
     }else if(excelHeaderToDbColumnsDetails.status === 'failed'){
-      dispatch(resetConfigUploadDetails())
+      toast.error(ERROR_MESSAGES.DEFAULT);
     }
   },[excelHeaderToDbColumnsDetails.status])
 
@@ -208,7 +259,8 @@ const Configurations = () => {
 
   const onClickSubmitUpload = () => {
     const formData = new FormData();
-    formData.append('file', uploadData[0]);
+    const data = uploadData ? uploadData[0] : []
+    formData.append('file', data);
     formData.append('Remarks', 'NA')
     formData.append('Year', year)
     formData.append('Month', month)
@@ -219,24 +271,19 @@ const Configurations = () => {
     formData.append('LocationId', location)
     formData.append('StateId', stateName)
 
-    dispatch(configUpload(formData))
+    dispatch(employeeUpload(formData))
   }
 
   const onClickSave = () => {
+    console.log('ttabbel', tableData)
     const check = tableData.find((each:any) => each.employeeFieldName === null)
     if(check){
       return toast.error('Please Select All Ezycomp Fields');
     } else{
-      console.log('table datttaa', tableData)
       dispatch(callExcelHeaderToDbColumns({listExcelHeadertoDBColumnsMapp : tableData}))
     }
   }
 
-  const downloadSample = (e: any) => {
-    preventDefault(e);
-    download('Sample config.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/ActsTemplate.xlsx')
-  }
-  
   const downloadErrors = (e: any) => {
     preventDefault(e);
     const data: any = {};
@@ -251,9 +298,34 @@ const Configurations = () => {
     document.body.removeChild(a);
   }
 
-  console.log('resetConfigUploadDetails', configUploadDetails.data, columnsList)
+  const resetStateValues = () => {
+    dispatch(resetConfigUploadDetails())
+    dispatch(resetGetColumnsDetails())
+    dispatch(resetExcelHeaderToDbColumnsDetails())
+    dispatch(resetEmployeeUploadDetails())
 
-  console.log("tableData", tableData)
+    setConfigType('')
+    setCompany('')
+    setAssociateCompany('')
+    setStateName('')
+    setLocation('')
+    setYear('')
+    setMonth('')
+    setUploadData(null)
+    setTableData([])
+  }
+
+  const resetDataValues = () =>{
+    dispatch(resetConfigUploadDetails())
+    dispatch(resetGetColumnsDetails())
+    dispatch(resetExcelHeaderToDbColumnsDetails())
+    dispatch(resetEmployeeUploadDetails())
+    setUploadData(null)
+    setTableData([])
+  } 
+
+  console.log('UploadDetails', configUploadDetails, employeeUploadDetails, tableData)
+
   return (
     <div style={{ backgroundColor:'#ffffff', height:'100vh'}}>
 
@@ -287,7 +359,6 @@ const Configurations = () => {
                   accept='.xlsx, .xls, .csv'
                   onChange={(e) => setUploadData(e.target.files)}
                 />
-                <a href="/" style={{marginTop: '10px', width:'210px'}} onClick={downloadSample}>Dowload Sample Config</a>
             </Box>
           </Box>
 
@@ -308,18 +379,38 @@ const Configurations = () => {
             <Box sx={{paddingX: '20px', paddingY:'10px',}}>
               <Box sx={{backgroundColor:'#E2E3F8', paddingX: '20px', paddingY:'10px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                   <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'5px'}}>
-                      <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Configurations</h5>
+                      <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Input Module Uploads</h5>
                       <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                   </div>
                   <div style={{display:'flex', marginBottom:'10px'}}>
 
+                  <Box sx={{width:'100%', mr:1}}>
+                      <Typography mb={1}>Configuration Type</Typography>
+                      <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <MSelect
+                          sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
+                          displayEmpty
+                          value={configType}
+                          onChange={handleChangeConfigType}
+                        >
+                          <MenuItem disabled sx={{display:'none'}} value="">
+                            Select Configuration Type
+                          </MenuItem>
+                          {configurationTypes && configurationTypes.map((each:any) => 
+                            <MenuItem value={each}>{each}</MenuItem>
+                          )}
+                        </MSelect>
+                      </FormControl>
+                    </Box>
+
                     <Box sx={{width:'100%', mr:1}}>
                       <Typography mb={1}>Company</Typography>
                       <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <Select
+                        <MSelect
                           sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                           value={company}
                           displayEmpty
+                          disabled={!configType}
                           onChange={handleChangeCompany}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
@@ -328,14 +419,14 @@ const Configurations = () => {
                           {companies && companies.map((each:any) => {
                               return <MenuItem sx={{width:'240px', whiteSpace:'initial'}} value={each.id}>{each.name}</MenuItem>
                           })}
-                        </Select>
+                        </MSelect>
                       </FormControl>
                     </Box>
 
                     <Box sx={{width:'100%', mr:1}}>
                       <Typography mb={1}>Associate Company</Typography>
                       <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <Select
+                        <MSelect
                           sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                           displayEmpty
                           value={associateCompany}
@@ -348,14 +439,14 @@ const Configurations = () => {
                           {associateCompanies && associateCompanies.map((each:any) => {
                             return <MenuItem value={each.id}>{each.name}</MenuItem>
                           })}
-                        </Select>
+                        </MSelect>
                       </FormControl>
                     </Box>
 
                     <Box sx={{width:'100%', mr:1}}>
                       <Typography mb={1}>States</Typography>
                       <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <Select
+                        <MSelect
                           sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                           displayEmpty
                           value={stateName}
@@ -368,14 +459,14 @@ const Configurations = () => {
                           {states && states.map((each:any) => {
                             return <MenuItem value={each.id}>{each.name}</MenuItem>
                           })}
-                        </Select>
+                        </MSelect>
                       </FormControl>
                     </Box>
 
                     <Box sx={{width:'100%', mr:1}}>
                       <Typography mb={1}>Location</Typography>
                       <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <Select
+                        <MSelect
                           sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                           displayEmpty
                           value={location}
@@ -392,14 +483,14 @@ const Configurations = () => {
                               return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                             }
                           })}
-                        </Select>
+                        </MSelect>
                       </FormControl>
                     </Box>
 
                     <Box sx={{width:'100%', mr:1}}>
                       <Typography mb={1}>Year</Typography>
                       <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <Select
+                        <MSelect
                           sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                           displayEmpty
                           value={year}
@@ -412,14 +503,14 @@ const Configurations = () => {
                           {yearsList && yearsList.map((each:any) => 
                             <MenuItem value={each}>{each}</MenuItem>
                           )}
-                        </Select>
+                        </MSelect>
                       </FormControl>
                     </Box>
 
                     <Box sx={{width:'100%', mr:1}}>
                       <Typography mb={1}>Month</Typography>
                       <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <Select
+                        <MSelect
                           sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                           displayEmpty
                           value={month}
@@ -432,27 +523,7 @@ const Configurations = () => {
                           {monthList && monthList.map((each:any) => 
                             <MenuItem value={each.value}>{each.label}</MenuItem>
                           )}
-                        </Select>
-                      </FormControl>
-                    </Box>
-
-                    <Box sx={{width:'100%', mr:1}}>
-                      <Typography mb={1}>Configuration Type</Typography>
-                      <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                        <Select
-                          sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                          displayEmpty
-                          value={configType}
-                          disabled={!month}
-                          onChange={handleChangeConfigType}
-                        >
-                          <MenuItem disabled sx={{display:'none'}} value="">
-                            Select Configuration Type
-                          </MenuItem>
-                          {configurationTypes && configurationTypes.map((each:any) => 
-                            <MenuItem value={each}>{each}</MenuItem>
-                          )}
-                        </Select>
+                        </MSelect>
                       </FormControl>
                     </Box>
 
@@ -460,9 +531,9 @@ const Configurations = () => {
               </Box>
             </Box>
             
-            {configurationList && <Box sx={{paddingX: '20px', display: 'flex', flexDirection:'column'}}>
+            {tableData &&  tableData.length > 0 && <Box sx={{paddingX: '20px', display: 'flex', flexDirection:'column'}}>
               {
-                configurationList && configurationList.length <= 0 ? 
+                tableData && tableData.length <= 0 ? 
 
                 <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
                   <Typography variant='h5'>No Records Found</Typography>
@@ -495,60 +566,22 @@ const Configurations = () => {
                                       <TableCell >{each.rowPosition}</TableCell>
                                       <TableCell >
                                         <FormControl sx={{ m: 1, width:"100%", maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                                          <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Ezycomp Field</InputLabel>
-                                          <MSelect
-                                            labelId="demo-select-small-label"
-                                            id="demo-select-small"
-                                            value={each.employeeFieldName ? each.employeeFieldName : ''}
-                                            label="Ezycomp Field"
-                                            onChange={(e) => {handleChangeEzycompField(e, each)}}
-                                          >
-                                            {columnsList && columnsList.map((each:any) => {
-                                                return <MenuItem value={each}>{each}</MenuItem>
-                                            })}
-                                          </MSelect>
+                                          <Select
+                                            options={columnsList.map((each:any) => {return {label : each, value: each}})}
+                                            className="basic-multi-select"
+                                            classNamePrefix="select"
+                                            value={each.employeeFieldName ? {label: each.employeeFieldName, value: each.employeeFieldName} : ''}
+                                            styles={customStyles}
+                                            onChange={(e) => handleChangeEzycompField(e, each)}
+                                        />
                                       </FormControl>
                                       </TableCell>
                                       <TableCell >{each.mapped ? "Yes" : "No"}</TableCell>
-                                  </TableRow>
+                                     </TableRow>
                               ))}
                               </TableBody>
                           </Table>
                   </TableContainer>
-                  {/* <TablePagination   
-                      sx={{
-                        '.MuiTablePagination-toolbar': {
-                          backgroundColor: '#EFEBFE',
-                          height: '30px',
-                          display:'flex',
-                          justifyContent:'flex-end'
-                        },
-                        '.MuiTablePagination-displayedRows':{
-                          margin:'0',
-                        },
-                        '.MuiTablePagination-selectLabel':{
-                          margin:'0',
-                        },
-                        '.MuiTablePagination-spacer':{
-                          display:'none '
-                        },
-                        '.MuiTablePagination-input':{
-                          marginRight:'auto'
-                        },
-                      }}
-                
-                      labelRowsPerPage='Show'
-                      labelDisplayedRows={(page) =>
-                        `Showing ${page.from}-${page.to === -1 ? page.count : page.to} of ${page.count}`
-                      }
-                      rowsPerPageOptions={[10, 25, 50, 100]}
-                      component="div"
-                      count={attendanceCount}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                  /> */}
                 </>
               }
               <Button sx={{marginTop:'20px', alignSelf:'flex-end', width:'200px'}} variant='contained' onClick={onClickSave}>Save</Button>  

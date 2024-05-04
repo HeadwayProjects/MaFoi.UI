@@ -22,6 +22,26 @@ interface InputModuleState {
         data: any,
         error: string | null
     },
+    actsDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    activitiesDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    rulesDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    formsDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
     configUploadDetails: {
         status: string,
         data: any,
@@ -33,6 +53,11 @@ interface InputModuleState {
         error: string | null
     },
     excelHeaderToDbColumnsDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    employeeUploadDetails: {
         status: string,
         data: any,
         error: string | null
@@ -60,6 +85,26 @@ const initialState: InputModuleState = {
         data: '',
         error: null
     },
+    actsDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    activitiesDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    }, 
+    rulesDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    formsDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
     configUploadDetails: {
         status: 'idle',
         data: '',
@@ -71,6 +116,11 @@ const initialState: InputModuleState = {
         error: null
     },
     excelHeaderToDbColumnsDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    employeeUploadDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -97,6 +147,26 @@ export const getStates = createAsyncThunk('inputModule/getStates', async (data: 
     return await inputModuleService.getStatesDetails(data);
 })
 
+export const getActs = createAsyncThunk('inputModule/getActs', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getActs(data)
+})
+
+export const getActivities = createAsyncThunk('inputModule/getActivities', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getActivities(data)
+})
+
+export const getRules = createAsyncThunk('inputModule/getRules', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getRules(data)
+})
+
+export const getForms = createAsyncThunk('inputModule/getForms', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getForms(data)
+})
+
 export const configUpload = createAsyncThunk('inputModule/configUpload', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.configUpload(data);
@@ -110,6 +180,11 @@ export const getColumns = createAsyncThunk('inputModule/getColumns', async (type
 export const callExcelHeaderToDbColumns = createAsyncThunk('inputModule/callExcelHeaderToDbColumns', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.callExcelHeaderToDbColumns(data);
+})
+
+export const employeeUpload = createAsyncThunk('inputModule/employeeUpload', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.employeeUpload(data);
 })
 
 export const inputModuleSlice = createSlice({
@@ -136,7 +211,14 @@ export const inputModuleSlice = createSlice({
                 data: '',
                 error: null
             }
-        }
+        },
+        resetEmployeeUploadDetails: (state) => {
+            state.employeeUploadDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
     },
     extraReducers: (builder) => builder
         .addCase(getAllCompaniesDetails.pending, (state) => {
@@ -206,12 +288,80 @@ export const inputModuleSlice = createSlice({
             state.statesDetails.status = 'failed'
             state.statesDetails.error = action.error.message
         })
-       
+        
+        .addCase(getActs.pending, (state) => {
+            state.actsDetails.status = 'loading'
+        })
+        .addCase(getActs.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.actsDetails.status = 'succeeded'
+                state.actsDetails.data = action.payload.data
+            } else {
+                state.actsDetails.status = 'failed'
+                state.actsDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getActs.rejected, (state, action: any) => {
+            state.actsDetails.status = 'failed'
+            state.actsDetails.error = action.error.message
+        })
+
+        .addCase(getActivities.pending, (state) => {
+            state.activitiesDetails.status = 'loading'
+        })
+        .addCase(getActivities.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.activitiesDetails.status = 'succeeded'
+                state.activitiesDetails.data = action.payload.data
+            } else {
+                state.activitiesDetails.status = 'failed'
+                state.activitiesDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getActivities.rejected, (state, action: any) => {
+            state.activitiesDetails.status = 'failed'
+            state.activitiesDetails.error = action.error.message
+        })
+
+        .addCase(getRules.pending, (state) => {
+            state.rulesDetails.status = 'loading'
+        })
+        .addCase(getRules.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.rulesDetails.status = 'succeeded'
+                state.rulesDetails.data = action.payload.data
+            } else {
+                state.rulesDetails.status = 'failed'
+                state.rulesDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getRules.rejected, (state, action: any) => {
+            state.rulesDetails.status = 'failed'
+            state.rulesDetails.error = action.error.message
+        })
+        
+        .addCase(getForms.pending, (state) => {
+            state.formsDetails.status = 'loading'
+        })
+        .addCase(getForms.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.formsDetails.status = 'succeeded'
+                state.formsDetails.data = action.payload.data
+            } else {
+                state.formsDetails.status = 'failed'
+                state.formsDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getForms.rejected, (state, action: any) => {
+            state.formsDetails.status = 'failed'
+            state.formsDetails.error = action.error.message
+        })
+
         .addCase(configUpload.pending, (state) => {
             state.configUploadDetails.status = 'loading'
         })
         .addCase(configUpload.fulfilled, (state, action: any) => {
-            if(action.payload.data.status === 'SUCCESS') {
+            if(action.payload.data) {
                 state.configUploadDetails.status = 'succeeded'
                 state.configUploadDetails.data = action.payload.data
             } else {
@@ -257,8 +407,25 @@ export const inputModuleSlice = createSlice({
             state.excelHeaderToDbColumnsDetails.status = 'failed'
             state.excelHeaderToDbColumnsDetails.error = action.error.message
         })
+
+        .addCase(employeeUpload.pending, (state) => {
+            state.employeeUploadDetails.status = 'loading'
+        })
+        .addCase(employeeUpload.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.employeeUploadDetails.status = 'succeeded'
+                state.employeeUploadDetails.data = action.payload.data
+            } else {
+                state.employeeUploadDetails.status = 'failed'
+                state.employeeUploadDetails.error = action.payload.message;
+            }
+        })
+        .addCase(employeeUpload.rejected, (state, action: any) => {
+            state.employeeUploadDetails.status = 'failed'
+            state.employeeUploadDetails.error = action.error.message
+        })
 })
   
-export const { resetConfigUploadDetails, resetGetColumnsDetails, resetExcelHeaderToDbColumnsDetails } = inputModuleSlice.actions
+export const { resetConfigUploadDetails, resetGetColumnsDetails, resetExcelHeaderToDbColumnsDetails, resetEmployeeUploadDetails } = inputModuleSlice.actions
 
 export default inputModuleSlice.reducer

@@ -113,7 +113,7 @@ function AuthenticatedContent() {
         ),
         '/activities': () => getActivitiesByRole(),
         '/input/dashboard': () => (layout(<Dashboard />)),
-        '/input/configurations': () => (layout(<Configurations />)),
+        '/input/inputModuleUploads': () => (layout(<Configurations />)),
         '/input/holidayList': () => (layout(<HolidayList />)),
         '/input/leaveConfiguration': () => (layout(<LeaveConfiguration />)),
         '/input/attendanceConfig': () => (layout(<AttendanceConfig />)),

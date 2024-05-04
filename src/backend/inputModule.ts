@@ -23,7 +23,32 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
-    //Config Upload
+    public async getActs(data: any) {
+        const url = `/api/Act/GetAll`
+        return await api.post(url, data)
+    }
+
+    public async getActivities(data: any) {
+        const url = `/api/Activity/GetAll`
+        return await api.post(url, data)
+    }
+
+    public async getRules(data: any) {
+        const url = `/api/Rule/GetAll`
+        return await api.post(url, data)
+    }
+    
+    public async getForms(data: any) {
+        const url = `/api/Mappings/GetActStateList`
+        return await api.post(url, data)
+    }
+
+    public async getStateConfigurationDetails(fileUrl: any) {
+        const url = `/api/StateRegisterConfiguration/GetStateConfigurationDetails?url=${fileUrl}`
+        return await api.get(url)
+    }
+
+    //Employee Master uploads
     public async configUpload(data: any) {
         const url = `/api/Configuration/upload`
         return await api.post(url, data, null, true)
@@ -37,6 +62,11 @@ export class InputModuleService {
     public async callExcelHeaderToDbColumns(data: any) {
         const url = `/api/Configuration/ExcelHeaderToDBColumns`
         return await api.post(url, data)
+    }
+    
+    public async employeeUpload(data: any) {
+        const url = `/api/Configuration/UploadEmployeeMaster`
+        return await api.post(url, data, null, true)
     }
 
     // Dashboard
@@ -146,8 +176,4 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
-    public async employeeUpload(data: any) {
-        const url = `/api/Configuration/UploadEmployeeMaster`
-        return await api.post(url, data, null, true)
-    }
 }

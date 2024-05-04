@@ -91,6 +91,21 @@ export function useExportLeaveConfig(onSuccess?: any, onError?: any) {
     return { exportLeaveConfig, error, exporting };
 }
 
+export function useExportEmployees(onSuccess?: any, onError?: any) {
+    const { mutate: exportEmployees, error, isLoading: exporting } = useMutation(
+        ['exportEmployees'],
+        async (payload: any) => await post('/api/Employee/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportEmployees, error, exporting };
+}
+
 export function useExportActivities(onSuccess?: any, onError?: any) {
     const { mutate: exportActivity, error, isLoading: exporting } = useMutation(
         ['exportActivity'],
