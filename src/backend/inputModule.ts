@@ -48,6 +48,7 @@ export class InputModuleService {
         return await api.get(url)
     }
 
+
     //Employee Master uploads
     public async configUpload(data: any) {
         const url = `/api/Configuration/upload`
@@ -167,6 +168,11 @@ export class InputModuleService {
     // State Register
     public async fetchStateRegister(data: any) {
         const url = `/api/StateRegisterConfiguration/GetAll`
+        return await api.post(url, data)
+    }
+
+    public async addStateRegister(data: any) {
+        const url = `/api/StateRegisterConfiguration/Add`
         return await api.post(url, data)
     }
     

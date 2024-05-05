@@ -12,6 +12,11 @@ interface LeaveConfigurationState {
         data: any,
         error: string | null
     },
+    addStateRegisterDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    }
 }
 
 const initialState: LeaveConfigurationState = { 
@@ -25,6 +30,11 @@ const initialState: LeaveConfigurationState = {
         data: '',
         error: null
     },
+    addStateRegisterDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    }
 } as LeaveConfigurationState
 
 export const getStateRegister = createAsyncThunk('stateRegister/getleaveConfiguration', async (data: any) => {
@@ -37,11 +47,29 @@ export const getStateConfigurationDetails = createAsyncThunk('inputModule/getSta
     return await inputModuleService.getStateConfigurationDetails(data)
 })
 
+export const addStateRegister = createAsyncThunk('inputModule/addStateRegister', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.addStateRegister(data)
+})
+
 export const stateRegisterSlice = createSlice({
     name: 'stateRegister',
     initialState,
     reducers: {
-       
+       resetStateConfigDetails: (state) => {
+            state.stateConfigureDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+       },
+       resetAddStateConfigDetails: (state) => {
+        state.addStateRegisterDetails = {
+            status: 'idle',
+            data: '',
+            error: null
+        }
+   }
     },
     extraReducers: (builder) => builder
         .addCase(getStateRegister.pending, (state) => {
@@ -77,8 +105,25 @@ export const stateRegisterSlice = createSlice({
             state.stateConfigureDetails.status = 'failed'
             state.stateConfigureDetails.error = action.error.message
         })
+        
+        .addCase(addStateRegister.pending, (state) => {
+            state.addStateRegisterDetails.status = 'loading'
+        })
+        .addCase(addStateRegister.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.addStateRegisterDetails.status = 'succeeded'
+                state.addStateRegisterDetails.data = action.payload.data
+            } else {
+                state.addStateRegisterDetails.status = 'failed'
+                state.addStateRegisterDetails.error = action.payload.message;
+            }
+        })
+        .addCase(addStateRegister.rejected, (state, action: any) => {
+            state.addStateRegisterDetails.status = 'failed'
+            state.addStateRegisterDetails.error = action.error.message
+        })
 })
   
-export const { } = stateRegisterSlice.actions
+export const { resetStateConfigDetails, resetAddStateConfigDetails} = stateRegisterSlice.actions
 
 export default stateRegisterSlice.reducer
