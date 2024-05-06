@@ -770,7 +770,7 @@ const StateRegisterConfiguration = () => {
 
         <Box sx={style}>
 
-          <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+          <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
             <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Configure Register</Typography>
             <IconButton
               onClick={() => {setOpenAddModal(false);resetStateValues()}}
@@ -1269,7 +1269,7 @@ const StateRegisterConfiguration = () => {
 
                           <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px', mt:1}}>Font Size</Typography>
                           <Typography color="#000000" sx={{fontSize:'20px'}} >{each.FontSize}</Typography>
-                          
+
                         </Box>
                       )
                   })}
@@ -1400,12 +1400,12 @@ const StateRegisterConfiguration = () => {
                                   key={index}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >   
-                                      <TableCell >{each.State && each.State.Name ? each.State.Name : ''}</TableCell>
-                                      <TableCell >{each.Act && each.Act.Name ? each.Act.Name : ''}</TableCell>
-                                      <TableCell >{each.Rule && each.Rule.Name ? each.Rule.Name : ''}</TableCell>
-                                      <TableCell >{each.Activity && each.Activity.Name ? each.Activity.Name : ''}</TableCell>
-                                      <TableCell >{each.Form && each.Form ? each.Form : ''}</TableCell>
-                                      <TableCell >{each.RegisterType && each.RegisterType ? each.RegisterType: ''}</TableCell>
+                                      <TableCell >{each.State && each.State.Name ? each.State.Name : 'NA'}</TableCell>
+                                      <TableCell >{each.Act && each.Act.Name ? each.Act.Name : 'NA'}</TableCell>
+                                      <TableCell >{each.Rule && each.Rule.Name ? each.Rule.Name : 'NA'}</TableCell>
+                                      <TableCell >{each.Activity && each.Activity.Name ? each.Activity.Name : 'NA'}</TableCell>
+                                      <TableCell >{each.Form && each.Form ? each.Form : 'NA'}</TableCell>
+                                      <TableCell >{each.RegisterType && each.RegisterType ? each.RegisterType: 'NA'}</TableCell>
                                       
                                       <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'50px'}}>
