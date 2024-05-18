@@ -24,10 +24,12 @@ const SideNavMenu = [
             { id: 'input/salaryComponents', url: '/input/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/stateRegisterConfiguration', url: '/input/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'input/inputModuleUploads', url: '/input/inputModuleUploads', label: 'Input Module Uploads', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'input/employeeMasterUpload', url: '/input/employeeMasterUpload', label: 'Employee Master Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'input/employeeLeaveCreditUpload', url: '/input/employeeLeaveCreditUpload', label: 'Employee Leave Credit Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'input/employeeLeaveAvailedUpload', url: '/input/employeeLeaveAvailedUpload', label: 'Employee Leave Availed Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'input/employeeAttendanceUpload', url: '/input/employeeAttendanceUpload', label: 'Employee Attendance Upload', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY }
+            { id: 'input/employeeMasterUpload', url: '/input/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/employeeLeaveBalanceUpload', url: '/input/employeeLeaveBalanceUpload', label: 'Employee Leave Balance', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/employeeLeaveAvailedUpload', url: '/input/employeeLeaveAvailedUpload', label: 'Employee Leave Availed', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'input/employeeAttendanceUpload', url: '/input/employeeAttendanceUpload', label: 'Employee Attendance', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'input/employeeWageUpload', url: '/input/employeeWageUpload', label: 'Employee Wage', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY }
+
         ]
     },
     {

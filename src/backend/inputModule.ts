@@ -70,6 +70,26 @@ export class InputModuleService {
         return await api.post(url, data, null, true)
     }
 
+    public async employeeAttendanceUpload(data: any) {
+        const url = `/api/Configuration/UploadEmployeeAttendance`
+        return await api.post(url, data, null, true)
+    }
+
+    public async employeeLeaveBalanceUpload(data: any) {
+        const url = `/api/Configuration/UploadEmployeeLeaveBalance`
+        return await api.post(url, data, null, true)
+    }
+
+    public async employeeLeaveAvailedUpload(data: any) {
+        const url = `/api/Configuration/UploadEmployeeLeaveAvailed`
+        return await api.post(url, data, null, true)
+    }
+
+    public async employeeWageUpload(data: any) {
+        const url = `/api/Configuration/UploadEmployeeWage`
+        return await api.post(url, data, null, true)
+    }
+
     // Dashboard
     public async getEmployeeDashboardCounts(data: any) {
         const url = `/api/Dashboard/EmployeeDashboardCounts`
@@ -179,6 +199,26 @@ export class InputModuleService {
     //Employee Master
     public async getEmployees(data: any) {
         const url = `/api/Employee/GetAll`
+        return await api.post(url, data)
+    }
+    
+    public async getEmployeesAttendance(data: any) {
+        const url = `/api/Employee/GetAllEmployeeAttendance`
+        return await api.post(url, data)
+    }
+    
+    public async getEmployeesLeaveBalance(data: any) {
+        const url = `/api/Employee/GetAllEmployeeLeaveBalance`
+        return await api.post(url, data)
+    }
+    
+    public async getEmployeesLeaveAvailed(data: any) {
+        const url = `/api/Employee/GetAlEmployeeLeaveAvailed`
+        return await api.post(url, data)
+    }
+    
+    public async getEmployeesWage(data: any) {
+        const url = `/api/Employee/GetAlEmployeeLeaveAvailed`
         return await api.post(url, data)
     }
 

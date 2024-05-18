@@ -180,7 +180,7 @@ const EmployeeMasterUpload = () => {
   
   const handleChangeYear = (event:any) => {
     setYear('')
-    setYear(event.target.value);
+    setYear(event.target.value.toString());
     const employeesPayload: any =  { 
       search: searchInput, 
       filters: [
@@ -198,7 +198,7 @@ const EmployeeMasterUpload = () => {
         },
         {
           columnName:'year',
-          value: event.target.value
+          value: event.target.value.toString()
         }
       ],
       pagination: {
@@ -261,7 +261,7 @@ const EmployeeMasterUpload = () => {
         },
         {
           columnName:'month',
-          value: event.target.value
+          value: monthKey.toString()
         }
       ],
       pagination: {
@@ -1353,7 +1353,7 @@ const EmployeeMasterUpload = () => {
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
-                                      <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}> Code</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB}> DOB</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender}> Gender</TableSortLabel></TableCell>

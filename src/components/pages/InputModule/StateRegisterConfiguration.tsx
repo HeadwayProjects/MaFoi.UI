@@ -1,4 +1,4 @@
-import React, { act, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getActivities, getActs, getAllCompaniesDetails, getAssociateCompanies, getColumns, getForms, getLocations, getRules, getStates } from '../../../redux/features/inputModule.slice';
@@ -120,6 +120,7 @@ const StateRegisterConfiguration = () => {
   const [type, setType] = React.useState('');
 
   const [registerType, setRegisterType] = React.useState('');
+  const [processType, setProcessType] = React.useState('');
   const [stateName, setStateName] = React.useState<any>('');
   const [actName, setActName] = React.useState<any>('')
   const [ruleName, setRuleName] = React.useState<any>('')
@@ -267,6 +268,17 @@ const StateRegisterConfiguration = () => {
     const newTableData = tableData.map((each:any) => {
       if(each.id === fieldData.id){
         return {...each, fontSize: event.target.value}
+      }else{
+        return each
+      }
+    })
+    setTableData(newTableData)
+  }
+
+  const handleChangeFormula = (event:any, fieldData:any) => {
+    const newTableData = tableData.map((each:any) => {
+      if(each.id === fieldData.id){
+        return {...each, formula: event.target.value}
       }else{
         return each
       }
@@ -627,22 +639,23 @@ const StateRegisterConfiguration = () => {
   }
 
   const onClickConfigure = () => {
-    if(!registerType || !stateName || !actName || !ruleName || !activityName || !formName || !formNameValue){
+    if(!registerType || !processType || !stateName || !actName || !ruleName || !activityName || !formName || !formNameValue ){
       return toast.error(ERROR_MESSAGES.FILL_ALL);
     }else{
       const payload = formName.value
       const testUrl = 'https://mafoi.s3.ap-south-1.amazonaws.com/inputtemplates/test3.xlsx'
-      dispatch(getStateConfigurationDetails(testUrl))
+      dispatch(getStateConfigurationDetails(payload))
     }
   }
 
   const onClickSave = () => {
-    const check = tableData.find((each:any) => each.columnType === '' || each.employeeFieldName === '' || each.style === '' || each.fontName === '' || each.fontSize === '')
+    const check = tableData.find((each:any) => each.columnType === '' || each.employeeFieldName === '' || each.style === '' || each.fontName === '' || each.fontSize === '' || each.formula)
     if(check || !registerType || !stateName || !actName || !ruleName || !activityName || !formNameValue || !formName || !headerStartRow || !headerEndRow || !footerStartRow || !footerEndRow || !totalRowsPerPage || !pageSize || !pageOrientation){
       return toast.error('Please Select and Fill All Fields');
     } else{
       const payload = {
         registerType,
+        processType,
         stateId: stateName.value,
         actId: actName.value,
         ruleId: ruleName.value,
@@ -663,8 +676,18 @@ const StateRegisterConfiguration = () => {
     }
   }
 
-  const onclickEdit = (holiday:any) => {
-   
+
+  const onclickEdit = (configDetails:any) => {
+    setRegisterType(configDetails.RegisterType)
+    setProcessType(configDetails.ProcessType)
+    setStateName({label: configDetails.State.Name, value: configDetails.StateId})
+    setActName({label: configDetails.Act.Name, value: configDetails.ActId})
+    setRuleName({label: configDetails.Rule.Name, value: configDetails.RuleId})
+    setActivityName({label: configDetails.Activity.Name, value: configDetails.ActivityId})
+    setFormNameValue(configDetails.FormName)
+    setFormName({label: configDetails.Form, value: configDetails.Form})
+    setShowInitialConfig(true)
+    setOpenAddModal(true)
   }
 
   const onClickSubmitEdit = () => {
@@ -740,6 +763,7 @@ const StateRegisterConfiguration = () => {
     setShowInitialConfig(false)
     setShowConfigTable(false)
     setRegisterType('')
+    setProcessType('')
     setStateName('')
     setActName('')
     setRuleName('')
@@ -781,6 +805,8 @@ const StateRegisterConfiguration = () => {
 
           <Box sx={{height:'85vh'}}>
             {showInitialConfig && <Box sx={{padding:'20px', backgroundColor:'#ffffff',}}>
+
+              <Box sx={{display:'flex'}}>
                 <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                   <FormLabel  sx={{color:'#000000'}}>Register Type</FormLabel>
                   <MSelect
@@ -798,6 +824,18 @@ const StateRegisterConfiguration = () => {
                 </FormControl>
 
                 <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                  <FormLabel  sx={{color:'#000000'}}>Process Type</FormLabel>
+                  <Select
+                    options={['Leave', 'Employee', 'Wage'].map((each:any) => {return {label : each, value: each}})}
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    value={processType}
+                    styles={customStyles}
+                    onChange={(e:any) => {setProcessType(e) }}
+                  />
+                </FormControl>
+
+                <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                   <FormLabel  sx={{color:'#000000'}}>State</FormLabel>
                   <Select
                     options={statesList && statesList.map((each:any) => {return {label : each.name, value: each.id}})}
@@ -808,6 +846,8 @@ const StateRegisterConfiguration = () => {
                     onChange={(e:any) => {handleChangeStateName(e) }}
                   />
                 </FormControl>
+
+              </Box>
 
                 <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                   <FormLabel  sx={{color:'#000000'}}>Act</FormLabel>
@@ -1026,6 +1066,7 @@ const StateRegisterConfiguration = () => {
                                             <TableCell > Style</TableCell>
                                             <TableCell > Font Name</TableCell>
                                             <TableCell > Font Size</TableCell>
+                                            <TableCell > Formula</TableCell>
                                             <TableCell > Value Merged</TableCell>
                                             <TableCell > Value Merged Range </TableCell>
                                             <TableCell > Value Row Address </TableCell>
@@ -1129,6 +1170,24 @@ const StateRegisterConfiguration = () => {
                                               </FormControl>
                                             </TableCell>
 
+                                            {/** Formula */}
+                                            <TableCell > 
+                                              <FormControl sx={{ m: 1, width:"100%", maxWidth:'190px', minWidth:'120px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                                                <OutlinedInput
+                                                  sx={{
+                                                    '& input::placeholder':{
+                                                      fontSize:'14px'
+                                                    }
+                                                  }}
+                                                  type='text'
+                                                  placeholder='Formula'
+                                                  value={each.fontSize ? each.fontSize : ''}
+                                                  onChange={(e) => handleChangeFormula(e, each)}
+                                                  id="outlined-adornment-name"
+                                                />
+                                              </FormControl>
+                                            </TableCell>
+
                                             {/** Value Merged */}
                                             <TableCell >
                                               <FormControl sx={{ m: 1, width:"100%", maxWidth:'120px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
@@ -1154,9 +1213,11 @@ const StateRegisterConfiguration = () => {
                                                   sx={{
                                                     '& input::placeholder':{
                                                       fontSize:'14px'
-                                                    }
+                                                    },
+                                                    backgroundColor: !each.valueMerged ? '#EBEBE4' : '#ffffff'
                                                   }}
                                                   placeholder='Value Merged Range'
+                                                  disabled={!each.valueMerged}
                                                   value={each.valueMergedRange ? each.valueMergedRange : ''}
                                                   onChange={(e) => handleChangeValueMergedRange(e, each)}
                                                   id="outlined-adornment-name"
@@ -1172,8 +1233,10 @@ const StateRegisterConfiguration = () => {
                                                   sx={{
                                                     '& input::placeholder':{
                                                       fontSize:'14px'
-                                                    }
+                                                    },
+                                                    backgroundColor: each.valueMerged ? '#EBEBE4' : '#ffffff'
                                                   }}
+                                                  disabled={each.valueMerged}
                                                   placeholder='Value Row'
                                                   value={each.valueRowAddress ? each.valueRowAddress : ''}
                                                   onChange={(e) => handleChangeValueRow(e, each)}
@@ -1190,8 +1253,10 @@ const StateRegisterConfiguration = () => {
                                                   sx={{
                                                     '& input::placeholder':{
                                                       fontSize:'14px'
-                                                    }
+                                                    },
+                                                    backgroundColor: each.valueMerged ? '#EBEBE4' : '#ffffff'
                                                   }}
+                                                  disabled={each.valueMerged}
                                                   placeholder='Value Column'
                                                   value={each.valueColumnAddress ? each.valueColumnAddress : ''}
                                                   onChange={(e) => handleChangeValueColumn(e, each)}
@@ -1233,16 +1298,16 @@ const StateRegisterConfiguration = () => {
             <>
               <Box sx={{ width: '100%', padding:'20px', height:'90vh', overflowY:'scroll'}}>
                   <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>State</Typography>
-                  <Typography color="#000000" sx={{fontSize:'20px'}} >{selectedStateConfig.StateId}</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{selectedStateConfig.State ? selectedStateConfig.State.Name : 'NA'}</Typography>
                   
                   <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px', mt:1}}>Act</Typography>
-                  <Typography color="#000000" sx={{fontSize:'20px'}} >{selectedStateConfig.ActId}</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{selectedStateConfig.Act ? selectedStateConfig.Act.Name : 'NA'}</Typography>
 
                   <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px', mt:1}}>Rule</Typography>
-                  <Typography color="#000000" sx={{fontSize:'20px'}} >{selectedStateConfig.RuleId}</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{selectedStateConfig.Rule ? selectedStateConfig.Rule.Name : 'NA'}</Typography>
 
                   <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px', mt:1}}>Activity</Typography>
-                  <Typography color="#000000" sx={{fontSize:'20px'}} >{selectedStateConfig.ActivityId}</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{selectedStateConfig.Activity ? selectedStateConfig.Activity.Name : 'NA'}</Typography>
 
                   <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px', mt:1}}>Form Name</Typography>
                   <Typography color="#000000" sx={{fontSize:'20px'}} >{selectedStateConfig.Form}</Typography>

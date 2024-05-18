@@ -46,12 +46,13 @@ import LeaveConfiguration from "../components/pages/InputModule/LeaveConfigurati
 import LeaveMapping from "../components/pages/InputModule/Dashboard";
 import AttendanceConfig from "../components/pages/InputModule/AttendanceConfig";
 import StateRegisterConfiguration from "../components/pages/InputModule/StateRegisterConfiguration";
-import EmployeeLeaveCreditUpload from "../components/pages/InputModule/EmployeeLeaveCreditUpload";
+import EmployeeLeaveCreditUpload from "../components/pages/InputModule/EmployeeLeaveBalanceUpload";
 import EmployeeLeaveAvailedUpload from "../components/pages/InputModule/EmployeeLeaveAvailedUpload";
 import EmployeeAttendanceUpload from "../components/pages/InputModule/EmployeeAttendanceUpload";
 import SalaryComponents from "../components/pages/InputModule/SalaryComponents";
 import Dashboard from "../components/pages/InputModule/Dashboard";
 import Configurations from "../components/pages/InputModule/Configurations";
+import EmployeeWageUpload from "../components/pages/InputModule/EmployeeWageUpload";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -120,9 +121,10 @@ function AuthenticatedContent() {
         '/input/salaryComponents': () => (layout(<SalaryComponents />)),
         '/input/stateRegisterConfiguration': () => (layout(<StateRegisterConfiguration />)),
         '/input/employeeMasterUpload': () => (layout(<EmployeeMasterUpload />)),
-        '/input/employeeLeaveCreditUpload': () => (layout(<EmployeeLeaveCreditUpload />)),
+        '/input/employeeLeaveBalanceUpload': () => (layout(<EmployeeLeaveCreditUpload />)),
         '/input/employeeLeaveAvailedUpload': () => (layout(<EmployeeLeaveAvailedUpload />)),
         '/input/employeeAttendanceUpload': () => (layout(<EmployeeAttendanceUpload />)),
+        '/input/employeeWageUpload': () => (layout(<EmployeeWageUpload />)),
 
         '/masters/law': () => (
             layout(<Law />)

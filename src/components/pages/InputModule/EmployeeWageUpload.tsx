@@ -13,27 +13,27 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { getEmployees, getEmployeesAttendance } from '../../../redux/features/employeeMaster.slice';
+import { getEmployees, getEmployeesAttendance, getEmployeesLeaveAvailed, getEmployeesLeaveBalance } from '../../../redux/features/employeeMaster.slice';
 
-const EmployeeAttendanceUpload = () => {
+const EmployeeWageUpload = () => {
 
   const dispatch = useAppDispatch();
 
-  const employeesAttendanceDetails = useAppSelector((state) => state.employeeMaster.employeesAttendanceDetails)
+  const employeesLeaveAvailedDetails = useAppSelector((state) => state.employeeMaster.employeesLeaveAvailedDetails)
 
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
 
-  const employeesAttendance = employeesAttendanceDetails.data.list
-  const employeesAttendanceCount = employeesAttendanceDetails.data.count 
-  console.log("employeesAttendance", employeesAttendance, 'employeesAttendanceCount', employeesAttendanceCount)
+  const employeesLeaveAvailed = employeesLeaveAvailedDetails.data.list
+  const employeesLeaveAvailedCount = employeesLeaveAvailedDetails.data.count 
+  console.log("employeesLeaveAvailed", employeesLeaveAvailed, 'employeesLeaveAvailedCount', employeesLeaveAvailedCount)
 
   const companies = companiesDetails.data.list
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading =  employeesAttendanceDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading =  employeesLeaveAvailedDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -62,10 +62,10 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(payload))
+    dispatch(getEmployeesLeaveAvailed(payload))
   };
 
   const handleChangeAssociateCompany = (event:any) => {
@@ -89,10 +89,10 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(payload))
+    dispatch(getEmployeesLeaveAvailed(payload))
   };
 
   const handleChangeLocation = (event:any) => {
@@ -119,10 +119,10 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(payload))
+    dispatch(getEmployeesLeaveAvailed(payload))
   };
   
   const handleChangeYear = (event:any) => {
@@ -152,10 +152,10 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(payload))
+    dispatch(getEmployeesLeaveAvailed(payload))
   };
   
   const handleChangeMonth = (event:any) => {
@@ -189,10 +189,10 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(payload))
+    dispatch(getEmployeesLeaveAvailed(payload))
   };
 
   const handleChangeSearchInput = (event:any) => {
@@ -200,18 +200,18 @@ const EmployeeAttendanceUpload = () => {
   }
 
   useEffect(() => {
-    const employeesAttendancePayload: any =  { 
+    const employeesWagePayload: any =  { 
       search: "",
       filters: [],
       pagination: {
         pageSize: 10,
         pageNumber: 1
       },
-      sort: { columnName: 'EmployeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
 
-    dispatch(getEmployeesAttendance(employeesAttendancePayload))
+    dispatch(getEmployeesLeaveAvailed(employeesWagePayload))
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
     dispatch(getAllCompaniesDetails(companiesPayload))
   },[])
@@ -235,12 +235,12 @@ const EmployeeAttendanceUpload = () => {
   }, [associateCompany])
 
   useEffect(() => {
-    if(employeesAttendanceDetails.status === 'succeeded'){
+    if(employeesLeaveAvailedDetails.status === 'succeeded'){
 
-    }else if(employeesAttendanceDetails.status === 'failed'){
+    }else if(employeesLeaveAvailedDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  },[employeesAttendanceDetails.status])
+  },[employeesLeaveAvailedDetails.status])
 
   const yearsList = []
   const currentYear = new Date().getFullYear();
@@ -272,10 +272,10 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(payload))
+    dispatch(getEmployeesLeaveAvailed(payload))
   }
 
   const onClickClearSearch = () => {
@@ -286,10 +286,10 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(payload))
+    dispatch(getEmployeesLeaveAvailed(payload))
     setSearchInput('')
   }
 
@@ -335,7 +335,7 @@ const EmployeeAttendanceUpload = () => {
       })
     }
 
-    const employeesAttendancePayload: any =  { 
+    const payload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
@@ -345,7 +345,7 @@ const EmployeeAttendanceUpload = () => {
       sort: { columnName: 'employeeCode', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(employeesAttendancePayload))
+    dispatch(getEmployeesLeaveAvailed(payload))
   }
 
   const onClickSortName = () => {
@@ -390,7 +390,7 @@ const EmployeeAttendanceUpload = () => {
       })
     }
 
-    const employeesAttendancePayload: any =  { 
+    const payload: any =  { 
       search: searchInput, 
       filters,
       pagination: {
@@ -400,13 +400,12 @@ const EmployeeAttendanceUpload = () => {
       sort: { columnName: 'employeeName', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(employeesAttendancePayload))
-    
+    dispatch(getEmployeesLeaveAvailed(payload))
   }
 
-  const onClickSortPresentDays = () => {
+  const onClickSortNoOfDays = () => {
     let type = 'asc'
-    setActiveSort('presentDays'); 
+    setActiveSort('noOfDays'); 
     if(sortType === 'asc'){
       setSortType('desc')
       type = 'desc'
@@ -453,71 +452,127 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'presentDays', order: type },
+      sort: { columnName: 'noOfDays', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesAttendance(payload))
+    dispatch(getEmployeesLeaveAvailed(payload))
+    
+  }
+
+  const onClickSortStartDate = () => {
+    let type = 'asc'
+    setActiveSort('leaveStartDate'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
+
+    const payload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'leaveStartDate', order: type },
+      "includeCentral": true
+    }
+    dispatch(getEmployeesLeaveAvailed(payload))
+    
+  }
+
+  const onClickSortEndDate= () => {
+    let type = 'asc'
+    setActiveSort('leaveEndDate'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
+
+    const payload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'leaveEndDate', order: type },
+      "includeCentral": true
+    }
+    dispatch(getEmployeesLeaveAvailed(payload))
     
   }
   
-  const onClickSortWageMonth = () => {
-    let type = 'asc'
-    setActiveSort('wageMonth'); 
-    if(sortType === 'asc'){
-      setSortType('desc')
-      type = 'desc'
-    }else{
-      setSortType('asc')
-    }
-
-    const filters = []
-    if(company){
-      filters.push({
-        columnName:'companyId',
-        value: company
-      })
-    }
-    if(associateCompany){
-      filters.push({
-        columnName:'associateCompanyId',
-        value: associateCompany
-      })
-    }
-    if(location){
-      filters.push({
-        columnName:'locationId',
-        value: location
-      })
-    }
-    if(year){
-      filters.push({
-        columnName:'year',
-        value: year
-      })
-    }
-    if(month){
-      filters.push({
-        columnName:'month',
-        value: month
-      })
-    }
-
-    const payload: any =  { 
-      search: searchInput, 
-      filters,
-      pagination: {
-        pageSize: rowsPerPage,
-        pageNumber: page+1
-      },
-      sort: { columnName: 'wageMonth', order: type },
-      "includeCentral": true
-    }
-    dispatch(getEmployeesAttendance(payload))
-    
-  }
-
   const handleChangePage = (event: unknown, newPage: number) => {
-    const employeesAttendancePayload: any =  { 
+    const payload: any =  { 
       search: '', 
       filters: [
       ],
@@ -525,27 +580,27 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: newPage+1
       },
-      sort: { columnName: 'EmployeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
 
-    dispatch(getEmployeesAttendance(employeesAttendancePayload))
+    dispatch(getEmployeesLeaveAvailed(payload))
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const employeesAttendancePayload: any =  { 
+    const payload: any =  { 
       search: '', 
       filters: [],
       pagination: {
         pageSize: parseInt(event.target.value, 10),
         pageNumber: 1
       },
-      sort: { columnName: 'EmployeeName', order: 'asc' },
+      sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
 
-    dispatch(getEmployeesAttendance(employeesAttendancePayload))
+    dispatch(getEmployeesLeaveAvailed(payload))
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -559,8 +614,8 @@ const EmployeeAttendanceUpload = () => {
              <Box sx={{paddingX: '20px', paddingY:'10px',}}>
                 <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
-                        <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Attendance</h5>
-                        {/* <button onClick={onClickExport} disabled={!employeesAttendance} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesAttendance ? '#707070': '#ffffff' , color: !employeesAttendance ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
+                        <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Wage</h5>
+                        {/* <button onClick={onClickExport} disabled={!employeesLeaveAvailed} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveAvailed ? '#707070': '#ffffff' , color: !employeesLeaveAvailed ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
                     </div>
                     <div style={{display:'flex'}}>
 
@@ -705,7 +760,7 @@ const EmployeeAttendanceUpload = () => {
 
             <Box sx={{paddingX: '20px'}}>
               {
-                employeesAttendance && employeesAttendance.length <= 0 ? 
+                employeesLeaveAvailed && employeesLeaveAvailed.length <= 0 ? 
 
                 <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
                   <Typography variant='h5'>No Records Found</Typography>
@@ -717,86 +772,25 @@ const EmployeeAttendanceUpload = () => {
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
                                       <TableCell > <TableSortLabel active={activeSort === 'employeeCode'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'employeeName'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'presentDays'} direction={sortType} onClick={onClickSortPresentDays}> Present Days</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'wageMonth'} direction={sortType} onClick={onClickSortWageMonth}> Wage Month</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 1</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 2</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 3</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 4</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 5</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 6</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 7</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 8</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 9</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 10</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 11</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 12</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 13</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 14</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 15</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 16</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 17</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 18</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 19</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 20</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 21</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 22</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 23</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 24</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 25</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 26</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 27</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 28</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 29</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 30</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel > Day 31</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'employeeName'} direction={sortType} onClick={onClickSortName}>Name</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'noOfDays'} direction={sortType} onClick={onClickSortNoOfDays}>Number Of Days</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'leaveStartDate'} direction={sortType} onClick={onClickSortStartDate}>Start Date</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortEndDate}>End Date</TableSortLabel></TableCell>
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
 
                               <TableBody>
-                              {employeesAttendance && employeesAttendance.map((each: any, index: number) => (
+                              {employeesLeaveAvailed && employeesLeaveAvailed.map((each: any, index: number) => (
                                   <TableRow
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >   
                                       <TableCell >{each.employeeCode}</TableCell>
                                       <TableCell >{each.employeeName}</TableCell>
-                                      <TableCell >{each.presentDays}</TableCell>
-                                      <TableCell >{each.wageMonth}</TableCell>
-                                      <TableCell >{each.day1}</TableCell>
-                                      <TableCell >{each.day2}</TableCell>
-                                      <TableCell >{each.day3}</TableCell>
-                                      <TableCell >{each.day4}</TableCell>
-                                      <TableCell >{each.day5}</TableCell>
-                                      <TableCell >{each.day6}</TableCell>
-                                      <TableCell >{each.day7}</TableCell>
-                                      <TableCell >{each.day8}</TableCell>
-                                      <TableCell >{each.day9}</TableCell>
-                                      <TableCell >{each.day10}</TableCell>
-                                      <TableCell >{each.day11}</TableCell>
-                                      <TableCell >{each.day12}</TableCell>
-                                      <TableCell >{each.day13}</TableCell>
-                                      <TableCell >{each.day14}</TableCell>
-                                      <TableCell >{each.day15}</TableCell>
-                                      <TableCell >{each.day16}</TableCell>
-                                      <TableCell >{each.day17}</TableCell>
-                                      <TableCell >{each.day18}</TableCell>
-                                      <TableCell >{each.day19}</TableCell>
-                                      <TableCell >{each.day20}</TableCell>
-                                      <TableCell >{each.day21}</TableCell>
-                                      <TableCell >{each.day22}</TableCell>
-                                      <TableCell >{each.day23}</TableCell>
-                                      <TableCell >{each.day24}</TableCell>
-                                      <TableCell >{each.day25}</TableCell>
-                                      <TableCell >{each.day26}</TableCell>
-                                      <TableCell >{each.day27}</TableCell>
-                                      <TableCell >{each.day28}</TableCell>
-                                      <TableCell >{each.day29}</TableCell>
-                                      <TableCell >{each.day30}</TableCell>
-                                      <TableCell >{each.day31}</TableCell>
-
+                                      <TableCell >{each.noOfDays}</TableCell>
+                                      <TableCell >{each.leaveStartDate}</TableCell>
+                                      <TableCell >{each.leaveEndDate}</TableCell>
                                       {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
@@ -837,7 +831,7 @@ const EmployeeAttendanceUpload = () => {
                       }
                       rowsPerPageOptions={[10, 25, 50, 100]}
                       component="div"
-                      count={employeesAttendanceCount}
+                      count={employeesLeaveAvailedCount}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}
@@ -852,4 +846,4 @@ const EmployeeAttendanceUpload = () => {
   )
 }
 
-export default EmployeeAttendanceUpload
+export default EmployeeWageUpload

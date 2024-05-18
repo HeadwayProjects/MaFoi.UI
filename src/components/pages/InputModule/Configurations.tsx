@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
-import { callExcelHeaderToDbColumns, configUpload, employeeUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
+import { callExcelHeaderToDbColumns, configUpload, employeeAttendanceUpload, employeeLeaveAvailedUpload, employeeLeaveBalanceUpload, employeeUpload, employeeWageUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeLeaveBalanceUploadDetails, resetEmployeeUploadDetails, resetEmployeeWageUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
 import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, Select as MSelect, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { ERROR_MESSAGES } from '../../../utils/constants';
@@ -58,11 +58,16 @@ const Configurations = () => {
   const getColumnsDetails = useAppSelector((state) => state.inputModule.getColumnsDetails);
   const excelHeaderToDbColumnsDetails = useAppSelector((state) => state.inputModule.excelHeaderToDbColumnsDetails);
   const employeeUploadDetails = useAppSelector((state) => state.inputModule.employeeUploadDetails);
+  const employeeAttendanceUploadDetails = useAppSelector((state) => state.inputModule.employeeAttendanceUploadDetails);
+  const employeeLeaveBalanceUploadDetails = useAppSelector((state) => state.inputModule.employeeLeaveBalanceUploadDetails);
+  const employeeLeaveAvailedUploadDetails = useAppSelector((state) => state.inputModule.employeeLeaveAvailedUploadDetails);
+  const employeeWageUploadDetails = useAppSelector((state) => state.inputModule.employeeWageUploadDetails);
+
 
   const configurationList = configUploadDetails && configUploadDetails.data.list
   const columnsList = getColumnsDetails && getColumnsDetails.data
 
-  const loading = employeeUploadDetails.status === 'loading' || configUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || excelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading =  employeeUploadDetails.status === 'loading' || employeeAttendanceUploadDetails.status === 'loading' || employeeLeaveBalanceUploadDetails.status === 'loading' || employeeLeaveAvailedUploadDetails.status === 'loading' || employeeWageUploadDetails.status === 'loading' || configUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || excelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -148,6 +153,7 @@ const Configurations = () => {
   }
 
   useEffect(() => {
+    resetStateValues()
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
     dispatch(getAllCompaniesDetails(companiesPayload))
   },[])
@@ -196,9 +202,119 @@ const Configurations = () => {
   }, [employeeUploadDetails.status])
 
   useEffect(() => {
+    if(employeeAttendanceUploadDetails.status === 'succeeded'){
+      if(employeeAttendanceUploadDetails.data.key === 'FAILURE'){
+        const formData = new FormData();
+        const data = uploadData ? uploadData[0] : []
+        formData.append('file', data);
+        formData.append('Remarks', 'NA')
+        formData.append('Year', year)
+        formData.append('Month', month)
+        formData.append('Mapped', 'false')
+        formData.append('ConfigurationType', configType)
+        formData.append('CompanyId', company)
+        formData.append('AssociateCompanyId', associateCompany)
+        formData.append('LocationId', location)
+        formData.append('StateId', stateName)
+        dispatch(configUpload(formData))
+      }else{
+        resetStateValues()
+        toast.success(`Upload Successfull`)
+      }
+    }else if (employeeAttendanceUploadDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [employeeAttendanceUploadDetails.status])
+
+  useEffect(() => {
+    if(employeeLeaveBalanceUploadDetails.status === 'succeeded'){
+      if(employeeLeaveBalanceUploadDetails.data.key === 'FAILURE'){
+        const formData = new FormData();
+        const data = uploadData ? uploadData[0] : []
+        formData.append('file', data);
+        formData.append('Remarks', 'NA')
+        formData.append('Year', year)
+        formData.append('Month', month)
+        formData.append('Mapped', 'false')
+        formData.append('ConfigurationType', configType)
+        formData.append('CompanyId', company)
+        formData.append('AssociateCompanyId', associateCompany)
+        formData.append('LocationId', location)
+        formData.append('StateId', stateName)
+        dispatch(configUpload(formData))
+      }else{
+        resetStateValues()
+        toast.success(`Upload Successfull`)
+      }
+    }else if (employeeLeaveBalanceUploadDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [employeeLeaveBalanceUploadDetails.status])
+
+  useEffect(() => {
+    if(employeeLeaveAvailedUploadDetails.status === 'succeeded'){
+      if(employeeLeaveAvailedUploadDetails.data.key === 'FAILURE'){
+        const formData = new FormData();
+        const data = uploadData ? uploadData[0] : []
+        formData.append('file', data);
+        formData.append('Remarks', 'NA')
+        formData.append('Year', year)
+        formData.append('Month', month)
+        formData.append('Mapped', 'false')
+        formData.append('ConfigurationType', configType)
+        formData.append('CompanyId', company)
+        formData.append('AssociateCompanyId', associateCompany)
+        formData.append('LocationId', location)
+        formData.append('StateId', stateName)
+        dispatch(configUpload(formData))
+      }else{
+        resetStateValues()
+        toast.success(`Upload Successfull`)
+      }
+    }else if (employeeLeaveAvailedUploadDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [employeeLeaveAvailedUploadDetails.status])
+
+  useEffect(() => {
+    if(employeeWageUploadDetails.status === 'succeeded'){
+      if(employeeWageUploadDetails.data.key === 'FAILURE'){
+        const formData = new FormData();
+        const data = uploadData ? uploadData[0] : []
+        formData.append('file', data);
+        formData.append('Remarks', 'NA')
+        formData.append('Year', year)
+        formData.append('Month', month)
+        formData.append('Mapped', 'false')
+        formData.append('ConfigurationType', configType)
+        formData.append('CompanyId', company)
+        formData.append('AssociateCompanyId', associateCompany)
+        formData.append('LocationId', location)
+        formData.append('StateId', stateName)
+        dispatch(configUpload(formData))
+      }else{
+        resetStateValues()
+        toast.success(`Upload Successfull`)
+      }
+    }else if (employeeWageUploadDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [employeeWageUploadDetails.status])
+
+  useEffect(() => {
     if(configUploadDetails.status === 'succeeded'){
       setTableData(configUploadDetails.data.list)
-      dispatch(getColumns(configType))
+      if(configType === 'Employee'){
+        dispatch(getColumns('Employee'))
+      }else if(configType === 'Employee attendance'){
+        dispatch(getColumns('employeeattendance'))
+      }else if(configType === 'Leave balance'){
+        dispatch(getColumns('employeeleavebalance'))
+      }else if(configType === 'Leave availed'){
+        dispatch(getColumns('employeeleaveavailed'))
+      }else if(configType === 'Employee Wage'){
+        dispatch(getColumns('employeewage'))
+      }
       setOpenUploadModal(false)
     }else if (configUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
@@ -213,13 +329,23 @@ const Configurations = () => {
       formData.append('Remarks', 'NA')
       formData.append('Year', year)
       formData.append('Month', month)
-      formData.append('Mapped', 'false')
+      formData.append('Mapped', 'true')
       formData.append('ConfigurationType', configType)
       formData.append('CompanyId', company)
       formData.append('AssociateCompanyId', associateCompany)
       formData.append('LocationId', location)
       formData.append('StateId', stateName)
-      dispatch(employeeUpload(formData))
+      if(configType === 'Employee'){
+        dispatch(employeeUpload(formData))
+      }else if(configType === 'Employee attendance'){
+        dispatch(employeeAttendanceUpload(formData))
+      }else if(configType === 'Leave balance'){
+        dispatch(employeeLeaveBalanceUpload(formData))
+      }else if(configType === 'Leave availed'){
+        dispatch(employeeLeaveAvailedUpload(formData))
+      }else if(configType === 'Employee Wage'){
+        dispatch(employeeWageUpload(formData))
+      }
     }else if(excelHeaderToDbColumnsDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
@@ -270,8 +396,17 @@ const Configurations = () => {
     formData.append('AssociateCompanyId', associateCompany)
     formData.append('LocationId', location)
     formData.append('StateId', stateName)
-
-    dispatch(employeeUpload(formData))
+    if(configType === 'Employee'){
+      dispatch(employeeUpload(formData))
+    }else if(configType === 'Employee attendance'){
+      dispatch(employeeAttendanceUpload(formData))
+    }else if(configType === 'Leave balance'){
+      dispatch(employeeLeaveBalanceUpload(formData))
+    }else if(configType === 'Leave availed'){
+      dispatch(employeeLeaveAvailedUpload(formData))
+    }else if(configType === 'Employee Wage'){
+      dispatch(employeeWageUpload(formData))
+    }
   }
 
   const onClickSave = () => {
@@ -303,7 +438,12 @@ const Configurations = () => {
     dispatch(resetGetColumnsDetails())
     dispatch(resetExcelHeaderToDbColumnsDetails())
     dispatch(resetEmployeeUploadDetails())
+    dispatch(resetEmployeeAttendanceUploadDetails())
+    dispatch(resetEmployeeLeaveBalanceUploadDetails())
+    dispatch(resetEmployeeLeaveAvailedUploadDetails())
+    dispatch(resetEmployeeWageUploadDetails())
 
+    setOpenUploadModal(false)
     setConfigType('')
     setCompany('')
     setAssociateCompany('')
@@ -567,7 +707,7 @@ const Configurations = () => {
                                       <TableCell >
                                         <FormControl sx={{ m: 1, width:"100%", maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                                           <Select
-                                            options={columnsList.map((each:any) => {return {label : each, value: each}})}
+                                            options={columnsList ? columnsList.map((each:any) => {return {label : each, value: each}}) : []}
                                             className="basic-multi-select"
                                             classNamePrefix="select"
                                             value={each.employeeFieldName ? {label: each.employeeFieldName, value: each.employeeFieldName} : ''}

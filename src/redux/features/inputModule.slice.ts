@@ -61,7 +61,27 @@ interface InputModuleState {
         status: string,
         data: any,
         error: string | null
-    }
+    },
+    employeeAttendanceUploadDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    employeeLeaveBalanceUploadDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    employeeLeaveAvailedUploadDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    employeeWageUploadDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
 }
 
 const initialState: InputModuleState = { 
@@ -124,7 +144,27 @@ const initialState: InputModuleState = {
         status: 'idle',
         data: '',
         error: null
-    }
+    },
+    employeeAttendanceUploadDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    employeeLeaveBalanceUploadDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    employeeLeaveAvailedUploadDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    employeeWageUploadDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
 } as InputModuleState
 
 export const getAllCompaniesDetails = createAsyncThunk('inputModule/getAllCompaniesDetails', async (data: any) => {
@@ -187,6 +227,26 @@ export const employeeUpload = createAsyncThunk('inputModule/employeeUpload', asy
     return await inputModuleService.employeeUpload(data);
 })
 
+export const employeeAttendanceUpload = createAsyncThunk('inputModule/employeeAttendanceUpload', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.employeeAttendanceUpload(data);
+})
+
+export const employeeLeaveBalanceUpload = createAsyncThunk('inputModule/employeeLeaveBalanceUpload', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.employeeLeaveBalanceUpload(data);
+})
+
+export const employeeLeaveAvailedUpload = createAsyncThunk('inputModule/employeeLeaveAvailedUpload', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.employeeLeaveAvailedUpload(data);
+})
+
+export const employeeWageUpload = createAsyncThunk('inputModule/employeeWageUpload', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.employeeWageUpload(data);
+})
+
 export const inputModuleSlice = createSlice({
     name: 'inputModule',
     initialState,
@@ -214,6 +274,34 @@ export const inputModuleSlice = createSlice({
         },
         resetEmployeeUploadDetails: (state) => {
             state.employeeUploadDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetEmployeeAttendanceUploadDetails: (state) => {
+            state.employeeAttendanceUploadDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetEmployeeLeaveBalanceUploadDetails: (state) => {
+            state.employeeLeaveBalanceUploadDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetEmployeeLeaveAvailedUploadDetails: (state) => {
+            state.employeeLeaveAvailedUploadDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetEmployeeWageUploadDetails: (state) => {
+            state.employeeWageUploadDetails = {
                 status: 'idle',
                 data: '',
                 error: null
@@ -424,8 +512,76 @@ export const inputModuleSlice = createSlice({
             state.employeeUploadDetails.status = 'failed'
             state.employeeUploadDetails.error = action.error.message
         })
+
+        .addCase(employeeAttendanceUpload.pending, (state) => {
+            state.employeeAttendanceUploadDetails.status = 'loading'
+        })
+        .addCase(employeeAttendanceUpload.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.employeeAttendanceUploadDetails.status = 'succeeded'
+                state.employeeAttendanceUploadDetails.data = action.payload.data
+            } else {
+                state.employeeAttendanceUploadDetails.status = 'failed'
+                state.employeeAttendanceUploadDetails.error = action.payload.message;
+            }
+        })
+        .addCase(employeeAttendanceUpload.rejected, (state, action: any) => {
+            state.employeeAttendanceUploadDetails.status = 'failed'
+            state.employeeAttendanceUploadDetails.error = action.error.message
+        })
+
+        .addCase(employeeLeaveBalanceUpload.pending, (state) => {
+            state.employeeLeaveBalanceUploadDetails.status = 'loading'
+        })
+        .addCase(employeeLeaveBalanceUpload.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.employeeLeaveBalanceUploadDetails.status = 'succeeded'
+                state.employeeLeaveBalanceUploadDetails.data = action.payload.data
+            } else {
+                state.employeeLeaveBalanceUploadDetails.status = 'failed'
+                state.employeeLeaveBalanceUploadDetails.error = action.payload.message;
+            }
+        })
+        .addCase(employeeLeaveBalanceUpload.rejected, (state, action: any) => {
+            state.employeeLeaveBalanceUploadDetails.status = 'failed'
+            state.employeeLeaveBalanceUploadDetails.error = action.error.message
+        })
+
+        .addCase(employeeLeaveAvailedUpload.pending, (state) => {
+            state.employeeLeaveAvailedUploadDetails.status = 'loading'
+        })
+        .addCase(employeeLeaveAvailedUpload.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.employeeLeaveAvailedUploadDetails.status = 'succeeded'
+                state.employeeLeaveAvailedUploadDetails.data = action.payload.data
+            } else {
+                state.employeeLeaveAvailedUploadDetails.status = 'failed'
+                state.employeeLeaveAvailedUploadDetails.error = action.payload.message;
+            }
+        })
+        .addCase(employeeLeaveAvailedUpload.rejected, (state, action: any) => {
+            state.employeeLeaveAvailedUploadDetails.status = 'failed'
+            state.employeeLeaveAvailedUploadDetails.error = action.error.message
+        })
+        
+        .addCase(employeeWageUpload.pending, (state) => {
+            state.employeeWageUploadDetails.status = 'loading'
+        })
+        .addCase(employeeWageUpload.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.employeeWageUploadDetails.status = 'succeeded'
+                state.employeeWageUploadDetails.data = action.payload.data
+            } else {
+                state.employeeWageUploadDetails.status = 'failed'
+                state.employeeWageUploadDetails.error = action.payload.message;
+            }
+        })
+        .addCase(employeeWageUpload.rejected, (state, action: any) => {
+            state.employeeWageUploadDetails.status = 'failed'
+            state.employeeWageUploadDetails.error = action.error.message
+        })
 })
   
-export const { resetConfigUploadDetails, resetGetColumnsDetails, resetExcelHeaderToDbColumnsDetails, resetEmployeeUploadDetails } = inputModuleSlice.actions
+export const { resetConfigUploadDetails, resetGetColumnsDetails, resetExcelHeaderToDbColumnsDetails, resetEmployeeUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveBalanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeWageUploadDetails } = inputModuleSlice.actions
 
 export default inputModuleSlice.reducer
