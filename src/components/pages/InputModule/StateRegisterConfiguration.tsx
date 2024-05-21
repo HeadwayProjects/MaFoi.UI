@@ -826,7 +826,7 @@ const StateRegisterConfiguration = () => {
                 <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                   <FormLabel  sx={{color:'#000000'}}>Process Type</FormLabel>
                   <Select
-                    options={['Leave', 'Employee', 'Wage'].map((each:any) => {return {label : each, value: each}})}
+                    options={['Attendance', 'Employee', 'Leave', 'Wage'].map((each:any) => {return {label : each, value: each}})}
                     className="basic-multi-select"
                     classNamePrefix="select"
                     value={processType}
@@ -1108,13 +1108,20 @@ const StateRegisterConfiguration = () => {
                                             
                                             {/** Ezycomp Field */}
                                             <TableCell >
-                                              <FormControl sx={{ m: 1, width:"100%", minWidth:'120px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                                              <FormControl sx={{ m: 1, width:"100%", minWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                                                 <Select
                                                   options={columnsList ? columnsList.map((each:any) => {return {label : each, value: each}}): []}
                                                   className="basic-multi-select"
                                                   classNamePrefix="select"
                                                   value={each.employeeFieldName ? {label: each.employeeFieldName, value: each.employeeFieldName} : ''}
-                                                  styles={customStyles}
+                                                  styles={{
+                                                    control: (base:any) => ({
+                                                      ...base,
+                                                      maxHeight: 150,
+                                                      overflow:"auto",
+                                                      width:'200px'
+                                                    })
+                                                  }}
                                                   onChange={(e) => handleChangeEzycompField(e, each)}
                                                 />
                                               </FormControl>

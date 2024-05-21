@@ -304,6 +304,7 @@ const Configurations = () => {
   useEffect(() => {
     if(configUploadDetails.status === 'succeeded'){
       setTableData(configUploadDetails.data.list)
+      resetUploadDetails()
       if(configType === 'Employee'){
         dispatch(getColumns('Employee'))
       }else if(configType === 'Employee attendance'){
@@ -411,7 +412,7 @@ const Configurations = () => {
 
   const onClickSave = () => {
     console.log('ttabbel', tableData)
-    const check = tableData.find((each:any) => each.employeeFieldName === null)
+    const check = tableData.find((each:any) => (each.employeeFieldName === null || each.employeeFieldName === ''))
     if(check){
       return toast.error('Please Select All Ezycomp Fields');
     } else{
@@ -431,6 +432,16 @@ const Configurations = () => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  }
+  console.log('leve dett', employeeLeaveBalanceUploadDetails)
+
+  const resetUploadDetails = () => {
+    dispatch(resetConfigUploadDetails())
+    dispatch(resetEmployeeUploadDetails())
+    dispatch(resetEmployeeAttendanceUploadDetails())
+    dispatch(resetEmployeeLeaveBalanceUploadDetails())
+    dispatch(resetEmployeeLeaveAvailedUploadDetails())
+    dispatch(resetEmployeeWageUploadDetails())
   }
 
   const resetStateValues = () => {
