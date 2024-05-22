@@ -27,6 +27,11 @@ interface HolidayListState {
         data: any,
         error: string | null
     },
+    bulkDeleteHolidaysDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    }
 }
 
 const initialState: HolidayListState = { 
@@ -55,6 +60,11 @@ const initialState: HolidayListState = {
         data: '',
         error: null
     },
+    bulkDeleteHolidaysDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    }
 } as HolidayListState
 
 export const getHolidaysList = createAsyncThunk('holidayList/getHolidaysList', async (data: any) => {
@@ -80,6 +90,11 @@ export const uploadHoliday = createAsyncThunk('holidayList/uploadHoliday', async
 export const editHoliday = createAsyncThunk('holidayList/editHoliday', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.editHoliday(data);
+})
+
+export const bulkDeleteHolidays = createAsyncThunk('holidayList/bulkDeleteHolidays', async (id: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.bulkDeleteHolidays(id);
 })
 
 export const holidayListSlice = createSlice({
@@ -112,6 +127,13 @@ export const holidayListSlice = createSlice({
         },
         resetEditHolidayDetails: (state) => {
             state.editHolidayDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetBulkDeleteHolidaysDetails: (state) => {
+            state.bulkDeleteHolidaysDetails = {
                 status: 'idle',
                 data: '',
                 error: null
@@ -203,8 +225,25 @@ export const holidayListSlice = createSlice({
             state.editHolidayDetails.status = 'failed'
             state.editHolidayDetails.error = action.error.message
         })
+        
+        .addCase(bulkDeleteHolidays.pending, (state) => {
+            state.bulkDeleteHolidaysDetails.status = 'loading'
+        })
+        .addCase(bulkDeleteHolidays.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.bulkDeleteHolidaysDetails.status = 'succeeded'
+                state.bulkDeleteHolidaysDetails.data = action.payload.data
+            } else {
+                state.bulkDeleteHolidaysDetails.status = 'failed'
+                state.bulkDeleteHolidaysDetails.error = action.payload.message;
+            }
+        })
+        .addCase(bulkDeleteHolidays.rejected, (state, action: any) => {
+            state.bulkDeleteHolidaysDetails.status = 'failed'
+            state.bulkDeleteHolidaysDetails.error = action.error.message
+        })
 })
   
-export const {resetGetHolidayDetailsStatus, resetDeleteHolidayDetails, resetAddHolidayDetails, resetUploadHolidayDetails, resetEditHolidayDetails } = holidayListSlice.actions
+export const {resetGetHolidayDetailsStatus, resetDeleteHolidayDetails, resetAddHolidayDetails, resetUploadHolidayDetails, resetEditHolidayDetails, resetBulkDeleteHolidaysDetails } = holidayListSlice.actions
 
 export default holidayListSlice.reducer

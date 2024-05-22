@@ -133,6 +133,11 @@ export class InputModuleService {
         return await api.put(url, data)
     }
 
+    public async bulkDeleteHolidays(data: any) {
+        const url = `/api/Holiday/BulkDelete`
+        return await api.post(url, data)
+    } 
+
     // Leave Configuration
     public async fetchLeaveConfiguration(data: any) {
         const url = `/api/Leave/GetAll`

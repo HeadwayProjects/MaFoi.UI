@@ -2,11 +2,11 @@ import React, { useEffect } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations, getStates } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, Checkbox, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
-import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetGetHolidayDetailsStatus, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
+import { addHoliday, bulkDeleteHolidays, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetBulkDeleteHolidaysDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetGetHolidayDetailsStatus, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
 import { useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
@@ -44,6 +44,7 @@ const HolidayList = () => {
   const addHolidayDetails = useAppSelector((state) => state.holidayList.addHolidayDetails)
   const uploadHolidayDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
   const editHolidayDetails = useAppSelector((state) => state.holidayList.editHolidayDetails)
+  const bulkDeleteHolidaysDetails = useAppSelector((state) => state.holidayList.bulkDeleteHolidaysDetails)
 
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
@@ -77,7 +78,7 @@ const HolidayList = () => {
     }
   })
   
-  const loading = exporting || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading' || statesDetails.status === 'loading'
+  const loading = exporting || bulkDeleteHolidaysDetails.status === 'loading' || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading' || statesDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -106,6 +107,9 @@ const HolidayList = () => {
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
   const [uploadData, setUploadData] =  React.useState<any>();
   const [uploadError, setUploadError] = React.useState(false);
+
+  const [selectedHolidays, setSelectedHolidays] = React.useState<any>([]);
+  const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany('')
@@ -462,6 +466,28 @@ const HolidayList = () => {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [editHolidayDetails.status])
+
+  useEffect(() => {
+    if(bulkDeleteHolidaysDetails.status === 'succeeded'){
+      toast.success(`Holidays deleted successfully.`)
+      setSelectedHolidays([])
+      dispatch(resetBulkDeleteHolidaysDetails())
+      setOpenBulkDeleteModal(false)
+      const HolidayListDefaultPayload: any =  { 
+        search: "",
+        filters: [],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'name', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getHolidaysList(HolidayListDefaultPayload))
+    }else if(bulkDeleteHolidaysDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [bulkDeleteHolidaysDetails.status])
 
   const yearsList = []
   const currentYear = new Date().getFullYear();
@@ -1053,6 +1079,32 @@ const HolidayList = () => {
     dispatch(deleteHoliday(holiday.id))
   }
 
+  const onClickIndividualCheckBox = (id:any) => {
+    if(selectedHolidays.includes(id)){
+      const updatedSelectedHolidays:any = selectedHolidays.filter((each:any) => each != id)
+      setSelectedHolidays(updatedSelectedHolidays)
+    }else{
+      setSelectedHolidays([...selectedHolidays, id])
+    }
+  }
+
+  const onClickAllCheckBox = () => {
+    if(selectedHolidays.length !== holidays.length){
+      const allIds = holidays && holidays.map((each:any) => each.id)
+      setSelectedHolidays(allIds)
+    }else{
+      setSelectedHolidays([])
+    }
+  }
+
+  const onClickBulkDelete = () => {
+    setOpenBulkDeleteModal(true)
+  }
+
+  const onClickConfirmBulkDelete = () => {
+    dispatch(bulkDeleteHolidays(selectedHolidays))
+  }
+
   const handleChangePage = (event: unknown, newPage: number) => {
     const HolidayListPayload: any =  { 
       search: '', 
@@ -1566,6 +1618,33 @@ const HolidayList = () => {
         </Box>
       </Modal>
 
+      {/* Bulk Delete Modal */}
+      <Modal
+          open={openBulkDeleteModal}
+          onClose={() => setOpenBulkDeleteModal(false)}
+        >
+          <Box sx={style}>
+            <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Delete Holidays</Typography>
+              <IconButton
+                onClick={() => setOpenBulkDeleteModal(false)}
+              >
+                <IoMdClose />
+              </IconButton>
+            </Box>
+            <Box sx={{padding:'20px', backgroundColor:'#ffffff'}}>
+              <Box>
+                <Typography variant='h5'>There are {selectedHolidays.length} record(s) selected for deleting.</Typography>
+                <Typography mt={2}>Are you sure you want to delete all of them ?</Typography>
+              </Box>
+              <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center', mt:2}}>
+                <Button variant='outlined' color="error" onClick={() => setOpenBulkDeleteModal(false)}>No</Button>
+                <Button variant='contained' onClick={onClickConfirmBulkDelete}>Yes</Button>
+              </Box>
+            </Box>
+          </Box>
+      </Modal>
+
       {loading ? <PageLoader>Loading...</PageLoader> : 
       
         <div>
@@ -1573,9 +1652,10 @@ const HolidayList = () => {
                 <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
                         <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Holiday List</h5>
-                        <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
+                        <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'400px', justifyContent: 'space-between'}}>
                           <Button onClick={onClickUpload} title='Import Data' variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
+                          <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedHolidays && selectedHolidays.length === 0}> Bulk Delete</Button>
                           <button onClick={onClickExport} title='Export Data' disabled={holidays && holidays.length <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (holidays && holidays.length <=0) ? '#707070': '#ffffff' , color: (holidays && holidays.length <=0) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
@@ -1755,6 +1835,7 @@ const HolidayList = () => {
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
+                                      <TableCell><Checkbox checked={(selectedHolidays && selectedHolidays.length) === (holidays && holidays.length)} onClick={onClickAllCheckBox}/></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Year</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'day'} direction={sortType} onClick={onClickSortDate}> Date</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'day'} direction={sortType} onClick={onClickSortDate}> Company</TableSortLabel></TableCell>
@@ -1770,7 +1851,8 @@ const HolidayList = () => {
                                   <TableRow
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                  >   
+                                  >    
+                                      <TableCell><Checkbox checked={selectedHolidays.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)}/></TableCell>
                                       <TableCell >{each.year}</TableCell>
                                       <TableCell >{`${each.day > 9 ? each.day : '0'+ each.day}-${each.month > 9 ? each.month : '0'+ each.month}-${each.year}`}</TableCell>
                                       <TableCell >{each.company.name}</TableCell>
