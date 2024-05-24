@@ -1186,6 +1186,7 @@ const LeaveConfiguration = () => {
                   style={{ border:'1px solid #0F67B1', width:'500px', height:'40px', borderRadius:'5px'}}
                   type="file"
                   accept='.xlsx, .xls, .csv'
+                  onClick={(e: any) => e.target.value = ''}
                   onChange={(e) => setUploadData(e.target.files)}
                 />
                 <a href="/" style={{marginTop: '10px', width:'210px'}} onClick={downloadSample}>Dowload Sample Leaves</a>

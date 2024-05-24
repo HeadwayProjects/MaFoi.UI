@@ -399,20 +399,24 @@ const HolidayList = () => {
 
   useEffect(() => {
     if(addHolidayDetails.status === 'succeeded'){
-      toast.success(`Holiday Added successfully.`)
-      dispatch(resetAddHolidayDetails())
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
-      const HolidayListDefaultPayload: any =  { 
-        search: "",
-        filters: [],
-        pagination: {
-          pageSize: 10,
-          pageNumber: 1
-        },
-        sort: { columnName: 'name', order: 'asc' },
-        "includeCentral": true
+      if(addHolidayDetails.data.key === 'FAILURE'){
+        toast.error(`Holiday Already Exist.`)
+      }else{
+        toast.success(`Holiday Added successfully.`)
+        dispatch(resetAddHolidayDetails())
+        setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+        const HolidayListDefaultPayload: any =  { 
+          search: "",
+          filters: [],
+          pagination: {
+            pageSize: 10,
+            pageNumber: 1
+          },
+          sort: { columnName: 'name', order: 'asc' },
+          "includeCentral": true
+        }
+        dispatch(getHolidaysList(HolidayListDefaultPayload))
       }
-      dispatch(getHolidaysList(HolidayListDefaultPayload))
     }else if(addHolidayDetails.status === 'failed'){
       setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
       toast.error(ERROR_MESSAGES.DEFAULT);
@@ -439,6 +443,7 @@ const HolidayList = () => {
         dispatch(getHolidaysList(HolidayListDefaultPayload))
       }else{
         setUploadError(true)
+        setUploadData({})
       }
     }else if(uploadHolidayDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
@@ -1106,9 +1111,47 @@ const HolidayList = () => {
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
+      })
+    }
+
     const HolidayListPayload: any =  { 
       search: '', 
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: newPage+1
@@ -1122,9 +1165,47 @@ const HolidayList = () => {
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
+      })
+    }
+
     const HolidayListPayload: any =  { 
       search: '', 
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: parseInt(event.target.value, 10),
         pageNumber: 1
@@ -1602,7 +1683,8 @@ const HolidayList = () => {
                   style={{ border:'1px solid #0F67B1', width:'500px', height:'40px', borderRadius:'5px'}}
                   type="file"
                   accept='.xlsx, .xls, .csv'
-                  onChange={(e) => setUploadData(e.target.files)}
+                  onClick={(e: any) => e.target.value = ''}
+                  onChange={(e) => {console.log('chandeeddd', e.target.files);setUploadData(e.target.files)}}
                 />
                 <a href="/" style={{marginTop: '10px', width:'210px'}} onClick={downloadSample}>Dowload Sample Holiday</a>
             </Box>

@@ -866,7 +866,7 @@ const StateRegisterConfiguration = () => {
                   <FormLabel  sx={{color:'#000000'}}>Rule</FormLabel>
                   <Select
                     isDisabled={!actName}
-                    options={filteredFormsList && filteredFormsList.filter((each:any) => each.actRuleActivityMapping.actId === actName.value).map((each:any) => {return {label: each.actRuleActivityMapping.rule.name, value: each.actRuleActivityMapping.rule.id}})}
+                    options={filteredFormsList && filteredFormsList.filter((each:any) => each.actRuleActivityMapping.actId === actName.value).map((each:any) => {return {label: each.actRuleActivityMapping.rule.name+", (Section No. "+ each.actRuleActivityMapping.rule.sectionNo+", Rule No. "+ each.actRuleActivityMapping.rule.ruleNo+ ")", value: each.actRuleActivityMapping.rule.id}})}
                     className="basic-multi-select"
                     classNamePrefix="select"
                     value={ruleName}
