@@ -51,15 +51,7 @@ const HolidayList = () => {
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
   const statesDetails = useAppSelector((state) => state.inputModule.statesDetails);
 
-  const { exportHolidayList, exporting } = useExportHolidayList((response: any) => {
-    downloadFileContent({
-        name: 'HolidayList.xlsx',
-        type: response.headers['content-type'],
-        content: response.data
-    });
-  }, () => {
-      toast.error(ERROR_MESSAGES.DEFAULT);
-  });
+  
 
   const holidays = holidayListDetails && holidayListDetails.data.list
   const holidaysCount = holidayListDetails && holidayListDetails.data.count
@@ -78,8 +70,6 @@ const HolidayList = () => {
     }
   })
   
-  const loading = exporting || bulkDeleteHolidaysDetails.status === 'loading' || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading' || statesDetails.status === 'loading'
-
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
   const [stateName, setStateName] = React.useState('');
@@ -110,6 +100,21 @@ const HolidayList = () => {
 
   const [selectedHolidays, setSelectedHolidays] = React.useState<any>([]);
   const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
+
+  const { exportHolidayList, exporting } = useExportHolidayList((response: any) => {
+    const companyDetails = companies.find((each:any) => each.id === company)
+    const assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
+    
+    downloadFileContent({
+        name: `HolidayList - ${companyDetails.name} - ${assCompNameDetails.name} - ${employmentType} - HolidayList.xlsx`,
+        type: response.headers['content-type'],
+        content: response.data
+    });
+  }, () => {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+  });
+
+  const loading = exporting || bulkDeleteHolidaysDetails.status === 'loading' || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || holidayListDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading' || statesDetails.status === 'loading'
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany('')
@@ -1738,7 +1743,7 @@ const HolidayList = () => {
                           <Button onClick={onClickUpload} title='Import Data' variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
                           <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedHolidays && selectedHolidays.length === 0}> Bulk Delete</Button>
-                          <button onClick={onClickExport} title='Export Data' disabled={holidays && holidays.length <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (holidays && holidays.length <=0) ? '#707070': '#ffffff' , color: (holidays && holidays.length <=0) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} title='Export Data' disabled={(holidays && holidays.length <=0) || !company || !associateCompany} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((holidays && holidays.length <=0) || !company || !associateCompany) ? '#707070': '#ffffff' , color: ((holidays && holidays.length <=0) || !company || !associateCompany) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
