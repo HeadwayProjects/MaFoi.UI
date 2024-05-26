@@ -164,6 +164,11 @@ export class InputModuleService {
         return await api.put(url, data)
     }
 
+    public async bulkDeleteLeaves(data: any) {
+        const url = `/api/Leave/BulkDelete`
+        return await api.post(url, data)
+    } 
+
     // Attendance Configuration
     public async fetchAttendanceConfiguration(data: any) {
         const url = `/api/Attendance/GetAll`
@@ -189,6 +194,11 @@ export class InputModuleService {
         const url = `/api/Attendance/Update`
         return await api.put(url, data)
     }
+
+    public async bulkDeleteAttendance(data: any) {
+        const url = `/api/Attendance/BulkDelete`
+        return await api.post(url, data)
+    } 
 
     // State Register
     public async fetchStateRegister(data: any) {
@@ -227,4 +237,19 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
+    //Salary Components
+    public async salaryComponentUpload(data: any) {
+        const url = `/api/Configuration/UploadSalaryComponent`
+        return await api.post(url, data, null, true)
+    }
+
+    public async salaryComponentConfigUpload(data: any) {
+        const url = `/api/Configuration/SalaryComponentConfigurationUpload`
+        return await api.post(url, data, null, true)
+    }
+
+    public async callSalaryComponentsExcelHeaderToDbColumns(data: any) {
+        const url = `/api/Configuration/UpdateSalaryExcelHeadertoDBColumnsMap`
+        return await api.post(url, data)
+    }
 }

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import { InputModuleService } from '../../backend/inputModule';
 
-interface LeaveConfigurationState {
+interface StateConfigurationState {
     stateRegisterDetails: {
         status: string,
         data: any,
@@ -19,7 +19,7 @@ interface LeaveConfigurationState {
     }
 }
 
-const initialState: LeaveConfigurationState = { 
+const initialState: StateConfigurationState = { 
     stateRegisterDetails: {
         status: 'idle',
         data: '',
@@ -35,7 +35,7 @@ const initialState: LeaveConfigurationState = {
         data: '',
         error: null
     }
-} as LeaveConfigurationState
+} as StateConfigurationState
 
 export const getStateRegister = createAsyncThunk('stateRegister/getleaveConfiguration', async (data: any) => {
     const inputModuleService = new InputModuleService();

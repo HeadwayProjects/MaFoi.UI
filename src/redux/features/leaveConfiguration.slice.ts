@@ -26,6 +26,11 @@ interface LeaveConfigurationState {
         status: string,
         data: any,
         error: string | null
+    },
+    bulkDeleteLeaveDetails: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -51,6 +56,11 @@ const initialState: LeaveConfigurationState = {
         error: null
     },
     editLeaveDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    bulkDeleteLeaveDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -80,6 +90,10 @@ export const addLeave = createAsyncThunk('leaveConfiguration/addLeave', async (d
 export const editLeave = createAsyncThunk('leaveConfiguration/editLeave', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.editLeaveConfiguration(data);
+})
+export const bulkDeleteLeaves = createAsyncThunk('Leave/bulkDeleteLeaves', async (id: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.bulkDeleteLeaves(id);
 })
 
 export const leaveConfigurationSlice = createSlice({
@@ -112,6 +126,13 @@ export const leaveConfigurationSlice = createSlice({
         },
         resetEditLeaveDetails: (state) => {
             state.editLeaveDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetBulkDeleteLeaveDetails: (state) => {
+            state.bulkDeleteLeaveDetails = {
                 status: 'idle',
                 data: '',
                 error: null
@@ -203,8 +224,25 @@ export const leaveConfigurationSlice = createSlice({
             state.editLeaveDetails.status = 'failed'
             state.editLeaveDetails.error = action.error.message
         })
+        
+        .addCase(bulkDeleteLeaves.pending, (state) => {
+            state.bulkDeleteLeaveDetails.status = 'loading'
+        })
+        .addCase(bulkDeleteLeaves.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.bulkDeleteLeaveDetails.status = 'succeeded'
+                state.bulkDeleteLeaveDetails.data = action.payload.data
+            } else {
+                state.bulkDeleteLeaveDetails.status = 'failed'
+                state.bulkDeleteLeaveDetails.error = action.payload.message;
+            }
+        })
+        .addCase(bulkDeleteLeaves.rejected, (state, action: any) => {
+            state.bulkDeleteLeaveDetails.status = 'failed'
+            state.bulkDeleteLeaveDetails.error = action.error.message
+        })
 })
   
-export const { resetGetLeaveDetailsStatus, resetUploadLeavesDetails, resetDeleteLeaveDetails, resetAddLeaveDetails, resetEditLeaveDetails} = leaveConfigurationSlice.actions
+export const { resetGetLeaveDetailsStatus, resetUploadLeavesDetails, resetBulkDeleteLeaveDetails, resetDeleteLeaveDetails, resetAddLeaveDetails, resetEditLeaveDetails} = leaveConfigurationSlice.actions
 
 export default leaveConfigurationSlice.reducer

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { Box, Button,Checkbox, Drawer, FormControl, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import { addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
 import  Select from "react-select";
-import { addLeave, deleteLeave, editLeave, getLeaveConfiguration, resetAddLeaveDetails, resetDeleteLeaveDetails, resetEditLeaveDetails, resetGetLeaveDetailsStatus, resetUploadLeavesDetails, uploadLeaves } from '../../../redux/features/leaveConfiguration.slice';
+import { resetBulkDeleteLeaveDetails, bulkDeleteLeaves, addLeave, deleteLeave, editLeave, getLeaveConfiguration, resetAddLeaveDetails, resetDeleteLeaveDetails, resetEditLeaveDetails, resetGetLeaveDetailsStatus, resetUploadLeavesDetails, uploadLeaves } from '../../../redux/features/leaveConfiguration.slice';
 import { EMPLOYEMENT_TYPES, EZYCOMP_LEAVE_TYPES } from '../../common/Constants';
 
 
@@ -53,15 +53,7 @@ const LeaveConfiguration = () => {
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
 
-  const { exportLeaveConfig, exporting } = useExportLeaveConfig((response: any) => {
-    downloadFileContent({
-        name: 'Leaves.xlsx',
-        type: response.headers['content-type'],
-        content: response.data
-    });
-  }, () => {
-      toast.error(ERROR_MESSAGES.DEFAULT);
-  });
+  const bulkDeleteLeaveDetails = useAppSelector((state) => state.leaveConfiguration.bulkDeleteLeaveDetails)
 
   const leaves = leaveConfigurationDetails.data.list
   const leavesCount = leaveConfigurationDetails.data.count
@@ -71,8 +63,6 @@ const LeaveConfiguration = () => {
   const locations = locationsDetails && locationsDetails.data.list
   const employementTypes = EMPLOYEMENT_TYPES
   const ezycompLeaveTypes = EZYCOMP_LEAVE_TYPES
-
-  const loading = exporting || editLeaveDetails.status === 'loading' || uploadLeavesDetails.status === 'loading' || addLeaveDetails.status === 'loading' || deleteLeaveDetails.status === 'loading' || leaveConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -84,6 +74,7 @@ const LeaveConfiguration = () => {
   const [leaveType, setLeaveType] = React.useState('')
   const [frequency, setFrequency] = React.useState('')
   const [totalLeaves, setTotalLeaves] = React.useState('')
+  const [remarkLeaves, setRemarkLeaves] = React.useState('')
 
   const [searchInput, setSearchInput] = React.useState('');
   const [activeSort, setActiveSort] = React.useState('companyId')
@@ -100,6 +91,24 @@ const LeaveConfiguration = () => {
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
   const [uploadData, setUploadData] =  React.useState<any>();
   const [uploadError, setUploadError] = React.useState(false);
+
+  const [selectedLeaves, setSelectedLeaves] = React.useState<any>([]);
+  const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
+
+  const { exportLeaveConfig, exporting } = useExportLeaveConfig((response: any) => {
+    const companyDetails = companies.find((each:any) => each.id === company)
+    const assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
+  
+    downloadFileContent({
+        name: `Leave Configuration - ${companyDetails.name} - ${assCompNameDetails.name} - ${employmentType} - Leaves.xlsx`,
+        type: response.headers['content-type'],
+        content: response.data
+    });
+  }, () => {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+  });
+
+  const loading = exporting || editLeaveDetails.status === 'loading' || uploadLeavesDetails.status === 'loading' || addLeaveDetails.status === 'loading' || deleteLeaveDetails.status === 'loading' || leaveConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany('')
@@ -283,6 +292,9 @@ const LeaveConfiguration = () => {
         dispatch(resetUploadLeavesDetails())
         setOpenUploadModal(false)
         setUploadError(false)
+        setCompany('')
+        setAssociateCompany('')
+        setEmploymentType('')
         const leavesPayload: any =  { 
           search: "",
           filters: [],
@@ -323,6 +335,28 @@ const LeaveConfiguration = () => {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [editLeaveDetails.status])
+
+  useEffect(() => {
+    if(bulkDeleteLeaveDetails.status === 'succeeded'){
+      toast.success(`Leaves deleted successfully.`)
+      setSelectedLeaves([])
+      dispatch(resetBulkDeleteLeaveDetails())
+      setOpenBulkDeleteModal(false)
+      const LeaveDetailsDefaultPayload: any =  { 
+        search: "",
+        filters: [],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'ezycompLeave', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getLeaveConfiguration(LeaveDetailsDefaultPayload))
+    }else if(bulkDeleteLeaveDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [bulkDeleteLeaveDetails.status])
  
   const onClickExport = () => {
     const filters = []
@@ -428,6 +462,28 @@ const LeaveConfiguration = () => {
     dispatch(getLeaveConfiguration(leavesPayload))
     setSearchInput('')
   }
+
+  const onClickSortcompany = () => {
+    let type = 'asc'
+    setActiveSort('company'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+  }
+
+    const onClickSortassociatecompany = () => {
+      let type = 'asc'
+      setActiveSort('associatecompany'); 
+      if(sortType === 'asc'){
+        setSortType('desc')
+        type = 'desc'
+      }else{
+        setSortType('asc')
+      }
+    }
 
   const onClickSortEzycompLeave = () => {
     let type = 'asc'
@@ -690,7 +746,7 @@ const LeaveConfiguration = () => {
       associateCompanyId: associateCompany,
       locationId: location.split('^')[0],
       stateId: location.split('^')[1],
-      remarks: ''
+      remarks: remarkLeaves
     }
     dispatch(addLeave(payload))
   }
@@ -747,10 +803,56 @@ const LeaveConfiguration = () => {
     dispatch(deleteLeave(leaveDetails.id))
   }
 
+  const onClickIndividualCheckBox = (id:any) => {
+    if(selectedLeaves.includes(id)){
+      const updatedSelectedLeaves:any = selectedLeaves.filter((each:any) => each != id)
+      setSelectedLeaves(updatedSelectedLeaves)
+    }else{
+      setSelectedLeaves([...selectedLeaves, id])
+    }
+  }
+
+  const onClickAllCheckBox = () => {
+    if(selectedLeaves.length !== leaves.length){
+      const allIds = leaves && leaves.map((each:any) => each.id)
+      setSelectedLeaves(allIds)
+    }else{
+      setSelectedLeaves([])
+    }
+  }
+
+  const onClickBulkDelete = () => {
+    setOpenBulkDeleteModal(true)
+  }
+
+  const onClickConfirmBulkDelete = () => {
+    dispatch(bulkDeleteLeaves(selectedLeaves))
+  }
+
   const handleChangePage = (event: unknown, newPage: number) => {
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(employmentType){
+      filters.push({
+        columnName:'employeeType',
+        value: employmentType
+      })
+    }
+
     const leavesPayload: any =  { 
       search: '', 
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: newPage+1
@@ -764,9 +866,30 @@ const LeaveConfiguration = () => {
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(employmentType){
+      filters.push({
+        columnName:'employeeType',
+        value: employmentType
+      })
+    }
+
     const leavesPayload: any =  { 
       search: '', 
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: parseInt(event.target.value, 10),
         pageNumber: 1
@@ -782,7 +905,7 @@ const LeaveConfiguration = () => {
   
   const downloadSample = (e: any) => {
     preventDefault(e);
-    download('Sample Leaves.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/ActsTemplate.xlsx')
+    download('Sample Leaves.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/LeavesTemplate.xlsx')
   }
 
   const downloadErrors = (e: any) => {
@@ -798,6 +921,20 @@ const LeaveConfiguration = () => {
     a.click();
     document.body.removeChild(a);
   }
+
+  const handleCompanyLeaveTypeChange =(e: React.ChangeEvent<HTMLInputElement>)=>{
+    const value = e.target.value;
+    const alphabetOnly = value.replace(/[^a-zA-Z\s]/g, ''); 
+    setLeaveType(alphabetOnly);
+  }
+
+  const handleTotalLeavesChange =(e: React.ChangeEvent<HTMLInputElement>)=>{
+    const value = e.target.value;
+    const numericOnly = value.replace(/[^0-9]/g, ''); 
+    setTotalLeaves(numericOnly);
+  }
+
+console.log(leaves);
 
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
@@ -869,12 +1006,12 @@ const LeaveConfiguration = () => {
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Employement Types</InputLabel>
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Employment Types</InputLabel>
                     <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={employmentType}
-                      label="Employement Types"
+                      label="Employment Types"
                       onChange={(e) => setEmploymentType(e.target.value)}
                     >
                       {employementTypes && employementTypes.map((each:any) => {
@@ -884,12 +1021,12 @@ const LeaveConfiguration = () => {
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Ezycomp Leave</InputLabel>
+                    <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Ezycomp Leave Type</InputLabel>
                     <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={ezycompLeave}
-                      label="Employement Types"
+                      label="Employment Types"
                       onChange={(e) => setEzycompLeave(e.target.value)}
                     >
                       {ezycompLeaveTypes && ezycompLeaveTypes.map((each:any) => {
@@ -898,21 +1035,21 @@ const LeaveConfiguration = () => {
                     </MSelect>
                   </FormControl>
 
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel htmlFor="outlined-adornment-name">Leave Type</InputLabel>
-                    <OutlinedInput
-                      label='Leave Type'
-                      value={leaveType}
-                      onChange={(e) => setLeaveType(e.target.value)}
-                      id="outlined-adornment-name"
-                      type='text'
-                    />
-                  </FormControl>
+                  <FormControl sx={{ m: 1, width: '100%', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+      <InputLabel htmlFor="outlined-adornment-name">Company Leave Type</InputLabel>
+      <OutlinedInput
+        label='Company Leave Type'
+        value={leaveType}
+        onChange={handleCompanyLeaveTypeChange}
+        id="outlined-adornment-name"
+        type='text'
+      />
+    </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel htmlFor="outlined-adornment-name">Frequency</InputLabel>
+                    <InputLabel htmlFor="outlined-adornment-name">Leave Credit Frequency</InputLabel>
                     <OutlinedInput
-                      label='Frequency'
+                      label='Leave Credit Frequency'
                       value={frequency}
                       onChange={(e) => setFrequency(e.target.value)}
                       id="outlined-adornment-name"
@@ -925,14 +1062,14 @@ const LeaveConfiguration = () => {
                     <OutlinedInput
                       label='Total Leaves'
                       value={totalLeaves}
-                      onChange={(e) => setTotalLeaves(e.target.value)}
+                      onChange={handleTotalLeavesChange}
                       id="outlined-adornment-name"
                       type='text'
                     />
                   </FormControl>
                   
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }}>
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Carry Forward</FormLabel>
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Carry Forward...</FormLabel>
                     <RadioGroup
                       row
                       aria-labelledby="demo-radio-buttons-group-label"
@@ -945,6 +1082,17 @@ const LeaveConfiguration = () => {
                       <FormControlLabel value="false" control={<Radio />} label="No" />
                     </RadioGroup>
                   </FormControl>
+
+                  <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                  <InputLabel htmlFor="outlined-adornment-name">Remarks </InputLabel>
+                  <OutlinedInput
+                    label='Remark Leaves'
+                    value={remarkLeaves}
+                    onChange={(e) => setRemarkLeaves(e.target.value)}
+                    id="outlined-adornment-name"
+                    type='text'
+                  />
+                </FormControl>
 
             </Box>
             }
@@ -961,27 +1109,33 @@ const LeaveConfiguration = () => {
           <>
             {modalType === "View" && 
               <Box sx={{ width: '100%', padding:'20px'}}>
-                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>Ezycomp Leave</Typography>
+                <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px', mt:0.5}}>Company</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{leaveDetails.company.name}</Typography>
+
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px', mt:2}}>Associate Company</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{leaveDetails.associateCompany.name}</Typography>
+                
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>Ezycomp Leave Type</Typography>
                   <Typography color="#000000" sx={{fontSize:'20px'}} >{leaveDetails.ezycompLeave}</Typography>
                   
-                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Leave Type</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:1.5}}>Company Leave Type</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.leaveType}</Typography>
 
-                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Frequency</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:1.5}}>Leave Credit Frequency</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.creditFrequency}</Typography>
 
-                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Total Leaves</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:1.5}}>Total Leaves</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.totalLeaves}</Typography>
 
-                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Employement Type</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:1.5}}>Employment Type</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.employeeType}</Typography>
 
-                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Carry Forward</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:1.5}}>Carry Forward</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{leaveDetails.carryForward ? "Yes" : "No"}</Typography>
               </Box>
             }
             {modalType === 'View' && 
-              <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:6}}>
+              <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:0.2}}>
                 <Button variant='contained' onClick={() => {setOpenModal(false); setModalType('');  setLeaveDetails({})}}>Cancel</Button>
               </Box>
             }
@@ -1042,12 +1196,12 @@ const LeaveConfiguration = () => {
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px' }} size="small">
-                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Employement Types</InputLabel>
+                    <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Employment Types</InputLabel>
                     <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={employmentType}
-                      label="Employement Types"
+                      label="Employment Types"
                       onChange={(e) => setEmploymentType(e.target.value)}
                     >
                       {employementTypes && employementTypes.map((each:any) => {
@@ -1057,12 +1211,12 @@ const LeaveConfiguration = () => {
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Ezycomp Leave</InputLabel>
+                    <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Ezycomp Leave Type</InputLabel>
                     <MSelect
                       labelId="demo-select-small-label"
                       id="demo-select-small"
                       value={ezycompLeave}
-                      label="Employement Types"
+                      label="Employment Types"
                       onChange={(e) => setEzycompLeave(e.target.value)}
                     >
                       {ezycompLeaveTypes && ezycompLeaveTypes.map((each:any) => {
@@ -1072,18 +1226,18 @@ const LeaveConfiguration = () => {
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel htmlFor="outlined-adornment-name">Leave Type</InputLabel>
+                    <InputLabel htmlFor="outlined-adornment-name">Company Leave Type</InputLabel>
                     <OutlinedInput
-                      label='Leave Type'
+                      label='Company Leave Type'
                       value={leaveType}
-                      onChange={(e) => setLeaveType(e.target.value)}
+                      onChange={handleCompanyLeaveTypeChange}
                       id="outlined-adornment-name"
                       type='text'
                     />
                   </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel htmlFor="outlined-adornment-name">Frequency</InputLabel>
+                    <InputLabel htmlFor="outlined-adornment-name">Leave Credit Frequency</InputLabel>
                     <OutlinedInput
                       label='Frequency'
                       value={frequency}
@@ -1098,7 +1252,7 @@ const LeaveConfiguration = () => {
                     <OutlinedInput
                       label='Total Leaves'
                       value={totalLeaves}
-                      onChange={(e) => setTotalLeaves(e.target.value)}
+                      onChange={handleTotalLeavesChange}
                       id="outlined-adornment-name"
                       type='text'
                     />
@@ -1186,7 +1340,6 @@ const LeaveConfiguration = () => {
                   style={{ border:'1px solid #0F67B1', width:'500px', height:'40px', borderRadius:'5px'}}
                   type="file"
                   accept='.xlsx, .xls, .csv'
-                  onClick={(e: any) => e.target.value = ''}
                   onChange={(e) => setUploadData(e.target.files)}
                 />
                 <a href="/" style={{marginTop: '10px', width:'210px'}} onClick={downloadSample}>Dowload Sample Leaves</a>
@@ -1199,6 +1352,33 @@ const LeaveConfiguration = () => {
 
           <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:4}}>
                 <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenUploadModal(false); setUploadError(false); setUploadData(null)}}>Cancel</Button>
+                </Box>
+        </Box>
+      </Modal>
+
+      {/* Bulk Delete Modal */}
+      <Modal
+          open={openBulkDeleteModal}
+          onClose={() => setOpenBulkDeleteModal(false)}
+        >
+          <Box sx={style}>
+            <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Delete Leaves</Typography>
+              <IconButton
+                onClick={() => setOpenBulkDeleteModal(false)}
+              >
+                <IoMdClose />
+              </IconButton>
+            </Box>
+            <Box sx={{padding:'20px', backgroundColor:'#ffffff'}}>
+              <Box>
+                <Typography variant='h5'>There are {selectedLeaves.length} record(s) selected for deleting.</Typography>
+                <Typography mt={2}>Are you sure you want to delete all of them ?</Typography>
+              </Box>
+              <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center', mt:2}}>
+                <Button variant='outlined' color="error" onClick={() => setOpenBulkDeleteModal(false)}>No</Button>
+                <Button variant='contained' onClick={onClickConfirmBulkDelete}>Yes</Button>
+              </Box>
           </Box>
         </Box>
       </Modal>
@@ -1210,10 +1390,11 @@ const LeaveConfiguration = () => {
                 <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
                         <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Leave Configuration</h5>
-                        <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
+                        <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'400px', justifyContent: 'space-between'}}>
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
-                          <button onClick={onClickExport} disabled={leaves && leaves <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (leaves && leaves <=0) ? '#707070': '#ffffff' , color: (leaves && leaves <=0) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedLeaves && selectedLeaves.length === 0}> Bulk Delete</Button>
+                          <button onClick={onClickExport} disabled={(leaves && leaves <=0) || !company || !associateCompany} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((leaves && leaves <=0) || !company || !associateCompany) ? '#707070': '#ffffff' , color: ((leaves && leaves <=0) || !company || !associateCompany) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
@@ -1226,6 +1407,16 @@ const LeaveConfiguration = () => {
                             value={company}
                             displayEmpty
                             onChange={handleChangeCompany}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 230, 
+                                  marginLeft: "10px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Company
@@ -1239,19 +1430,29 @@ const LeaveConfiguration = () => {
 
                       <Box sx={{ mr:1}}>
                         <Typography mb={1}>Associate Company</Typography>
-                        <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <MSelect
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
                             value={associateCompany}
                             disabled={!company}
                             onChange={handleChangeAssociateCompany}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 215, 
+                                  marginLeft: "10px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Associate Company
                             </MenuItem>
                             {associateCompanies && associateCompanies.map((each:any) => {
-                              return <MenuItem value={each.id}>{each.name}</MenuItem>
+                              return <MenuItem sx={{width:'240px', whiteSpace:'initial'}} value={each.id}>{each.name}</MenuItem>
                             })}
                           </MSelect>
                         </FormControl>
@@ -1278,7 +1479,7 @@ const LeaveConfiguration = () => {
                       </Box>
 
                       <Box sx={{ mr:1}}>
-                        <Typography mb={1}>Search</Typography>
+                        <Typography mb={1}>Search for EzycompLeave</Typography>
                         <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                           <OutlinedInput
@@ -1328,9 +1529,12 @@ const LeaveConfiguration = () => {
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
-                                      <TableCell > <TableSortLabel active={activeSort === 'ezycompLeave'} direction={sortType} onClick={onClickSortEzycompLeave}> Ezycomp Leave</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'leaveType'} direction={sortType} onClick={onClickSortLeaveType}> Leave Type</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'creditFrequency'} direction={sortType} onClick={onClickSortCreditFrequency}> Frequency</TableSortLabel></TableCell>
+                                  <TableCell><Checkbox checked={(selectedLeaves && selectedLeaves.length) === (leaves && leaves.length)} onClick={onClickAllCheckBox}/></TableCell>
+                                  <TableCell > <TableSortLabel active={activeSort === 'company'} direction={sortType} onClick={onClickSortcompany}> Company</TableSortLabel></TableCell>
+                                  <TableCell > <TableSortLabel active={activeSort === 'associateCompany'} direction={sortType} onClick={onClickSortassociatecompany}>Associate Company</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'ezycompLeave'} direction={sortType} onClick={onClickSortEzycompLeave}> Ezycomp Leave Type</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'leaveType'} direction={sortType} onClick={onClickSortLeaveType}>Company Leave Type</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'creditFrequency'} direction={sortType} onClick={onClickSortCreditFrequency}>Leave credit Frequency</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'totalLeaves'} direction={sortType} onClick={onClickSortTotalLeaves}> Total Leaves</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'employeeType'} direction={sortType} onClick={onClickSortEmployeeType}> Employee Type</TableSortLabel></TableCell>
                                       <TableCell > Actions</TableCell>
@@ -1344,6 +1548,9 @@ const LeaveConfiguration = () => {
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >   
+                                     <TableCell><Checkbox checked={selectedLeaves.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)}/></TableCell>
+                                     <TableCell >{each.company.name}</TableCell>
+                                     <TableCell >{each.associateCompany.name}</TableCell>
                                       <TableCell >{each.ezycompLeave}</TableCell>
                                       <TableCell >{each.leaveType}</TableCell>
                                       <TableCell >{each.creditFrequency}</TableCell>

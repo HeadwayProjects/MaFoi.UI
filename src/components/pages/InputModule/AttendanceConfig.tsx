@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, Checkbox, Drawer, FormControl, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
@@ -12,7 +12,7 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetGetAttendanceDetailsStatus, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
+import {bulkDeleteAttendance, resetBulkDeleteAttendanceDetails, addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetGetAttendanceDetailsStatus, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
 import  Select from "react-select";
 
 
@@ -58,6 +58,8 @@ const AttendanceConfig = () => {
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
 
+  const bulkDeleteAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.bulkDeleteAttendanceDetails)
+
   const { exportAttendanceConfig, exporting } = useExportAttendanceConfig((response: any) => {
     downloadFileContent({
         name: 'Attendance.xlsx',
@@ -75,7 +77,7 @@ const AttendanceConfig = () => {
   const associateCompanies = associateCompaniesDetails && associateCompaniesDetails.data.list
   const locations = locationsDetails && locationsDetails.data.list
 
-  const loading = exporting || editAttendanceDetails.status === 'loading' || uploadAttendanceDetails.status === 'loading' || addAttendanceDetails.status === 'loading' || deleteAttendanceDetails.status === 'loading' || attendanceConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || bulkDeleteAttendanceDetails.status === 'loading'  || editAttendanceDetails.status === 'loading' || uploadAttendanceDetails.status === 'loading' || addAttendanceDetails.status === 'loading' || deleteAttendanceDetails.status === 'loading' || attendanceConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -103,6 +105,9 @@ const AttendanceConfig = () => {
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
   const [uploadData, setUploadData] =  React.useState<any>();
   const [uploadError, setUploadError] = React.useState(false);
+
+  const [selectedAttendance, setSelectedAttendance] = React.useState<any>([]);
+  const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany('')
@@ -323,6 +328,28 @@ const AttendanceConfig = () => {
     }
   }, [editAttendanceDetails.status])
 
+  useEffect(() => {
+    if(bulkDeleteAttendanceDetails.status === 'succeeded'){
+      toast.success(`Attendance deleted successfully.`)
+      setSelectedAttendance([])
+      dispatch(resetBulkDeleteAttendanceDetails())
+      setOpenBulkDeleteModal(false)
+      const AttendanceDefaultPayload: any =  { 
+        search: "",
+        filters: [],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'companyId', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getAttendanceConfiguration(AttendanceDefaultPayload))
+    }else if(bulkDeleteAttendanceDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [bulkDeleteAttendanceDetails.status])
+
 
   const values = [{ label: "Select All", value: "all" }, {label: 'Monday', value: 'Monday'}, {label: 'Tuesday', value: 'Tuesday'}, {label: 'Wednesday', value: 'Wednesday'}, {label: 'Thursday', value: 'Thursday'}, {label: 'Friday', value: 'Friday'},{label: 'Saturday', value: 'Saturday'},{label: 'Sunday', value: 'Sunday'}]
  
@@ -394,6 +421,33 @@ const AttendanceConfig = () => {
     }
     dispatch(getAttendanceConfiguration(attendancePayload))
   }
+
+  const onClickIndividualCheckBox = (id:any) => {
+    if(selectedAttendance.includes(id)){
+      const updatedSelectedAttendance:any = selectedAttendance.filter((each:any) => each != id)
+      setSelectedAttendance(updatedSelectedAttendance)
+    }else{
+      setSelectedAttendance([...selectedAttendance, id])
+    }
+  }
+
+  const onClickAllCheckBox = () => {
+    if(selectedAttendance.length !== attendance.length){
+      const allIds = attendance && attendance.map((each:any) => each.id)
+      setSelectedAttendance(allIds)
+    }else{
+      setSelectedAttendance([])
+    }
+  }
+
+  const onClickBulkDelete = () => {
+    setOpenBulkDeleteModal(true)
+  }
+
+  const onClickConfirmBulkDelete = () => {
+    dispatch(bulkDeleteAttendance(selectedAttendance))
+  }
+
 
   const onClickClearSearch = () => {
     
@@ -845,9 +899,31 @@ const AttendanceConfig = () => {
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+
+
     const attendancePayload: any =  { 
       search: '', 
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: newPage+1
@@ -861,9 +937,31 @@ const AttendanceConfig = () => {
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+
+
     const attendancePayload: any =  { 
       search: '', 
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: parseInt(event.target.value, 10),
         pageNumber: 1
@@ -879,8 +977,8 @@ const AttendanceConfig = () => {
   
   const downloadSample = (e: any) => {
     preventDefault(e);
-    download('Sample Attendance.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/ActsTemplate.xlsx')
-  }
+    download('Sample Attendance.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/AttendanceTemplate.xlsx')
+  }  
 
   const downloadErrors = (e: any) => {
     preventDefault(e);
@@ -1097,6 +1195,10 @@ const AttendanceConfig = () => {
 
                   <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Work Days Per Week</Typography>
                   <Typography color="#000000" sx={{fontSize:'22px'}}>{attendanceDetails.workDaysPerWeek}</Typography>
+
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'24px', mt:2}}>Week Days </Typography>
+                  <Typography color="#000000" sx={{fontSize:'22px'}}>{attendanceDetails.nameOfWeekDays}</Typography>
+
               </Box>
             }
             {modalType === 'View' && 
@@ -1296,6 +1398,34 @@ const AttendanceConfig = () => {
         </Box>
       </Modal>
 
+      {/* Bulk Delete Modal */}
+      <Modal
+          open={openBulkDeleteModal}
+          onClose={() => setOpenBulkDeleteModal(false)}
+        >
+          <Box sx={style}>
+            <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Delete Attendance</Typography>
+              <IconButton
+                onClick={() => setOpenBulkDeleteModal(false)}
+              >
+                <IoMdClose />
+              </IconButton>
+            </Box>
+            <Box sx={{padding:'20px', backgroundColor:'#ffffff'}}>
+              <Box>
+                <Typography variant='h5'>There are {selectedAttendance.length} record(s) selected for deleting.</Typography>
+                <Typography mt={2}>Are you sure you want to delete all of them ?</Typography>
+              </Box>
+              <Box sx={{display:'flex', justifyContent:'space-between', alignItems:'center', mt:2}}>
+                <Button variant='outlined' color="error" onClick={() => setOpenBulkDeleteModal(false)}>No</Button>
+                <Button variant='contained' onClick={onClickConfirmBulkDelete}>Yes</Button>
+              </Box>
+            </Box>
+          </Box>
+      </Modal>
+
+
       {/* Upload Modal */}
       <Modal
         open={openUploadModal}
@@ -1348,9 +1478,10 @@ const AttendanceConfig = () => {
                 <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
                         <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Attendance Configuration</h5>
-                        <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'280px', justifyContent: 'space-between'}}>
+                        <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'400px', justifyContent: 'space-between'}}>
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
+                          <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAttendance && selectedAttendance.length === 0}> Bulk Delete</Button>
                           <button onClick={onClickExport} disabled={attendance && attendance <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (attendance && attendance <=0) ? '#707070': '#ffffff' , color: (attendance && attendance <=0) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
@@ -1364,6 +1495,16 @@ const AttendanceConfig = () => {
                             value={company}
                             displayEmpty
                             onChange={handleChangeCompany}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 230, 
+                                  marginLeft: "10px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Company
@@ -1384,12 +1525,22 @@ const AttendanceConfig = () => {
                             value={associateCompany}
                             disabled={!company}
                             onChange={handleChangeAssociateCompany}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 215, 
+                                  marginLeft: "10px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Associate Company
                             </MenuItem>
                             {associateCompanies && associateCompanies.map((each:any) => {
-                              return <MenuItem value={each.id}>{each.name}</MenuItem>
+                              return <MenuItem sx={{width:'240px', whiteSpace:'initial'}} value={each.id}>{each.name}</MenuItem>
                             })}
                           </MSelect>
                         </FormControl>
@@ -1404,6 +1555,16 @@ const AttendanceConfig = () => {
                             value={location}
                             disabled={!associateCompany}
                             onChange={handleChangeLocation}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 215, 
+                                  marginLeft: "10px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Location
@@ -1411,14 +1572,14 @@ const AttendanceConfig = () => {
                             {locations && locations.map((each:any) => {
                               const { id, name, code, cities }: any = each.location || {};
                               const { state } = cities || {};
-                              return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                              return <MenuItem sx={{width:'250px', whiteSpace:'initial'}} value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                             })}
                           </MSelect>
                         </FormControl>
                       </Box>
 
                       <Box sx={{ mr:1}}>
-                        <Typography mb={1}>Search</Typography>
+                        <Typography mb={1}>Search (Shift Name)</Typography>
                         <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                           <OutlinedInput
@@ -1468,11 +1629,12 @@ const AttendanceConfig = () => {
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
+                                  <TableCell><Checkbox checked={(selectedAttendance && selectedAttendance.length) === (attendance && attendance.length)} onClick={onClickAllCheckBox}/></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'companyId'} direction={sortType} onClick={onClickSortcompany}> Company</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'associateCompanyId'} direction={sortType} onClick={onClickSortAssociateCompany}> Associate Company</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'locationId'} direction={sortType} onClick={onClickSortlocation}> Location</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'shiftName'} direction={sortType} onClick={onClickSortShiftName}> Shift Name</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'session1StartTime'} direction={sortType} onClick={onClickSortSession}> Session</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'session1StartTime'} direction={sortType} onClick={onClickSortSession}> Session-1</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'session2StartTime'} direction={sortType} onClick={onClickSortSession2}> Session-2</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'workDaysPerWeek'} direction={sortType} onClick={onClickSortWorkDays}> Workdays Per Week</TableSortLabel></TableCell>
                                       <TableCell > Actions</TableCell>
@@ -1486,6 +1648,7 @@ const AttendanceConfig = () => {
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >   
+                                    <TableCell><Checkbox checked={selectedAttendance.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)}/></TableCell>
                                       <TableCell >{each.company.name}</TableCell>
                                       <TableCell >{each.associateCompany.name}</TableCell>
                                       <TableCell >{each.location.name}</TableCell>

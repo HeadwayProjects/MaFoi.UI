@@ -26,6 +26,11 @@ interface AttendanceConfigurationState {
         status: string,
         data: any,
         error: string | null
+    },
+    bulkDeleteAttendanceDetails: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -55,6 +60,11 @@ const initialState: AttendanceConfigurationState = {
         data: '',
         error: null
     },
+    bulkDeleteAttendanceDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    }
 } as AttendanceConfigurationState
 
 export const getAttendanceConfiguration = createAsyncThunk('attendanceConfiguration/getAttendanceConfiguration', async (data: any) => {
@@ -80,6 +90,11 @@ export const addAttendance = createAsyncThunk('attendanceConfiguration/addAttend
 export const editAttendance = createAsyncThunk('attendanceConfiguration/editAttendance', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.editAttendanceConfiguration(data);
+})
+
+export const bulkDeleteAttendance = createAsyncThunk('Attendance/bulkDeleteAttendance', async (id: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.bulkDeleteAttendance(id);
 })
 
 export const attendanceConfigurationSlice = createSlice({
@@ -117,7 +132,15 @@ export const attendanceConfigurationSlice = createSlice({
                 error: null
             }
         },
+        resetBulkDeleteAttendanceDetails: (state) => {
+            state.bulkDeleteAttendanceDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
     },
+
     extraReducers: (builder) => builder
         .addCase(getAttendanceConfiguration.pending, (state) => {
             state.attendanceConfigurationDetails.status = 'loading'
@@ -203,8 +226,24 @@ export const attendanceConfigurationSlice = createSlice({
             state.editAttendanceDetails.status = 'failed'
             state.editAttendanceDetails.error = action.error.message
         })
+        .addCase(bulkDeleteAttendance.pending, (state) => {
+            state.bulkDeleteAttendanceDetails.status = 'loading'
+        })
+        .addCase(bulkDeleteAttendance.fulfilled, (state, action: any) => {
+            if(action.payload) {
+                state.bulkDeleteAttendanceDetails.status = 'succeeded'
+                state.bulkDeleteAttendanceDetails.data = action.payload.data
+            } else {
+                state.bulkDeleteAttendanceDetails.status = 'failed'
+                state.bulkDeleteAttendanceDetails.error = action.payload.message;
+            }
+        })
+        .addCase(bulkDeleteAttendance.rejected, (state, action: any) => {
+            state.bulkDeleteAttendanceDetails.status = 'failed'
+            state.bulkDeleteAttendanceDetails.error = action.error.message
+        })
 })
   
-export const { resetGetAttendanceDetailsStatus, resetUploadAttendanceDetails, resetDeleteAttendanceDetails, resetAddAttendanceDetails, resetEditAttendanceDetails } = attendanceConfigurationSlice.actions
+export const {resetBulkDeleteAttendanceDetails, resetGetAttendanceDetailsStatus, resetUploadAttendanceDetails, resetDeleteAttendanceDetails, resetAddAttendanceDetails, resetEditAttendanceDetails } = attendanceConfigurationSlice.actions
 
 export default attendanceConfigurationSlice.reducer

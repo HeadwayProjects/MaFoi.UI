@@ -1154,10 +1154,42 @@ const EmployeeMasterUpload = () => {
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
+
     const employeesPayload: any =  { 
       search: '', 
-      filters: [
-      ],
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: newPage+1
@@ -1171,9 +1203,42 @@ const EmployeeMasterUpload = () => {
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
+
     const employeesPayload: any =  { 
       search: '', 
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: parseInt(event.target.value, 10),
         pageNumber: 1
