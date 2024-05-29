@@ -12,7 +12,7 @@ interface EmployeeMasterState {
         data: any,
         error: string | null
     },
-    employeesLeaveBalanceDetails: {
+    employeesLeaveCreditDetails: {
         status: string,
         data: any,
         error: string | null
@@ -35,7 +35,7 @@ const initialState: EmployeeMasterState = {
         data: '',
         error: null
     },
-    employeesLeaveBalanceDetails: {
+    employeesLeaveCreditDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -57,7 +57,7 @@ export const getEmployeesAttendance = createAsyncThunk('employeeMaster/getEmploy
     return await inputModuleService.getEmployeesAttendance(data);
 })
 
-export const getEmployeesLeaveBalance = createAsyncThunk('employeeMaster/getEmployeesLeaveBalance', async (data: any) => {
+export const getEmployeesLeaveCredit = createAsyncThunk('employeeMaster/getEmployeesLeaveCredit', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.getEmployeesLeaveBalance(data);
 })
@@ -113,21 +113,21 @@ export const employeeMasterSlice = createSlice({
             state.employeesAttendanceDetails.error = action.error.message
         })
         
-        .addCase(getEmployeesLeaveBalance.pending, (state) => {
-            state.employeesLeaveBalanceDetails.status = 'loading'
+        .addCase(getEmployeesLeaveCredit.pending, (state) => {
+            state.employeesLeaveCreditDetails.status = 'loading'
         })
-        .addCase(getEmployeesLeaveBalance.fulfilled, (state, action: any) => {
+        .addCase(getEmployeesLeaveCredit.fulfilled, (state, action: any) => {
             if(action.payload.data) {
-                state.employeesLeaveBalanceDetails.status = 'succeeded'
-                state.employeesLeaveBalanceDetails.data = action.payload.data
+                state.employeesLeaveCreditDetails.status = 'succeeded'
+                state.employeesLeaveCreditDetails.data = action.payload.data
             } else {
-                state.employeesLeaveBalanceDetails.status = 'failed'
-                state.employeesLeaveBalanceDetails.error = action.payload.message;
+                state.employeesLeaveCreditDetails.status = 'failed'
+                state.employeesLeaveCreditDetails.error = action.payload.message;
             }
         })
-        .addCase(getEmployeesLeaveBalance.rejected, (state, action: any) => {
-            state.employeesLeaveBalanceDetails.status = 'failed'
-            state.employeesLeaveBalanceDetails.error = action.error.message
+        .addCase(getEmployeesLeaveCredit.rejected, (state, action: any) => {
+            state.employeesLeaveCreditDetails.status = 'failed'
+            state.employeesLeaveCreditDetails.error = action.error.message
         })
 
         .addCase(getEmployeesLeaveAvailed.pending, (state) => {

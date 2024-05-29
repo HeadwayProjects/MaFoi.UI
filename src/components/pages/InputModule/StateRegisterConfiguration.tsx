@@ -662,6 +662,7 @@ const StateRegisterConfiguration = () => {
         activityId: activityName.value,
         formName: formNameValue,
         form: formName.label,
+        filePath: formName.value,
         headerStartRow,
         headerEndRow,
         footerStartRow,

@@ -67,7 +67,7 @@ interface InputModuleState {
         data: any,
         error: string | null
     },
-    employeeLeaveBalanceUploadDetails: {
+    employeeLeaveCreditUploadDetails: {
         status: string,
         data: any,
         error: string | null
@@ -150,7 +150,7 @@ const initialState: InputModuleState = {
         data: '',
         error: null
     },
-    employeeLeaveBalanceUploadDetails: {
+    employeeLeaveCreditUploadDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -232,7 +232,7 @@ export const employeeAttendanceUpload = createAsyncThunk('inputModule/employeeAt
     return await inputModuleService.employeeAttendanceUpload(data);
 })
 
-export const employeeLeaveBalanceUpload = createAsyncThunk('inputModule/employeeLeaveBalanceUpload', async (data: any) => {
+export const employeeLeaveCreditUpload = createAsyncThunk('inputModule/employeeLeaveBalanceUpload', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.employeeLeaveBalanceUpload(data);
 })
@@ -286,8 +286,8 @@ export const inputModuleSlice = createSlice({
                 error: null
             }
         },
-        resetEmployeeLeaveBalanceUploadDetails: (state) => {
-            state.employeeLeaveBalanceUploadDetails = {
+        resetEmployeeLeaveCreditUploadDetails: (state) => {
+            state.employeeLeaveCreditUploadDetails = {
                 status: 'idle',
                 data: '',
                 error: null
@@ -530,21 +530,21 @@ export const inputModuleSlice = createSlice({
             state.employeeAttendanceUploadDetails.error = action.error.message
         })
 
-        .addCase(employeeLeaveBalanceUpload.pending, (state) => {
-            state.employeeLeaveBalanceUploadDetails.status = 'loading'
+        .addCase(employeeLeaveCreditUpload.pending, (state) => {
+            state.employeeLeaveCreditUploadDetails.status = 'loading'
         })
-        .addCase(employeeLeaveBalanceUpload.fulfilled, (state, action: any) => {
+        .addCase(employeeLeaveCreditUpload.fulfilled, (state, action: any) => {
             if(action.payload.data) {
-                state.employeeLeaveBalanceUploadDetails.status = 'succeeded'
-                state.employeeLeaveBalanceUploadDetails.data = action.payload.data
+                state.employeeLeaveCreditUploadDetails.status = 'succeeded'
+                state.employeeLeaveCreditUploadDetails.data = action.payload.data
             } else {
-                state.employeeLeaveBalanceUploadDetails.status = 'failed'
-                state.employeeLeaveBalanceUploadDetails.error = action.payload.message;
+                state.employeeLeaveCreditUploadDetails.status = 'failed'
+                state.employeeLeaveCreditUploadDetails.error = action.payload.message;
             }
         })
-        .addCase(employeeLeaveBalanceUpload.rejected, (state, action: any) => {
-            state.employeeLeaveBalanceUploadDetails.status = 'failed'
-            state.employeeLeaveBalanceUploadDetails.error = action.error.message
+        .addCase(employeeLeaveCreditUpload.rejected, (state, action: any) => {
+            state.employeeLeaveCreditUploadDetails.status = 'failed'
+            state.employeeLeaveCreditUploadDetails.error = action.error.message
         })
 
         .addCase(employeeLeaveAvailedUpload.pending, (state) => {
@@ -582,6 +582,6 @@ export const inputModuleSlice = createSlice({
         })
 })
   
-export const { resetConfigUploadDetails, resetGetColumnsDetails, resetExcelHeaderToDbColumnsDetails, resetEmployeeUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveBalanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeWageUploadDetails } = inputModuleSlice.actions
+export const { resetConfigUploadDetails, resetGetColumnsDetails, resetExcelHeaderToDbColumnsDetails, resetEmployeeUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveCreditUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeWageUploadDetails } = inputModuleSlice.actions
 
 export default inputModuleSlice.reducer

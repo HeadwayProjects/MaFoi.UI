@@ -46,7 +46,7 @@ import LeaveConfiguration from "../components/pages/InputModule/LeaveConfigurati
 import LeaveMapping from "../components/pages/InputModule/Dashboard";
 import AttendanceConfig from "../components/pages/InputModule/AttendanceConfig";
 import StateRegisterConfiguration from "../components/pages/InputModule/StateRegisterConfiguration";
-import EmployeeLeaveCreditUpload from "../components/pages/InputModule/EmployeeLeaveBalanceUpload";
+import EmployeeLeaveCreditUpload from "../components/pages/InputModule/EmployeeLeaveCreditUpload";
 import EmployeeLeaveAvailedUpload from "../components/pages/InputModule/EmployeeLeaveAvailedUpload";
 import EmployeeAttendanceUpload from "../components/pages/InputModule/EmployeeAttendanceUpload";
 import SalaryComponents from "../components/pages/InputModule/SalaryComponents";
@@ -121,7 +121,7 @@ function AuthenticatedContent() {
         '/setupInput/salaryComponents': () => (layout(<SalaryComponents />)),
         '/setupInput/stateRegisterConfiguration': () => (layout(<StateRegisterConfiguration />)),
         '/inputUploads/employeeMasterUpload': () => (layout(<EmployeeMasterUpload />)),
-        '/inputUploads/employeeLeaveBalanceUpload': () => (layout(<EmployeeLeaveCreditUpload />)),
+        '/inputUploads/employeeLeaveCreditUpload': () => (layout(<EmployeeLeaveCreditUpload />)),
         '/inputUploads/employeeLeaveAvailedUpload': () => (layout(<EmployeeLeaveAvailedUpload />)),
         '/inputUploads/employeeAttendanceUpload': () => (layout(<EmployeeAttendanceUpload />)),
         '/inputUploads/employeeWageUpload': () => (layout(<EmployeeWageUpload />)),

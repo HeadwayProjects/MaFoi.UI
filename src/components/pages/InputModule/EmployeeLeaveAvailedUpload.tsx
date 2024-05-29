@@ -13,7 +13,7 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { getEmployees, getEmployeesAttendance, getEmployeesLeaveAvailed, getEmployeesLeaveBalance } from '../../../redux/features/employeeMaster.slice';
+import { getEmployees, getEmployeesAttendance, getEmployeesLeaveAvailed, getEmployeesLeaveCredit } from '../../../redux/features/employeeMaster.slice';
 
 const EmployeeLeaveAvailedUpload = () => {
 
@@ -691,12 +691,22 @@ const EmployeeLeaveAvailedUpload = () => {
                             value={company}
                             displayEmpty
                             onChange={handleChangeCompany}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 230,
+                                  // marginLeft: "21px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Company
                             </MenuItem>
                             {companies && companies.map((each:any) => {
-                                return <MenuItem value={each.id}>{each.name}</MenuItem>
+                                return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
@@ -731,6 +741,16 @@ const EmployeeLeaveAvailedUpload = () => {
                             value={location}
                             disabled={!associateCompany}
                             onChange={handleChangeLocation}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 230,
+                                 marginLeft: "27px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Location
@@ -753,6 +773,16 @@ const EmployeeLeaveAvailedUpload = () => {
                             value={year}
                             disabled={!location}
                             onChange={handleChangeYear}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 100,
+                                  // marginLeft: "21px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Year
@@ -773,6 +803,16 @@ const EmployeeLeaveAvailedUpload = () => {
                             value={month}
                             disabled={!year}
                             onChange={handleChangeMonth}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 100,
+                                  // marginLeft: "21px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Month
@@ -785,7 +825,7 @@ const EmployeeLeaveAvailedUpload = () => {
                       </Box>
 
                       <Box sx={{width:'100%', mr:1}}>
-                        <Typography mb={1}>Search</Typography>
+                        <Typography mb={1}>Search (Emp Name)</Typography>
                         <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                           <OutlinedInput

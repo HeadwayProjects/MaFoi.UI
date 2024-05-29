@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Checkbox, Drawer, FormControl, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, Checkbox, Drawer, FormControl, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography,Grid  } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
@@ -60,9 +60,68 @@ const AttendanceConfig = () => {
 
   const bulkDeleteAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.bulkDeleteAttendanceDetails)
 
+
+  const [sesssion1starthour, setsesssion1startHour] = useState('');
+  const [sesssion1startminute, setsesssion1startMinute] = useState('');
+  const [sesssion1startperiod, setsesssion1startPeriod] = useState('');
+
+  
+  const [sesssion1endhour, setsesssion1endHour] = useState('');
+  const [sesssion1endminute, setsesssion1endMinute] = useState('');
+  const [sesssion1endperiod, setsesssion1endPeriod] = useState('');
+
+  const [sesssion2starthour, setsesssion2startHour] = useState('');
+  const [sesssion2startminute, setsesssion2startMinute] = useState('');
+  const [sesssion2startperiod, setsesssion2startPeriod] = useState('');
+
+  
+  const [sesssion2endhour, setsesssion2endHour] = useState('');
+  const [sesssion2endminute, setsesssion2endMinute] = useState('');
+  const [sesssion2endperiod, setsesssion2endPeriod] = useState('');
+
+
+
   const { exportAttendanceConfig, exporting } = useExportAttendanceConfig((response: any) => {
+    const companyDetails = companies.find((each:any) => each.id === company)
+    const assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
+    const locationdetailsextracting = locations.find((each:any) => each.location && each.location.id === location);
+const locationdetails = locationdetailsextracting ? locationdetailsextracting.location.name : null;
+console.log(locationdetails);
+  
+interface CompanyDetails {
+  name?: string;
+}
+
+interface AssCompNameDetails {
+  name?: string;
+}
+
+console.log('locaname',locationdetails);
+  function constructFileName(
+      companyDetails: CompanyDetails, 
+      assCompNameDetails: AssCompNameDetails, 
+      locationdetails: string, 
+    
+  ): string {
+      const parts = [
+        'AttendanceConfig',
+        companyDetails && companyDetails.name ? companyDetails.name : null,
+        assCompNameDetails && assCompNameDetails.name ? assCompNameDetails.name : null,
+        locationdetails,
+        'AttendanceConfig.xlsx'
+      ];
+  
+      const validParts = parts.filter(part => part != null && part !== '');
+  
+      return validParts.join(' - ');
+  }
+  
+
+  const fileName = constructFileName(companyDetails, assCompNameDetails, locationdetails );
+
+
     downloadFileContent({
-        name: 'Attendance.xlsx',
+        name: fileName,
         type: response.headers['content-type'],
         content: response.data
     });
@@ -108,6 +167,8 @@ const AttendanceConfig = () => {
 
   const [selectedAttendance, setSelectedAttendance] = React.useState<any>([]);
   const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
+
+  
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany('')
@@ -188,9 +249,7 @@ const AttendanceConfig = () => {
     setSearchInput(event.target.value)
   }
 
-  const handleChangeWeekDays = (arr:any) => {
-    setWeekDays(arr)
-  };
+
 
   useEffect(() => {
     const attendanceConfigurationDefaultPayload: any =  { 
@@ -260,6 +319,10 @@ const AttendanceConfig = () => {
 
   useEffect(() => {
     if(addAttendanceDetails.status === 'succeeded'){
+      if(addAttendanceDetails.data.key === 'FAILURE'){
+        toast.error(`Attendance Already Exist.`)
+      }else{
+
       toast.success(`Attendance Added successfully.`)
       dispatch(resetAddAttendanceDetails())
       setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([]) 
@@ -274,6 +337,7 @@ const AttendanceConfig = () => {
         "includeCentral": true
       }
       dispatch(getAttendanceConfiguration(attendanceDefaultPayload))
+    }
     }else if(addAttendanceDetails.status === 'failed'){
       setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([])
       toast.error(ERROR_MESSAGES.DEFAULT);
@@ -287,6 +351,10 @@ const AttendanceConfig = () => {
         dispatch(resetUploadAttendanceDetails())
         setOpenUploadModal(false)
         setUploadError(false)
+        setCompany('')
+        setAssociateCompany('')
+        setLocation('')
+        
         const attendancePayload: any =  { 
           search: "",
           filters: [],
@@ -446,6 +514,42 @@ const AttendanceConfig = () => {
 
   const onClickConfirmBulkDelete = () => {
     dispatch(bulkDeleteAttendance(selectedAttendance))
+    setCompany('')
+    setAssociateCompany('')
+    setLocation('')
+    setSearchInput('')
+    
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+
+    const attendancePayload: any =  { 
+      search: '', 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'companyId', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getAttendanceConfiguration(attendancePayload))
   }
 
 
@@ -803,7 +907,7 @@ const AttendanceConfig = () => {
     dispatch(uploadAttendance(formData))
   }
 
-  const addButtonDisable = !shiftName || !company || !associateCompany || !location || !sessionOneStartTime || !sessionOneEndTime || !sessionTwoStartTime || !sessionTwoEndTime || !workDays || !weekDays
+  const addButtonDisable = !shiftName || !company || !associateCompany || !location || !sesssion1starthour || !sesssion1startminute || !sesssion1startperiod || !sesssion1endhour || !sesssion1endminute || !sesssion1endperiod || !sesssion2starthour || !sesssion2startminute || !sesssion2startperiod || !sesssion2endhour || !sesssion2endminute|| !sesssion2endperiod || !workDays || !weekDays
 
   const onClickAdd = () => {
     setOpenModal(true)
@@ -827,10 +931,10 @@ const AttendanceConfig = () => {
 
     const payload = {
       shiftName,
-      session1StartTime: sessionOneStartTime,
-      session1EndTime: sessionOneEndTime,
-      session2StartTime: sessionTwoStartTime,
-      session2EndTime: sessionTwoEndTime,
+      session1StartTime: sesssion1starthour+':'+sesssion1startminute+' '+sesssion1startperiod,
+      session1EndTime: sesssion1endhour+':'+sesssion1endminute+' '+sesssion1endperiod,
+      session2StartTime: sesssion2starthour+':'+sesssion2startminute+' '+sesssion2startperiod,
+      session2EndTime: sesssion2endhour+':'+sesssion2endminute+' '+sesssion2endperiod,
       workDaysPerWeek: workDays,
       nameOfWeekDays,
       companyId: company,
@@ -841,6 +945,60 @@ const AttendanceConfig = () => {
     }
     dispatch(addAttendance(payload))
   }
+
+ const onClickAddcancel = () => {
+
+  {setOpenModal(false);
+     setModalType('');
+      setAtttendanceDetails({}); 
+      setCompany(''); 
+      setAssociateCompany(''); 
+      setLocation(''); 
+      setShiftName(''); 
+      setSessionOneStartTime(''); 
+      setSessionOneEndTime(''); 
+      setSessionTwoStartTime(''); 
+      setSessionTwoEndTime(''); 
+      setWorkDays('');
+       setWeekDays([]);
+          setCompany('')
+    setAssociateCompany('')
+    setLocation('')
+    setSearchInput('')
+    
+       const filters = []
+       if(company){
+         filters.push({
+           columnName:'companyId',
+           value: company
+         })
+       }
+       if(associateCompany){
+         filters.push({
+           columnName:'associateCompanyId',
+           value: associateCompany
+         })
+       }
+       if(location){
+         filters.push({
+           columnName:'locationId',
+           value: location
+         })
+       }
+   
+       const attendancePayload: any =  { 
+         search: '', 
+         filters,
+         pagination: {
+           pageSize: rowsPerPage,
+           pageNumber: page+1
+         },
+         sort: { columnName: 'companyId', order: 'asc' },
+         "includeCentral": true
+       }
+       dispatch(getAttendanceConfiguration(attendancePayload))
+ }
+}
 
   const onclickEdit = (attendanceDetails:any) => {
     const weekdaysArray = attendanceDetails && attendanceDetails.nameOfWeekDays.split(',').map((each: any) => {return {label: each, value: each}})
@@ -896,6 +1054,43 @@ const AttendanceConfig = () => {
  
   const onClickConfirmDelete = () => {
     dispatch(deleteAttendance(attendanceDetails.id))
+    setCompany('')
+    setAssociateCompany('')
+    setLocation('')
+    setSearchInput('')
+
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+
+    const attendancePayload: any =  { 
+      search: '', 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'companyId', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getAttendanceConfiguration(attendancePayload))
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -994,6 +1189,71 @@ const AttendanceConfig = () => {
     document.body.removeChild(a);
   }
 
+
+  const [updateValues, setUpdateValues] = React.useState(0)
+
+  const handleChangeWeekDays = (arr: any) => {
+    let value = parseInt(workDays) + 1
+    console.log("week", value, values.length, values.length - value);
+
+
+    
+    if (values.length - value >= arr.length) {
+      setUpdateValues(values.length - value)
+      setWeekDays(arr)
+    }
+    
+  };
+
+
+  const handlesetWorkDays = (e: any) => {
+    const value = e.target.value;
+    // Ensure the value is an integer and not zero
+    const numericOnly = value.replace(/[^0-9]/g, '');
+  
+    // If the value is a valid positive integer and not zero
+    if (numericOnly !== '' && parseInt(numericOnly) > 0) {
+      setWorkDays(numericOnly);
+  
+      if ((values.length + weekDays.length) !== 7) {
+        setUpdateValues(0);
+        setWeekDays([]);
+      }
+    } else {
+      // Reset the workDays to an empty string if the input is zero or invalid
+      setWorkDays('');
+    }
+  }
+
+  console.log('attendance',attendance);
+
+  
+  const Session1StartTimehandleHourChange = (e: any) => setsesssion1startHour(e.target.value);
+  const Session1StartTimehandleMinuteChange = (e: any) => setsesssion1startMinute(e.target.value);
+  const Session1StartTimehandlePeriodChange = (e: any)=> setsesssion1startPeriod(e.target.value);
+
+  const Session1EndTimehandleHourChange = (e: any)=> setsesssion1endHour(e.target.value);
+  const Session1EndTimehandleMinuteChange = (e: any) => setsesssion1endMinute(e.target.value);
+  const Session1EndTimehandlePeriodChange = (e: any) => setsesssion1endPeriod(e.target.value);
+
+  const Session2StartTimehandleHourChange = (e: any)=> setsesssion2startHour(e.target.value);
+  const Session2StartTimehandleMinuteChange = (e: any)=> setsesssion2startMinute(e.target.value);
+  const Session2StartTimehandlePeriodChange = (e: any)=> setsesssion2startPeriod(e.target.value);
+
+  const Session2EndTimehandleHourChange = (e: any)=> setsesssion2endHour(e.target.value);
+  const Session2EndTimehandleMinuteChange = (e: any) => setsesssion2endMinute(e.target.value);
+  const Session2EndTimehandlePeriodChange = (e: any) => setsesssion2endPeriod(e.target.value);
+
+  const generateOptions = (count :any) => {
+    return Array.from({ length: count }, (_, i) => (
+      <MenuItem key={i} value={String(i).padStart(2, '0')}>
+        {String(i).padStart(2, '0')}
+      </MenuItem>
+    ));
+  };
+
+
+
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
 
@@ -1021,6 +1281,15 @@ const AttendanceConfig = () => {
                       id="demo-select-small"
                       value={company}
                       label="Company"
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 115,
+                            marginTop: '3px'
+                          },
+                        },
+                      }}
                       onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
                     >
                       {companies && companies.map((each:any) => {
@@ -1037,6 +1306,7 @@ const AttendanceConfig = () => {
                       value={associateCompany}
                       label="Associate Company"
                       disabled={!company}
+
                       onChange={(e) => setAssociateCompany(e.target.value)}
                     >
                       {associateCompanies && associateCompanies.map((each:any) => {
@@ -1053,6 +1323,15 @@ const AttendanceConfig = () => {
                       value={location}
                       label="Location"
                       disabled={!associateCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 115,
+                            marginTop: '3px'
+                          },
+                        },
+                      }}
                       onChange={(e) => setLocation(e.target.value)}
                     >
                       {locations && locations.map((each:any) => {
@@ -1076,63 +1355,215 @@ const AttendanceConfig = () => {
                       onChange={(e) => setShiftName(e.target.value)}
                       id="outlined-adornment-name"
                       type='text'
+                      inputProps={{
+                        maxLength : 50
+                      }}
                     />
                   </FormControl>
 
-                  <Box sx={{display:'flex'}}>
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 Start Time</FormLabel>
-                      <OutlinedInput
-                        placeholder='Start Time'
-                        value={sessionOneStartTime}
-                        onChange={(e) => setSessionOneStartTime(e.target.value)}
-                        id="outlined-adornment-name"
-                        type='text'
-                      />
-                    </FormControl>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 End Time</FormLabel>
-                      <OutlinedInput
-                        placeholder='End Time'
-                        value={sessionOneEndTime}
-                        onChange={(e) => setSessionOneEndTime(e.target.value)}
-                        id="outlined-adornment-name"
-                        type='text'
-                      />
-                    </FormControl>
+                  <Box sx={{m: 1}}>
+                  <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 Start Time</FormLabel>
+
+                  <Grid container spacing={2}>
+      <Grid item xs={4}>
+        <FormControl fullWidth variant="outlined" sx={{width:"80px"}} size="small">
+          <InputLabel id="hour-label">Hour</InputLabel>
+          <MSelect
+            labelId="hour-label"
+            value={sesssion1starthour}
+            onChange={Session1StartTimehandleHourChange}
+            label="Hour"
+            MenuProps={{
+              PaperProps: {
+                style: {
+                  maxHeight: 200, // Max height for the dropdown menu
+                },
+              },
+            }}
+          >
+            {generateOptions(13)}
+          </MSelect>
+        </FormControl>
+      </Grid>
+      <Grid item xs={4}>
+        <FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
+          <InputLabel id="minute-label">Minute</InputLabel>
+          <MSelect
+            labelId="minute-label"
+            value={sesssion1startminute}
+            onChange={Session1StartTimehandleMinuteChange}
+            label="Minute"
+          >
+            {generateOptions(60)}
+          </MSelect>
+        </FormControl>
+      </Grid>
+      <Grid item xs={4}>
+        <FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
+          <InputLabel id="period-label">AM/PM</InputLabel>
+          <MSelect
+            labelId="period-label"
+            value={sesssion1startperiod}
+            onChange={Session1StartTimehandlePeriodChange}
+            label="AM/PM"
+          >
+            <MenuItem value="AM">AM</MenuItem>
+            <MenuItem value="PM">PM</MenuItem>
+          </MSelect>
+        </FormControl>
+      </Grid>
+    </Grid>
                   </Box> 
 
-                  <Box sx={{display:'flex'}}>
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 Start Time</FormLabel>
-                      <OutlinedInput
-                        placeholder='Start Time'
-                        value={sessionTwoStartTime}
-                        onChange={(e) => setSessionTwoStartTime(e.target.value)}
-                        id="outlined-adornment-name"
-                        type='text'
-                      />
-                    </FormControl>
+                  <Box sx={{m: 1,}}>
+                  <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 End Time</FormLabel>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 End Time</FormLabel>
-                      <OutlinedInput
-                        placeholder='End Time'
-                        value={sessionTwoEndTime}
-                        onChange={(e) => setSessionTwoEndTime(e.target.value)}
-                        id="outlined-adornment-name"
-                        type='text'
-                      />
-                    </FormControl>
+<Grid container spacing={2}>
+<Grid item xs={4}>
+<FormControl fullWidth variant="outlined" sx={{width:"80px"}} size="small">
+<InputLabel id="hour-label">Hour</InputLabel>
+<MSelect
+labelId="hour-label"
+value={sesssion1endhour}
+onChange={Session1EndTimehandleHourChange}
+label="Hour"
+>
+{generateOptions(13)}
+</MSelect>
+</FormControl>
+</Grid>
+<Grid item xs={4}>
+<FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
+<InputLabel id="minute-label">Minute</InputLabel>
+<MSelect
+labelId="minute-label"
+value={sesssion1endminute}
+onChange={Session1EndTimehandleMinuteChange}
+label="Minute"
+>
+{generateOptions(60)}
+</MSelect>
+</FormControl>
+</Grid>
+<Grid item xs={4}>
+<FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
+<InputLabel id="period-label">AM/PM</InputLabel>
+<MSelect
+labelId="period-label"
+value={sesssion1endperiod}
+onChange={Session1EndTimehandlePeriodChange}
+label="AM/PM"
+>
+<MenuItem value="AM">AM</MenuItem>
+<MenuItem value="PM">PM</MenuItem>
+</MSelect>
+</FormControl>
+</Grid>
+</Grid>                  </Box> 
+
+
+<Box sx={{m: 1,}}>
+                  <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 Start Time</FormLabel>
+
+                  <Grid container spacing={2}>
+      <Grid item xs={4}>
+        <FormControl fullWidth variant="outlined" sx={{width:"80px"}} size="small">
+          <InputLabel id="hour-label">Hour</InputLabel>
+          <MSelect
+            labelId="hour-label"
+            value={sesssion2starthour}
+            onChange={Session2StartTimehandleHourChange}
+            label="Hour"
+          >
+            {generateOptions(12)}
+          </MSelect>
+        </FormControl>
+      </Grid>
+      <Grid item xs={4}>
+        <FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
+          <InputLabel id="minute-label">Minute</InputLabel>
+          <MSelect
+            labelId="minute-label"
+            value={sesssion2startminute}
+            onChange={Session2StartTimehandleMinuteChange}
+            label="Minute"
+          >
+            {generateOptions(60)}
+          </MSelect>
+        </FormControl>
+      </Grid>
+      <Grid item xs={4}>
+        <FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
+          <InputLabel id="period-label">AM/PM</InputLabel>
+          <MSelect
+            labelId="period-label"
+            value={sesssion2startperiod}
+            onChange={Session2StartTimehandlePeriodChange}
+            label="AM/PM"
+          >
+            <MenuItem value="AM">AM</MenuItem>
+            <MenuItem value="PM">PM</MenuItem>
+          </MSelect>
+        </FormControl>
+      </Grid>
+    </Grid>
                   </Box> 
+
+                  <Box sx={{m: 1,}}>
+                  <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 End Time</FormLabel>
+
+<Grid container spacing={2}>
+<Grid item xs={4}>
+<FormControl fullWidth variant="outlined" sx={{width:"80px"}} size="small">
+<InputLabel id="hour-label">Hour</InputLabel>
+<MSelect
+labelId="hour-label"
+value={sesssion2endhour}
+onChange={Session2EndTimehandleHourChange}
+label="Hour"
+>
+{generateOptions(12)}
+</MSelect>
+</FormControl>
+</Grid>
+<Grid item xs={4}>
+<FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
+<InputLabel id="minute-label">Minute</InputLabel>
+<MSelect
+labelId="minute-label"
+value={sesssion2endminute}
+onChange={Session2EndTimehandleMinuteChange}
+label="Minute"
+>
+{generateOptions(60)}
+</MSelect>
+</FormControl>
+</Grid>
+<Grid item xs={4}>
+<FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
+<InputLabel id="period-label">AM/PM</InputLabel>
+<MSelect
+labelId="period-label"
+value={sesssion2endperiod}
+onChange={Session2EndTimehandlePeriodChange}
+label="AM/PM"
+>
+<MenuItem value="AM">AM</MenuItem>
+<MenuItem value="PM">PM</MenuItem>
+</MSelect>
+</FormControl>
+</Grid>
+</Grid>                  </Box> 
+
+
                   
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                     <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Total Working Days Per Week</FormLabel>
                     <OutlinedInput
                       placeholder='Work days'
                       value={workDays}
-                      onChange={(e) => setWorkDays(e.target.value)}
+                      onChange={handlesetWorkDays}
                       id="outlined-adornment-name"
                       type='text'
                     />
@@ -1165,7 +1596,7 @@ const AttendanceConfig = () => {
 
             {modalType === 'Add' && 
             <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center'}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setAtttendanceDetails({}); setCompany(''); setAssociateCompany(''); setLocation(''); setShiftName(''); setSessionOneStartTime(''); setSessionOneEndTime(''); setSessionTwoStartTime(''); setSessionTwoEndTime(''); setWorkDays(''); setWeekDays([])}}>Cancel</Button>
+              <Button variant='outlined' color="error" onClick={onClickAddcancel}>Cancel</Button>
               <Button variant='contained' onClick={onClickSubmitAdd}>Submit</Button>
             </Box>
             }
@@ -1482,7 +1913,7 @@ const AttendanceConfig = () => {
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
                           <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAttendance && selectedAttendance.length === 0}> Bulk Delete</Button>
-                          <button onClick={onClickExport} disabled={attendance && attendance <=0} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: (attendance && attendance <=0) ? '#707070': '#ffffff' , color: (attendance && attendance <=0) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} disabled={(attendance && attendance.length <=0) || !company || !associateCompany || !location}  style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((attendance && attendance.length <=0) || !company || !associateCompany ||!location) ? '#707070': '#ffffff' , color: ((attendance && attendance.length <=0) || !company || !associateCompany ||!location) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>

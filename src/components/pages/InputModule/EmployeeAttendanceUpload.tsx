@@ -639,12 +639,22 @@ const EmployeeAttendanceUpload = () => {
                             value={company}
                             displayEmpty
                             onChange={handleChangeCompany}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 230,
+                                  // marginLeft: "21px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Company
                             </MenuItem>
                             {companies && companies.map((each:any) => {
-                                return <MenuItem value={each.id}>{each.name}</MenuItem>
+                                return <MenuItem  sx={{ width: '240px', whiteSpace: 'initial' }}  value={each.id}>{each.name}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
@@ -679,6 +689,16 @@ const EmployeeAttendanceUpload = () => {
                             value={location}
                             disabled={!associateCompany}
                             onChange={handleChangeLocation}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 230,
+                                  marginLeft: "27px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Location
@@ -701,6 +721,16 @@ const EmployeeAttendanceUpload = () => {
                             value={year}
                             disabled={!location}
                             onChange={handleChangeYear}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 100,
+                                  // marginLeft: "21px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Year
@@ -721,6 +751,16 @@ const EmployeeAttendanceUpload = () => {
                             value={month}
                             disabled={!year}
                             onChange={handleChangeMonth}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 100,
+                                  // marginLeft: "21px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Month

@@ -35,6 +35,8 @@ const styleUploadModal = {
   boxShadow: 24,
 };
 
+//new code 26may
+
 const HolidayList = () => {
 
   const dispatch = useAppDispatch();
@@ -104,9 +106,53 @@ const HolidayList = () => {
   const { exportHolidayList, exporting } = useExportHolidayList((response: any) => {
     const companyDetails = companies.find((each:any) => each.id === company)
     const assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
+    //const locationdetails = locations.find((each:any) => each.id === location).toString()
+    const stateNameDetailsextracting = states.find((each:any) => each.id === stateName)
+    // Extract the name from the found state object
+    const stateNameDetails = stateNameDetailsextracting ? stateNameDetailsextracting.name : null;
+    //const locationdetails = location.toString()
+    const locationdetailsextracting = locations.find((each:any) => each.location && each.location.id === location);
+    const locationdetails = locationdetailsextracting ? locationdetailsextracting.location.name : null;
+    const yeardetails = year.toString()
+    const momnthdetails = month 
     
+    interface CompanyDetails {
+      name?: string;
+    }
+  
+    interface AssCompNameDetails {
+        name?: string;
+    }
+    
+    function constructFileName(
+      companyDetails: CompanyDetails, 
+      assCompNameDetails: AssCompNameDetails, 
+      stateNameDetails: string,
+      locationdetails: string, 
+      monthdetails: string, 
+      yeardetails: string
+    ): string {
+      const parts = [
+        'HolidayList',
+        companyDetails && companyDetails.name ? companyDetails.name : null,
+        assCompNameDetails && assCompNameDetails.name ? assCompNameDetails.name : null,
+        stateNameDetails,
+        locationdetails,
+        monthdetails,
+        yeardetails,
+        'HolidayList.xlsx'
+      ];
+  
+      const validParts = parts.filter(part => part != null && part !== '');
+  
+      return validParts.join(' - ');
+    }
+  
+    const fileName = constructFileName(companyDetails, assCompNameDetails,stateNameDetails, locationdetails, momnthdetails, yeardetails);
+
     downloadFileContent({
-        name: `HolidayList - ${companyDetails.name} - ${assCompNameDetails.name} - ${employmentType} - HolidayList.xlsx`,
+        //name: `HolidayList - ${companyDetails.name} - ${assCompNameDetails.name} - ${locationdetails}  - ${momnthdetails} - ${yeardetails} - HolidayList.xlsx`,
+        name :fileName,
         type: response.headers['content-type'],
         content: response.data
     });
@@ -380,6 +426,8 @@ const HolidayList = () => {
     }
   },[holidayListDetails.status])
 
+
+  
   useEffect(() => {
     if(deleteHolidayDetails.status === 'succeeded'){
       toast.success(`${holiday.name} deleted successfully.`)
@@ -522,6 +570,8 @@ const HolidayList = () => {
   ];
 
   const daysList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+
+  const [originalDayList, setOriginalDayList] = React.useState(daysList);
 
   const onClickExport = () => {
     const filters = []
@@ -804,6 +854,130 @@ const HolidayList = () => {
     dispatch(getHolidaysList(HolidayListPayload)) 
   }
 
+  const onClickSortCompanyName = () => {
+    let type = 'asc'
+    setActiveSort('company'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
+      })
+    }
+
+    const HolidayListPayload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'Company.name', order: type },
+      "includeCentral": true
+    }
+    dispatch(getHolidaysList(HolidayListPayload))
+    
+  }
+
+  const onClickSortassociateCompanyName = () => {
+    let type = 'asc'
+    setActiveSort('associatecompany'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(stateName){
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
+      })
+    }
+
+    const HolidayListPayload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'associatecompany', order: type },
+      "includeCentral": true
+    }
+    dispatch(getHolidaysList(HolidayListPayload))
+    
+  }
+
   const onClickSortName = () => {
     let type = 'asc'
     setActiveSort('name'); 
@@ -1009,7 +1183,46 @@ const HolidayList = () => {
     setAssociateCompany('')
     setStateName('')
     setLocation('')
+
   }
+
+  const onClickCancelAdd = ()=>{
+    setOpenModal(false);
+    setModalType(''); 
+    setHoliday({});
+    setCompany(''); 
+    setAssociateCompany(''); 
+    setStateName(''); 
+    setLocation('');
+    setYear('');
+    setMonth(''); 
+    setDay('');
+    setName('');
+    setRestrictedHoliday(true);
+    setOptionalHoliday(true);
+
+    let type = 'asc'
+    setActiveSort('restricted'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+
+    
+  const HolidayListPayload: any =  { 
+    search: searchInput, 
+    filters : [],
+    pagination: {
+      pageSize: rowsPerPage,
+      pageNumber: page+1
+    },
+    sort: { columnName: 'stateId', order: type },
+    "includeCentral": true
+  }
+  dispatch(getHolidaysList(HolidayListPayload))
+}
 
   const onClickSubmitAdd = () => {
 
@@ -1087,6 +1300,35 @@ const HolidayList = () => {
  
   const onClickConfirmDelete = () => {
     dispatch(deleteHoliday(holiday.id))
+    let type = 'asc'
+    setActiveSort('restricted'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+    setCompany('')
+    setAssociateCompany('')
+    setStateName('')
+    setLocation('')
+    setYear('')
+    setMonth('')
+
+    
+    const HolidayListPayload: any =  { 
+     search: searchInput, 
+     filters : [],
+     pagination: {
+       pageSize: rowsPerPage,
+       pageNumber: page+1
+     },
+     sort: { columnName: 'stateId', order: type },
+     "includeCentral": true
+   }
+   dispatch(getHolidaysList(HolidayListPayload))
+
+
   }
 
   const onClickIndividualCheckBox = (id:any) => {
@@ -1113,6 +1355,60 @@ const HolidayList = () => {
 
   const onClickConfirmBulkDelete = () => {
     dispatch(bulkDeleteHolidays(selectedHolidays))
+    let type = 'asc'
+    setActiveSort('restricted'); 
+    if(sortType === 'asc'){
+      setSortType('desc')
+      type = 'desc'
+    }else{
+      setSortType('asc')
+    }
+    setCompany('')
+    setAssociateCompany('')
+    setStateName('')
+    setLocation('')
+    setYear('')
+    setMonth('')
+
+    
+    const HolidayListPayload: any =  { 
+     search: searchInput, 
+     filters : [],
+     pagination: {
+       pageSize: rowsPerPage,
+       pageNumber: page+1
+     },
+     sort: { columnName: 'stateId', order: type },
+     "includeCentral": true
+   }
+   dispatch(getHolidaysList(HolidayListPayload))
+  }
+
+  const handleMonth = (e: any) => {
+    setMonth(e.target.value)
+  
+    let updatedDaysList = [...daysList];
+    
+    
+    
+    
+    if (e.target.value == 'April' || e.target.value == 'June' || e.target.value == 'September' || e.target.value == 'November') {
+      updatedDaysList.splice(30, 1)
+      
+      
+    } else if (e.target.value == 'February') {
+      if (((0 == parseInt(year) % 4) && (0 != parseInt(year) % 100)) || (0 == parseInt(year) % 400)) {
+        updatedDaysList.splice(29, 2)
+      }
+      else {
+        updatedDaysList.splice(28, 3)
+      }
+    }
+    setOriginalDayList(updatedDaysList);
+  }
+  const handleYear = (e: any) => {
+    setYear(e.target.value)
+    setOriginalDayList(daysList);
   }
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -1226,7 +1522,7 @@ const HolidayList = () => {
   
   const downloadSample = (e: any) => {
     preventDefault(e);
-    download('Sample Holidays.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/ActsTemplate.xlsx')
+    download('Sample Holidays.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/HolidaysTemplate.xlsx')
   }
 
   const downloadErrors = (e: any) => {
@@ -1263,15 +1559,18 @@ const HolidayList = () => {
             {modalType === 'Add' && 
             <Box sx={{ width: 400, padding:'20px'}}>
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Name</FormLabel>
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Holiday Name</FormLabel>
                     {/* <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Name</InputLabel> */}
                     <OutlinedInput
-                      placeholder='Name'
+                      placeholder='Holiday Name'
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       id="outlined-adornment-name"
                       type='text'
                       label="Name"
+                      inputProps={{
+                        maxLength: 50
+                      }}
                     />
                   </FormControl>
 
@@ -1282,6 +1581,17 @@ const HolidayList = () => {
                       id="demo-select-small"
                       value={company}
                       label="Company"
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 215,
+                            width: 230,
+                            
+                            marginTop: '3px'
+                          },
+                        },
+                      }}
+                      
                       onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
                     >
                       {companies && companies.map((each:any) => {
@@ -1350,7 +1660,17 @@ const HolidayList = () => {
                         id="demo-select-small"
                         value={year}
                         label="Year"
-                        onChange={(e) => setYear(e.target.value)}
+                        MenuProps={{
+                          PaperProps: {
+                            sx: {
+                              maxHeight: 200,
+                              width: 100,
+                              marginTop: '3px'
+                            },
+                          },
+                        }}
+                        // onChange={(e) => setYear(e.target.value)}
+                        onChange={handleYear}
                       >
                         {yearsList && yearsList.map((each:any) => 
                           <MenuItem value={each}>{each}</MenuItem>
@@ -1358,14 +1678,25 @@ const HolidayList = () => {
                       </Select>
                     </FormControl>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small" disabled={!year}>
                       <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Month</InputLabel>
                       <Select
                         labelId="demo-select-small-label"
                         id="demo-select-small"
                         value={month}
                         label="Month"
-                        onChange={(e) => setMonth(e.target.value)}
+                        MenuProps={{
+                          PaperProps: {
+                            sx: {
+                              maxHeight: 200,
+                              width: 115,
+                              marginTop: '3px'
+                            },
+                          },
+                        }}
+                          // onChange={(e) => setMonth(e.target.value)}
+                          
+                          onChange={handleMonth}
                       >
                         {monthList && monthList.map((each:any) => 
                           <MenuItem value={each}>{each}</MenuItem>
@@ -1373,16 +1704,25 @@ const HolidayList = () => {
                       </Select>
                     </FormControl>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small" disabled={!year || !month}>
                       <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Day</InputLabel>
                       <Select
                         labelId="demo-select-small-label"
                         id="demo-select-small"
                         value={day}
                         label="Day"
+                        MenuProps={{
+                          PaperProps: {
+                            sx: {
+                              maxHeight: 200,
+                              width: 100,
+                              marginTop: '3px'
+                            },
+                          },
+                        }}
                         onChange={(e) => setDay(e.target.value)}
                       >
-                        {daysList && daysList.map((each:any) => 
+                        {originalDayList && originalDayList.map((each:any) => 
                           <MenuItem value={each}>{each}</MenuItem>
                         )}
                       </Select>
@@ -1426,7 +1766,9 @@ const HolidayList = () => {
 
             {modalType === 'Add' && 
             <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:6}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button>
+              {/* <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setStateName(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);}}>Cancel</Button> */}
+              <Button variant='outlined' color="error" onClick={onClickCancelAdd}>Cancel</Button>
+
               <Button variant='contained' onClick={onClickSubmitAdd}>Submit</Button>
             </Box>
             }
@@ -1436,6 +1778,12 @@ const HolidayList = () => {
           <>
             {modalType === "View" && 
               <Box sx={{ width: '100%', padding:'20px'}}>
+
+<Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px',mt:1}}>Company Name</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{holiday.company.name}</Typography>
+                  <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px',mt:2}}>Associate Company Name</Typography>
+                  <Typography color="#000000" sx={{fontSize:'20px'}} >{holiday.associateCompany.name}</Typography>
+
                   <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>Holiday Name</Typography>
                   <Typography color="#000000" sx={{fontSize:'20px'}} >{holiday.name}</Typography>
                   
@@ -1453,8 +1801,8 @@ const HolidayList = () => {
               </Box>
             }
             {modalType === 'View' && 
-              <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:15}}>
-                <Button variant='contained' onClick={() => {setOpenModal(false); setModalType('');  setHoliday({})}}>Cancel</Button>
+              <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:2}}>
+                <Button variant='contained' onClick={() => {setOpenModal(false); setModalType('');  setHoliday({})}}>Close</Button>
               </Box>
             }
           </>
@@ -1464,15 +1812,18 @@ const HolidayList = () => {
             {modalType === 'Edit' && 
             <Box sx={{ width: 400, padding:'20px'}}>
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Name</FormLabel>
+                    <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Holiday Name</FormLabel>
                     {/* <InputLabel htmlFor="outlined-adornment-name" sx={{color:'#000000'}}>Name</InputLabel> */}
                     <OutlinedInput
-                      placeholder='Name'
+                      placeholder='Holiday Name'
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       id="outlined-adornment-name"
                       type='text'
                       label="Name"
+                      inputProps={{
+                        maxLength: 50
+                      }}
                     />
                   </FormControl>
 
@@ -1551,7 +1902,9 @@ const HolidayList = () => {
                         id="demo-select-small"
                         value={year}
                         label="Year"
-                        onChange={(e) => setYear(e.target.value)}
+                         // onChange={(e) => setYear(e.target.value)}
+                         
+                         onChange={handleYear}
                       >
                         {yearsList && yearsList.map((each:any) => 
                           <MenuItem value={each}>{each}</MenuItem>
@@ -1559,14 +1912,16 @@ const HolidayList = () => {
                       </Select>
                     </FormControl>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small"  disabled={!year}>
                       <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Month</InputLabel>
                       <Select
                         labelId="demo-select-small-label"
                         id="demo-select-small"
                         value={month}
                         label="Month"
-                        onChange={(e) => setMonth(e.target.value)}
+                         // onChange={(e) => setMonth(e.target.value)}
+                         
+                         onChange={handleMonth}
                       >
                         {monthList && monthList.map((each:any) => 
                           <MenuItem value={each}>{each}</MenuItem>
@@ -1574,7 +1929,7 @@ const HolidayList = () => {
                       </Select>
                     </FormControl>
 
-                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small" disabled={!year || !month}>
                       <InputLabel id="demo-select-small-label" sx={{color:'#000000'}}>Day</InputLabel>
                       <Select
                         labelId="demo-select-small-label"
@@ -1583,7 +1938,7 @@ const HolidayList = () => {
                         label="Day"
                         onChange={(e) => setDay(e.target.value)}
                       >
-                        {daysList && daysList.map((each:any) => 
+                        {originalDayList && originalDayList.map((each:any) => 
                           <MenuItem value={each}>{each}</MenuItem>
                         )}
                       </Select>
@@ -1743,7 +2098,7 @@ const HolidayList = () => {
                           <Button onClick={onClickUpload} title='Import Data' variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
                           <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedHolidays && selectedHolidays.length === 0}> Bulk Delete</Button>
-                          <button onClick={onClickExport} title='Export Data' disabled={(holidays && holidays.length <=0) || !company || !associateCompany} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((holidays && holidays.length <=0) || !company || !associateCompany) ? '#707070': '#ffffff' , color: ((holidays && holidays.length <=0) || !company || !associateCompany) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} title='Export Data' disabled={(holidays && holidays.length <=0) || !company || !associateCompany || !stateName} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((holidays && holidays.length <=0) || !company || !associateCompany) ? '#707070': '#ffffff' , color: ((holidays && holidays.length <=0) || !company || !associateCompany) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
@@ -1756,7 +2111,20 @@ const HolidayList = () => {
                             value={company}
                             displayEmpty
                             onChange={handleChangeCompany}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 230, 
+                                  marginLeft: "21px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
+      
+      
+          
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Company
                             </MenuItem>
@@ -1776,12 +2144,22 @@ const HolidayList = () => {
                             value={associateCompany}
                             disabled={!company}
                             onChange={handleChangeAssociateCompany}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 215,
+                                  marginLeft: "10px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Associate Company
                             </MenuItem>
                             {associateCompanies && associateCompanies.map((each:any) => {
-                              return <MenuItem value={each.id}>{each.name}</MenuItem>
+                              return <MenuItem sx={{width:'240px', whiteSpace:'initial'}} value={each.id}>{each.name}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
@@ -1796,12 +2174,22 @@ const HolidayList = () => {
                             value={stateName}
                             disabled={!associateCompany}
                             onChange={handleChangeStateName}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 180,
+                                  marginLeft: "0px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select State
                             </MenuItem>
                             {states && states.map((each:any) => {
-                              return <MenuItem value={each.id}>{each.name}</MenuItem>
+                              return <MenuItem sx={{width:'240px', whiteSpace:'initial'}} value={each.id}>{each.name}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
@@ -1816,6 +2204,16 @@ const HolidayList = () => {
                             value={location}
                             disabled={!stateName}
                             onChange={handleChangeLocation}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 215,
+                                  marginLeft: "10px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Location
@@ -1824,7 +2222,7 @@ const HolidayList = () => {
                               const { id, name, code, cities }: any = each.location || {};
                               const { state } = cities || {};
                               if(state.id === stateName){
-                                return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                                return <MenuItem sx={{width:'250px', whiteSpace:'initial'}} value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                               }
                             })}
                           </Select>
@@ -1840,12 +2238,22 @@ const HolidayList = () => {
                             value={year}
                             disabled={!location}
                             onChange={handleChangeYear}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 110,
+                                  marginLeft: "0px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Year
                             </MenuItem>
                             {yearsList && yearsList.map((each:any) => 
-                              <MenuItem value={each}>{each}</MenuItem>
+                              <MenuItem sx={{width:'250px', whiteSpace:'initial'}} value={each}>{each}</MenuItem>
                             )}
                           </Select>
                         </FormControl>
@@ -1860,19 +2268,29 @@ const HolidayList = () => {
                             value={month}
                             disabled={!year}
                             onChange={handleChangeMonth}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 210,
+                                  width: 100,
+                                  marginLeft: "0px",
+                                  marginTop: '3px'
+                                },
+                              },
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Month
                             </MenuItem>
                             {monthList && monthList.map((each:any) => 
-                              <MenuItem value={each}>{each}</MenuItem>
+                              <MenuItem sx={{width:'250px', whiteSpace:'initial'}} value={each}>{each}</MenuItem>
                             )}
                           </Select>
                         </FormControl>
                       </Box>
 
                       <Box sx={{width:'100%', mr:1}}>
-                        <Typography mb={1}>Search</Typography>
+                        <Typography mb={1}>Search(HolidayName)</Typography>
                         <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                           <OutlinedInput
@@ -1880,7 +2298,10 @@ const HolidayList = () => {
                             onChange={handleChangeSearchInput}
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             id="outlined-adornment-search"
-                            type='text'
+                            type='text'  
+                              inputProps={{
+                              maxLength : 30
+                            }}
                             
                             endAdornment={
                               <InputAdornment position="end">
@@ -1925,7 +2346,8 @@ const HolidayList = () => {
                                       <TableCell><Checkbox checked={(selectedHolidays && selectedHolidays.length) === (holidays && holidays.length)} onClick={onClickAllCheckBox}/></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Year</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'day'} direction={sortType} onClick={onClickSortDate}> Date</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'day'} direction={sortType} onClick={onClickSortDate}> Company</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'company'} direction={sortType} onClick={onClickSortName}> Company</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'associatecompany'} direction={sortType} onClick={onClickSortName}>Associate Company</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Holiday Name</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'stateId'} direction={sortType} onClick={onClickSortState}> State</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'restricted'} direction={sortType} onClick={onClickSortRestricted}> Restricted</TableSortLabel></TableCell>
@@ -1943,6 +2365,7 @@ const HolidayList = () => {
                                       <TableCell >{each.year}</TableCell>
                                       <TableCell >{`${each.day > 9 ? each.day : '0'+ each.day}-${each.month > 9 ? each.month : '0'+ each.month}-${each.year}`}</TableCell>
                                       <TableCell >{each.company.name}</TableCell>
+                                      <TableCell >{each.associateCompany.name}</TableCell>
                                       <TableCell >{each.name}</TableCell>
                                       <TableCell >{each.state.name}</TableCell>
                                       <TableCell >{each.restricted ? 'Yes' : 'No'}</TableCell>
