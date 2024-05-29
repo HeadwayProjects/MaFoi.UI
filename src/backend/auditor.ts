@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import * as api from "./request";
 
 export function useGetAuditorLimeStatus(userId: string) {
@@ -41,4 +41,19 @@ export function useGetAuditorActivites(payload: any) {
     );
 
     return { activities: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useSendReportAsEmail(onSuccess?: any, onError?: any) {
+    const { mutate: sendEmail, error, isLoading: adding } = useMutation(
+        ['sendEmail'],
+        async (payload: any) => await api.post('/api/Auditor/SendEmailDownlaodReport', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const { data } = response || {};
+                onSuccess(data || {});
+            }
+        }
+    );
+    return { sendEmail, error, adding };
 }

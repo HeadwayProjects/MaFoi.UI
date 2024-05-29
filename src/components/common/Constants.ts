@@ -5,7 +5,8 @@ export const PATTERNS = {
     PAN: /[A-Za-z]{5}[0-9]{4}[A-Za-z]{1}$/,
     TAN: /[A-Za-z]{4}[0-9]{5}[A-Za-z]{1}$/,
     GSTN: /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
-    MOBILE: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
+    MOBILE: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/,
+    GENERIC: /^(?=.*[A-Za-z0-9])[A-Za-z0-9 _\-]*$/
 };
 
 export const FILE_SIZE = {
@@ -21,7 +22,13 @@ export const ACTIONS = {
     VIEW: '4',
     BULK_DELETE: '5',
     BULK_EDIT: '6',
-    IMPORT: '7'
+    IMPORT: '7',
+    ASSIGN_SINGLE: '8',
+    ASSIGN_BULK: '9',
+    COPY_TO: '10',
+    CONFIRM: '11',
+    EXPORT: '12',
+    SEND_REPORT: '13'
 }
 
 export const ACTIVITY_STATUS = {
@@ -40,6 +47,18 @@ export const AUDIT_STATUS = {
     COMPLIANT: 'Compliant',
     NON_COMPLIANCE: 'Non-Compliance',
     NOT_APPLICABLE: 'Not-Applicable'
+}
+
+export const ActivityColorMappings = {
+    [ACTIVITY_STATUS.ACTIVITY_SAVED]: '--blue',
+    [ACTIVITY_STATUS.PENDING]: '--light-red',
+    [ACTIVITY_STATUS.OVERDUE]: '--orange',
+    [ACTIVITY_STATUS.SUBMITTED]: '--light-green',
+    [ACTIVITY_STATUS.REJECTED]: '--yellow',
+    [ACTIVITY_STATUS.AUDITED]: '--light-blue',
+    [AUDIT_STATUS.COMPLIANT]: '--medium-green',
+    [AUDIT_STATUS.NON_COMPLIANCE]: '--red',
+    [AUDIT_STATUS.NOT_APPLICABLE]: '--mild-gray',
 }
 
 export const ALLOWED_FILES_REGEX = /(\.xlsx|\.xls|\.csv|\.pdf|\.jpg|\.jpeg|\.png|\.doc|\.docx)$/i;
@@ -103,7 +122,10 @@ export const FILTERS = {
     DUE_DATE: 'dueDate',
     SUBMITTED_DATE: 'submittedDate',
     ACTIVITY_TYPE: 'activityType',
-    AUDIT_TYPE: 'auditType'
+    AUDIT_TYPE: 'auditType',
+    ACT: 'act',
+    RULE: 'rule',
+    ACTIVITY: 'activity'
 }
 
 export const SEARCH_FIELDS = [
@@ -113,3 +135,9 @@ export const SEARCH_FIELDS = [
 ]
 
 export const SMTP_PORTS = ['25', '465', '587'];
+
+export const EMPLOYEMENT_TYPES = ['Full Time', 'Part Time', 'Contract', 'Daily workers']
+
+export const EZYCOMP_LEAVE_TYPES = ['PL (Privilege  Leave)', 'EL (Earned Leave)', 'AL (Annual Leave)', 'SL (Sick Leave)', 'CL (Casual Leave)',
+    'ML (Maternity Leave)']
+export const Leave_Credit_Frequency = ['Yearly', 'Monthly', 'Weekly']

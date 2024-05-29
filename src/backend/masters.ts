@@ -545,7 +545,7 @@ export function useGetSmtpDetails(companyId: any, payload: any, enabled = true) 
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
-            enabled
+            enabled: enabled && !!companyId
         }
     );
     return { smtp: (data || {}).data || {}, isFetching, refetch, invalidate };
@@ -593,77 +593,12 @@ export function useDeleteSmtp(onSuccess?: any, onError?: any) {
     return { deleteSmtp, error };
 }
 
-export function useGetRuleCompliances(payload: any, enabled = true) {
-    const { data, isFetching, refetch } = useQuery(
-        ['ruleCompliances', payload],
-        async () => await api.post(`/api/RuleComplianceDetail/GetAll`, payload),
-        {
-            refetchOnMount: false,
-            refetchOnWindowFocus: false,
-            enabled
-        }
-    );
-    return { ruleCompliances: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
+export async function getRuleMappings(payload: any) {
+    const response = await api.post(`/api/Mappings/GetActStateList`, payload);
+    return (response || {}).data || {};
 }
 
-export function useCreateRuleCompliance(onSuccess?: any, onError?: any) {
-    const { mutate: createRuleCompliance, error, isLoading: creating } = useMutation(
-        ['createRuleCompliance'],
-        async (payload) => await api.post('/api/RuleComplianceDetail/Add', payload),
-        {
-            onError,
-            onSuccess: (response) => {
-                const data = (response || {}).data || {};
-                onSuccess(data);
-            }
-        }
-    );
-    return { createRuleCompliance, error, creating };
-}
-
-export function useUpdateRuleCompliance(onSuccess?: any, onError?: any) {
-    const { mutate: updateRuleCompliance, error, isLoading: updating } = useMutation(
-        ['updateRuleCompliance'],
-        async (payload) => await api.put('/api/RuleComplianceDetail/Update', payload),
-        {
-            onError,
-            onSuccess: (response) => {
-                const data = (response || {}).data || {};
-                onSuccess(data);
-            }
-        }
-    );
-    return { updateRuleCompliance, error, updating };
-}
-
-export function useDeleteRuleCompliance(onSuccess?: any, onError?: any) {
-    const { mutate: deleteRuleCompliance, error, isLoading: deleting } = useMutation(
-        ['deleteRuleCompliance'],
-        async (id) => await api.del(`/api/RuleComplianceDetail/Delete?Id=${id}`),
-        {
-            onError,
-            onSuccess
-        }
-    );
-    return { deleteRuleCompliance, error, deleting };
-}
-
-export function useImportRuleCompliance(onSuccess?: any, onError?: any) {
-    const { mutate: importRuleCompliance, error, isLoading: uploading } = useMutation(
-        ['importRuleCompliance'],
-        async ({ formData }: any) => await api.post('/api/RuleComplianceDetail/Import', formData, null, true, { responseType: 'blob' }),
-        {
-            onError,
-            onSuccess: (response) => {
-                const data = (response || {});
-                onSuccess(data);
-            }
-        }
-    );
-    return { importRuleCompliance, error, uploading };
-}
-
-export function useStateRuleCompanyMappings(payload: any, enabled = true) {
+export function useGetRuleMappings(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['mappings', payload],
         async () => await api.post(`/api/Mappings/GetActStateList`, payload),
@@ -677,9 +612,9 @@ export function useStateRuleCompanyMappings(payload: any, enabled = true) {
     return { mappings: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
 }
 
-export function useCreateStateRuleCompanyMapping(onSuccess?: any, onError?: any) {
-    const { mutate: createStateRuleCompanyMapping, error, isLoading: creating } = useMutation(
-        ['createStateRuleCompanyMapping'],
+export function useCreateRuleMapping(onSuccess?: any, onError?: any) {
+    const { mutate: createRuleMapping, error, isLoading: creating } = useMutation(
+        ['createRuleMapping'],
         async (payload: any) => await api.post('/api/Mappings/Add', payload),
         {
             onError,
@@ -689,11 +624,11 @@ export function useCreateStateRuleCompanyMapping(onSuccess?: any, onError?: any)
             }
         }
     );
-    return { createStateRuleCompanyMapping, error, creating };
+    return { createRuleMapping, error, creating };
 }
-export function useUpdateStateRuleMapping(onSuccess?: any, onError?: any) {
-    const { mutate: updateStateRuleMapping, error, isLoading: updating } = useMutation(
-        ['updateStateRuleMapping'],
+export function useUpdateRuleMapping(onSuccess?: any, onError?: any) {
+    const { mutate: updateRuleMapping, error, isLoading: updating } = useMutation(
+        ['updateRuleMapping'],
         async (payload) => await api.post('/api/Mappings/UpdateActStateMapping', payload),
         {
             onError,
@@ -703,7 +638,7 @@ export function useUpdateStateRuleMapping(onSuccess?: any, onError?: any) {
             }
         }
     );
-    return { updateStateRuleMapping, error, updating };
+    return { updateRuleMapping, error, updating };
 }
 
 export function useUploadActStateMappingTemplate(onSuccess?: any, onError?: any) {
@@ -734,6 +669,21 @@ export function useDeleteActStateMapping(onSuccess?: any, onError?: any) {
         }
     );
     return { deleteActStateMapping, error, deleting };
+}
+
+export function useImportMappings(onSuccess?: any, onError?: any) {
+    const { mutate: importMappings, error, isLoading: uploading } = useMutation(
+        ['importMappings'],
+        async ({ formData }: any) => await api.post('/api/Mappings/BulkActStateMapping', formData, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importMappings, error, uploading };
 }
 
 export function useGetCompanyLocations(payload: any, enabled = true) {
@@ -793,6 +743,249 @@ export function useDeleteCompanyLocation(onSuccess?: any, onError?: any) {
         }
     );
     return { deleteCompanyLocation, error, deleting };
+}
+
+export function useGetVerticals(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['verticals', payload],
+        async () => await api.post(`/api/Vertical/GetAll`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return {
+        verticals: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch
+    };
+}
+
+export function useCreateVertical(onSuccess?: any, onError?: any) {
+    const { mutate: createVertical, error, isLoading } = useMutation<any>(
+        ['createVertical'],
+        async (payload) => await api.post('/api/Vertical/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createVertical, error, creating: isLoading };
+}
+
+export function useUpdateVertical(onSuccess?: any, onError?: any) {
+    const { mutate: updateVertical, error, isLoading } = useMutation(
+        ['updateVertical'],
+        async (payload) => await api.put('/api/Vertical/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateVertical, error, updating: isLoading };
+}
+
+export function useDeleteVertical(onSuccess?: any, onError?: any) {
+    const { mutate: deleteVertical, error, isLoading } = useMutation(
+        ['deleteVertical'],
+        async (id) => await api.del(`/api/Vertical/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteVertical, error, deleting: isLoading };
+}
+
+export function useGetDepartments(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['departments', payload],
+        async () => await api.post(`/api/Department/GetAll`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return {
+        departments: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch
+    };
+}
+
+export function useCreateDepartment(onSuccess?: any, onError?: any) {
+    const { mutate: createDepartment, error, isLoading } = useMutation(
+        ['createDepartment'],
+        async (payload) => await api.post('/api/Department/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createDepartment, error, creating: isLoading };
+}
+
+export function useUpdateDepartment(onSuccess?: any, onError?: any) {
+    const { mutate: updateDepartment, error, isLoading } = useMutation(
+        ['updateDepartment'],
+        async (payload) => await api.put('/api/Department/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateDepartment, error, updating: isLoading };
+}
+
+export function useDeleteDepartment(onSuccess?: any, onError?: any) {
+    const { mutate: deleteDepartment, error, isLoading } = useMutation(
+        ['deleteDepartment'],
+        async (id) => await api.del(`/api/Department/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteDepartment, error, deleting: isLoading };
+}
+
+export function useGetEscalationMatrix(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['escalationMatrix', payload],
+        async () => await api.post(`/api/EscalationMatrix/GetAll`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return {
+        matrixList: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch
+    };
+}
+
+export function useCreateEscalationMatrix(onSuccess?: any, onError?: any) {
+    const { mutate: createMatrix, error, isLoading } = useMutation(
+        ['createMatrix'],
+        async (payload) => await api.post('/api/EscalationMatrix/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createMatrix, error, creating: isLoading };
+}
+
+export function useUpdateEscalationMatrix(onSuccess?: any, onError?: any) {
+    const { mutate: updateMatrix, error, isLoading } = useMutation(
+        ['updateMatrix'],
+        async (payload) => await api.put('/api/EscalationMatrix/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateMatrix, error, updating: isLoading };
+}
+
+export function useDeleteEscalationMatrix(onSuccess?: any, onError?: any) {
+    const { mutate: deleteMatrix, error, isLoading } = useMutation(
+        ['deleteMatrix'],
+        async (id) => await api.del(`/api/EscalationMatrix/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteMatrix, error, deleting: isLoading };
+}
+
+export function useGetDepartmentUserMappings(payload: any, enabled = true) {
+    const { data, isFetching, refetch }: any = useQuery(
+        ['departmentUsers', payload],
+        async () => await api.post(`/api/UserDepartmentMap/GetAll`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+    return {
+        departmentUsers: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch
+    };
+}
+
+export function useCreateDepartmentUserMapping(onSuccess?: any, onError?: any) {
+    const { mutate: createDepartmentUserMapping, error, isLoading } = useMutation(
+        ['createDepartmentUserMapping'],
+        async (payload) => await api.post('/api/UserDepartmentMap/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createDepartmentUserMapping, error, creating: isLoading };
+}
+
+export function useUpdateDepartmentUserMapping(onSuccess?: any, onError?: any) {
+    const { mutate: updateDepartmentUserMapping, error, isLoading } = useMutation(
+        ['updateDepartmentUserMapping'],
+        async (payload) => await api.put('/api/UserDepartmentMap/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateDepartmentUserMapping, error, updating: isLoading };
+}
+
+export function useDeleteDepartmentUserMapping(onSuccess?: any, onError?: any) {
+    const { mutate: deleteDepartmentUserMapping, error, isLoading } = useMutation(
+        ['deleteDepartmentUserMapping'],
+        async (id) => await api.del(`/api/UserDepartmentMap/Delete?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteDepartmentUserMapping, error, deleting: isLoading };
 }
 
 export function useGetUserCompanies(payload: any, enabled = true) {
@@ -899,3 +1092,34 @@ export function useBulkUpdateAuditSchedule(onSuccess?: any, onError?: any) {
     return { updateBulkAuditSchedule, error, updating };
 }
 
+
+export function useGetAllNotifications(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['notifications', payload],
+        async () => await api.post(`/api/Mappings/GetNotifications`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+    return {
+        notifications: ((data || {}).data || {}).list || [],
+        total: ((data || {}).data || {}).count || 0,
+        counts: ((data || {}).data || {}).notificationcounts || {},
+        isFetching, refetch
+    };
+}
+
+export function useUpdateNotificationStatus(payload: any, enabled = false) {
+    const { data, isFetching, refetch } = useQuery(
+        ['updateStatus', payload],
+        async () => await api.post(`/api/Mappings/UpdateNotificationStatus`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+    return { data: (data || {}).data, isFetching };
+}

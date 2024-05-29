@@ -5,7 +5,7 @@ import { preventDefault } from "../../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 import { Button } from "react-bootstrap";
-import { clearAuthToken, getUserDetails, useChangePassword, useValidateUrl } from "../../../backend/auth";
+import { clearUserSession, getUserDetails, useChangePassword, useValidateUrl } from "../../../backend/auth";
 import PageLoader from "../../shared/PageLoader";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
@@ -50,7 +50,7 @@ function ChangePassword({ token }: any) {
     }
 
     useEffect(() => {
-        clearAuthToken();
+        clearUserSession();
     }, []);
 
     return (

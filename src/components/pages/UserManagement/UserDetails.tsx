@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useCreateUser, useGetUserRoles, useUpdateUser } from "../../../backend/users";
 import { toast } from "react-toastify";
-import { API_DELIMITER, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
+import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue, preventDefault } from "../../../utils/common";
 import { ACTIONS, PATTERNS, STATUS } from "../../common/Constants";
-import { Button, Modal } from "react-bootstrap";
+import { Accordion, Button, Modal } from "react-bootstrap";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../common/FormRenderer";
 import PageLoader from "../../shared/PageLoader";
+import ViewPrivileges from "./Roles/ViewPrivileges";
+import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
+import styles from "./UserManagement.module.css";
 
 function UserDetails({ action, data, onClose, onSubmit }: any) {
     const [form, setForm] = useState<any>({});
     const [user, setUser] = useState<any>({ hideButtons: true, status: { value: STATUS.ACTIVE, label: STATUS.ACTIVE } });
-    const { roles } = useGetUserRoles(null);
-    const [userPages, setUserpages] = useState('');
+    const { roles } = useGetUserRoles({ ...DEFAULT_OPTIONS_PAYLOAD });
     const { createUser, creating } = useCreateUser(({ key, value }: any) => {
-        if (key === 'SUCCESS') {
+        if (key === API_RESULT.SUCCESS) {
             toast.success(`${user.name} created successfully.`);
             onSubmit();
         } else {
@@ -23,7 +25,7 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
         }
     }, errorCallback);
     const { updateUser, updating } = useUpdateUser(({ key, value }: any) => {
-        if (key === 'SUCCESS') {
+        if (key === API_RESULT.SUCCESS) {
             toast.success(`${user.name} updated successfully.`);
             onSubmit();
         } else {
@@ -33,11 +35,6 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
 
     function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
-    }
-
-    function onRoleChange(e: any) {
-        const { pages } = roles.find((x: any) => x.id === e.value);
-        setUserpages(pages.split(API_DELIMITER).join(UI_DELIMITER));
     }
 
     const schema = {
@@ -74,19 +71,12 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'role',
                 label: 'Role',
-                onChange: onRoleChange,
+                isMulti: true,
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
                 content: getValue(user, 'role.label'),
-                options: (roles || []).map((x: any) => {
-                    return {
-                        id: x.id,
-                        name: x.description,
-                        role: x
-                    }
-                }),
-                description: userPages ? `Accessible Modules: ${userPages}` : ''
+                options: roles
             }
         ],
     };
@@ -104,7 +94,7 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
                 name: name.trim(),
                 email: (email || '').trim(),
                 userName: (userName || '').trim().toLowerCase(),
-                roleIds: [role.value],
+                roleIds: role.map(({ value }: any) => value),
                 isActive: true,
                 mobile: '',
                 password: '',
@@ -135,7 +125,9 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
             setUser({
                 ...user,
                 ...data,
-                role: { value: data.userRoles[0].id, label: data.userRoles[0].description },
+                role: data.userRoles.map((role: any) => {
+                    return { value: role.id, label: role.name, role }
+                }),
                 status: { value: data.isActive ? STATUS.ACTIVE : STATUS.INACTIVE, label: data.isActive ? STATUS.ACTIVE : STATUS.INACTIVE }
             });
         }
@@ -154,6 +146,23 @@ function UserDetails({ action, data, onClose, onSubmit }: any) {
                         schema={schema}
                         debug={debugForm}
                     />
+                    {
+                        (user.role || []).length > 0 &&
+                        <Accordion alwaysOpen={true} className={styles.roleDetails}>
+                            {
+                                (user.role || []).map(({ value, label, role }: any) => {
+                                    return (
+                                        <Accordion.Item eventKey={value} key={value}>
+                                            <Accordion.Header>{label}</Accordion.Header>
+                                            <Accordion.Body>
+                                                <ViewPrivileges privileges={role.pages} fullView={false} />
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+                                    )
+                                })
+                            }
+                        </Accordion>
+                    }
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">
                     {

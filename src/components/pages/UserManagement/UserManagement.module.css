@@ -29,3 +29,23 @@
 .locationDetails:hover svg {
     opacity: 1;
 }
+
+.roleDetails > :global(.accordion-item){
+    border: none;
+}
+.roleDetails :global(.accordion-body){
+    padding: 1rem 0;
+}
+
+.roleDetails :global(.accordion-collapse.show){
+    border-top: 1px solid var(--gray-400);
+}
+
+.roleDetails :global(.accordion-button) {
+    background-color: transparent !important;
+    padding: 1rem 0;
+}
+
+.roleDetails :global(.accordion-button:focus) {
+    box-shadow: none !important;
+}

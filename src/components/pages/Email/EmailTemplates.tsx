@@ -26,8 +26,8 @@ function EmailTemplates() {
         if (view) {
             const _breadcrumb: any = [
                 { id: 'home', label: 'Home', path: '/' },
-                { id: 'email', label: 'Email', path: '/email/templates' },
-                { id: 'templates', label: 'Manage Templates' }
+                { id: 'email', label: 'Email & Notifications', path: '/templates/email' },
+                { id: 'templates', label: 'Email Templates' }
             ];
             if (view === VIEWS.ADD || view === VIEWS.EDIT || view === VIEWS.VIEW) {
                 _breadcrumb[2].path = '/email/templates';
@@ -35,7 +35,7 @@ function EmailTemplates() {
                     preventDefault(event);
                     changeView(VIEWS.LIST, null);
                 }
-                _breadcrumb.push({ id: view, label: view });
+                _breadcrumb.push({ id: view, label: view.toUpperCase() });
             }
             setBreadcrumb(_breadcrumb);
         }

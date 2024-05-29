@@ -15,21 +15,21 @@ import { ResponseModel } from "../../../models/responseModel";
 function RuleDetails({ action, data, onClose, onSubmit }: any) {
     const [form, setForm] = useState<any>({});
     const [ruleDetails, setRuleDetails] = useState<any>({ hideButtons: true });
-    const { createRule, isLoading: creatingRule } = useCreateRule(({key, value}: ResponseModel) => {
+    const { createRule, isLoading: creatingRule } = useCreateRule(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
-            toast.success(`${ruleDetails.name} created successfully.`);
+            toast.success(`${form.values.name.trim()} created successfully.`);
             onSubmit();
         } else {
-            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Rule combination already exists.': ERROR_MESSAGES.ERROR);
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Rule combination already exists.' : ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
 
-    const { updateRule, isLoading: updatingRule } = useUpdateRule(({key, value}: ResponseModel) => {
+    const { updateRule, isLoading: updatingRule } = useUpdateRule(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
-            toast.success(`${ruleDetails.name} upated successfully.`);
+            toast.success(`${form.values.name.trim()} updated successfully.`);
             onSubmit();
         } else {
-            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Rule combination already exists.': ERROR_MESSAGES.ERROR);
+            toast.error(value === ERROR_MESSAGES.DUPLICATE ? 'Similar Rule combination already exists.' : ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
 
@@ -75,7 +75,7 @@ function RuleDetails({ action, data, onClose, onSubmit }: any) {
                 label: 'Section No.',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.MAX_LENGTH, threshold: 255 }
+                    { type: validatorTypes.MAX_LENGTH, threshold: 50 }
                 ],
                 content: getValue(ruleDetails, 'sectionNo')
             },
@@ -85,22 +85,33 @@ function RuleDetails({ action, data, onClose, onSubmit }: any) {
                 label: 'Rule No.',
                 validate: [
                     { type: validatorTypes.REQUIRED },
-                    { type: validatorTypes.MAX_LENGTH, threshold: 255 }
+                    { type: validatorTypes.MAX_LENGTH, threshold: 50 }
                 ],
                 content: getValue(ruleDetails, 'ruleNo')
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.INPUT_AS_TEXT,
+                name: 'uniqueIdentifier',
+                label: 'Unique Identifier',
+                validate: [
+                    { type: validatorTypes.REQUIRED },
+                    { type: validatorTypes.MAX_LENGTH, threshold: 100 }
+                ],
+                content: getValue(ruleDetails, 'uniqueIdentifier')
             }
         ],
     };
 
     function submitData() {
         if (form.valid) {
-            const { name, description, type, sectionNo, ruleNo } = form.values || {};
+            const { name, description, type, sectionNo, ruleNo, uniqueIdentifier } = form.values || {};
             const payload: any = {
                 name: name.trim(),
                 description: (description || '').trim(),
                 type: type.value,
                 sectionNo,
-                ruleNo
+                ruleNo,
+                uniqueIdentifier: uniqueIdentifier.trim(),
             }
             if (action === ACTIONS.ADD) {
                 createRule(payload);

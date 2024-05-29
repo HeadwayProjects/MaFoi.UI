@@ -1,26 +1,29 @@
 import React, { useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisV, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import Location from "../../common/Location";
 import PageLoader from "../../shared/PageLoader";
 import * as api from "../../../backend/request";
 import { toast } from 'react-toastify';
-import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../common/Constants";
+import { ACTIONS, ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../common/Constants";
 import Icon from "../../common/Icon";
 import Table, { reactFormatter, CellTmpl, TitleTmpl, DEFAULT_PAYLOAD } from "../../common/Table";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
 import AdvanceSearch from "../../common/AdvanceSearch";
 import AlertModal from "../../common/AlertModal";
-import { download, preventDefault, reduceArraytoObj } from "../../../utils/common";
+import { download, downloadFileContent, preventDefault, reduceArraytoObj } from "../../../utils/common";
 import PublishModal from "./PublishModal";
 import ActivityModal from "./ActivityModal";
-import { getUserDetails } from "../../../backend/auth";
-import { useAuditReport } from "../../../backend/exports";
+import { getUserDetails, hasUserAccess } from "../../../backend/auth";
+import { getAuditReportFileName, useAuditReport } from "../../../backend/exports";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
-import { useGetAllActivities } from "../../../backend/query";
+import { useExportTodos, useGetAllActivities } from "../../../backend/query";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../common/TableActions";
+import SendEmailModal from "./SendEmailModal";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -30,11 +33,6 @@ const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.REJECTED, label: STATUS_MAPPING[ACTIVITY_STATUS.REJECTED], style: 'danger' },
     { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'danger' }
 ];
-
-const ACTIONS = {
-    EDIT: 1,
-    VIEW: 2
-};
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -70,18 +68,37 @@ function TaskManagement() {
     const [alertMessage, setAlertMessage] = useState<any>(null);
     const [publish, setPublish] = useState(false);
     const { auditReport, exporting } = useAuditReport((response: any) => {
-        const blob = new Blob([response.data], { type: response.headers['content-type'] })
-        const URL = window.URL || window.webkitURL;
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = 'AuditReport.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        if (response) {
+            downloadFileContent({
+                name: getAuditReportFileName(data.data[0], response.headers['content-type']),
+                type: response.headers['content-type'],
+                content: response.data
+            });
+        }
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
     });
+
+    const { exportTodos, exporting: exportingTodos } = useExportTodos((response: any) => {
+        downloadFileContent({
+            name: 'Audit Activities.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+
+    const buttons: ActionButton[] = [{
+        label: 'Publish',
+        name: 'publish',
+        privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES_PUBLISH,
+        action: () => publishActivity(null)
+    }, {
+        label: 'Send Report',
+        name: 'email',
+        action: () => setAction(ACTIONS.SEND_REPORT)
+    }];
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
@@ -258,9 +275,23 @@ function TaskManagement() {
             <>
                 {
                     auditted !== ACTIVITY_TYPE.NO_AUDIT && value !== '0001-01-01T00:00:00' &&
-                    <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+                    <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
                 }
             </>
+        )
+    }
+
+
+    function ActionHeaderTmpl() {
+        return (
+            <div className={`nav-item dropdown todoTableActions`}>
+                <div className="nav-link text-white" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <FontAwesomeIcon icon={faEllipsisV} />
+                </div>
+                <div className="dropdown-menu">
+                    <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
+                </div>
+            </div>
         )
     }
 
@@ -322,7 +353,8 @@ function TaskManagement() {
                             ((row.auditted === ACTIVITY_TYPE.AUDIT
                                 && [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED].includes(row.status))
                                 || row.auditted === ACTIVITY_TYPE.PHYSICAL_AUDIT) &&
-                            <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={editActivity} />
+                            <Icon className="mx-2" type="button" name={hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_AUDIT) ? 'pencil' : 'eye'}
+                                text={hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_AUDIT) ? 'Edit' : 'View'} data={row} action={editActivity} />
                         }
                     </div>
                 }
@@ -443,18 +475,6 @@ function TaskManagement() {
             last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
             page: pageNumber || 1
         };
-        // list.forEach(x => {
-        //     const { id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-        //         submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId, auditted } = x;
-        //     if (auditted !== ACTIVITY_TYPE.NO_AUDIT) {
-        //         console.log(JSON.stringify({
-        //             id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-        //             submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId,
-        //             status: ACTIVITY_STATUS.OVERDUE
-        //         }));
-        //     }
-        // });
-        // list.forEach(x => console.log(x.id))
         setData(tdata);
         return tdata;
     }
@@ -498,6 +518,30 @@ function TaskManagement() {
             _payload[x.columnName] = x.value;
         });
         return _payload;
+    }
+
+
+    function handleExport(event: any) {
+        event.preventDefault();
+        if (total < 1) {
+            toast.warn('There are no records available for this filter criteria.');
+            return;
+        }
+        const _payload = {
+            ...DEFAULT_PAYLOAD,
+            sort: {
+                columnName: 'month',
+                order: 'desc'
+            },
+            ...params,
+            filters: [
+                ...locationFilters,
+                ...(afRef.current || []),
+                ...(sfRef.current || [])
+            ],
+            pagination: null
+        };
+        exportTodos(_payload);
     }
 
     useEffect(() => {
@@ -602,7 +646,7 @@ function TaskManagement() {
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search}
-                                    downloadReport={downloadReport} />
+                                    downloadReport={hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_DOWNLOAD_REPORT) ? downloadReport : undefined} />
                             </div>
                         </div>
                     </div>
@@ -618,26 +662,21 @@ function TaskManagement() {
                                                 <input name={btn.name} type="checkbox" className="btn-check" id={btn.name} autoComplete="off"
                                                     onChange={onFormStatusChangeHandler}
                                                     checked={checkedStatuses[btn.name]} />
-                                                <label className={`btn`} htmlFor={btn.name}>{btn.label}</label>
+                                                <label className={`btn bg-status-${btn.name}`} htmlFor={btn.name}>{btn.label}</label>
                                             </div>
                                         )
                                     })
                                 }
                             </div>
-                            <div className="d-flex">
-                                <button className="btn btn-success" onClick={publishActivity}
-                                >
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon={faSave} />
-                                        <span className="ms-2">Publish</span>
-                                    </div>
-                                </button>
-                            </div>
+                            <TableActions buttons={buttons} />
                         </div>
                     </div>
                 </form>
-
-                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                <div className="position-relative">
+                    <ActionHeaderTmpl />
+                    <Table data={data} options={tableConfig} isLoading={isFetching}
+                        onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                </div>
             </div>
 
             {
@@ -657,6 +696,10 @@ function TaskManagement() {
                     onClose={() => setPublish(false)}
                     onSubmit={onPublish}
                     selectedRows={selectedRows} />
+            }
+            {
+                action === ACTIONS.SEND_REPORT &&
+                <SendEmailModal onCancel={() => setAction(ACTIONS.NONE)} />
             }
             {(submitting || exporting) && <PageLoader />}
         </>

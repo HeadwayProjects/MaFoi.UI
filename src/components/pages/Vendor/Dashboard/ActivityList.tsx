@@ -1,22 +1,12 @@
 import React from "react";
 import dayjs from "dayjs";
 import { STATUS_MAPPING } from "../../../common/Constants";
+import Icon from "../../../common/Icon";
+import { ACTIVITY_TYPE_ICONS } from "../../../../utils/constants";
 
 function StatusTmp({ status }: any) {
-    function computeStatusColor(status: string) {
-        if (status === 'Pending') {
-            return 'text-warning';
-        } else if (status === 'Reject' || status === 'Overdue') {
-            return 'text-danger';
-        } else if (status === 'Submitted') {
-            return 'text-success';
-        } else if (status === 'Audited') {
-            return 'text-success-emphasis'
-        }
-        return 'text-secondary'
-    }
     return (
-        <span className={computeStatusColor(status)}>{status}</span>
+        <span className={`status-${status}`}>{status}</span>
     )
 }
 
@@ -28,6 +18,7 @@ function ActivityList({ list }: any) {
                     list.map((activity: any) => {
                         return (
                             <li className="list-group-item" key={activity.id} style={{ height: '40px' }}>
+                                <Icon name={ACTIVITY_TYPE_ICONS[activity.auditted]} text={activity.auditted} className="me-2" />
                                 <span>{activity.location.name}</span>
                                 <span>-</span>
                                 <StatusTmp status={STATUS_MAPPING[activity.status]} />
