@@ -1361,202 +1361,53 @@ console.log('locaname',locationdetails);
                     />
                   </FormControl>
 
+                  <Box sx={{display:'flex'}}>
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 Start Time</FormLabel>
+                      <OutlinedInput
+                        placeholder='Start Time'
+                        value={sessionOneStartTime}
+                        onChange={(e) => setSessionOneStartTime(e.target.value)}
+                        id="outlined-adornment-name"
+                        type='text'
+                      />
+                    </FormControl>
 
-                  <Box sx={{m: 1}}>
-                  <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 Start Time</FormLabel>
-
-                  <Grid container spacing={2}>
-      <Grid item xs={4}>
-        <FormControl fullWidth variant="outlined" sx={{width:"80px"}} size="small">
-          <InputLabel id="hour-label">Hour</InputLabel>
-          <MSelect
-            labelId="hour-label"
-            value={sesssion1starthour}
-            onChange={Session1StartTimehandleHourChange}
-            label="Hour"
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: 200, // Max height for the dropdown menu
-                },
-              },
-            }}
-          >
-            {generateOptions(13)}
-          </MSelect>
-        </FormControl>
-      </Grid>
-      <Grid item xs={4}>
-        <FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
-          <InputLabel id="minute-label">Minute</InputLabel>
-          <MSelect
-            labelId="minute-label"
-            value={sesssion1startminute}
-            onChange={Session1StartTimehandleMinuteChange}
-            label="Minute"
-          >
-            {generateOptions(60)}
-          </MSelect>
-        </FormControl>
-      </Grid>
-      <Grid item xs={4}>
-        <FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
-          <InputLabel id="period-label">AM/PM</InputLabel>
-          <MSelect
-            labelId="period-label"
-            value={sesssion1startperiod}
-            onChange={Session1StartTimehandlePeriodChange}
-            label="AM/PM"
-          >
-            <MenuItem value="AM">AM</MenuItem>
-            <MenuItem value="PM">PM</MenuItem>
-          </MSelect>
-        </FormControl>
-      </Grid>
-    </Grid>
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 End Time</FormLabel>
+                      <OutlinedInput
+                        placeholder='End Time'
+                        value={sessionOneEndTime}
+                        onChange={(e) => setSessionOneEndTime(e.target.value)}
+                        id="outlined-adornment-name"
+                        type='text'
+                      />
+                    </FormControl>
                   </Box> 
 
-                  <Box sx={{m: 1,}}>
-                  <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 1 End Time</FormLabel>
+                  <Box sx={{display:'flex'}}>
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 Start Time</FormLabel>
+                      <OutlinedInput
+                        placeholder='Start Time'
+                        value={sessionTwoStartTime}
+                        onChange={(e) => setSessionTwoStartTime(e.target.value)}
+                        id="outlined-adornment-name"
+                        type='text'
+                      />
+                    </FormControl>
 
-<Grid container spacing={2}>
-<Grid item xs={4}>
-<FormControl fullWidth variant="outlined" sx={{width:"80px"}} size="small">
-<InputLabel id="hour-label">Hour</InputLabel>
-<MSelect
-labelId="hour-label"
-value={sesssion1endhour}
-onChange={Session1EndTimehandleHourChange}
-label="Hour"
->
-{generateOptions(13)}
-</MSelect>
-</FormControl>
-</Grid>
-<Grid item xs={4}>
-<FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
-<InputLabel id="minute-label">Minute</InputLabel>
-<MSelect
-labelId="minute-label"
-value={sesssion1endminute}
-onChange={Session1EndTimehandleMinuteChange}
-label="Minute"
->
-{generateOptions(60)}
-</MSelect>
-</FormControl>
-</Grid>
-<Grid item xs={4}>
-<FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
-<InputLabel id="period-label">AM/PM</InputLabel>
-<MSelect
-labelId="period-label"
-value={sesssion1endperiod}
-onChange={Session1EndTimehandlePeriodChange}
-label="AM/PM"
->
-<MenuItem value="AM">AM</MenuItem>
-<MenuItem value="PM">PM</MenuItem>
-</MSelect>
-</FormControl>
-</Grid>
-</Grid>                  </Box> 
-
-
-<Box sx={{m: 1,}}>
-                  <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 Start Time</FormLabel>
-
-                  <Grid container spacing={2}>
-      <Grid item xs={4}>
-        <FormControl fullWidth variant="outlined" sx={{width:"80px"}} size="small">
-          <InputLabel id="hour-label">Hour</InputLabel>
-          <MSelect
-            labelId="hour-label"
-            value={sesssion2starthour}
-            onChange={Session2StartTimehandleHourChange}
-            label="Hour"
-          >
-            {generateOptions(12)}
-          </MSelect>
-        </FormControl>
-      </Grid>
-      <Grid item xs={4}>
-        <FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
-          <InputLabel id="minute-label">Minute</InputLabel>
-          <MSelect
-            labelId="minute-label"
-            value={sesssion2startminute}
-            onChange={Session2StartTimehandleMinuteChange}
-            label="Minute"
-          >
-            {generateOptions(60)}
-          </MSelect>
-        </FormControl>
-      </Grid>
-      <Grid item xs={4}>
-        <FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
-          <InputLabel id="period-label">AM/PM</InputLabel>
-          <MSelect
-            labelId="period-label"
-            value={sesssion2startperiod}
-            onChange={Session2StartTimehandlePeriodChange}
-            label="AM/PM"
-          >
-            <MenuItem value="AM">AM</MenuItem>
-            <MenuItem value="PM">PM</MenuItem>
-          </MSelect>
-        </FormControl>
-      </Grid>
-    </Grid>
+                    <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                      <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 End Time</FormLabel>
+                      <OutlinedInput
+                        placeholder='End Time'
+                        value={sessionTwoEndTime}
+                        onChange={(e) => setSessionTwoEndTime(e.target.value)}
+                        id="outlined-adornment-name"
+                        type='text'
+                      />
+                    </FormControl>
                   </Box> 
-
-                  <Box sx={{m: 1,}}>
-                  <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Session 2 End Time</FormLabel>
-
-<Grid container spacing={2}>
-<Grid item xs={4}>
-<FormControl fullWidth variant="outlined" sx={{width:"80px"}} size="small">
-<InputLabel id="hour-label">Hour</InputLabel>
-<MSelect
-labelId="hour-label"
-value={sesssion2endhour}
-onChange={Session2EndTimehandleHourChange}
-label="Hour"
->
-{generateOptions(12)}
-</MSelect>
-</FormControl>
-</Grid>
-<Grid item xs={4}>
-<FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
-<InputLabel id="minute-label">Minute</InputLabel>
-<MSelect
-labelId="minute-label"
-value={sesssion2endminute}
-onChange={Session2EndTimehandleMinuteChange}
-label="Minute"
->
-{generateOptions(60)}
-</MSelect>
-</FormControl>
-</Grid>
-<Grid item xs={4}>
-<FormControl fullWidth variant="outlined" sx={{width:"90px"}} size="small">
-<InputLabel id="period-label">AM/PM</InputLabel>
-<MSelect
-labelId="period-label"
-value={sesssion2endperiod}
-onChange={Session2EndTimehandlePeriodChange}
-label="AM/PM"
->
-<MenuItem value="AM">AM</MenuItem>
-<MenuItem value="PM">PM</MenuItem>
-</MSelect>
-</FormControl>
-</Grid>
-</Grid>                  </Box> 
-
-
                   
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                     <FormLabel id="demo-radio-buttons-group-label"  sx={{color:'#000000'}}>Total Working Days Per Week</FormLabel>

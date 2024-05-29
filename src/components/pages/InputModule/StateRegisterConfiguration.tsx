@@ -120,7 +120,7 @@ const StateRegisterConfiguration = () => {
   const [type, setType] = React.useState('');
 
   const [registerType, setRegisterType] = React.useState('');
-  const [processType, setProcessType] = React.useState('');
+  const [processType, setProcessType] = React.useState<any>('');
   const [stateName, setStateName] = React.useState<any>('');
   const [actName, setActName] = React.useState<any>('')
   const [ruleName, setRuleName] = React.useState<any>('')
@@ -234,7 +234,7 @@ const StateRegisterConfiguration = () => {
   const handleChangeEzycompField = (event:any, fieldData: any) => {
     const newTableData = tableData.map((each:any) => {
       if(each.id === fieldData.id){
-        return {...each, employeeFieldName: event.value}
+        return {...each, ezycompField: event.value}
       }else{
         return each
       }
@@ -649,7 +649,7 @@ const StateRegisterConfiguration = () => {
   }
 
   const onClickSave = () => {
-    const check = tableData.find((each:any) => each.columnType === '' || each.employeeFieldName === '' || each.style === '' || each.fontName === '' || each.fontSize === '' || each.formula)
+    const check = tableData.find((each:any) => each.columnType === '' || each.ezycompField === '' || each.style === '' || each.fontName === '' || each.fontSize === '' || each.formula === '')
     if(check || !registerType || !stateName || !actName || !ruleName || !activityName || !formNameValue || !formName || !headerStartRow || !headerEndRow || !footerStartRow || !footerEndRow || !totalRowsPerPage || !pageSize || !pageOrientation){
       return toast.error('Please Select and Fill All Fields');
     } else{
@@ -1114,7 +1114,7 @@ const StateRegisterConfiguration = () => {
                                                   options={columnsList ? columnsList.map((each:any) => {return {label : each, value: each}}): []}
                                                   className="basic-multi-select"
                                                   classNamePrefix="select"
-                                                  value={each.employeeFieldName ? {label: each.employeeFieldName, value: each.employeeFieldName} : ''}
+                                                  value={each.ezycompField ? {label: each.ezycompField, value: each.ezycompField} : ''}
                                                   styles={{
                                                     control: (base:any) => ({
                                                       ...base,
@@ -1189,7 +1189,7 @@ const StateRegisterConfiguration = () => {
                                                   }}
                                                   type='text'
                                                   placeholder='Formula'
-                                                  value={each.fontSize ? each.fontSize : ''}
+                                                  value={each.formula ? each.formula : ''}
                                                   onChange={(e) => handleChangeFormula(e, each)}
                                                   id="outlined-adornment-name"
                                                 />
