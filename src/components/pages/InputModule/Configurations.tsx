@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
-import { callExcelHeaderToDbColumns, configUpload, employeeAttendanceUpload, employeeLeaveAvailedUpload, employeeLeaveBalanceUpload, employeeUpload, employeeWageUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeLeaveBalanceUploadDetails, resetEmployeeUploadDetails, resetEmployeeWageUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
+import { callExcelHeaderToDbColumns, configUpload, employeeAttendanceUpload, employeeLeaveAvailedUpload, employeeLeaveCreditUpload, employeeUpload, employeeWageUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeLeaveCreditUploadDetails, resetEmployeeUploadDetails, resetEmployeeWageUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
 import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, Select as MSelect, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { ERROR_MESSAGES } from '../../../utils/constants';
@@ -340,7 +340,7 @@ const Configurations = () => {
         dispatch(employeeUpload(formData))
       }else if(configType === 'Employee attendance'){
         dispatch(employeeAttendanceUpload(formData))
-      }else if(configType === 'Leave credit'){
+      }else if(configType === 'Leave balance'){
         dispatch(employeeLeaveCreditUpload(formData))
       }else if(configType === 'Leave availed'){
         dispatch(employeeLeaveAvailedUpload(formData))
@@ -374,7 +374,7 @@ const Configurations = () => {
     {label: "December", value: "12"},
   ];
 
-  const configurationTypes = ["Employee", "Leave credit", 'Leave availed', 'Employee attendance', 'Employee Wage' ]
+  const configurationTypes = ["Employee", "Leave balance", 'Leave availed', 'Employee attendance', 'Employee Wage' ]
 
   const onClickUpload = () => {
     if(!company || !associateCompany || !stateName || !location || !year || !month || !configType){
@@ -401,7 +401,7 @@ const Configurations = () => {
       dispatch(employeeUpload(formData))
     }else if(configType === 'Employee attendance'){
       dispatch(employeeAttendanceUpload(formData))
-    }else if(configType === 'Leave credit'){
+    }else if(configType === 'Leave balance'){
       dispatch(employeeLeaveCreditUpload(formData))
     }else if(configType === 'Leave availed'){
       dispatch(employeeLeaveAvailedUpload(formData))
