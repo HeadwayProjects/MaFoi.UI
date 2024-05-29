@@ -16,6 +16,11 @@ interface SalaryComponentsState {
         status: string,
         data: any,
         error: string | null
+    },
+    salaryComponentDetails: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -31,6 +36,11 @@ const initialState: SalaryComponentsState = {
         error: null
     },
     salaryExcelHeaderToDbColumnsDetails:{
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    salaryComponentDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -51,6 +61,11 @@ export const callSalaryComponentsExcelHeaderToDbColumns = createAsyncThunk('sala
 export const salaryComponentConfigUpload = createAsyncThunk('salaryComponent/salaryComponentConfigUpload', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.salaryComponentConfigUpload(data);
+})
+
+export const getSalaryComponentsDetails = createAsyncThunk('salaryComponent/getSalaryComponentsDetails', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getSalaryComponentsDetails(data);
 })
 
 export const salaryComponentSlice = createSlice({
@@ -131,6 +146,22 @@ export const salaryComponentSlice = createSlice({
             state.salaryExcelHeaderToDbColumnsDetails.error = action.error.message
         })
         
+        .addCase(getSalaryComponentsDetails.pending, (state) => {
+            state.salaryComponentDetails.status = 'loading'
+        })
+        .addCase(getSalaryComponentsDetails.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.salaryComponentDetails.status = 'succeeded'
+                state.salaryComponentDetails.data = action.payload.data
+            } else {
+                state.salaryComponentDetails.status = 'failed'
+                state.salaryComponentDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getSalaryComponentsDetails.rejected, (state, action: any) => {
+            state.salaryComponentDetails.status = 'failed'
+            state.salaryComponentDetails.error = action.error.message
+        })
 })
   
 export const { resetSalaryUploadDetails, resetSalaryConfigUploadDetails, resetSalaryExcelToDBColumnsDetails } = salaryComponentSlice.actions

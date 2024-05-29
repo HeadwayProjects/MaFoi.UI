@@ -30,7 +30,7 @@ const SideNavMenu = [
         children: [
             { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'inputUploads/employeeMasterUpload', url: '/inputUploads/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'inputUploads/employeeLeaveBalanceUpload', url: '/inputUploads/employeeLeaveBalanceUpload', label: 'Employee Leave Balance', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'inputUploads/employeeLeaveCreditUpload', url: '/inputUploads/employeeLeaveCreditUpload', label: 'Employee Leave Credit', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'inputUploads/employeeLeaveAvailedUpload', url: '/inputUploads/employeeLeaveAvailedUpload', label: 'Employee Leave Availed', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'inputUploads/employeeAttendanceUpload', url: '/inputUploads/employeeAttendanceUpload', label: 'Employee Attendance', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'inputUploads/employeeWageUpload', url: '/inputUploads/employeeWageUpload', label: 'Employee Wage', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY }

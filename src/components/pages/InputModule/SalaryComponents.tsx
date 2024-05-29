@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
-import { callExcelHeaderToDbColumns, configUpload, employeeAttendanceUpload, employeeLeaveAvailedUpload, employeeLeaveBalanceUpload, employeeUpload, employeeWageUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeLeaveBalanceUploadDetails, resetEmployeeUploadDetails, resetEmployeeWageUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
+import { callExcelHeaderToDbColumns, configUpload, employeeAttendanceUpload, employeeLeaveAvailedUpload, employeeLeaveCreditUpload, employeeUpload, employeeWageUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeLeaveCreditUploadDetails, resetEmployeeUploadDetails, resetEmployeeWageUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
 import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, Select as MSelect, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { ERROR_MESSAGES } from '../../../utils/constants';
@@ -11,7 +11,7 @@ import { Alert } from 'react-bootstrap';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { FaUpload } from 'react-icons/fa';
 import Select from "react-select";
-import { callSalaryComponentsExcelHeaderToDbColumns, resetSalaryConfigUploadDetails, resetSalaryExcelToDBColumnsDetails, resetSalaryUploadDetails, salaryComponentConfigUpload, salaryComponentUpload } from '../../../redux/features/salaryComponents.slice';
+import { callSalaryComponentsExcelHeaderToDbColumns, getSalaryComponentsDetails, resetSalaryConfigUploadDetails, resetSalaryExcelToDBColumnsDetails, resetSalaryUploadDetails, salaryComponentConfigUpload, salaryComponentUpload } from '../../../redux/features/salaryComponents.slice';
 
 const styleUploadModal = {
   position: 'absolute' as 'absolute',
@@ -49,6 +49,12 @@ const SalaryComponents = () => {
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const companies = companiesDetails && companiesDetails.data.list
 
+  const salaryComponentDetails = useAppSelector((state) => state.salaryComponent.salaryComponentDetails)
+  const salaryComponentList = salaryComponentDetails && salaryComponentDetails.data.list
+  const salaryComponentCount = salaryComponentDetails && salaryComponentDetails.data.count 
+
+  console.log("salaryComponentList", salaryComponentList)
+
   const salaryConfigUploadDetails = useAppSelector((state) => state.salaryComponent.salaryConfigUploadDetails);
   const getColumnsDetails = useAppSelector((state) => state.inputModule.getColumnsDetails);
   const salaryExcelHeaderToDbColumnsDetails = useAppSelector((state) => state.salaryComponent.salaryExcelHeaderToDbColumnsDetails);
@@ -57,11 +63,17 @@ const SalaryComponents = () => {
   const configurationList = salaryConfigUploadDetails && salaryConfigUploadDetails.data.list
   const columnsList = getColumnsDetails && getColumnsDetails.data
 
-  const loading =  salaryUploadDetails.status === 'loading' || salaryConfigUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || salaryExcelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading'
+  const loading =  salaryComponentDetails.status === 'loading' || salaryUploadDetails.status === 'loading' || salaryConfigUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || salaryExcelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [year, setYear] = React.useState('');
   const [month, setMonth] =  React.useState<any>('');
+  
+  const [activeSort, setActiveSort] = React.useState('companyId')
+  const [sortType, setSortType] = React.useState<any>('asc')
+
+  const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [page, setPage] = React.useState(0);
 
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
   const [uploadData, setUploadData] =  React.useState<any>();
@@ -72,6 +84,22 @@ const SalaryComponents = () => {
 
   const handleChangeCompany = (event:any) => {
     setCompany(event.target.value);
+    const payload: any =  { 
+      search: '', 
+      filters: [
+        {
+          columnName:'companyId',
+          value: event.target.value
+        }
+      ],
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'companyId', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(payload))
   };
 
   const handleChangeEzycompField = (event:any, fieldData: any) => {
@@ -104,6 +132,18 @@ const SalaryComponents = () => {
     resetStateValues()
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
     dispatch(getAllCompaniesDetails(companiesPayload))
+    const salaryPayload: any = {
+      search: "",
+      filters: [],
+      pagination: {
+        pageSize: 10,
+        pageNumber: 1
+      },
+      sort: { columnName: 'companyId', order: 'asc' },
+      "includeCentral": true
+    }
+    
+    dispatch(getSalaryComponentsDetails(salaryPayload))
   },[])
 
   useEffect(() => {
@@ -200,6 +240,57 @@ const SalaryComponents = () => {
       dispatch(callSalaryComponentsExcelHeaderToDbColumns({listSalaryConfigurations : tableData}))
     }
   }
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+
+    const payload: any =  { 
+      search: '', 
+      filters: filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: newPage+1
+      },
+      sort: { columnName: 'companyId', order: 'asc' },
+      "includeCentral": true
+    }
+
+    dispatch(getSalaryComponentsDetails(payload))
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+
+    const payload: any =  { 
+      search: '', 
+      filters: filters,
+      pagination: {
+        pageSize: parseInt(event.target.value, 10),
+        pageNumber: 1
+      },
+      sort: { columnName: 'companyId', order: 'asc' },
+      "includeCentral": true
+    }
+
+    dispatch(getSalaryComponentsDetails(payload))
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   const resetUploadDetails = () => {
     dispatch(resetSalaryConfigUploadDetails())
@@ -433,7 +524,94 @@ const SalaryComponents = () => {
               </Box>
             </Box>
             
-           
+            <Box sx={{paddingX: '20px'}}>
+              {
+                salaryComponentList && salaryComponentList.length <= 0 ? 
+
+                <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
+                  <Typography variant='h5'>No Records Found</Typography>
+                </Box>
+                : 
+                <>
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
+                          <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                                  <TableRow>
+                                      <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} >Employee Code</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} > DOB</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} > Gender</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'designation'} direction={sortType} > Designation</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'panNumber'} direction={sortType} > CTC PA</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > CTC PM</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Monthly Gross</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Present Days</TableSortLabel></TableCell>
+                                      {/* <TableCell > Actions</TableCell> */}
+                                  </TableRow>
+                              </TableHead>
+
+                              <TableBody>
+                              {salaryComponentList && salaryComponentList.map((each: any, index: number) => (
+                                  <TableRow
+                                  key={each._id}
+                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                  >   
+                                      <TableCell >{each.employeeCode}</TableCell>
+                                      <TableCell >{new Date(each.dateofBirth).toLocaleDateString()}</TableCell>
+                                      <TableCell >{each.gender}</TableCell>
+                                      <TableCell >{each.designation}</TableCell>
+                                      <TableCell >{each.ctC_PA}</TableCell>
+                                      <TableCell >{each.ctC_PM}</TableCell>
+                                      <TableCell >{each.monthly_Gross}</TableCell>
+                                      <TableCell >{each.presentDays}</TableCell>
+                                      {/* <TableCell >
+                                        <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
+                                          <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
+                                          <Icon action={() => onclickDelete(each)} style={{color:'#EB1010'}} type="button" name={'trash'} text={'Delete'}/>
+                                          <Icon action={() => onclickView(each)}  style={{color:'#00C853'}} type="button" name={'eye'} text={'View'}/>
+                                        </Box>
+                                      </TableCell> */}
+                                  </TableRow>
+                              ))}
+                              </TableBody>
+                          </Table>
+                  </TableContainer>
+                  <TablePagination   
+                      sx={{
+                        '.MuiTablePagination-toolbar': {
+                          backgroundColor: '#EFEBFE',
+                          height: '30px',
+                          display:'flex',
+                          justifyContent:'flex-end'
+                        },
+                        '.MuiTablePagination-displayedRows':{
+                          margin:'0',
+                        },
+                        '.MuiTablePagination-selectLabel':{
+                          margin:'0',
+                        },
+                        '.MuiTablePagination-spacer':{
+                          display:'none '
+                        },
+                        '.MuiTablePagination-input':{
+                          marginRight:'auto'
+                        },
+                      }}
+                
+                      labelRowsPerPage='Show'
+                      labelDisplayedRows={(page) =>
+                        `Showing ${page.from}-${page.to === -1 ? page.count : page.to} of ${page.count}`
+                      }
+                      rowsPerPageOptions={[10, 25, 50, 100]}
+                      component="div"
+                      count={salaryComponentCount}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </>
+            }
+            </Box>
 
         </div>
       }

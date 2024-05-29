@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
-import { callExcelHeaderToDbColumns, configUpload, employeeAttendanceUpload, employeeLeaveAvailedUpload, employeeLeaveBalanceUpload, employeeUpload, employeeWageUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeLeaveBalanceUploadDetails, resetEmployeeUploadDetails, resetEmployeeWageUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
+import { callExcelHeaderToDbColumns, configUpload, employeeAttendanceUpload, employeeLeaveAvailedUpload, employeeLeaveCreditUpload, employeeUpload, employeeWageUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeLeaveCreditUploadDetails, resetEmployeeUploadDetails, resetEmployeeWageUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
 import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, Select as MSelect, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { ERROR_MESSAGES } from '../../../utils/constants';
@@ -59,7 +59,7 @@ const Configurations = () => {
   const excelHeaderToDbColumnsDetails = useAppSelector((state) => state.inputModule.excelHeaderToDbColumnsDetails);
   const employeeUploadDetails = useAppSelector((state) => state.inputModule.employeeUploadDetails);
   const employeeAttendanceUploadDetails = useAppSelector((state) => state.inputModule.employeeAttendanceUploadDetails);
-  const employeeLeaveBalanceUploadDetails = useAppSelector((state) => state.inputModule.employeeLeaveBalanceUploadDetails);
+  const employeeLeaveCreditUploadDetails = useAppSelector((state) => state.inputModule.employeeLeaveCreditUploadDetails);
   const employeeLeaveAvailedUploadDetails = useAppSelector((state) => state.inputModule.employeeLeaveAvailedUploadDetails);
   const employeeWageUploadDetails = useAppSelector((state) => state.inputModule.employeeWageUploadDetails);
 
@@ -67,7 +67,7 @@ const Configurations = () => {
   const configurationList = configUploadDetails && configUploadDetails.data.list
   const columnsList = getColumnsDetails && getColumnsDetails.data
 
-  const loading =  employeeUploadDetails.status === 'loading' || employeeAttendanceUploadDetails.status === 'loading' || employeeLeaveBalanceUploadDetails.status === 'loading' || employeeLeaveAvailedUploadDetails.status === 'loading' || employeeWageUploadDetails.status === 'loading' || configUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || excelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading =  employeeUploadDetails.status === 'loading' || employeeAttendanceUploadDetails.status === 'loading' || employeeLeaveCreditUploadDetails.status === 'loading' || employeeLeaveAvailedUploadDetails.status === 'loading' || employeeWageUploadDetails.status === 'loading' || configUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || excelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -227,8 +227,8 @@ const Configurations = () => {
   }, [employeeAttendanceUploadDetails.status])
 
   useEffect(() => {
-    if(employeeLeaveBalanceUploadDetails.status === 'succeeded'){
-      if(employeeLeaveBalanceUploadDetails.data.key === 'FAILURE'){
+    if(employeeLeaveCreditUploadDetails.status === 'succeeded'){
+      if(employeeLeaveCreditUploadDetails.data.key === 'FAILURE'){
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
@@ -246,10 +246,10 @@ const Configurations = () => {
         resetStateValues()
         toast.success(`Upload Successfull`)
       }
-    }else if (employeeLeaveBalanceUploadDetails.status === 'failed'){
+    }else if (employeeLeaveCreditUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  }, [employeeLeaveBalanceUploadDetails.status])
+  }, [employeeLeaveCreditUploadDetails.status])
 
   useEffect(() => {
     if(employeeLeaveAvailedUploadDetails.status === 'succeeded'){
@@ -309,8 +309,8 @@ const Configurations = () => {
         dispatch(getColumns('Employee'))
       }else if(configType === 'Employee attendance'){
         dispatch(getColumns('employeeattendance'))
-      }else if(configType === 'Leave balance'){
-        dispatch(getColumns('employeeleavebalance'))
+      }else if(configType === 'Leave credit'){
+        dispatch(getColumns('employeeleavecredit'))
       }else if(configType === 'Leave availed'){
         dispatch(getColumns('employeeleaveavailed'))
       }else if(configType === 'Employee Wage'){
@@ -340,8 +340,8 @@ const Configurations = () => {
         dispatch(employeeUpload(formData))
       }else if(configType === 'Employee attendance'){
         dispatch(employeeAttendanceUpload(formData))
-      }else if(configType === 'Leave balance'){
-        dispatch(employeeLeaveBalanceUpload(formData))
+      }else if(configType === 'Leave credit'){
+        dispatch(employeeLeaveCreditUpload(formData))
       }else if(configType === 'Leave availed'){
         dispatch(employeeLeaveAvailedUpload(formData))
       }else if(configType === 'Employee Wage'){
@@ -374,7 +374,7 @@ const Configurations = () => {
     {label: "December", value: "12"},
   ];
 
-  const configurationTypes = ["Employee", "Leave balance", 'Leave availed', 'Employee attendance', 'Employee Wage' ]
+  const configurationTypes = ["Employee", "Leave credit", 'Leave availed', 'Employee attendance', 'Employee Wage' ]
 
   const onClickUpload = () => {
     if(!company || !associateCompany || !stateName || !location || !year || !month || !configType){
@@ -401,8 +401,8 @@ const Configurations = () => {
       dispatch(employeeUpload(formData))
     }else if(configType === 'Employee attendance'){
       dispatch(employeeAttendanceUpload(formData))
-    }else if(configType === 'Leave balance'){
-      dispatch(employeeLeaveBalanceUpload(formData))
+    }else if(configType === 'Leave credit'){
+      dispatch(employeeLeaveCreditUpload(formData))
     }else if(configType === 'Leave availed'){
       dispatch(employeeLeaveAvailedUpload(formData))
     }else if(configType === 'Employee Wage'){
@@ -433,13 +433,13 @@ const Configurations = () => {
     a.click();
     document.body.removeChild(a);
   }
-  console.log('leve dett', employeeLeaveBalanceUploadDetails)
+  console.log('leve dett', employeeLeaveCreditUploadDetails)
 
   const resetUploadDetails = () => {
     dispatch(resetConfigUploadDetails())
     dispatch(resetEmployeeUploadDetails())
     dispatch(resetEmployeeAttendanceUploadDetails())
-    dispatch(resetEmployeeLeaveBalanceUploadDetails())
+    dispatch(resetEmployeeLeaveCreditUploadDetails())
     dispatch(resetEmployeeLeaveAvailedUploadDetails())
     dispatch(resetEmployeeWageUploadDetails())
   }
@@ -450,7 +450,7 @@ const Configurations = () => {
     dispatch(resetExcelHeaderToDbColumnsDetails())
     dispatch(resetEmployeeUploadDetails())
     dispatch(resetEmployeeAttendanceUploadDetails())
-    dispatch(resetEmployeeLeaveBalanceUploadDetails())
+    dispatch(resetEmployeeLeaveCreditUploadDetails())
     dispatch(resetEmployeeLeaveAvailedUploadDetails())
     dispatch(resetEmployeeWageUploadDetails())
 

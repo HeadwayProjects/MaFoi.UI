@@ -15,7 +15,7 @@ import { Alert } from 'react-bootstrap';
 import { addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
 import  Select from "react-select";
 import { resetBulkDeleteLeaveDetails, bulkDeleteLeaves, addLeave, deleteLeave, editLeave, getLeaveConfiguration, resetAddLeaveDetails, resetDeleteLeaveDetails, resetEditLeaveDetails, resetGetLeaveDetailsStatus, resetUploadLeavesDetails, uploadLeaves } from '../../../redux/features/leaveConfiguration.slice';
-import { EMPLOYEMENT_TYPES, EZYCOMP_LEAVE_TYPES } from '../../common/Constants';
+import { EMPLOYEMENT_TYPES, EZYCOMP_LEAVE_TYPES,Leave_Credit_Frequency } from '../../common/Constants';
 
 
 const style = {
@@ -63,6 +63,7 @@ const LeaveConfiguration = () => {
   const locations = locationsDetails && locationsDetails.data.list
   const employementTypes = EMPLOYEMENT_TYPES
   const ezycompLeaveTypes = EZYCOMP_LEAVE_TYPES
+  const leaveCreditFrequency = Leave_Credit_Frequency
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -98,9 +99,37 @@ const LeaveConfiguration = () => {
   const { exportLeaveConfig, exporting } = useExportLeaveConfig((response: any) => {
     const companyDetails = companies.find((each:any) => each.id === company)
     const assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
+    interface CompanyDetails {
+      name?: string;
+  }
   
+  interface AssCompNameDetails {
+      name?: string;
+  }
+
+  function constructFileName(
+    companyDetails: CompanyDetails, 
+    assCompNameDetails: AssCompNameDetails, 
+    
+): string {
+    const parts = [
+      'LeaveConfig',
+      companyDetails && companyDetails.name ? companyDetails.name : null,
+      assCompNameDetails && assCompNameDetails.name ? assCompNameDetails.name : null,
+     
+      'LeaveConfig.xlsx'
+    ];
+
+    const validParts = parts.filter(part => part != null && part !== '');
+
+    return validParts.join(' - ');
+}
+
+const fileName = constructFileName(companyDetails, assCompNameDetails);
+
     downloadFileContent({
-        name: `Leave Configuration - ${companyDetails.name} - ${assCompNameDetails.name} - ${employmentType} - Leaves.xlsx`,
+        //name: `Leave Configuration - ${companyDetails.name} - ${assCompNameDetails.name} - ${employmentType} - Leaves.xlsx`,
+        name :fileName,
         type: response.headers['content-type'],
         content: response.data
     });
@@ -265,6 +294,9 @@ const LeaveConfiguration = () => {
 
   useEffect(() => {
     if(addLeaveDetails.status === 'succeeded'){
+      if(addLeaveDetails.data.key === 'FAILURE'){
+        toast.error(`Leave Already Exist.`)
+      }else{
       toast.success(`Leave Added successfully.`)
       dispatch(resetAddLeaveDetails())
       setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)
@@ -279,6 +311,7 @@ const LeaveConfiguration = () => {
         "includeCentral": true
       }
       dispatch(getLeaveConfiguration(leavesPayload))
+    }
     }else if(addLeaveDetails.status === 'failed'){
       setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)
       toast.error(ERROR_MESSAGES.DEFAULT);
@@ -472,7 +505,40 @@ const LeaveConfiguration = () => {
     }else{
       setSortType('asc')
     }
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(employmentType){
+      filters.push({
+        columnName:'employeeType',
+        value: employmentType
+      })
+    }
+
+    const leavesPayload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'companyId', order: type },
+      "includeCentral": true
+    }
+    dispatch(getLeaveConfiguration(leavesPayload))
+
   }
+
 
     const onClickSortassociatecompany = () => {
       let type = 'asc'
@@ -483,6 +549,38 @@ const LeaveConfiguration = () => {
       }else{
         setSortType('asc')
       }
+      const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(employmentType){
+      filters.push({
+        columnName:'employeeType',
+        value: employmentType
+      })
+    }
+
+    const leavesPayload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'companyId', order: type },
+      "includeCentral": true
+    }
+    dispatch(getLeaveConfiguration(leavesPayload))
+
     }
 
   const onClickSortEzycompLeave = () => {
@@ -766,6 +864,30 @@ const LeaveConfiguration = () => {
     setLeaveDetails(leaveDetails)
   }
 
+  const onClickCancelAdd = ()=>{
+    setOpenModal(false);
+     setModalType(''); 
+     setLeaveDetails({});
+      setCompany('');
+       setAssociateCompany(''); 
+       setEmploymentType(''); 
+       setEzycompLeave(''); 
+       setLeaveType(''); 
+       setFrequency('');
+        setTotalLeaves('');
+         setCarryForward(true)
+         const leavesPayload: any =  { 
+          search: "", 
+          filters: [],
+          pagination: {
+            pageSize: 10,
+            pageNumber: 1
+          },
+          sort: { columnName: 'ezycompLeave', order: 'asc' },
+          "includeCentral": true
+        }
+        dispatch(getLeaveConfiguration(leavesPayload))
+  }
   const onClickSubmitEdit = () => {
 
     if(addButtonDisable){
@@ -801,6 +923,20 @@ const LeaveConfiguration = () => {
  
   const onClickConfirmDelete = () => {
     dispatch(deleteLeave(leaveDetails.id))
+    setCompany('')
+    setAssociateCompany('')
+    setEmploymentType('')
+    const leavesPayload: any =  { 
+      search: "", 
+      filters: [],
+      pagination: {
+        pageSize: 10,
+        pageNumber: 1
+      },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getLeaveConfiguration(leavesPayload))
   }
 
   const onClickIndividualCheckBox = (id:any) => {
@@ -827,7 +963,23 @@ const LeaveConfiguration = () => {
 
   const onClickConfirmBulkDelete = () => {
     dispatch(bulkDeleteLeaves(selectedLeaves))
+    setCompany('')
+    setAssociateCompany('')
+    setEmploymentType('')
+    const leavesPayload: any =  { 
+      search: "", 
+      filters: [],
+      pagination: {
+        pageSize: 10,
+        pageNumber: 1
+      },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getLeaveConfiguration(leavesPayload))
   }
+
+
 
   const handleChangePage = (event: unknown, newPage: number) => {
     const filters = []
@@ -930,7 +1082,7 @@ const LeaveConfiguration = () => {
 
   const handleTotalLeavesChange =(e: React.ChangeEvent<HTMLInputElement>)=>{
     const value = e.target.value;
-    const numericOnly = value.replace(/[^0-9]/g, ''); 
+    const numericOnly =  value.replace(/[^0-9.]/g, '');
     setTotalLeaves(numericOnly);
   }
 
@@ -963,6 +1115,15 @@ console.log(leaves);
                       id="demo-select-small"
                       value={company}
                       label="Company"
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 100,
+                            marginTop: '3px'
+                          },
+                        },
+                      }}
                       onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setEmploymentType('')}}
                     >
                       {companies && companies.map((each:any) => {
@@ -979,6 +1140,15 @@ console.log(leaves);
                       value={associateCompany}
                       label="Associate Company"
                       disabled={!company}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 100,
+                            marginTop: '3px'
+                          },
+                        },
+                      }}
                       onChange={(e) => setAssociateCompany(e.target.value)}
                     >
                       {associateCompanies && associateCompanies.map((each:any) => {
@@ -995,6 +1165,15 @@ console.log(leaves);
                       value={location}
                       label="Location"
                       disabled={!associateCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 100,
+                            marginTop: '3px'
+                          },
+                        },
+                      }}
                       onChange={(e) => setLocation(e.target.value)}
                     >
                       {locations && locations.map((each:any) => {
@@ -1046,16 +1225,22 @@ console.log(leaves);
       />
     </FormControl>
 
-                  <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                    <InputLabel htmlFor="outlined-adornment-name">Leave Credit Frequency</InputLabel>
-                    <OutlinedInput
-                      label='Leave Credit Frequency'
-                      value={frequency}
-                      onChange={(e) => setFrequency(e.target.value)}
-                      id="outlined-adornment-name"
-                      type='text'
-                    />
-                  </FormControl>
+    <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                  <InputLabel htmlFor="outlined-adornment-name">Leave Credit Frequency</InputLabel>
+                  <MSelect
+                    labelId="demo-select-small-label"
+                    value={frequency}
+                    label='Leave Credit Frequency'
+                    onChange={(e) => setFrequency(e.target.value)}
+                    id="outlined-adornment-name"
+                    type='text'
+                  
+                    >
+                    {leaveCreditFrequency && leaveCreditFrequency.map((each: any) => {
+                      return <MenuItem value={each}>{each}</MenuItem>
+                    })}
+                  </MSelect >
+                </FormControl>
 
                   <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                     <InputLabel htmlFor="outlined-adornment-name">Total Leaves</InputLabel>
@@ -1099,8 +1284,10 @@ console.log(leaves);
 
             {modalType === 'Add' && 
             <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center'}}>
-              <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)}}>Cancel</Button>
-              <Button variant='contained' onClick={onClickSubmitAdd}>Submit</Button>
+              {/* <Button variant='outlined' color="error" onClick={() => {setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)}}>Cancel</Button> */}
+             
+              <Button variant='outlined' color="error" onClick={onClickCancelAdd}>Cancel</Button>
+ <Button variant='contained' onClick={onClickSubmitAdd}>Submit</Button>
             </Box>
             }
           </>

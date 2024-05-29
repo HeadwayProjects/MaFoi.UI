@@ -13,27 +13,29 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { getEmployees, getEmployeesAttendance, getEmployeesLeaveBalance } from '../../../redux/features/employeeMaster.slice';
+import { getEmployees, getEmployeesAttendance, getEmployeesLeaveCredit } from '../../../redux/features/employeeMaster.slice';
 
-const EmployeeLeaveBalanceUpload = () => {
+const EmployeeLeaveCreditUpload = () => {
 
   const dispatch = useAppDispatch();
 
-  const employeesLeaveBalanceDetails = useAppSelector((state) => state.employeeMaster.employeesLeaveBalanceDetails)
+  const employeesLeaveCreditDetails = useAppSelector((state) => state.employeeMaster.employeesLeaveCreditDetails)
 
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
 
-  const employeesLeaveBalance = employeesLeaveBalanceDetails.data.list
-  const employeesLeaveBalanceCount = employeesLeaveBalanceDetails.data.count 
-  console.log("employeesLeaveBalance", employeesLeaveBalance, 'employeesLeaveBalanceCount', employeesLeaveBalanceCount)
+  const employeesLeaveCredit = employeesLeaveCreditDetails.data.list
+  const employeesLeaveCreditCount = employeesLeaveCreditDetails.data.count 
+  console.log("employeesLeaveCredit", employeesLeaveCredit, 'employeesLeaveCreditCount', employeesLeaveCreditCount)
 
   const companies = companiesDetails.data.list
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading =  employeesLeaveBalanceDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading =  employeesLeaveCreditDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+
+console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -65,7 +67,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
   };
 
   const handleChangeAssociateCompany = (event:any) => {
@@ -92,7 +94,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
   };
 
   const handleChangeLocation = (event:any) => {
@@ -122,7 +124,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
   };
   
   const handleChangeYear = (event:any) => {
@@ -155,7 +157,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
   };
   
   const handleChangeMonth = (event:any) => {
@@ -192,7 +194,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
   };
 
   const handleChangeSearchInput = (event:any) => {
@@ -200,7 +202,7 @@ const EmployeeLeaveBalanceUpload = () => {
   }
 
   useEffect(() => {
-    const employeesLeaveBalancePayload: any =  { 
+    const employeesLeaveCreditPayload: any =  { 
       search: "",
       filters: [],
       pagination: {
@@ -211,7 +213,7 @@ const EmployeeLeaveBalanceUpload = () => {
       "includeCentral": true
     }
 
-    dispatch(getEmployeesLeaveBalance(employeesLeaveBalancePayload))
+    dispatch(getEmployeesLeaveCredit(employeesLeaveCreditPayload))
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
     dispatch(getAllCompaniesDetails(companiesPayload))
   },[])
@@ -235,12 +237,13 @@ const EmployeeLeaveBalanceUpload = () => {
   }, [associateCompany])
 
   useEffect(() => {
-    if(employeesLeaveBalanceDetails.status === 'succeeded'){
+    if(employeesLeaveCreditDetails.status === 'succeeded'){
 
-    }else if(employeesLeaveBalanceDetails.status === 'failed'){
+    }else if(employeesLeaveCreditDetails.status === 'failed'){
+      alert("hittes");
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  },[employeesLeaveBalanceDetails.status])
+  },[employeesLeaveCreditDetails.status])
 
   const yearsList = []
   const currentYear = new Date().getFullYear();
@@ -275,7 +278,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
   }
 
   const onClickClearSearch = () => {
@@ -289,7 +292,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
     setSearchInput('')
   }
 
@@ -345,7 +348,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'employeeCode', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
   }
 
   const onClickSortWageMonth = () => {
@@ -400,7 +403,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'wageMonth', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
     
   }
 
@@ -456,7 +459,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'pL_EL_AL_MonthlyCredit', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
     
   }
 
@@ -512,7 +515,7 @@ const EmployeeLeaveBalanceUpload = () => {
       sort: { columnName: 'slMonthlyCredit', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
     
   }
   
@@ -562,7 +565,7 @@ const EmployeeLeaveBalanceUpload = () => {
       "includeCentral": true
     }
 
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
     setPage(newPage);
   };
 
@@ -611,7 +614,7 @@ const EmployeeLeaveBalanceUpload = () => {
       "includeCentral": true
     }
 
-    dispatch(getEmployeesLeaveBalance(payload))
+    dispatch(getEmployeesLeaveCredit(payload))
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -625,8 +628,8 @@ const EmployeeLeaveBalanceUpload = () => {
              <Box sx={{paddingX: '20px', paddingY:'10px',}}>
                 <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
-                        <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Leave Balance</h5>
-                        {/* <button onClick={onClickExport} disabled={!employeesLeaveBalance} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveBalance ? '#707070': '#ffffff' , color: !employeesLeaveBalance ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
+                        <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Leave Credit</h5>
+                        {/* <button onClick={onClickExport} disabled={!employeesLeaveCredit} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveCredit ? '#707070': '#ffffff' , color: !employeesLeaveCredit ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
                     </div>
                     <div style={{display:'flex'}}>
 
@@ -638,12 +641,22 @@ const EmployeeLeaveBalanceUpload = () => {
                             value={company}
                             displayEmpty
                             onChange={handleChangeCompany}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 150,
+                                  // marginLeft: "21px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Company
                             </MenuItem>
                             {companies && companies.map((each:any) => {
-                                return <MenuItem value={each.id}>{each.name}</MenuItem>
+                                return <MenuItem  sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
@@ -678,6 +691,16 @@ const EmployeeLeaveBalanceUpload = () => {
                             value={location}
                             disabled={!associateCompany}
                             onChange={handleChangeLocation}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 230,
+                                   marginLeft: "27px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Location
@@ -700,6 +723,16 @@ const EmployeeLeaveBalanceUpload = () => {
                             value={year}
                             disabled={!location}
                             onChange={handleChangeYear}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 100,
+                                  // marginLeft: "21px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Year
@@ -720,6 +753,16 @@ const EmployeeLeaveBalanceUpload = () => {
                             value={month}
                             disabled={!year}
                             onChange={handleChangeMonth}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: {
+                                  maxHeight: 200,
+                                  width: 100,
+                                  // marginLeft: "21px", 
+                                  marginTop: "3px"
+                                }
+                              }
+                            }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Month
@@ -732,7 +775,7 @@ const EmployeeLeaveBalanceUpload = () => {
                       </Box>
 
                       <Box sx={{width:'100%', mr:1}}>
-                        <Typography mb={1}>Search</Typography>
+                        <Typography mb={1}>Search (Wage Month)</Typography>
                         <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                           <OutlinedInput
@@ -771,7 +814,7 @@ const EmployeeLeaveBalanceUpload = () => {
 
             <Box sx={{paddingX: '20px'}}>
               {
-                employeesLeaveBalance && employeesLeaveBalance.length <= 0 ? 
+                employeesLeaveCredit && employeesLeaveCredit.length <= 0 ? 
 
                 <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
                   <Typography variant='h5'>No Records Found</Typography>
@@ -791,7 +834,7 @@ const EmployeeLeaveBalanceUpload = () => {
                               </TableHead>
 
                               <TableBody>
-                              {employeesLeaveBalance && employeesLeaveBalance.map((each: any, index: number) => (
+                              {employeesLeaveCredit && employeesLeaveCredit.map((each: any, index: number) => (
                                   <TableRow
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -840,7 +883,7 @@ const EmployeeLeaveBalanceUpload = () => {
                       }
                       rowsPerPageOptions={[10, 25, 50, 100]}
                       component="div"
-                      count={employeesLeaveBalanceCount}
+                      count={employeesLeaveCreditCount}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}
@@ -855,4 +898,4 @@ const EmployeeLeaveBalanceUpload = () => {
   )
 }
 
-export default EmployeeLeaveBalanceUpload
+export default EmployeeLeaveCreditUpload

@@ -252,4 +252,10 @@ export class InputModuleService {
         const url = `/api/Configuration/UpdateSalaryExcelHeadertoDBColumnsMap`
         return await api.post(url, data)
     }
+
+    public async getSalaryComponentsDetails(data: any) {
+        const url = `/api/Employee/GetAllSalaryComponent`
+        return await api.post(url, data)
+    }
+
 }

@@ -137,4 +137,7 @@ export const SEARCH_FIELDS = [
 export const SMTP_PORTS = ['25', '465', '587'];
 
 export const EMPLOYEMENT_TYPES = ['Full Time', 'Part Time', 'Contract', 'Daily workers']
-export const EZYCOMP_LEAVE_TYPES = ['PL', 'EL', 'AL', 'SL', 'CL', 'ML']
+
+export const EZYCOMP_LEAVE_TYPES = ['PL (Privilege  Leave)', 'EL (Earned Leave)', 'AL (Annual Leave)', 'SL (Sick Leave)', 'CL (Casual Leave)',
+    'ML (Maternity Leave)']
+export const Leave_Credit_Frequency = ['Yearly', 'Monthly', 'Weekly']
