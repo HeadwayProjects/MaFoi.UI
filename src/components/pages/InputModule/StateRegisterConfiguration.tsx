@@ -649,12 +649,12 @@ const StateRegisterConfiguration = () => {
   }
 
   const onClickSave = () => {
-    // const check = tableData.find((each:any) => each.columnType === '' || each.ezycompField === '' || each.style === '' || each.fontName === '' || each.fontSize === '' || each.formula === '')
-    // if(check || !registerType || !stateName || !actName || !ruleName || !activityName || !formNameValue || !formName || !headerStartRow || !headerEndRow || !footerStartRow || !footerEndRow )
-    //   if(!registerType)
-    //   {
-    //   //return toast.error('Please Select and Fill All Fields');
-    // } else{
+    const check = tableData.find((each:any) => each.columnType === '' || each.ezycompField === '' || each.style === '' || each.fontName === '' || each.fontSize === '' || each.formula === '')
+    if(check || !registerType || !stateName || !actName || !ruleName || !activityName || !formNameValue || !formName || !headerStartRow || !headerEndRow || !footerStartRow || !footerEndRow )
+      if(!registerType)
+      {
+      //return toast.error('Please Select and Fill All Fields');
+    } else{
       const payload = {
         registerType,
         processType,
@@ -676,7 +676,7 @@ const StateRegisterConfiguration = () => {
       }
       console.log('payloda', payload)
       dispatch(addStateRegister(payload))
-    // }
+     }
   }
 
 
