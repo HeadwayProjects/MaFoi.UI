@@ -639,7 +639,7 @@ const StateRegisterConfiguration = () => {
   }
 
   const onClickConfigure = () => {
-    if(!registerType || !processType || !stateName || !actName || !ruleName || !activityName || !formName || !formNameValue ){
+    if(!registerType || !processType.value || !stateName || !actName || !ruleName || !activityName || !formName || !formNameValue ){
       return toast.error(ERROR_MESSAGES.FILL_ALL);
     }else{
       const payload = formName.value
@@ -657,7 +657,7 @@ const StateRegisterConfiguration = () => {
     } else{
       const payload = {
         registerType,
-        processType,
+        processType: processType.value,
         stateId: stateName.value,
         actId: actName.value,
         ruleId: ruleName.value,
