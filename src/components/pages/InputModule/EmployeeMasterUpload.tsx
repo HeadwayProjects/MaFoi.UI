@@ -1266,9 +1266,9 @@ const EmployeeMasterUpload = () => {
                     </div>
                     <div style={{display:'flex'}}>
 
-                      <Box sx={{width:'100%', mr:1}}>
+                      <Box sx={{ mr:1}}>
                         <Typography mb={1}>Company</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             value={company}
@@ -1295,9 +1295,9 @@ const EmployeeMasterUpload = () => {
                         </FormControl>
                       </Box>
 
-                      <Box sx={{width:'100%', mr:1}}>
+                      <Box sx={{ mr:1}}>
                         <Typography mb={1}>Associate Company</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -1316,9 +1316,9 @@ const EmployeeMasterUpload = () => {
                         </FormControl>
                       </Box>
 
-                      <Box sx={{width:'100%', mr:1}}>
+                      <Box sx={{ mr:1}}>
                         <Typography mb={1}>Location</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -1342,7 +1342,7 @@ const EmployeeMasterUpload = () => {
                             {locations && locations.map((each:any) => {
                               const { id, name, code, cities }: any = each.location || {};
                               const { state } = cities || {};
-                              return <MenuItem value={each.locationId+'^'+ state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                              return <MenuItem sx={{whiteSpace:"initial"}} value={each.locationId+'^'+ state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                             })}
                           </Select>
                         </FormControl>

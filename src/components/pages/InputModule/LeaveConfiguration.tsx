@@ -99,6 +99,7 @@ const LeaveConfiguration = () => {
   const { exportLeaveConfig, exporting } = useExportLeaveConfig((response: any) => {
     const companyDetails = companies.find((each:any) => each.id === company)
     const assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
+    const locationDetails = locations.find((each:any)=> each.id === location)
     interface CompanyDetails {
       name?: string;
   }
@@ -107,15 +108,24 @@ const LeaveConfiguration = () => {
       name?: string;
   }
 
+    
+  interface LocationDetails {
+    name?: string;
+}
+
   function constructFileName(
     companyDetails: CompanyDetails, 
     assCompNameDetails: AssCompNameDetails, 
+    locationDetails : LocationDetails
+
+
     
 ): string {
     const parts = [
       'LeaveConfig',
       companyDetails && companyDetails.name ? companyDetails.name : null,
       assCompNameDetails && assCompNameDetails.name ? assCompNameDetails.name : null,
+      locationDetails && locationDetails.name ? locationDetails.name : null,
      
       'LeaveConfig.xlsx'
     ];
@@ -125,7 +135,7 @@ const LeaveConfiguration = () => {
     return validParts.join(' - ');
 }
 
-const fileName = constructFileName(companyDetails, assCompNameDetails);
+const fileName = constructFileName(companyDetails, assCompNameDetails,locationDetails);
 
     downloadFileContent({
         //name: `Leave Configuration - ${companyDetails.name} - ${assCompNameDetails.name} - ${employmentType} - Leaves.xlsx`,
@@ -137,7 +147,8 @@ const fileName = constructFileName(companyDetails, assCompNameDetails);
       toast.error(ERROR_MESSAGES.DEFAULT);
   });
 
-  const loading = exporting || editLeaveDetails.status === 'loading' || uploadLeavesDetails.status === 'loading' || addLeaveDetails.status === 'loading' || deleteLeaveDetails.status === 'loading' || leaveConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || editLeaveDetails.status === 'loading' || uploadLeavesDetails.status === 'loading' || addLeaveDetails.status === 'loading' || deleteLeaveDetails.status === 'loading' || leaveConfigurationDetails.status === 'loading' || companiesDetails.status === 'loading'
+   || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany('')
@@ -532,7 +543,7 @@ const fileName = constructFileName(companyDetails, assCompNameDetails);
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'companyId', order: type },
+      sort: { columnName: 'company.name', order: type },
       "includeCentral": true
     }
     dispatch(getLeaveConfiguration(leavesPayload))
@@ -576,7 +587,7 @@ const fileName = constructFileName(companyDetails, assCompNameDetails);
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'companyId', order: type },
+      sort: { columnName: 'associatecompany.name', order: type },
       "includeCentral": true
     }
     dispatch(getLeaveConfiguration(leavesPayload))
@@ -1087,6 +1098,36 @@ const fileName = constructFileName(companyDetails, assCompNameDetails);
   }
 
 console.log(leaves);
+
+const handleChangeLocation = (event: any) => {
+  setEmploymentType('')
+  setLocation(event.target.value);
+  console.log(event.target.value);
+  const leavesPayload: any =  { 
+    search: searchInput, 
+    filters: [
+      {
+        columnName:'companyId',
+        value: company
+      },
+      {
+        columnName:'associateCompanyId',
+        value: associateCompany
+      },
+      {
+        columnName:'locationId',
+        value: event.target.value
+      }
+    ],
+    pagination: {
+      pageSize: rowsPerPage,
+      pageNumber: page+1
+    },
+    sort: { columnName: 'ezycompLeave', order: 'asc' },
+    "includeCentral": true
+  }
+  dispatch(getLeaveConfiguration(leavesPayload))
+}
 
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
@@ -1644,6 +1685,38 @@ console.log(leaves);
                           </MSelect>
                         </FormControl>
                       </Box>
+
+                      <Box sx={{ mr: 1 }}>
+                  <Typography mb={1}>Location</Typography>
+                  <FormControl sx={{ width: "220px", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                    <MSelect
+                      sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+                      displayEmpty
+                      value={location}
+                      disabled={!associateCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 210,
+                            width: 215,
+                            // marginLeft: "10px",
+                            marginTop: '3px'
+                          },
+                        },
+                      }}
+                      onChange={handleChangeLocation}
+                    >
+                      <MenuItem disabled sx={{ display: 'none' }} value="">
+                        Location
+                      </MenuItem>
+                    {locations && locations.map((each: any) => {
+                      const { id, name, code, cities }: any = each.location || {};
+                      const { state } = cities || {};
+                      return <MenuItem value={each.locationIds}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                    })}
+                  </MSelect>
+                  </FormControl>
+                  </Box>
 
                       <Box sx={{ mr:1}}>
                         <Typography mb={1}>Employment Types</Typography>

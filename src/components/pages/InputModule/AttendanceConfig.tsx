@@ -627,7 +627,7 @@ console.log('locaname',locationdetails);
         pageSize: 10,
         pageNumber: 1
       },
-      sort: { columnName: 'companyId', order: type },
+      sort: { columnName: 'company.name', order: type },
       "includeCentral": true
     }
     dispatch(getAttendanceConfiguration(attendanceConfigurationDefaultPayload))
@@ -671,7 +671,7 @@ console.log('locaname',locationdetails);
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'associateCompanyId', order: type },
+      sort: { columnName: 'associateCompany.name', order: type },
       "includeCentral": true
     }
     dispatch(getAttendanceConfiguration(attendancePayload)) 
@@ -714,7 +714,7 @@ console.log('locaname',locationdetails);
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'locationId', order: type },
+      sort: { columnName: 'location.name', order: type },
       "includeCentral": true
     }
     dispatch(getAttendanceConfiguration(attendancePayload))

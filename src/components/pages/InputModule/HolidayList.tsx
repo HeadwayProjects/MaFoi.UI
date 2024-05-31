@@ -909,7 +909,7 @@ const HolidayList = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'Company.name', order: type },
+      sort: { columnName: 'company.name', order: type },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload))
@@ -971,7 +971,7 @@ const HolidayList = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'associatecompany', order: type },
+      sort: { columnName: 'associatecompany.name', order: type },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload))
@@ -2346,8 +2346,8 @@ const HolidayList = () => {
                                       <TableCell><Checkbox checked={(selectedHolidays && selectedHolidays.length) === (holidays && holidays.length)} onClick={onClickAllCheckBox}/></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Year</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'day'} direction={sortType} onClick={onClickSortDate}> Date</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'company'} direction={sortType} onClick={onClickSortName}> Company</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'associatecompany'} direction={sortType} onClick={onClickSortName}>Associate Company</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'company'} direction={sortType} onClick={onClickSortassociateCompanyName}> Company</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'associatecompany'} direction={sortType} onClick={onClickSortassociateCompanyName}>Associate Company</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Holiday Name</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'stateId'} direction={sortType} onClick={onClickSortState}> State</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'restricted'} direction={sortType} onClick={onClickSortRestricted}> Restricted</TableSortLabel></TableCell>

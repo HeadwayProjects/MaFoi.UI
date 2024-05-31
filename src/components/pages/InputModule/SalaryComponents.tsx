@@ -510,6 +510,15 @@ const SalaryComponents = () => {
                           value={company}
                           displayEmpty
                           onChange={handleChangeCompany}
+                          MenuProps={{
+                            PaperProps:{
+                             sx:{
+                              maxHeight:200,
+                              width:230,
+                              marginTop:"3px"
+                             }em
+                            }
+                          }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Company

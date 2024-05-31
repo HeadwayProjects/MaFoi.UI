@@ -633,9 +633,9 @@ console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
                     </div>
                     <div style={{display:'flex'}}>
 
-                      <Box sx={{width:'100%', mr:1}}>
+                      <Box sx={{ mr:1}}>
                         <Typography mb={1}>Company</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             value={company}
@@ -662,9 +662,9 @@ console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
                         </FormControl>
                       </Box>
 
-                      <Box sx={{width:'100%', mr:1}}>
+                      <Box sx={{ mr:1}}>
                         <Typography mb={1}>Associate Company</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -682,9 +682,9 @@ console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
                         </FormControl>
                       </Box>
 
-                      <Box sx={{width:'100%', mr:1}}>
+                      <Box sx={{ mr:1}}>
                         <Typography mb={1}>Location</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -708,15 +708,15 @@ console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
                             {locations && locations.map((each:any) => {
                               const { id, name, code, cities }: any = each.location || {};
                               const { state } = cities || {};
-                              return <MenuItem value={each.locationId+'^'+ state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                              return <MenuItem sx={{whiteSpace:"initial"}} evalue={each.locationId+'^'+ state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
                       </Box>
 
-                      <Box sx={{width:'100%', mr:1}}>
+                      <Box sx={{ mr:1}}>
                         <Typography mb={1}>Year</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -744,9 +744,9 @@ console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
                         </FormControl>
                       </Box>
 
-                      <Box sx={{width:'100%', mr:1}}>
+                      <Box sx={{ mr:1}}>
                         <Typography mb={1}>Month</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
@@ -774,9 +774,9 @@ console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
                         </FormControl>
                       </Box>
 
-                      <Box sx={{width:'100%', mr:1}}>
+                      <Box sx={{ mr:1}}>
                         <Typography mb={1}>Search (Wage Month)</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                           <OutlinedInput
                             value={searchInput}
