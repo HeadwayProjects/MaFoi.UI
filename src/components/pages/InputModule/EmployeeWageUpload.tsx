@@ -799,7 +799,7 @@ const EmployeeWageUpload = () => {
                       <Box sx={{ mr:1}}>
                         <Typography mb={1}>Month</Typography>
                         <FormControl sx={{ width:'100%', maxWidth:'200px',backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                          <Selectl
+                          <Select
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                             displayEmpty
                             value={month}

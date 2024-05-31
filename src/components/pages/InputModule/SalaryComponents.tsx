@@ -516,7 +516,7 @@ const SalaryComponents = () => {
                               maxHeight:200,
                               width:230,
                               marginTop:"3px"
-                             }em
+                             }
                             }
                           }}
                         >

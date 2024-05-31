@@ -708,7 +708,7 @@ console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
                             {locations && locations.map((each:any) => {
                               const { id, name, code, cities }: any = each.location || {};
                               const { state } = cities || {};
-                              return <MenuItem sx={{whiteSpace:"initial"}} evalue={each.locationId+'^'+ state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                              return <MenuItem sx={{whiteSpace:"initial"}} value={each.locationId+'^'+ state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
