@@ -196,6 +196,35 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
     }
     dispatch(getLeaveConfiguration(leavesPayload))
   };
+  const handleChangeLocation = (event: any) => {
+    setEmploymentType('')
+    setLocation(event.target.value);
+    console.log(event.target.value);
+    const leavesPayload: any =  { 
+      search: searchInput, 
+      filters: [
+        {
+          columnName:'companyId',
+          value: company
+        },
+        {
+          columnName:'associateCompanyId',
+          value: associateCompany
+        },
+        {
+          columnName:'locationId',
+          value: event.target.value
+        }
+      ],
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'ezycompLeave', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getLeaveConfiguration(leavesPayload))
+  }
 
   const handleChangeEmployementType = (event:any) => {
     setEmploymentType(event.target.value);
@@ -209,6 +238,10 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
         {
           columnName:'associateCompanyId',
           value: associateCompany
+        },
+        {
+          columnName:'locationId',
+          value: location
         },
         {
           columnName:'employeeType',
@@ -1098,36 +1131,9 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
   }
 
 console.log(leaves);
+console.log(locations);
 
-const handleChangeLocation = (event: any) => {
-  setEmploymentType('')
-  setLocation(event.target.value);
-  console.log(event.target.value);
-  const leavesPayload: any =  { 
-    search: searchInput, 
-    filters: [
-      {
-        columnName:'companyId',
-        value: company
-      },
-      {
-        columnName:'associateCompanyId',
-        value: associateCompany
-      },
-      {
-        columnName:'locationId',
-        value: event.target.value
-      }
-    ],
-    pagination: {
-      pageSize: rowsPerPage,
-      pageNumber: page+1
-    },
-    sort: { columnName: 'ezycompLeave', order: 'asc' },
-    "includeCentral": true
-  }
-  dispatch(getLeaveConfiguration(leavesPayload))
-}
+
 
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
@@ -1712,12 +1718,12 @@ const handleChangeLocation = (event: any) => {
                     {locations && locations.map((each: any) => {
                       const { id, name, code, cities }: any = each.location || {};
                       const { state } = cities || {};
-                      return <MenuItem value={each.locationIds}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                      return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                     })}
                   </MSelect>
                   </FormControl>
                   </Box>
-
+s
                       <Box sx={{ mr:1}}>
                         <Typography mb={1}>Employment Types</Typography>
                         <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">

@@ -677,7 +677,7 @@ const StateRegisterConfiguration = () => {
       console.log('payloda', payload)
       dispatch(addStateRegister(payload))
      }
-  }
+ }
 
 
   const onclickEdit = (configDetails:any) => {
