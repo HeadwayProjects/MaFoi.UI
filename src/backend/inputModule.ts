@@ -258,4 +258,9 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
+    public async getSalaryComponentsMappingDetails(data: any) {
+        const url = `/api/Configuration/GetSalaryConfigAll`
+        return await api.post(url, data)
+    }
+
 }

@@ -21,7 +21,12 @@ interface SalaryComponentsState {
         status: string,
         data: any,
         error: string | null
-    }
+    },
+    salaryComponentMappingDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
 }
 
 const initialState: SalaryComponentsState = { 
@@ -44,7 +49,12 @@ const initialState: SalaryComponentsState = {
         status: 'idle',
         data: '',
         error: null
-    }
+    },
+    salaryComponentMappingDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
 
 } as SalaryComponentsState
 
@@ -68,6 +78,11 @@ export const getSalaryComponentsDetails = createAsyncThunk('salaryComponent/getS
     return await inputModuleService.getSalaryComponentsDetails(data);
 })
 
+export const getSalaryComponentsMappingDetails = createAsyncThunk('salaryComponent/getSalaryComponentsMappingDetails', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getSalaryComponentsMappingDetails(data);
+})
+
 export const salaryComponentSlice = createSlice({
     name: 'salaryComponent',
     initialState,
@@ -88,6 +103,20 @@ export const salaryComponentSlice = createSlice({
         },
         resetSalaryExcelToDBColumnsDetails: (state) => {
             state.salaryExcelHeaderToDbColumnsDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetSalaryComponentDetails: (state) => {
+            state.salaryComponentDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
+        resetSalaryComponentMappingDetails: (state) => {
+            state.salaryComponentMappingDetails = {
                 status: 'idle',
                 data: '',
                 error: null
@@ -162,8 +191,25 @@ export const salaryComponentSlice = createSlice({
             state.salaryComponentDetails.status = 'failed'
             state.salaryComponentDetails.error = action.error.message
         })
+
+        .addCase(getSalaryComponentsMappingDetails.pending, (state) => {
+            state.salaryComponentMappingDetails.status = 'loading'
+        })
+        .addCase(getSalaryComponentsMappingDetails.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.salaryComponentMappingDetails.status = 'succeeded'
+                state.salaryComponentMappingDetails.data = action.payload.data
+            } else {
+                state.salaryComponentMappingDetails.status = 'failed'
+                state.salaryComponentMappingDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getSalaryComponentsMappingDetails.rejected, (state, action: any) => {
+            state.salaryComponentMappingDetails.status = 'failed'
+            state.salaryComponentMappingDetails.error = action.error.message
+        })
 })
   
-export const { resetSalaryUploadDetails, resetSalaryConfigUploadDetails, resetSalaryExcelToDBColumnsDetails } = salaryComponentSlice.actions
+export const { resetSalaryUploadDetails, resetSalaryConfigUploadDetails, resetSalaryExcelToDBColumnsDetails, resetSalaryComponentDetails, resetSalaryComponentMappingDetails } = salaryComponentSlice.actions
 
 export default salaryComponentSlice.reducer
