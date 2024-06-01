@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
-import { callExcelHeaderToDbColumns, configUpload, employeeAttendanceUpload, employeeLeaveAvailedUpload, employeeLeaveCreditUpload, employeeUpload, employeeWageUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getLocations, getStates, resetConfigUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeLeaveCreditUploadDetails, resetEmployeeUploadDetails, resetEmployeeWageUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails } from '../../../redux/features/inputModule.slice';
+import { callExcelHeaderToDbColumns, configUpload, employeeAttendanceUpload, employeeLeaveAvailedUpload, employeeLeaveCreditUpload, employeeUpload, employeeWageUpload, getAllCompaniesDetails, getAssociateCompanies, getColumns, getInputModuleMappingDetails, getLocations, getStates, resetConfigUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeLeaveCreditUploadDetails, resetEmployeeUploadDetails, resetEmployeeWageUploadDetails, resetExcelHeaderToDbColumnsDetails, resetGetColumnsDetails, resetGetConfigMappingDetails } from '../../../redux/features/inputModule.slice';
 import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, Select as MSelect, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { ERROR_MESSAGES } from '../../../utils/constants';
@@ -18,6 +18,16 @@ const styleUploadModal = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 800,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+};
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '97%',
   bgcolor: 'background.paper',
   boxShadow: 24,
 };
@@ -62,12 +72,14 @@ const Configurations = () => {
   const employeeLeaveCreditUploadDetails = useAppSelector((state) => state.inputModule.employeeLeaveCreditUploadDetails);
   const employeeLeaveAvailedUploadDetails = useAppSelector((state) => state.inputModule.employeeLeaveAvailedUploadDetails);
   const employeeWageUploadDetails = useAppSelector((state) => state.inputModule.employeeWageUploadDetails);
+  const configMappingDetails = useAppSelector((state) => state.inputModule.configMappingDetails)
 
+  const configMappingList = configMappingDetails && configMappingDetails.data.list
 
   const configurationList = configUploadDetails && configUploadDetails.data.list
   const columnsList = getColumnsDetails && getColumnsDetails.data
 
-  const loading =  employeeUploadDetails.status === 'loading' || employeeAttendanceUploadDetails.status === 'loading' || employeeLeaveCreditUploadDetails.status === 'loading' || employeeLeaveAvailedUploadDetails.status === 'loading' || employeeWageUploadDetails.status === 'loading' || configUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || excelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = configMappingDetails.status === 'loading' || employeeUploadDetails.status === 'loading' || employeeAttendanceUploadDetails.status === 'loading' || employeeLeaveCreditUploadDetails.status === 'loading' || employeeLeaveAvailedUploadDetails.status === 'loading' || employeeWageUploadDetails.status === 'loading' || configUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || excelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -80,7 +92,9 @@ const Configurations = () => {
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
   const [uploadData, setUploadData] =  React.useState<any>();
   const [uploadError, setUploadError] = React.useState(false);
-  
+
+  const [openPreviewModal, setOpenPreviewModal] = React.useState(false);
+
   const [tableData, setTableData] = React.useState<any>([])
 
   const handleChangeConfigType = (event:any) => {
@@ -352,6 +366,18 @@ const Configurations = () => {
     }
   },[excelHeaderToDbColumnsDetails.status])
 
+  
+  useEffect(() => {
+    if(configMappingDetails.status === 'succeeded'){
+      if(configMappingDetails.data.status !== 'FAILURE'){        
+        setTableData(configMappingList)
+      }
+    }else if(configMappingDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+      resetGetConfigMappingDetails()
+    }
+  }, [configMappingDetails.status])
+
   const yearsList = []
   const currentYear = new Date().getFullYear();
 
@@ -420,6 +446,42 @@ const Configurations = () => {
     }
   }
 
+  const onClickPreview = () => {  
+    if(!company || !associateCompany || !location || !configType){
+      return toast.error(ERROR_MESSAGES.FILL_ALL);
+    }else{
+      const payload = {
+        search: '', 
+        filters: [
+          {
+            columnName:'ConfigurationType',
+            value: configType
+          },
+          {
+            columnName:'CompanyId',
+            value: company
+          },
+          {
+            columnName:'AssociateCompanyId',
+            value: associateCompany
+          },
+          {
+            columnName:'LocationId',
+            value: location
+          }
+        ],
+        pagination: {
+          pageSize: 200,
+          pageNumber: 1
+        },
+        sort: { columnName: 'companyId', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getInputModuleMappingDetails(payload))
+      setOpenPreviewModal(true)
+    }
+  }
+
   const downloadErrors = (e: any) => {
     preventDefault(e);
     const data: any = {};
@@ -453,8 +515,10 @@ const Configurations = () => {
     dispatch(resetEmployeeLeaveCreditUploadDetails())
     dispatch(resetEmployeeLeaveAvailedUploadDetails())
     dispatch(resetEmployeeWageUploadDetails())
+    dispatch(resetGetConfigMappingDetails())
 
     setOpenUploadModal(false)
+    setOpenPreviewModal(false)
     setConfigType('')
     setCompany('')
     setAssociateCompany('')
@@ -524,6 +588,74 @@ const Configurations = () => {
         </Box>
       </Modal>
 
+      {/* Preview Modal */}
+      <Modal
+        open={openPreviewModal}
+        onClose={() => {resetStateValues()}}
+      >
+
+        <Box sx={style}> 
+            <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Salary Components Preview</Typography>
+              <IconButton
+                onClick={() => {resetStateValues()}}
+              >
+                <IoMdClose />
+              </IconButton>
+            </Box>
+
+            <Box sx={{paddingX: '20px', display: 'flex', flexDirection:'column'}}>
+              {
+                tableData && tableData.length <= 0 ? 
+
+                <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
+                  <Typography variant='h5'>No Records Found</Typography>
+                </Box>
+                : 
+                <>
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', maxHeight:'380px', overflowY:'scroll'}}>
+                          <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                                  <TableRow>
+                                      <TableCell > S.no</TableCell>
+                                      <TableCell > Column Name</TableCell>
+                                      <TableCell > Column Position</TableCell>
+                                      <TableCell > Row Position</TableCell>
+                                      <TableCell > Ezycomp Field</TableCell>
+                                      <TableCell > Mapped</TableCell>
+                                  </TableRow>
+                              </TableHead>
+
+                              <TableBody>
+
+                              {tableData && tableData.map((each: any, index: number) => (
+                                  <TableRow
+                                    key={each._id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >   
+                                      <TableCell >{index+1}</TableCell>
+                                      <TableCell >{each.excelColumnHeaderName}</TableCell>
+                                      <TableCell >{each.columnPosition}</TableCell>
+                                      <TableCell >{each.rowPosition}</TableCell>
+                                      <TableCell >{each.employeeFieldName}</TableCell>
+                                      <TableCell >{each.mapped ? "Yes" : "No"}</TableCell>
+                                    </TableRow>
+                              ))}
+                              </TableBody>
+                          </Table>
+                  </TableContainer>
+                </>
+              }
+            </Box>
+
+            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:4}}>
+              <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {resetStateValues()}}>Cancel</Button>
+            </Box>
+
+        </Box>
+
+      </Modal>
+
       {loading ? <PageLoader>Loading...</PageLoader> : 
         <div >
 
@@ -532,7 +664,10 @@ const Configurations = () => {
               <Box sx={{backgroundColor:'#E2E3F8', paddingX: '20px', paddingY:'10px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                   <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'5px'}}>
                       <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Input Module Uploads</h5>
-                      <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
+                      <Box sx={{marginRight:'12px', display:'flex', alignItems:'center', width:'260px', justifyContent: 'space-between'}}>
+                        <Button onClick={onClickPreview} variant='contained' > Preview </Button>
+                        <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
+                      </Box>
                   </div>
                   <div style={{display:'flex', marginBottom:'10px'}}>
 

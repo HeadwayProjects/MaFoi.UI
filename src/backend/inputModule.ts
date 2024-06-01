@@ -90,6 +90,11 @@ export class InputModuleService {
         return await api.post(url, data, null, true)
     }
 
+    public async getInputModuleMappingDetails(data: any) {
+        const url = `/api/Configuration/GetAll`
+        return await api.post(url, data)
+    }
+
     // Dashboard
     public async getEmployeeDashboardCounts(data: any) {
         const url = `/api/Dashboard/EmployeeDashboardCounts`
