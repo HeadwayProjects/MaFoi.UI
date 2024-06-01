@@ -11,7 +11,7 @@ import { Alert } from 'react-bootstrap';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { FaUpload } from 'react-icons/fa';
 import Select from "react-select";
-import { callSalaryComponentsExcelHeaderToDbColumns, getSalaryComponentsDetails, resetSalaryConfigUploadDetails, resetSalaryExcelToDBColumnsDetails, resetSalaryUploadDetails, salaryComponentConfigUpload, salaryComponentUpload } from '../../../redux/features/salaryComponents.slice';
+import { callSalaryComponentsExcelHeaderToDbColumns, getSalaryComponentsDetails, getSalaryComponentsMappingDetails, resetSalaryComponentDetails, resetSalaryComponentMappingDetails, resetSalaryConfigUploadDetails, resetSalaryExcelToDBColumnsDetails, resetSalaryUploadDetails, salaryComponentConfigUpload, salaryComponentUpload } from '../../../redux/features/salaryComponents.slice';
 
 const styleUploadModal = {
   position: 'absolute' as 'absolute',
@@ -53,6 +53,9 @@ const SalaryComponents = () => {
   const salaryComponentList = salaryComponentDetails && salaryComponentDetails.data.list
   const salaryComponentCount = salaryComponentDetails && salaryComponentDetails.data.count 
 
+  const salaryComponentMappingDetails = useAppSelector((state) => state.salaryComponent.salaryComponentMappingDetails)
+  const salaryComponentMappingList = salaryComponentMappingDetails && salaryComponentMappingDetails.data.list
+
   console.log("salaryComponentList", salaryComponentList)
 
   const salaryConfigUploadDetails = useAppSelector((state) => state.salaryComponent.salaryConfigUploadDetails);
@@ -63,7 +66,7 @@ const SalaryComponents = () => {
   const configurationList = salaryConfigUploadDetails && salaryConfigUploadDetails.data.list
   const columnsList = getColumnsDetails && getColumnsDetails.data
 
-  const loading =  salaryComponentDetails.status === 'loading' || salaryUploadDetails.status === 'loading' || salaryConfigUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || salaryExcelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading'
+  const loading =  salaryComponentMappingDetails.status === 'loading' || salaryComponentDetails.status === 'loading' || salaryUploadDetails.status === 'loading' || salaryConfigUploadDetails.status === 'loading' || getColumnsDetails.status === 'loading' || salaryExcelHeaderToDbColumnsDetails.status === 'loading' || companiesDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [year, setYear] = React.useState('');
@@ -79,7 +82,8 @@ const SalaryComponents = () => {
   const [uploadData, setUploadData] =  React.useState<any>();
 
   const [openMappingModal, setOpenMappingModal] = React.useState(false);
-  
+  const [openPreviewModal, setOpenPreviewModal] = React.useState(false);
+
   const [tableData, setTableData] = React.useState<any>([])
 
   const handleChangeCompany = (event:any) => {
@@ -145,6 +149,26 @@ const SalaryComponents = () => {
     
     dispatch(getSalaryComponentsDetails(salaryPayload))
   },[])
+
+  useEffect(() => {
+    if(salaryComponentDetails.status === 'succeeded'){
+
+    }else if(salaryComponentDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+      resetSalaryComponentDetails()
+    }
+  },[salaryComponentDetails.status])
+
+  useEffect(() => {
+    if(salaryComponentMappingDetails.status === 'succeeded'){
+      if(salaryComponentMappingDetails.data.status !== 'FAILURE'){        
+        setTableData(salaryComponentMappingList)
+      }
+    }else if(salaryComponentMappingDetails.status === 'failed'){
+      toast.error(ERROR_MESSAGES.DEFAULT);
+      resetSalaryComponentMappingDetails()
+    }
+  }, [salaryComponentMappingDetails.status])
 
   useEffect(() => {
     if(salaryUploadDetails.status === 'succeeded'){
@@ -241,6 +265,30 @@ const SalaryComponents = () => {
     }
   }
 
+  const onClickPreview = () => {
+    if(!company){
+      return toast.error('Please Select Company');
+    }else{
+      const payload = {
+        search: '', 
+        filters: [
+          {
+            columnName:'companyId',
+            value: company
+          }
+        ],
+        pagination: {
+          pageSize: 200,
+          pageNumber: 1
+        },
+        sort: { columnName: 'companyId', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getSalaryComponentsMappingDetails(payload))
+      setOpenPreviewModal(true)
+    }
+  }
+
   const handleChangePage = (event: unknown, newPage: number) => {
 
     const filters = []
@@ -302,9 +350,11 @@ const SalaryComponents = () => {
     dispatch(resetGetColumnsDetails())
     dispatch(resetSalaryExcelToDBColumnsDetails())
     dispatch(resetSalaryUploadDetails())
+    dispatch(resetSalaryComponentMappingDetails())
 
     setOpenUploadModal(false)
     setOpenMappingModal(false)
+    setOpenPreviewModal(false)
     setCompany('')
     setYear('')
     setMonth('')
@@ -312,7 +362,7 @@ const SalaryComponents = () => {
     setTableData([])
   }
 
-  console.log('UploadDetails', salaryConfigUploadDetails, salaryUploadDetails, tableData)
+  console.log(salaryComponentMappingDetails, 'UploadDetails', salaryConfigUploadDetails, salaryUploadDetails, tableData)
 
   return (
     <div style={{ backgroundColor:'#ffffff', height:'100vh'}}>
@@ -490,6 +540,73 @@ const SalaryComponents = () => {
         </Box>
 
       </Modal>
+
+      {/* Preview Modal */}
+      <Modal
+        open={openPreviewModal}
+        onClose={() => {resetStateValues()}}
+      >
+
+        <Box sx={style}> 
+            <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+              <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Salary Components Preview</Typography>
+              <IconButton
+                onClick={() => {resetStateValues()}}
+              >
+                <IoMdClose />
+              </IconButton>
+            </Box>
+
+            <Box sx={{paddingX: '20px', display: 'flex', flexDirection:'column'}}>
+              {
+                tableData && tableData.length <= 0 ? 
+
+                <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
+                  <Typography variant='h5'>No Records Found</Typography>
+                </Box>
+                : 
+                <>
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', maxHeight:'380px', overflowY:'scroll'}}>
+                          <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                                  <TableRow>
+                                      <TableCell > S.no</TableCell>
+                                      <TableCell > Column Name</TableCell>
+                                      <TableCell > Column Position</TableCell>
+                                      <TableCell > Component Category</TableCell>
+                                      <TableCell > Ezycomp Field</TableCell>
+                                  </TableRow>
+                              </TableHead>
+
+                              <TableBody>
+
+                              {tableData && tableData.map((each: any, index: number) => (
+                                  <TableRow
+                                  key={each._id}
+                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                  >   
+                                      <TableCell >{index+1}</TableCell>
+                                      <TableCell >{each.companyExcelHeaderName}</TableCell>
+                                      <TableCell >{each.columnPosition}</TableCell>
+                                      <TableCell >{each.compoentCategory}</TableCell>
+                                      <TableCell >{each.ezcomp_SalaryComponentName}</TableCell>
+                                     </TableRow>
+                              ))}
+                              </TableBody>
+                          </Table>
+                  </TableContainer>
+                </>
+              }
+            </Box>
+
+            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:4}}>
+              <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {resetStateValues()}}>Cancel</Button>
+            </Box>
+
+        </Box>
+
+      </Modal>
+
       {loading ? <PageLoader>Loading...</PageLoader> : 
         <div >
 
@@ -498,7 +615,10 @@ const SalaryComponents = () => {
               <Box sx={{backgroundColor:'#E2E3F8', paddingX: '20px', paddingY:'10px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                   <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'5px'}}>
                       <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Salary Components</h5>
-                      <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
+                      <Box sx={{marginRight:'12px', display:'flex', alignItems:'center', width:'260px', justifyContent: 'space-between'}}>
+                        <Button onClick={onClickPreview} variant='contained'> Preview</Button>
+                        <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
+                      </Box>
                   </div>
                   <div style={{display:'flex', marginBottom:'10px'}}>
 
