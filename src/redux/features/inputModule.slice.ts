@@ -82,6 +82,11 @@ interface InputModuleState {
         data: any,
         error: string | null
     },
+    configMappingDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    }
 }
 
 const initialState: InputModuleState = { 
@@ -165,6 +170,11 @@ const initialState: InputModuleState = {
         data: '',
         error: null
     },
+    configMappingDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    }
 } as InputModuleState
 
 export const getAllCompaniesDetails = createAsyncThunk('inputModule/getAllCompaniesDetails', async (data: any) => {
@@ -247,6 +257,11 @@ export const employeeWageUpload = createAsyncThunk('inputModule/employeeWageUplo
     return await inputModuleService.employeeWageUpload(data);
 })
 
+export const getInputModuleMappingDetails = createAsyncThunk('inputModule/getInputModuleMappingDetails', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getInputModuleMappingDetails(data);
+})
+
 export const inputModuleSlice = createSlice({
     name: 'inputModule',
     initialState,
@@ -307,6 +322,13 @@ export const inputModuleSlice = createSlice({
                 error: null
             }
         },
+        resetGetConfigMappingDetails: (state) => {
+            state.configMappingDetails= {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        }
     },
     extraReducers: (builder) => builder
         .addCase(getAllCompaniesDetails.pending, (state) => {
@@ -580,8 +602,26 @@ export const inputModuleSlice = createSlice({
             state.employeeWageUploadDetails.status = 'failed'
             state.employeeWageUploadDetails.error = action.error.message
         })
+        
+        .addCase(getInputModuleMappingDetails.pending, (state) => {
+            state.configMappingDetails.status = 'loading'
+        })
+        .addCase(getInputModuleMappingDetails.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.configMappingDetails.status = 'succeeded'
+                state.configMappingDetails.data = action.payload.data
+            } else {
+                state.configMappingDetails.status = 'failed'
+                state.configMappingDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getInputModuleMappingDetails.rejected, (state, action: any) => {
+            state.configMappingDetails.status = 'failed'
+            state.configMappingDetails.error = action.error.message
+        })
+
 })
   
-export const { resetConfigUploadDetails, resetGetColumnsDetails, resetExcelHeaderToDbColumnsDetails, resetEmployeeUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveCreditUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeWageUploadDetails } = inputModuleSlice.actions
+export const { resetGetConfigMappingDetails, resetConfigUploadDetails, resetGetColumnsDetails, resetExcelHeaderToDbColumnsDetails, resetEmployeeUploadDetails, resetEmployeeAttendanceUploadDetails, resetEmployeeLeaveCreditUploadDetails, resetEmployeeLeaveAvailedUploadDetails, resetEmployeeWageUploadDetails } = inputModuleSlice.actions
 
 export default inputModuleSlice.reducer
