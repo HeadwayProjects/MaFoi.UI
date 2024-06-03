@@ -616,7 +616,7 @@ const SalaryComponents = () => {
                   <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'5px'}}>
                       <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Salary Components</h5>
                       <Box sx={{marginRight:'12px', display:'flex', alignItems:'center', width:'260px', justifyContent: 'space-between'}}>
-                        <Button onClick={onClickPreview} variant='contained'> Preview</Button>
+                        <Button onClick={onClickPreview} disabled={!company} variant='contained'> Preview</Button>
                         <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                       </Box>
                   </div>
@@ -674,6 +674,9 @@ const SalaryComponents = () => {
                                       <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > CTC PM</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Monthly Gross</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Present Days</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Gross Pay</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Total Deductions </TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Net Payable </TableSortLabel></TableCell>
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
@@ -692,6 +695,9 @@ const SalaryComponents = () => {
                                       <TableCell >{each.ctC_PM}</TableCell>
                                       <TableCell >{each.monthly_Gross}</TableCell>
                                       <TableCell >{each.presentDays}</TableCell>
+                                      <TableCell >{each.grossPay}</TableCell>
+                                      <TableCell >{each.total_Deductions}</TableCell>
+                                      <TableCell >{each.netPayable}</TableCell>
                                       {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>

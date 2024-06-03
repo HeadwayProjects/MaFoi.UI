@@ -323,8 +323,8 @@ const Configurations = () => {
         dispatch(getColumns('Employee'))
       }else if(configType === 'Employee attendance'){
         dispatch(getColumns('employeeattendance'))
-      }else if(configType === 'Leave balance'){
-        dispatch(getColumns('employeeleavebalance'))
+      }else if(configType === 'Leave credit'){
+        dispatch(getColumns('employeeleavecredit'))
       }else if(configType === 'Leave availed'){
         dispatch(getColumns('employeeleaveavailed'))
       }else if(configType === 'Employee Wage'){
@@ -354,7 +354,7 @@ const Configurations = () => {
         dispatch(employeeUpload(formData))
       }else if(configType === 'Employee attendance'){
         dispatch(employeeAttendanceUpload(formData))
-      }else if(configType === 'Leave balance'){
+      }else if(configType === 'Leave credit'){
         dispatch(employeeLeaveCreditUpload(formData))
       }else if(configType === 'Leave availed'){
         dispatch(employeeLeaveAvailedUpload(formData))
@@ -400,7 +400,7 @@ const Configurations = () => {
     {label: "December", value: "12"},
   ];
 
-  const configurationTypes = ["Employee", "Leave balance", 'Leave availed', 'Employee attendance', 'Employee Wage' ]
+  const configurationTypes = ["Employee", "Leave credit", 'Leave availed', 'Employee attendance', 'Employee Wage' ]
 
   const onClickUpload = () => {
     if(!company || !associateCompany || !stateName || !location || !year || !month || !configType){
@@ -427,7 +427,7 @@ const Configurations = () => {
       dispatch(employeeUpload(formData))
     }else if(configType === 'Employee attendance'){
       dispatch(employeeAttendanceUpload(formData))
-    }else if(configType === 'Leave balance'){
+    }else if(configType === 'Leave credit'){
       dispatch(employeeLeaveCreditUpload(formData))
     }else if(configType === 'Leave availed'){
       dispatch(employeeLeaveAvailedUpload(formData))
