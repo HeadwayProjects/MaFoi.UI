@@ -596,7 +596,7 @@ const Configurations = () => {
 
         <Box sx={style}> 
             <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-              <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Salary Components Preview</Typography>
+              <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}> {configType} Mapping Details </Typography>
               <IconButton
                 onClick={() => {resetStateValues()}}
               >
@@ -665,7 +665,7 @@ const Configurations = () => {
                   <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'5px'}}>
                       <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Input Module Uploads</h5>
                       <Box sx={{marginRight:'12px', display:'flex', alignItems:'center', width:'260px', justifyContent: 'space-between'}}>
-                        <Button onClick={onClickPreview} variant='contained' > Preview </Button>
+                        <Button onClick={onClickPreview} disabled={!configType || !company || !associateCompany || !location} variant='contained' > Preview </Button>
                         <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                       </Box>
                   </div>
