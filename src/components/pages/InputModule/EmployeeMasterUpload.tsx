@@ -51,7 +51,7 @@ const EmployeeMasterUpload = () => {
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
-  const bulkDeleteEmployeeDetails = useAppSelector((state) => state.holidayList.bulkDeleteHolidaysDetails)
+  const bulkDeleteEmployeeDetails = useAppSelector((state) => state.employeeMaster.bulkDeleteEmployeeDetails)
 
   const { exportEmployees, exporting } = useExportEmployees((response: any) => {
     downloadFileContent({

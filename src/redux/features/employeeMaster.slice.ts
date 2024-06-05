@@ -21,6 +21,15 @@ interface EmployeeMasterState {
         status: string,
         data: any,
         error: string | null
+    }, employeesWageDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    bulkDeleteEmployeeDetails: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -147,19 +156,18 @@ export const employeeMasterSlice = createSlice({
         .addCase(getEmployeesLeaveAvailed.pending, (state) => {
             state.employeesLeaveAvailedDetails.status = 'loading'
         })
-        
-        .addCase(getEmployeesWage.fulfilled, (state, action: any) => {
+        .addCase(getEmployeesLeaveAvailed.fulfilled, (state, action: any) => {
             if(action.payload.data) {
-                state.employeesWageDetails.status = 'succeeded'
-                state.employeesWageDetails.data = action.payload.data
+                state.employeesLeaveAvailedDetails.status = 'succeeded'
+                state.employeesLeaveAvailedDetails.data = action.payload.data
             } else {
-                state.employeesWageDetails.status = 'failed'
-                state.employeesWageDetails.error = action.payload.message;
+                state.employeesLeaveAvailedDetails.status = 'failed'
+                state.employeesLeaveAvailedDetails.error = action.payload.message;
             }
         })
-        .addCase(getEmployeesWage.rejected, (state, action: any) => {
-            state.employeesWageDetails.status = 'failed'
-            state.employeesWageDetails.error = action.error.message
+        .addCase(getEmployeesLeaveAvailed.rejected, (state, action: any) => {
+            state.employeesLeaveAvailedDetails.status = 'failed'
+            state.employeesLeaveAvailedDetails.error = action.error.message
         })
     
         .addCase(bulkDeleteEmployee.pending, (state) => {
