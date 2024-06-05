@@ -2,18 +2,18 @@ import React, { useEffect } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, Checkbox, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
-import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
+import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetBulkDeleteHolidaysDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
 import { useExportEmployees, useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { getEmployees } from '../../../redux/features/employeeMaster.slice';
+import { bulkDeleteEmployee, getEmployees } from '../../../redux/features/employeeMaster.slice';
 
 
 const style = {
@@ -51,6 +51,7 @@ const EmployeeMasterUpload = () => {
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
+  const bulkDeleteEmployeeDetails = useAppSelector((state) => state.holidayList.bulkDeleteHolidaysDetails)
 
   const { exportEmployees, exporting } = useExportEmployees((response: any) => {
     downloadFileContent({
@@ -100,6 +101,8 @@ const EmployeeMasterUpload = () => {
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
   const [uploadData, setUploadData] =  React.useState<any>();
   const [uploadError, setUploadError] = React.useState(false);
+  const [selectedEmployee, setSelectedEmployee] = React.useState<any>([]);
+  const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setCompany(event.target.value);
@@ -1252,8 +1255,107 @@ const EmployeeMasterUpload = () => {
     setPage(0);
   };
 
+  const onClickAllCheckBox = () => {
+    if (selectedEmployee.length !== selectedEmployee.length) {
+      const allIds = employees && employees.map((each: any) => each.id)
+      setSelectedEmployee(allIds)
+    } else {
+      setSelectedEmployee([])
+    }
+  }
+
+  const onClickIndividualCheckBox = (id: any) => {
+    if (selectedEmployee.includes(id)) {
+      const updatedSelectedEmployee: any = selectedEmployee.filter((each: any) => each != id)
+      setSelectedEmployee(updatedSelectedEmployee)
+    } else {
+      setSelectedEmployee([...selectedEmployee, id])
+    }
+  }
+
+  const onClickBulkDelete = () => {
+    setOpenBulkDeleteModal(true)
+  }
+
+  useEffect(() => {
+    if (bulkDeleteEmployeeDetails.status === 'succeeded') {
+      toast.success(`Employees deleted successfully.`)
+      setSelectedEmployee([])
+      dispatch(resetBulkDeleteHolidaysDetails())
+      setOpenBulkDeleteModal(false)
+      const EmployeeDefaultPayload: any = {
+        search: "",
+        filters: [],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'name', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getHolidaysList(EmployeeDefaultPayload))
+    } else if (bulkDeleteEmployeeDetails.status === 'failed') {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [bulkDeleteEmployeeDetails.status])
+
+
+  const onClickConfirmBulkDelete = () => {
+    dispatch(bulkDeleteEmployee(selectedEmployee))
+    let type = 'asc'
+    setActiveSort('restricted');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+    setCompany('')
+    setAssociateCompany('')
+    setLocation('')
+
+    const EmployeePayload: any = {
+      search: searchInput,
+      filters: [],
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'name', order: type },
+      "includeCentral": true
+    }
+    dispatch(getEmployees(EmployeePayload))
+  }
+  // <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedHolidays && selectedHolidays.length === 0}> Bulk Delete</Button>
+
   return (
-    <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
+    <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
+      
+      <Modal
+        open={openBulkDeleteModal}
+        onClose={() => setOpenBulkDeleteModal(false)}
+      >
+        <Box sx={style}>
+          <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Delete Employees</Typography>
+            <IconButton
+              onClick={() => setOpenBulkDeleteModal(false)}
+            >
+              <IoMdClose />
+            </IconButton>
+          </Box>
+          <Box sx={{ padding: '20px', backgroundColor: '#ffffff' }}>
+            <Box>
+              <Typography variant='h5'>There are {selectedEmployee.length} record(s) selected for deleting.</Typography>
+              <Typography mt={2}>Are you sure you want to delete all of them ?</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+              <Button variant='outlined' color="error" onClick={() => setOpenBulkDeleteModal(false)}>No</Button>
+              <Button variant='contained' onClick={onClickConfirmBulkDelete}>Yes</Button>
+            </Box>
+          </Box>
+        </Box>
+      </Modal>
 
       {loading ? <PageLoader>Loading...</PageLoader> : 
       
@@ -1261,7 +1363,8 @@ const EmployeeMasterUpload = () => {
              <Box sx={{paddingX: '20px', paddingY:'10px',}}>
                 <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
-                        <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Master</h5>
+                <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Master</h5>
+                <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedEmployee && selectedEmployee.length === 0}> Bulk Delete</Button>
                         <button onClick={onClickExport} disabled={!employees} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employees ? '#707070': '#ffffff' , color: !employees ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                     </div>
                     <div style={{display:'flex'}}>
@@ -1458,7 +1561,9 @@ const EmployeeMasterUpload = () => {
                   <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
-                                  <TableRow>
+                        <TableRow>
+                          <TableCell><Checkbox checked={(selectedEmployee && selectedEmployee.length) === (employees && employees.length)} onClick={onClickAllCheckBox} /></TableCell>
+                          
                                       <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB}> DOB</TableSortLabel></TableCell>
@@ -1470,13 +1575,13 @@ const EmployeeMasterUpload = () => {
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
-
                               <TableBody>
                               {employees && employees.map((each: any, index: number) => (
                                   <TableRow
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                  >   
+                                >   
+                                  <TableCell><Checkbox checked={selectedEmployee.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)} /></TableCell>
                                       <TableCell >{each.code}</TableCell>
                                       <TableCell >{each.name}</TableCell>
                                       <TableCell >{new Date(each.dateOfBirth).toLocaleDateString()}</TableCell>
