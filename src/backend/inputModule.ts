@@ -241,6 +241,10 @@ export class InputModuleService {
         const url = `/api/Employee/GetAlEmployeeLeaveAvailed`
         return await api.post(url, data)
     }
+    public async bulkDeleteEmployees(data: any) {
+        const url = `/api/Employee/BulkDelete`
+        return await api.post(url, data)
+    }
 
     //Salary Components
     public async salaryComponentUpload(data: any) {

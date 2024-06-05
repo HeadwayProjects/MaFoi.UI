@@ -21,6 +21,11 @@ interface EmployeeMasterState {
         status: string,
         data: any,
         error: string | null
+    },
+    bulkDeleteEmployeeDetails: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -41,6 +46,11 @@ const initialState: EmployeeMasterState = {
         error: null
     },
     employeesLeaveAvailedDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+      bulkDeleteEmployeeDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -70,6 +80,10 @@ export const getEmployeesLeaveAvailed = createAsyncThunk('employeeMaster/getEmpl
 export const getEmployeesWage = createAsyncThunk('employeeMaster/getEmployeesWage', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.getEmployeesWage(data);
+})
+export const bulkDeleteEmployee = createAsyncThunk('employeeMaster/getEmployeesBulk', async (id: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.bulkDeleteEmployees(id);
 })
 
 export const employeeMasterSlice = createSlice({
@@ -146,8 +160,25 @@ export const employeeMasterSlice = createSlice({
             state.employeesLeaveAvailedDetails.status = 'failed'
             state.employeesLeaveAvailedDetails.error = action.error.message
         })
+    
+        .addCase(bulkDeleteEmployee.pending, (state) => {
+            state.bulkDeleteEmployeeDetails.status = 'loading'
+        })
+        .addCase(bulkDeleteEmployee.fulfilled, (state, action: any) => {
+            if (action.payload) {
+                state.bulkDeleteEmployeeDetails.status = 'succeeded'
+                state.bulkDeleteEmployeeDetails.data = action.payload.data
+            } else {
+                state.bulkDeleteEmployeeDetails.status = 'failed'
+                state.bulkDeleteEmployeeDetails.error = action.payload.message;
+            }
+        })
+        .addCase(bulkDeleteEmployee.rejected, (state, action: any) => {
+            state.bulkDeleteEmployeeDetails.status = 'failed'
+            state.bulkDeleteEmployeeDetails.error = action.error.message
+        })
 })
   
-export const { } = employeeMasterSlice.actions
+export const {  } = employeeMasterSlice.actions
 
 export default employeeMasterSlice.reducer
