@@ -21,7 +21,17 @@ interface EmployeeMasterState {
         status: string,
         data: any,
         error: string | null
-    }
+    },
+    employeesWageDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    bulkDeleteEmployeeDetails: {
+        status: string,
+        data: any,
+        error: string | null
+  }
 }
 
 const initialState: EmployeeMasterState = { 
@@ -81,10 +91,11 @@ export const getEmployeesWage = createAsyncThunk('employeeMaster/getEmployeesWag
     const inputModuleService = new InputModuleService();
     return await inputModuleService.getEmployeesWage(data);
 })
-export const bulkDeleteEmployee = createAsyncThunk('employeeMaster/getEmployeesBulk', async (id: any) => {
+export const bulkDeleteEmployees = createAsyncThunk('employeeMaster/bulkDeleteEmployees', async (id: any) => {
     const inputModuleService = new InputModuleService();
-    return await inputModuleService.bulkDeleteEmployees(id);
+    return await inputModuleService.bulkDeleteHolidays(id);
 })
+
 
 export const employeeMasterSlice = createSlice({
     name: 'employeeMaster',
