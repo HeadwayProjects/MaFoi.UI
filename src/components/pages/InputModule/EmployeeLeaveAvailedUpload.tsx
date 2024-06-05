@@ -22,6 +22,8 @@ const EmployeeLeaveAvailedUpload = () => {
 
   const employeesLeaveAvailedDetails = useAppSelector((state) => state.employeeMaster.employeesLeaveAvailedDetails)
 
+  console.log('empleavevavailed',employeesLeaveAvailedDetails);
+
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);

@@ -826,6 +826,7 @@ console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
                                       <TableCell > <TableSortLabel active={activeSort === 'employeeCode'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'wageMonth'} direction={sortType} onClick={onClickSortWageMonth}> Wage Year</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'wageMonth'} direction={sortType} onClick={onClickSortWageMonth}> Wage Month</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'pL_EL_AL_MonthlyCredit'} direction={sortType} onClick={onClickSortPlElAlCredit}> PL-EL-AL Credit</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'slMonthlyCredit'} direction={sortType} onClick={onClickSortSlCredit}> SL Credit</TableSortLabel></TableCell>
@@ -840,6 +841,7 @@ console.log('employeesLeaveCreditDetails',employeesLeaveCredit);
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >   
                                       <TableCell >{each.employeeCode}</TableCell>
+                                      <TableCell >{each.year}</TableCell>
                                       <TableCell >{each.wageMonth}</TableCell>
                                       <TableCell >{each.pL_EL_AL_MonthlyCredit}</TableCell>
                                       <TableCell >{each.slMonthlyCredit}</TableCell>

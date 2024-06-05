@@ -238,7 +238,7 @@ export class InputModuleService {
     }
     
     public async getEmployeesWage(data: any) {
-        const url = `/api/Employee/GetAlEmployeeLeaveAvailed`
+        const url = `/api/Employee/GetAlEmployeeWage`
         return await api.post(url, data)
     }
 
