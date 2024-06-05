@@ -13,27 +13,29 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { getEmployees, getEmployeesAttendance, getEmployeesLeaveAvailed, getEmployeesLeaveCredit } from '../../../redux/features/employeeMaster.slice';
+import { getEmployees, getEmployeesAttendance, getEmployeesLeaveAvailed, getEmployeesLeaveCredit, getEmployeesWage } from '../../../redux/features/employeeMaster.slice';
 
 const EmployeeWageUpload = () => {
 
   const dispatch = useAppDispatch();
 
-  const employeesLeaveAvailedDetails = useAppSelector((state) => state.employeeMaster.employeesLeaveAvailedDetails)
+  const employeesWageDetails = useAppSelector((state) => state.employeeMaster.employeesWageDetails)
+
+
 
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
 
-  const employeesLeaveAvailed = employeesLeaveAvailedDetails.data.list
-  const employeesLeaveAvailedCount = employeesLeaveAvailedDetails.data.count 
-  console.log("employeesLeaveAvailed", employeesLeaveAvailed, 'employeesLeaveAvailedCount', employeesLeaveAvailedCount)
+  const employeesWage = employeesWageDetails.data.list
+  const employeesWageCount = employeesWageDetails.data.count 
+  console.log("employeesLeaveAvailed", employeesWage, 'employeesLeaveAvailedCount', employeesWageCount)
 
   const companies = companiesDetails.data.list
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading =  employeesLeaveAvailedDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading =  employeesWageDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -65,7 +67,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
   };
 
   const handleChangeAssociateCompany = (event:any) => {
@@ -92,7 +94,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
   };
 
   const handleChangeLocation = (event:any) => {
@@ -122,7 +124,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
   };
   
   const handleChangeYear = (event:any) => {
@@ -155,7 +157,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
   };
   
   const handleChangeMonth = (event:any) => {
@@ -192,7 +194,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
   };
 
   const handleChangeSearchInput = (event:any) => {
@@ -211,7 +213,7 @@ const EmployeeWageUpload = () => {
       "includeCentral": true
     }
 
-    dispatch(getEmployeesLeaveAvailed(employeesWagePayload))
+    dispatch(getEmployeesWage(employeesWagePayload))
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
     dispatch(getAllCompaniesDetails(companiesPayload))
   },[])
@@ -235,12 +237,12 @@ const EmployeeWageUpload = () => {
   }, [associateCompany])
 
   useEffect(() => {
-    if(employeesLeaveAvailedDetails.status === 'succeeded'){
+    if(employeesWageDetails.status === 'succeeded'){
 
-    }else if(employeesLeaveAvailedDetails.status === 'failed'){
+    }else if(employeesWageDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  },[employeesLeaveAvailedDetails.status])
+  },[employeesWageDetails.status])
 
   const yearsList = []
   const currentYear = new Date().getFullYear();
@@ -275,7 +277,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
   }
 
   const onClickClearSearch = () => {
@@ -289,7 +291,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'EmployeeCode', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
     setSearchInput('')
   }
 
@@ -345,7 +347,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'employeeCode', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
   }
 
   const onClickSortName = () => {
@@ -400,7 +402,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'employeeName', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
   }
 
   const onClickSortNoOfDays = () => {
@@ -455,7 +457,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'noOfDays', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
     
   }
 
@@ -511,7 +513,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'leaveStartDate', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
     
   }
 
@@ -567,7 +569,7 @@ const EmployeeWageUpload = () => {
       sort: { columnName: 'leaveEndDate', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
     
   }
   
@@ -616,7 +618,7 @@ const EmployeeWageUpload = () => {
       "includeCentral": true
     }
 
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
     setPage(newPage);
   };
 
@@ -665,7 +667,7 @@ const EmployeeWageUpload = () => {
       "includeCentral": true
     }
 
-    dispatch(getEmployeesLeaveAvailed(payload))
+    dispatch(getEmployeesWage(payload))
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -866,7 +868,7 @@ const EmployeeWageUpload = () => {
 
             <Box sx={{paddingX: '20px'}}>
               {
-                employeesLeaveAvailed && employeesLeaveAvailed.length <= 0 ? 
+                employeesWage && employeesWage.length <= 0 ? 
 
                 <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
                   <Typography variant='h5'>No Records Found</Typography>
@@ -878,25 +880,26 @@ const EmployeeWageUpload = () => {
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
                                       <TableCell > <TableSortLabel active={activeSort === 'employeeCode'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'employeeName'} direction={sortType} onClick={onClickSortName}>Name</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'noOfDays'} direction={sortType} onClick={onClickSortNoOfDays}>Number Of Days</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'leaveStartDate'} direction={sortType} onClick={onClickSortStartDate}>Start Date</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortEndDate}>End Date</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'noOfDays'} direction={sortType} onClick={onClickSortNoOfDays}>Month</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'leaveStartDate'} direction={sortType} onClick={onClickSortStartDate}>Standard Days</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortEndDate}>WorkDays</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortEndDate}>House Rent Allowance</TableSortLabel></TableCell>
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
 
                               <TableBody>
-                              {employeesLeaveAvailed && employeesLeaveAvailed.map((each: any, index: number) => (
+                              {employeesWage && employeesWage.map((each: any, index: number) => (
                                   <TableRow
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >   
                                       <TableCell >{each.employeeCode}</TableCell>
-                                      <TableCell >{each.employeeName}</TableCell>
-                                      <TableCell >{each.noOfDays}</TableCell>
-                                      <TableCell >{each.leaveStartDate}</TableCell>
-                                      <TableCell >{each.leaveEndDate}</TableCell>
+                                     
+                                      <TableCell >{each.month}</TableCell>
+                                      <TableCell >{each.standardDays}</TableCell>
+                                      <TableCell >{each.workDays}</TableCell>
+                                      <TableCell >{each.houseRentAllowance}</TableCell>
                                       {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
@@ -937,7 +940,7 @@ const EmployeeWageUpload = () => {
                       }
                       rowsPerPageOptions={[10, 25, 50, 100]}
                       component="div"
-                      count={employeesLeaveAvailedCount}
+                      count={employeesWage}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}
