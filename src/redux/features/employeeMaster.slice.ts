@@ -21,7 +21,9 @@ interface EmployeeMasterState {
         status: string,
         data: any,
         error: string | null
-    }, employeesWageDetails: {
+    },
+    employeesWageDetails: {
+
         status: string,
         data: any,
         error: string | null
@@ -90,10 +92,11 @@ export const getEmployeesWage = createAsyncThunk('employeeMaster/getEmployeesWag
     const inputModuleService = new InputModuleService();
     return await inputModuleService.getEmployeesWage(data);
 })
-export const bulkDeleteEmployee = createAsyncThunk('employeeMaster/getEmployeesBulk', async (id: any) => {
+export const bulkDeleteEmployees = createAsyncThunk('employeeMaster/bulkDeleteEmployees', async (id: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.bulkDeleteEmployees(id);
 })
+
 
 export const employeeMasterSlice = createSlice({
     name: 'employeeMaster',
@@ -170,10 +173,10 @@ export const employeeMasterSlice = createSlice({
             state.employeesLeaveAvailedDetails.error = action.error.message
         })
     
-        .addCase(bulkDeleteEmployee.pending, (state) => {
+        .addCase(bulkDeleteEmployees.pending, (state) => {
             state.bulkDeleteEmployeeDetails.status = 'loading'
         })
-        .addCase(bulkDeleteEmployee.fulfilled, (state, action: any) => {
+        .addCase(bulkDeleteEmployees.fulfilled, (state, action: any) => {
             if (action.payload) {
                 state.bulkDeleteEmployeeDetails.status = 'succeeded'
                 state.bulkDeleteEmployeeDetails.data = action.payload.data
@@ -182,7 +185,7 @@ export const employeeMasterSlice = createSlice({
                 state.bulkDeleteEmployeeDetails.error = action.payload.message;
             }
         })
-        .addCase(bulkDeleteEmployee.rejected, (state, action: any) => {
+        .addCase(bulkDeleteEmployees.rejected, (state, action: any) => {
             state.bulkDeleteEmployeeDetails.status = 'failed'
             state.bulkDeleteEmployeeDetails.error = action.error.message
         })

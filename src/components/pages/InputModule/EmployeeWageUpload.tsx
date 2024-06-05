@@ -940,7 +940,7 @@ const EmployeeWageUpload = () => {
                       }
                       rowsPerPageOptions={[10, 25, 50, 100]}
                       component="div"
-                      count={employeesWage}
+                      count={employeesWageCount}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       onPageChange={handleChangePage}
