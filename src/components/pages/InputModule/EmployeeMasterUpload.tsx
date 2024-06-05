@@ -13,7 +13,7 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { bulkDeleteEmployee, getEmployees } from '../../../redux/features/employeeMaster.slice';
+import { bulkDeleteEmployees, getEmployees } from '../../../redux/features/employeeMaster.slice';
 
 
 const style = {
@@ -1281,7 +1281,7 @@ const EmployeeMasterUpload = () => {
   }
 
   const onClickConfirmBulkDelete = () => {
-    dispatch(bulkDeleteEmployee(selectedEmployees))
+    dispatch(bulkDeleteEmployees(selectedEmployees))
     let type = 'asc'
     setActiveSort('restricted');
     if (sortType === 'asc') {
