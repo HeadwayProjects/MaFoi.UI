@@ -55,16 +55,16 @@ const EmployeeMasterUpload = () => {
 
   const { exportEmployees, exporting } = useExportEmployees((response: any) => {
     downloadFileContent({
-        name: 'Employees.xlsx',
-        type: response.headers['content-type'],
-        content: response.data
+      name: 'Employees.xlsx',
+      type: response.headers['content-type'],
+      content: response.data
     });
   }, () => {
-      toast.error(ERROR_MESSAGES.DEFAULT);
+    toast.error(ERROR_MESSAGES.DEFAULT);
   });
 
   const employees = employeeDetails.data.list
-  const employeesCount = employeeDetails.data.count 
+  const employeesCount = employeeDetails.data.count
   console.log("employees", employees, 'employeesCount', employeesCount)
 
   const holidays = holidayListDetails.data.list
@@ -73,13 +73,13 @@ const EmployeeMasterUpload = () => {
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading = exporting  || bulkDeleteEmployeeDetails.status === 'loading'  || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || employeeDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || bulkDeleteEmployeeDetails.status === 'loading' || editHolidayDetails.status === 'loading' || uploadHolidayDetails.status === 'loading' || addHolidayDetails.status === 'loading' || deleteHolidayDetails.status === 'loading' || employeeDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
   const [location, setLocation] = React.useState('');
   const [year, setYear] = React.useState('');
-  const [month, setMonth] =  React.useState('');
+  const [month, setMonth] = React.useState('');
   const [day, setDay] = React.useState('');
   const [name, setName] = React.useState('')
 
@@ -99,26 +99,26 @@ const EmployeeMasterUpload = () => {
 
   const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
-  const [uploadData, setUploadData] =  React.useState<any>();
+  const [uploadData, setUploadData] = React.useState<any>();
   const [uploadError, setUploadError] = React.useState(false);
 
 
   const [selectedEmployees, setSelectedEmployees] = React.useState<any>([]);
   const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
 
-  const handleChangeCompany = (event:any) => {
+  const handleChangeCompany = (event: any) => {
     setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setCompany(event.target.value);
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters: [
         {
-          columnName:'companyId',
+          columnName: 'companyId',
           value: event.target.value
         }
       ],
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
@@ -126,26 +126,26 @@ const EmployeeMasterUpload = () => {
     dispatch(getEmployees(employeesPayload))
   };
 
-  const handleChangeAssociateCompany = (event:any) => {
+  const handleChangeAssociateCompany = (event: any) => {
     setLocation('')
     setYear('')
     setMonth('')
     setAssociateCompany(event.target.value);
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters: [
         {
-          columnName:'companyId',
+          columnName: 'companyId',
           value: company
         },
         {
-          columnName:'associateCompanyId',
+          columnName: 'associateCompanyId',
           value: event.target.value
         }
       ],
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
@@ -153,125 +153,125 @@ const EmployeeMasterUpload = () => {
     dispatch(getEmployees(employeesPayload))
   };
 
-  const handleChangeLocation = (event:any) => {
+  const handleChangeLocation = (event: any) => {
     setYear('')
     setMonth('')
     setLocation(event.target.value);
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters: [
         {
-          columnName:'companyId',
+          columnName: 'companyId',
           value: company
         },
         {
-          columnName:'associateCompanyId',
+          columnName: 'associateCompanyId',
           value: associateCompany
         },
         {
-          columnName:'locationId',
+          columnName: 'locationId',
           value: event.target.value.split('^')[0]
         }
       ],
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
   };
-  
-  const handleChangeYear = (event:any) => {
+
+  const handleChangeYear = (event: any) => {
     setYear('')
     setYear(event.target.value.toString());
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters: [
         {
-          columnName:'companyId',
+          columnName: 'companyId',
           value: company
         },
         {
-          columnName:'associateCompanyId',
+          columnName: 'associateCompanyId',
           value: associateCompany
         },
         {
-          columnName:'locationId',
+          columnName: 'locationId',
           value: location
         },
         {
-          columnName:'year',
+          columnName: 'year',
           value: event.target.value.toString()
         }
       ],
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
   };
-  
-  const handleChangeMonth = (event:any) => {
+
+  const handleChangeMonth = (event: any) => {
     setMonth(event.target.value);
     const monthName = event.target.value
-    let monthKey:any
-    if(monthName === 'January'){
+    let monthKey: any
+    if (monthName === 'January') {
       monthKey = 1
-    }else if(monthName === 'February'){
+    } else if (monthName === 'February') {
       monthKey = 2
-    }else if(monthName === 'March'){
+    } else if (monthName === 'March') {
       monthKey = 3
-    }else if(monthName === 'April'){
+    } else if (monthName === 'April') {
       monthKey = 4
-    }else if(monthName === 'May'){
+    } else if (monthName === 'May') {
       monthKey = 5
-    }else if(monthName === 'June'){
+    } else if (monthName === 'June') {
       monthKey = 6
-    }else if(monthName === 'July'){
+    } else if (monthName === 'July') {
       monthKey = 7
-    }else if(monthName === 'August'){
+    } else if (monthName === 'August') {
       monthKey = 8
-    }else if(monthName === 'September'){
+    } else if (monthName === 'September') {
       monthKey = 9
-    }else if(monthName === 'October'){
+    } else if (monthName === 'October') {
       monthKey = 10
-    }else if(monthName === 'November'){
+    } else if (monthName === 'November') {
       monthKey = 11
-    }else if(monthName === 'December'){
+    } else if (monthName === 'December') {
       monthKey = 12
     }
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters: [
         {
-          columnName:'companyId',
+          columnName: 'companyId',
           value: company
         },
         {
-          columnName:'associateCompanyId',
+          columnName: 'associateCompanyId',
           value: associateCompany
         },
         {
-          columnName:'locationId',
+          columnName: 'locationId',
           value: location
         },
         {
-          columnName:'year',
+          columnName: 'year',
           value: year
         },
         {
-          columnName:'month',
+          columnName: 'month',
           value: monthKey.toString()
         }
       ],
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
@@ -279,28 +279,28 @@ const EmployeeMasterUpload = () => {
     dispatch(getEmployees(employeesPayload))
   };
 
-  const handleChangeSearchInput = (event:any) => {
+  const handleChangeSearchInput = (event: any) => {
     setSearchInput(event.target.value)
   }
 
   const handleChangeOptionalHoliday = (event: any) => {
-    if('true' === event.target.value){
+    if ('true' === event.target.value) {
       setOptionalHoliday(true)
-    }else{
+    } else {
       setOptionalHoliday(false)
     }
   }
 
   const handleChangeRestrictedHoliday = (event: any) => {
-    if('true' === event.target.value){
+    if ('true' === event.target.value) {
       setRestrictedHoliday(true)
-    }else{
+    } else {
       setRestrictedHoliday(false)
     }
   }
 
   useEffect(() => {
-    const employeesPayload: any =  { 
+    const employeesPayload: any = {
       search: "",
       filters: [],
       pagination: {
@@ -314,41 +314,41 @@ const EmployeeMasterUpload = () => {
     dispatch(getEmployees(employeesPayload))
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
     dispatch(getAllCompaniesDetails(companiesPayload))
-  },[])
+  }, [])
 
   useEffect(() => {
-    const payload:any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: company }] }
-    if(company){
+    const payload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: company }] }
+    if (company) {
       dispatch(getAssociateCompanies(payload))
     }
   }, [company])
 
   useEffect(() => {
-    const payload:any ={
+    const payload: any = {
       ...DEFAULT_OPTIONS_PAYLOAD, filters: [
-          { columnName: 'companyId', value: associateCompany }],
+        { columnName: 'companyId', value: associateCompany }],
       sort: { columnName: 'locationName', order: 'asc' }
     }
-    if(associateCompany){
+    if (associateCompany) {
       dispatch(getLocations(payload))
     }
   }, [associateCompany])
 
   useEffect(() => {
-    if(employeeDetails.status === 'succeeded'){
+    if (employeeDetails.status === 'succeeded') {
 
-    }else if(employeeDetails.status === 'failed'){
+    } else if (employeeDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  },[employeeDetails.status])
+  }, [employeeDetails.status])
 
   useEffect(() => {
-    if(deleteHolidayDetails.status === 'succeeded'){
+    if (deleteHolidayDetails.status === 'succeeded') {
       toast.success(`${holiday.name} deleted successfully.`)
       setHoliday({})
       dispatch(resetDeleteHolidayDetails())
       setOpenDeleteModal(false)
-      const HolidayListDefaultPayload: any =  { 
+      const HolidayListDefaultPayload: any = {
         search: "",
         filters: [],
         pagination: {
@@ -359,17 +359,17 @@ const EmployeeMasterUpload = () => {
         "includeCentral": true
       }
       dispatch(getHolidaysList(HolidayListDefaultPayload))
-    }else if(deleteHolidayDetails.status === 'failed'){
+    } else if (deleteHolidayDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [deleteHolidayDetails.status])
 
   useEffect(() => {
-    if(addHolidayDetails.status === 'succeeded'){
+    if (addHolidayDetails.status === 'succeeded') {
       toast.success(`Holiday Added successfully.`)
       dispatch(resetAddHolidayDetails())
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
-      const HolidayListDefaultPayload: any =  { 
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);
+      const HolidayListDefaultPayload: any = {
         search: "",
         filters: [],
         pagination: {
@@ -380,20 +380,20 @@ const EmployeeMasterUpload = () => {
         "includeCentral": true
       }
       dispatch(getHolidaysList(HolidayListDefaultPayload))
-    }else if(addHolidayDetails.status === 'failed'){
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+    } else if (addHolidayDetails.status === 'failed') {
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [addHolidayDetails.status])
 
   useEffect(() => {
-    if(uploadHolidayDetails.status === 'succeeded'){
-      if(uploadHolidayDetails.data.size === 0){
+    if (uploadHolidayDetails.status === 'succeeded') {
+      if (uploadHolidayDetails.data.size === 0) {
         toast.success(`Holiday List Uploaded successfully.`)
         dispatch(resetUploadHolidayDetails())
         setOpenUploadModal(false)
         setUploadError(false)
-        const HolidayListDefaultPayload: any =  { 
+        const HolidayListDefaultPayload: any = {
           search: "",
           filters: [],
           pagination: {
@@ -404,20 +404,20 @@ const EmployeeMasterUpload = () => {
           "includeCentral": true
         }
         dispatch(getHolidaysList(HolidayListDefaultPayload))
-      }else{
+      } else {
         setUploadError(true)
       }
-    }else if(uploadHolidayDetails.status === 'failed'){
+    } else if (uploadHolidayDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [uploadHolidayDetails])
 
   useEffect(() => {
-    if(editHolidayDetails.status === 'succeeded'){
+    if (editHolidayDetails.status === 'succeeded') {
       toast.success(`Holiday Updated successfully.`)
       dispatch(resetEditHolidayDetails())
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
-      const HolidayListDefaultPayload: any =  { 
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);
+      const HolidayListDefaultPayload: any = {
         search: "",
         filters: [],
         pagination: {
@@ -428,8 +428,8 @@ const EmployeeMasterUpload = () => {
         "includeCentral": true
       }
       dispatch(getHolidaysList(HolidayListDefaultPayload))
-    }else if(editHolidayDetails.status === 'failed'){
-      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true); 
+    } else if (editHolidayDetails.status === 'failed') {
+      setOpenModal(false); setModalType(''); setHoliday({}); setCompany(''); setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setDay(''); setName(''); setRestrictedHoliday(true); setOptionalHoliday(true);
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [editHolidayDetails.status])
@@ -460,43 +460,43 @@ const EmployeeMasterUpload = () => {
 
   const onClickExport = () => {
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: activeSort, order: sortType },
       "includeCentral": true
@@ -505,12 +505,12 @@ const EmployeeMasterUpload = () => {
   }
 
   const onClickSearch = () => {
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters: [],
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
@@ -519,12 +519,12 @@ const EmployeeMasterUpload = () => {
   }
 
   const onClickClearSearch = () => {
-    const employeesPayload: any =  { 
-      search: '', 
+    const employeesPayload: any = {
+      search: '',
       filters: [],
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
@@ -535,52 +535,52 @@ const EmployeeMasterUpload = () => {
 
   const onClickSortCode = () => {
     let type = 'asc'
-    setActiveSort('code'); 
-    if(sortType === 'asc'){
+    setActiveSort('code');
+    if (sortType === 'asc') {
       setSortType('desc')
       type = 'desc'
-    }else{
+    } else {
       setSortType('asc')
     }
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'code', order: type },
       "includeCentral": true
@@ -590,398 +590,398 @@ const EmployeeMasterUpload = () => {
 
   const onClickSortName = () => {
     let type = 'asc'
-    setActiveSort('name'); 
-    if(sortType === 'asc'){
+    setActiveSort('name');
+    if (sortType === 'asc') {
       setSortType('desc')
       type = 'desc'
-    }else{
+    } else {
       setSortType('asc')
     }
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'name', order: type },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
-    
+
   }
 
   const onClickSortDOB = () => {
     let type = 'asc'
-    setActiveSort('dateOfBirth'); 
-    if(sortType === 'asc'){
+    setActiveSort('dateOfBirth');
+    if (sortType === 'asc') {
       setSortType('desc')
       type = 'desc'
-    }else{
+    } else {
       setSortType('asc')
     }
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'dateOfBirth', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployees(employeesPayload)) 
+    dispatch(getEmployees(employeesPayload))
   }
 
   const onClickSortDOJ = () => {
     let type = 'asc'
-    setActiveSort('dateOfJoining'); 
-    if(sortType === 'asc'){
+    setActiveSort('dateOfJoining');
+    if (sortType === 'asc') {
       setSortType('desc')
       type = 'desc'
-    }else{
+    } else {
       setSortType('asc')
     }
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'dateOfJoining', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployees(employeesPayload)) 
+    dispatch(getEmployees(employeesPayload))
   }
 
   const onClickSortGender = () => {
     let type = 'asc'
-    setActiveSort('gender'); 
-    if(sortType === 'asc'){
+    setActiveSort('gender');
+    if (sortType === 'asc') {
       setSortType('desc')
       type = 'desc'
-    }else{
+    } else {
       setSortType('asc')
     }
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'gender', order: type },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
-    
+
   }
-  
+
   const onClickSortDesignation = () => {
     let type = 'asc'
-    setActiveSort('designation'); 
-    if(sortType === 'asc'){
+    setActiveSort('designation');
+    if (sortType === 'asc') {
       setSortType('desc')
       type = 'desc'
-    }else{
+    } else {
       setSortType('asc')
     }
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'designation', order: type },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
-    
+
   }
 
   const onClickSortPan = () => {
     let type = 'asc'
-    setActiveSort('panNumber'); 
-    if(sortType === 'asc'){
+    setActiveSort('panNumber');
+    if (sortType === 'asc') {
       setSortType('desc')
       type = 'desc'
-    }else{
+    } else {
       setSortType('asc')
     }
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'panNumber', order: type },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
-    
+
   }
 
   const onClickSortAdhar = () => {
     let type = 'asc'
-    setActiveSort('aadharNumber'); 
-    if(sortType === 'asc'){
+    setActiveSort('aadharNumber');
+    if (sortType === 'asc') {
       setSortType('desc')
       type = 'desc'
-    }else{
+    } else {
       setSortType('asc')
     }
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: searchInput, 
+    const employeesPayload: any = {
+      search: searchInput,
       filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: page+1
+        pageNumber: page + 1
       },
       sort: { columnName: 'aadharNumber', order: type },
       "includeCentral": true
     }
     dispatch(getEmployees(employeesPayload))
-    
+
   }
 
   const onClickUpload = () => {
-    if(!company || !associateCompany || !location || !year || !month ){
+    if (!company || !associateCompany || !location || !year || !month) {
       return toast.error(ERROR_MESSAGES.FILL_ALL);
-    }else{
+    } else {
       setOpenUploadModal(true)
     }
   }
@@ -1002,7 +1002,7 @@ const EmployeeMasterUpload = () => {
     // dispatch(employeeUpload(formData))
   }
 
-  const addButtonDisable = !name || !company || !associateCompany || !location || !year || !month || !day 
+  const addButtonDisable = !name || !company || !associateCompany || !location || !year || !month || !day
 
   const onClickAdd = () => {
     setOpenModal(true)
@@ -1013,31 +1013,31 @@ const EmployeeMasterUpload = () => {
   }
 
   const onClickSubmitAdd = () => {
-    let monthKey:any
+    let monthKey: any
 
-    if(month === 'January'){
+    if (month === 'January') {
       monthKey = 1
-    }else if(month === 'February'){
+    } else if (month === 'February') {
       monthKey = 2
-    }else if(month === 'March'){
+    } else if (month === 'March') {
       monthKey = 3
-    }else if(month === 'April'){
+    } else if (month === 'April') {
       monthKey = 4
-    }else if(month === 'May'){
+    } else if (month === 'May') {
       monthKey = 5
-    }else if(month === 'June'){
+    } else if (month === 'June') {
       monthKey = 6
-    }else if(month === 'July'){
+    } else if (month === 'July') {
       monthKey = 7
-    }else if(month === 'August'){
+    } else if (month === 'August') {
       monthKey = 8
-    }else if(month === 'September'){
+    } else if (month === 'September') {
       monthKey = 9
-    }else if(month === 'October'){
+    } else if (month === 'October') {
       monthKey = 10
-    }else if(month === 'November'){
+    } else if (month === 'November') {
       monthKey = 11
-    }else if(month === 'December'){
+    } else if (month === 'December') {
       monthKey = 12
     }
     const payload = {
@@ -1050,38 +1050,38 @@ const EmployeeMasterUpload = () => {
       year,
       month: monthKey,
       day,
-      restricted:restrictedHoliday,
+      restricted: restrictedHoliday,
       remarks: ''
     }
     dispatch(addHoliday(payload))
   }
 
-  const onclickEdit = (holiday:any) => {
-    let monthKey:any
+  const onclickEdit = (holiday: any) => {
+    let monthKey: any
     const monthNumber = holiday.month
-    if(monthNumber === 1){
+    if (monthNumber === 1) {
       monthKey = 'January'
-    }else if(monthNumber === 2){
+    } else if (monthNumber === 2) {
       monthKey = 'February'
-    }else if(monthNumber === 3){
+    } else if (monthNumber === 3) {
       monthKey = 'March'
-    }else if(monthNumber === 4){
+    } else if (monthNumber === 4) {
       monthKey = 'April'
-    }else if(monthNumber === 5){
+    } else if (monthNumber === 5) {
       monthKey = 'May'
-    }else if(monthNumber === 6){
+    } else if (monthNumber === 6) {
       monthKey = 'June'
-    }else if(monthNumber === 7){
+    } else if (monthNumber === 7) {
       monthKey = 'July'
-    }else if(monthNumber === 8){
+    } else if (monthNumber === 8) {
       monthKey = 'August'
-    }else if(monthNumber === 9){
+    } else if (monthNumber === 9) {
       monthKey = 'September'
-    }else if(monthNumber === 10){
+    } else if (monthNumber === 10) {
       monthKey = 'October'
-    }else if(monthNumber === 11){
+    } else if (monthNumber === 11) {
       monthKey = 'November'
-    }else if(monthNumber === 12){
+    } else if (monthNumber === 12) {
       monthKey = 'December'
     }
     setOpenModal(true)
@@ -1089,7 +1089,7 @@ const EmployeeMasterUpload = () => {
     setName(holiday.name)
     setCompany(holiday.company.id)
     setAssociateCompany(holiday.associateCompany.id)
-    setLocation(holiday.location.id+'^'+holiday.stateId)
+    setLocation(holiday.location.id + '^' + holiday.stateId)
     setYear(holiday.year)
     setMonth(monthKey)
     setDay(holiday.day)
@@ -1099,35 +1099,35 @@ const EmployeeMasterUpload = () => {
   }
 
   const onClickSubmitEdit = () => {
-    let monthKey:any
+    let monthKey: any
 
-    if(month === 'January'){
+    if (month === 'January') {
       monthKey = 1
-    }else if(month === 'February'){
+    } else if (month === 'February') {
       monthKey = 2
-    }else if(month === 'March'){
+    } else if (month === 'March') {
       monthKey = 3
-    }else if(month === 'April'){
+    } else if (month === 'April') {
       monthKey = 4
-    }else if(month === 'May'){
+    } else if (month === 'May') {
       monthKey = 5
-    }else if(month === 'June'){
+    } else if (month === 'June') {
       monthKey = 6
-    }else if(month === 'July'){
+    } else if (month === 'July') {
       monthKey = 7
-    }else if(month === 'August'){
+    } else if (month === 'August') {
       monthKey = 8
-    }else if(month === 'September'){
+    } else if (month === 'September') {
       monthKey = 9
-    }else if(month === 'October'){
+    } else if (month === 'October') {
       monthKey = 10
-    }else if(month === 'November'){
+    } else if (month === 'November') {
       monthKey = 11
-    }else if(month === 'December'){
+    } else if (month === 'December') {
       monthKey = 12
     }
     const payload = {
-      id:holiday.id,
+      id: holiday.id,
       name,
       optionalHoliday,
       companyId: company,
@@ -1143,17 +1143,17 @@ const EmployeeMasterUpload = () => {
     dispatch(editHoliday(payload))
   }
 
-  const onclickView = (holiday:any) => {
+  const onclickView = (holiday: any) => {
     setOpenModal(true)
     setModalType('View')
     setHoliday(holiday)
   }
 
-  const onclickDelete = (holiday:any) => {
+  const onclickDelete = (holiday: any) => {
     setHoliday(holiday)
     setOpenDeleteModal(true)
   }
- 
+
   const onClickConfirmDelete = () => {
     dispatch(deleteHoliday(holiday.id))
   }
@@ -1161,43 +1161,43 @@ const EmployeeMasterUpload = () => {
   const handleChangePage = (event: unknown, newPage: number) => {
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: '', 
+    const employeesPayload: any = {
+      search: '',
       filters: filters,
       pagination: {
         pageSize: rowsPerPage,
-        pageNumber: newPage+1
+        pageNumber: newPage + 1
       },
       sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
@@ -1210,39 +1210,39 @@ const EmployeeMasterUpload = () => {
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     const filters = []
-    if(company){
+    if (company) {
       filters.push({
-        columnName:'companyId',
+        columnName: 'companyId',
         value: company
       })
     }
-    if(associateCompany){
+    if (associateCompany) {
       filters.push({
-        columnName:'associateCompanyId',
+        columnName: 'associateCompanyId',
         value: associateCompany
       })
     }
-    if(location){
+    if (location) {
       filters.push({
-        columnName:'locationId',
+        columnName: 'locationId',
         value: location
       })
     }
-    if(year){
+    if (year) {
       filters.push({
-        columnName:'year',
+        columnName: 'year',
         value: year
       })
     }
-    if(month){
+    if (month) {
       filters.push({
-        columnName:'month',
+        columnName: 'month',
         value: month
       })
     }
 
-    const employeesPayload: any =  { 
-      search: '', 
+    const employeesPayload: any = {
+      search: '',
       filters: filters,
       pagination: {
         pageSize: parseInt(event.target.value, 10),
@@ -1256,7 +1256,6 @@ const EmployeeMasterUpload = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
   const onClickAllCheckBox = () => {
     if (selectedEmployees.length !== employees.length) {
       const allIds = employees && employees.map((each: any) => each.id)
@@ -1265,7 +1264,6 @@ const EmployeeMasterUpload = () => {
       setSelectedEmployees([])
     }
   }
-
   const onClickIndividualCheckBox = (id: any) => {
     if (selectedEmployees.includes(id)) {
       const updatedSelectedEmployee: any = selectedEmployees.filter((each: any) => each != id)
@@ -1274,11 +1272,9 @@ const EmployeeMasterUpload = () => {
       setSelectedEmployees([...selectedEmployees, id])
     }
   }
-
   const onClickBulkDelete = () => {
     setOpenBulkDeleteModal(true)
   }
-
   const onClickConfirmBulkDelete = () => {
     dispatch(bulkDeleteEmployees(selectedEmployees))
     let type = 'asc'
@@ -1305,7 +1301,6 @@ const EmployeeMasterUpload = () => {
     }
     dispatch(getEmployees(EmployeePayload))
   }
-
   useEffect(() => {
     if (bulkDeleteEmployeeDetails.status === 'succeeded') {
       toast.success(`Employees deleted successfully.`)
@@ -1329,12 +1324,9 @@ const EmployeeMasterUpload = () => {
   }, [bulkDeleteEmployeeDetails.status])
 
 
-
-  // <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedHolidays && selectedHolidays.length === 0}> Bulk Delete</Button>
-
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
-      
+
       <Modal
         open={openBulkDeleteModal}
         onClose={() => setOpenBulkDeleteModal(false)}
@@ -1361,105 +1353,105 @@ const EmployeeMasterUpload = () => {
         </Box>
       </Modal>
 
-      {loading ? <PageLoader>Loading...</PageLoader> : 
-      
+      {loading ? <PageLoader>Loading...</PageLoader> :
+
         <div>
-             <Box sx={{paddingX: '20px', paddingY:'10px',}}>
-                <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
-                    <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
+          <Box sx={{ paddingX: '20px', paddingY: '10px', }}>
+            <div style={{ backgroundColor: '#E2E3F8', padding: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', marginTop: '10px' }}>
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Master</h5>
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '200px', justifyContent: 'space-between' }}>
-                <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedEmployees && selectedEmployees.length === 0}> Bulk Delete</Button>
-                        <button onClick={onClickExport} disabled={!employees} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employees ? '#707070': '#ffffff' , color: !employees ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                  <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedEmployees && selectedEmployees.length === 0}> Bulk Delete</Button>
+                  <button onClick={onClickExport} disabled={!employees} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !employees ? '#707070' : '#ffffff', color: !employees ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
 
                 </div>
-                
-                    </div>
-                    <div style={{display:'flex'}}>
 
-                      <Box sx={{ mr:1}}>
-                        <Typography mb={1}>Company</Typography>
-                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                          <Select
-                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                            value={company}
-                            displayEmpty
-                            onChange={handleChangeCompany}
-                            MenuProps={{
-                              PaperProps: {
-                                sx: {
-                                  maxHeight: 200,
-                                  width: 230,
-                                  // marginLeft: "21px", 
-                                  marginTop: "3px"
-                                }
-                              }
-                            }}
-                          >
-                            <MenuItem disabled sx={{display:'none'}} value="">
-                              Select Company
-                            </MenuItem>
-                            {companies && companies.map((each:any) => {
-                                return <MenuItem  sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
-                            })}
-                          </Select>
-                        </FormControl>
-                      </Box>
+              </div>
+              <div style={{ display: 'flex' }}>
 
-                      <Box sx={{ mr:1}}>
-                        <Typography mb={1}>Associate Company</Typography>
-                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                          <Select
-                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                            displayEmpty
-                            value={associateCompany}
-                            disabled={!company}
-                            onChange={handleChangeAssociateCompany}
-                            
-                          >
-                            <MenuItem disabled sx={{display:'none'}} value="">
-                              Select Associate Company
-                            </MenuItem>
-                            {associateCompanies && associateCompanies.map((each:any) => {
-                              return <MenuItem value={each.id}>{each.name}</MenuItem>
-                            })}
-                          </Select>
-                        </FormControl>
-                      </Box>
+                <Box sx={{ mr: 1 }}>
+                  <Typography mb={1}>Company</Typography>
+                  <FormControl sx={{ width: '100%', maxWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                    <Select
+                      sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+                      value={company}
+                      displayEmpty
+                      onChange={handleChangeCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            // marginLeft: "21px", 
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
+                    >
+                      <MenuItem disabled sx={{ display: 'none' }} value="">
+                        Select Company
+                      </MenuItem>
+                      {companies && companies.map((each: any) => {
+                        return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+                </Box>
 
-                      <Box sx={{ mr:1}}>
-                        <Typography mb={1}>Location</Typography>
-                        <FormControl sx={{ width:'100%',maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                          <Select
-                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                            displayEmpty
-                            value={location}
-                            disabled={!associateCompany}
-                            onChange={handleChangeLocation}
-                            MenuProps={{
-                              PaperProps: {
-                                sx: {
-                                  maxHeight: 200,
-                                  width: 230,
-                                  marginLeft: "27px", 
-                                  marginTop: "3px"
-                                }
-                              }
-                            }}
-                          >
-                            <MenuItem disabled sx={{display:'none'}} value="">
-                              Select Location
-                            </MenuItem>
-                            {locations && locations.map((each:any) => {
-                              const { id, name, code, cities }: any = each.location || {};
-                              const { state } = cities || {};
-                              return <MenuItem sx={{whiteSpace:"initial"}} value={each.locationId+'^'+ state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
-                            })}
-                          </Select>
-                        </FormControl>
-                      </Box>
+                <Box sx={{ mr: 1 }}>
+                  <Typography mb={1}>Associate Company</Typography>
+                  <FormControl sx={{ width: '100%', maxWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                    <Select
+                      sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+                      displayEmpty
+                      value={associateCompany}
+                      disabled={!company}
+                      onChange={handleChangeAssociateCompany}
 
-                      {/* <Box sx={{width:'100%', mr:1}}>
+                    >
+                      <MenuItem disabled sx={{ display: 'none' }} value="">
+                        Select Associate Company
+                      </MenuItem>
+                      {associateCompanies && associateCompanies.map((each: any) => {
+                        return <MenuItem value={each.id}>{each.name}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+                </Box>
+
+                <Box sx={{ mr: 1 }}>
+                  <Typography mb={1}>Location</Typography>
+                  <FormControl sx={{ width: '100%', maxWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                    <Select
+                      sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+                      displayEmpty
+                      value={location}
+                      disabled={!associateCompany}
+                      onChange={handleChangeLocation}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            marginLeft: "27px",
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
+                    >
+                      <MenuItem disabled sx={{ display: 'none' }} value="">
+                        Select Location
+                      </MenuItem>
+                      {locations && locations.map((each: any) => {
+                        const { id, name, code, cities }: any = each.location || {};
+                        const { state } = cities || {};
+                        return <MenuItem sx={{ whiteSpace: "initial" }} value={each.locationId + '^' + state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+                </Box>
+
+                {/* <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Year</Typography>
                         <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <Select
@@ -1488,7 +1480,7 @@ const EmployeeMasterUpload = () => {
                           </Select>
                         </FormControl>
                       </Box> */}
-{/* 
+                {/* 
                       <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Month</Typography>
                         <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
@@ -1519,134 +1511,134 @@ const EmployeeMasterUpload = () => {
                         </FormControl>
                       </Box> */}
 
-                      <Box sx={{width:'100%', mr:1}}>
-                        <Typography mb={1}>Search (Emp Name)</Typography>
-                        <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                          <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
-                          <OutlinedInput
-                            value={searchInput}
-                            onChange={handleChangeSearchInput}
-                            sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
-                            id="outlined-adornment-search"
-                            type='text'
-                            
-                            endAdornment={
-                              <InputAdornment position="end">
-                                {searchInput && 
-                                  <IconButton
-                                  onClick={onClickClearSearch}
-                                  edge="end"
-                                >
-                                  <IoMdClose />
-                                </IconButton>
-                                }
-                                <IconButton
-                                  onClick={onClickSearch}
-                                  edge="end"
-                                >
-                                  <IoMdSearch />
-                                </IconButton>
-                              </InputAdornment>
-                            }
-                            label="Search"
-                          />
-                        </FormControl>
-                      </Box>
+                <Box sx={{ width: '100%', mr: 1 }}>
+                  <Typography mb={1}>Search (Emp Name)</Typography>
+                  <FormControl sx={{ width: '100%', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                    <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
+                    <OutlinedInput
+                      value={searchInput}
+                      onChange={handleChangeSearchInput}
+                      sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+                      id="outlined-adornment-search"
+                      type='text'
 
-                    </div>
-                </div>
-             </Box>
+                      endAdornment={
+                        <InputAdornment position="end">
+                          {searchInput &&
+                            <IconButton
+                              onClick={onClickClearSearch}
+                              edge="end"
+                            >
+                              <IoMdClose />
+                            </IconButton>
+                          }
+                          <IconButton
+                            onClick={onClickSearch}
+                            edge="end"
+                          >
+                            <IoMdSearch />
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      label="Search"
+                    />
+                  </FormControl>
+                </Box>
 
-            <Box sx={{paddingX: '20px'}}>
-              {
-                employees && employees.length <= 0 ? 
+              </div>
+            </div>
+          </Box>
 
-                <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
+          <Box sx={{ paddingX: '20px' }}>
+            {
+              employees && employees.length <= 0 ?
+
+                <Box sx={{ height: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <Typography variant='h5'>No Records Found</Typography>
                 </Box>
-                : 
+                :
                 <>
-                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
-                          <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
-                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '385px', overflowY: 'scroll' }}>
+                    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
+                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' } }}>
                         <TableRow>
                           <TableCell><Checkbox checked={(selectedEmployees && selectedEmployees.length) === (employees && employees.length)} onClick={onClickAllCheckBox} /></TableCell>
-                          
-                                      <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB}> DOB</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender}> Gender</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'designation'} direction={sortType} onClick={onClickSortDesignation}> Designation</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'dateOfJoining'} direction={sortType} onClick={onClickSortDOJ}> DOJ</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'panNumber'} direction={sortType} onClick={onClickSortPan}> PAN no.</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}> Aadhar no.</TableSortLabel></TableCell>
-                                      {/* <TableCell > Actions</TableCell> */}
-                                  </TableRow>
-                              </TableHead>
-                              <TableBody>
-                              {employees && employees.map((each: any, index: number) => (
-                                  <TableRow
-                                  key={each._id}
-                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >   
-                                  <TableCell><Checkbox checked={selectedEmployees.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)} /></TableCell>
-                                      <TableCell >{each.code}</TableCell>
-                                      <TableCell >{each.name}</TableCell>
-                                      <TableCell >{new Date(each.dateOfBirth).toLocaleDateString()}</TableCell>
-                                      <TableCell >{each.gender}</TableCell>
-                                      <TableCell >{each.designation}</TableCell>
-                                      <TableCell >{new Date(each.dateOfJoining).toLocaleDateString()}</TableCell>
-                                      <TableCell >{each.panNumber}</TableCell>
-                                      <TableCell >{each.aadharNumber}</TableCell>
-                                      {/* <TableCell >
+
+                          <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB}> DOB</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender}> Gender</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'designation'} direction={sortType} onClick={onClickSortDesignation}> Designation</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'dateOfJoining'} direction={sortType} onClick={onClickSortDOJ}> DOJ</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'panNumber'} direction={sortType} onClick={onClickSortPan}> PAN no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}> Aadhar no.</TableSortLabel></TableCell>
+                          {/* <TableCell > Actions</TableCell> */}
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {employees && employees.map((each: any, index: number) => (
+                          <TableRow
+                            key={each._id}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                          >
+                            <TableCell><Checkbox checked={selectedEmployees.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)} /></TableCell>
+                            <TableCell >{each.code}</TableCell>
+                            <TableCell >{each.name}</TableCell>
+                            <TableCell >{new Date(each.dateOfBirth).toLocaleDateString()}</TableCell>
+                            <TableCell >{each.gender}</TableCell>
+                            <TableCell >{each.designation}</TableCell>
+                            <TableCell >{new Date(each.dateOfJoining).toLocaleDateString()}</TableCell>
+                            <TableCell >{each.panNumber}</TableCell>
+                            <TableCell >{each.aadharNumber}</TableCell>
+                            {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
                                           <Icon action={() => onclickDelete(each)} style={{color:'#EB1010'}} type="button" name={'trash'} text={'Delete'}/>
                                           <Icon action={() => onclickView(each)}  style={{color:'#00C853'}} type="button" name={'eye'} text={'View'}/>
                                         </Box>
                                       </TableCell> */}
-                                  </TableRow>
-                              ))}
-                              </TableBody>
-                          </Table>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </TableContainer>
-                  <TablePagination   
-                      sx={{
-                        '.MuiTablePagination-toolbar': {
-                          backgroundColor: '#EFEBFE',
-                          height: '30px',
-                          display:'flex',
-                          justifyContent:'flex-end'
-                        },
-                        '.MuiTablePagination-displayedRows':{
-                          margin:'0',
-                        },
-                        '.MuiTablePagination-selectLabel':{
-                          margin:'0',
-                        },
-                        '.MuiTablePagination-spacer':{
-                          display:'none '
-                        },
-                        '.MuiTablePagination-input':{
-                          marginRight:'auto'
-                        },
-                      }}
-                
-                      labelRowsPerPage='Show'
-                      labelDisplayedRows={(page) =>
-                        `Showing ${page.from}-${page.to === -1 ? page.count : page.to} of ${page.count}`
-                      }
-                      rowsPerPageOptions={[10, 25, 50, 100]}
-                      component="div"
-                      count={employeesCount}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
+                  <TablePagination
+                    sx={{
+                      '.MuiTablePagination-toolbar': {
+                        backgroundColor: '#EFEBFE',
+                        height: '30px',
+                        display: 'flex',
+                        justifyContent: 'flex-end'
+                      },
+                      '.MuiTablePagination-displayedRows': {
+                        margin: '0',
+                      },
+                      '.MuiTablePagination-selectLabel': {
+                        margin: '0',
+                      },
+                      '.MuiTablePagination-spacer': {
+                        display: 'none '
+                      },
+                      '.MuiTablePagination-input': {
+                        marginRight: 'auto'
+                      },
+                    }}
+
+                    labelRowsPerPage='Show'
+                    labelDisplayedRows={(page) =>
+                      `Showing ${page.from}-${page.to === -1 ? page.count : page.to} of ${page.count}`
+                    }
+                    rowsPerPageOptions={[10, 25, 50, 100]}
+                    component="div"
+                    count={employeesCount}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
                   />
                 </>
             }
-            </Box>
+          </Box>
         </div>
       }
     </div>

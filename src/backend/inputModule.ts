@@ -272,4 +272,10 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
+    //leave credit 
+    public async bulkDeleteLeaveBalance(data: any) {
+        const url = `/api/Leave/EmployeeLeaveBalBulkDelete`
+        return await api.post(url, data)
+    }
+
 }

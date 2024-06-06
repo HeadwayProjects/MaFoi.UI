@@ -32,6 +32,11 @@ interface EmployeeMasterState {
         status: string,
         data: any,
         error: string | null
+    },
+    bulkDeleteLeaveBalance: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -65,6 +70,11 @@ const initialState: EmployeeMasterState = {
         status: 'idle',
         data: '',
         error: null
+    },
+    bulkDeleteLeaveBalance: {
+        status: 'idle',
+        data: '',
+        error: null
     }
 } as EmployeeMasterState
 
@@ -95,6 +105,11 @@ export const getEmployeesWage = createAsyncThunk('employeeMaster/getEmployeesWag
 export const bulkDeleteEmployees = createAsyncThunk('employeeMaster/bulkDeleteEmployees', async (id: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.bulkDeleteEmployees(id);
+})
+
+export const bulkDeleteLeaveBalance = createAsyncThunk('employeeMaster/bulkDeleteLeaveBalance', async (id: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.bulkDeleteLeaveBalance(id);
 })
 
 
@@ -189,6 +204,24 @@ export const employeeMasterSlice = createSlice({
             state.bulkDeleteEmployeeDetails.status = 'failed'
             state.bulkDeleteEmployeeDetails.error = action.error.message
         })
+    
+        .addCase(bulkDeleteLeaveBalance.pending, (state) => {
+            state.bulkDeleteLeaveBalance.status = 'loading'
+        })
+        .addCase(bulkDeleteLeaveBalance.fulfilled, (state, action: any) => {
+            if (action.payload) {
+                state.bulkDeleteLeaveBalance.status = 'succeeded'
+                state.bulkDeleteLeaveBalance.data = action.payload.data
+            } else {
+                state.bulkDeleteLeaveBalance.status = 'failed'
+                state.bulkDeleteLeaveBalance.error = action.payload.message;
+            }
+        })
+        .addCase(bulkDeleteLeaveBalance.rejected, (state, action: any) => {
+            state.bulkDeleteLeaveBalance.status = 'failed'
+            state.bulkDeleteLeaveBalance.error = action.error.message
+        })
+     
 })
   
 export const {  } = employeeMasterSlice.actions
