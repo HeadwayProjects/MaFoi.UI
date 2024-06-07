@@ -681,7 +681,7 @@ const EmployeeLeaveCreditUpload = () => {
  
   useEffect(() => {
     if (bulkDeleteEmployeeCreditDetails.status === 'succeeded') {
-      toast.success(`Leave Creditsl successfully.`)
+      toast.success(`Leaves deleted successfully.`)
       setSelectedCredit([])
       dispatch(resetBulkDeleteHolidaysDetails())
       setOpenBulkDeleteModal(false)
