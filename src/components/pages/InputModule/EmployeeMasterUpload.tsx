@@ -1285,21 +1285,30 @@ const EmployeeMasterUpload = () => {
     } else {
       setSortType('asc')
     }
-    setCompany('')
-    setAssociateCompany('')
-    setLocation('')
+ 
 
-    const EmployeePayload: any = {
+
+    const employeesPayload: any = {
       search: searchInput,
-      filters: [],
+      filters: [
+        {
+          columnName: 'companyId',
+          value: company
+        },
+        {
+          columnName: 'associateCompanyId',
+          value: associateCompany
+        }
+      ],
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'name', order: type },
+      sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
-    dispatch(getEmployees(EmployeePayload))
+    alert(company);
+    dispatch(getEmployees(employeesPayload))
   }
   useEffect(() => {
     if (bulkDeleteEmployeeDetails.status === 'succeeded') {
@@ -1307,17 +1316,39 @@ const EmployeeMasterUpload = () => {
       setSelectedEmployees([])
       dispatch(resetBulkDeleteHolidaysDetails())
       setOpenBulkDeleteModal(false)
-      const EmployeeDefaultPayload: any = {
-        search: "",
-        filters: [],
+
+      const employeesPayload: any = {
+        search: searchInput,
+        filters: [
+          {
+            columnName: 'companyId',
+            value: company
+          },
+          {
+            columnName: 'associateCompanyId',
+            value: associateCompany
+          }
+        ],
         pagination: {
-          pageSize: 10,
-          pageNumber: 1
+          pageSize: rowsPerPage,
+          pageNumber: page + 1
         },
-        sort: { columnName: 'name', order: 'asc' },
+        sort: { columnName: 'code', order: 'asc' },
         "includeCentral": true
       }
-      dispatch(getHolidaysList(EmployeeDefaultPayload))
+      alert(company);
+
+      // const EmployeeDefaultPayload: any = {
+      //   search: "",
+      //   filters: [],
+      //   pagination: {
+      //     pageSize: 10,
+      //     pageNumber: 1
+      //   },
+      //   sort: { columnName: 'name', order: 'asc' },
+      //   "includeCentral": true
+      // }
+      dispatch(getHolidaysList(employeesPayload))
     } else if (bulkDeleteEmployeeDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
