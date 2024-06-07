@@ -46,7 +46,13 @@ interface EmployeeMasterState {
         status: string,
         data: any,
         error: string | null
+    },
+    bulkDeleteEmployeeWage: {
+        status: string,
+        data: any,
+        error: string | null
     }
+
 }
 
 const initialState: EmployeeMasterState = { 
@@ -91,6 +97,11 @@ const initialState: EmployeeMasterState = {
         error: null
     },
     bulkDeleteEmployeeAttendance: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    bulkDeleteEmployeeWage: {
         status: 'idle',
         data: '',
         error: null
@@ -139,6 +150,11 @@ export const bulkDeleteLeaveAvailed = createAsyncThunk('employeeMaster/bulkDelet
 export const bulkDeleteEmployeeAttendance = createAsyncThunk('employeeMaster/bulkDeleteEmployeeAttendance', async (id: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.bulkDeleteEmployeeAttendance(id);
+})
+
+export const bulkDeleteEmployeeWage = createAsyncThunk('employeeMaster/bulkDeleteEmployeeWage', async (id: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.bulkDeleteEmployeeWage(id);
 })
 
 
@@ -307,6 +323,23 @@ export const employeeMasterSlice = createSlice({
         .addCase(bulkDeleteEmployeeAttendance.rejected, (state, action: any) => {
             state.bulkDeleteEmployeeAttendance.status = 'failed'
             state.bulkDeleteEmployeeAttendance.error = action.error.message
+        })
+    
+        .addCase(bulkDeleteEmployeeWage.pending, (state) => {
+            state.bulkDeleteEmployeeWage.status = 'loading'
+        })
+        .addCase(bulkDeleteEmployeeWage.fulfilled, (state, action: any) => {
+            if (action.payload) {
+                state.bulkDeleteEmployeeWage.status = 'succeeded'
+                state.bulkDeleteEmployeeWage.data = action.payload.data
+            } else {
+                state.bulkDeleteEmployeeWage.status = 'failed'
+                state.bulkDeleteEmployeeWage.error = action.payload.message;
+            }
+        })
+        .addCase(bulkDeleteEmployeeWage.rejected, (state, action: any) => {
+            state.bulkDeleteEmployeeWage.status = 'failed'
+            state.bulkDeleteEmployeeWage.error = action.error.message
         })
 
         

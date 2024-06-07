@@ -2,18 +2,28 @@ import React, { useEffect } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, Checkbox, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
-import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
+import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetBulkDeleteHolidaysDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
 import { useExportEmployees, useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { getEmployees, getEmployeesAttendance, getEmployeesLeaveAvailed, getEmployeesLeaveCredit, getEmployeesWage } from '../../../redux/features/employeeMaster.slice';
+import { bulkDeleteEmployeeWage, getEmployees, getEmployeesAttendance, getEmployeesLeaveAvailed, getEmployeesLeaveCredit, getEmployeesWage } from '../../../redux/features/employeeMaster.slice';
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '25%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 600,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+};
 
 const EmployeeWageUpload = () => {
 
@@ -26,6 +36,7 @@ const EmployeeWageUpload = () => {
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
+  const bulkDeleteEmployeeWageDetails = useAppSelector((state) => state.employeeMaster.bulkDeleteEmployeeWage)
 
   const employeesWage = employeesWageDetails.data.list
   const employeesWageCount = employeesWageDetails.data.count 
@@ -35,7 +46,7 @@ const EmployeeWageUpload = () => {
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading =  employeesWageDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading =  bulkDeleteEmployeeWageDetails.status === 'loading' ||employeesWageDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -46,6 +57,8 @@ const EmployeeWageUpload = () => {
   const [searchInput, setSearchInput] = React.useState('');
   const [activeSort, setActiveSort] = React.useState('code')
   const [sortType, setSortType] = React.useState<any>('asc')
+  const [selectedWage, SetSelectedWage] = React.useState<any>([])
+  const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [page, setPage] = React.useState(0);
@@ -674,16 +687,117 @@ const EmployeeWageUpload = () => {
 
   console.log('employeewasg: ', employeesWage);
 
+  const onClickAllCheckBox = () => {
+    if (selectedWage.length !== employeesWage.length) {
+      const allIds = employeesWage && employeesWage.map((each: any) => each.id)
+      SetSelectedWage(allIds)
+    } else {
+      SetSelectedWage([])
+    }
+  }
+  const onClickIndividualCheckBox = (id: any) => {
+    if (selectedWage.includes(id)) {
+      const updatedSelectedWage: any = selectedWage.filter((each: any) => each != id)
+      SetSelectedWage(updatedSelectedWage)
+    } else {
+      SetSelectedWage([...selectedWage, id])
+    }
+  }
+  const onClickBulkDelete = () => {
+    setOpenBulkDeleteModal(true)
+  }
+
+  const onClickConfirmBulkDelete = () => {
+    dispatch(bulkDeleteEmployeeWage(selectedWage))
+    let type = 'asc'
+    setActiveSort('restricted');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+    setCompany('')
+    setAssociateCompany('')
+    setLocation('')
+    setYear('')
+    setMonth('')
+
+    const EmployeePayload: any = {
+      search: searchInput,
+      filters: [],
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'name', order: type },
+      "includeCentral": true
+    }
+    dispatch(getEmployees(EmployeePayload))
+  }
+
+
+  useEffect(() => {
+    if (bulkDeleteEmployeeWageDetails.status === 'succeeded') {
+      toast.success(`EmployeeWage deleted successfully.`)
+      SetSelectedWage([])
+      dispatch(resetBulkDeleteHolidaysDetails())
+      setOpenBulkDeleteModal(false)
+      const EmployeeDefaultPayload: any = {
+        search: "",
+        filters: [],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'name', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getHolidaysList(EmployeeDefaultPayload))
+    } else if (bulkDeleteEmployeeWageDetails.status === 'failed') {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [bulkDeleteEmployeeWageDetails.status])
+
+
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
 
+      <Modal
+        open={openBulkDeleteModal}
+        onClose={() => setOpenBulkDeleteModal(false)}
+      >
+        <Box sx={style}>
+          <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Delete Employees</Typography>
+            <IconButton
+              onClick={() => setOpenBulkDeleteModal(false)}
+            >
+              <IoMdClose />
+            </IconButton>
+          </Box>
+          <Box sx={{ padding: '20px', backgroundColor: '#ffffff' }}>
+            <Box>
+              <Typography variant='h5'>There are {selectedWage.length} record(s) selected for deleting.</Typography>
+              <Typography mt={2}>Are you sure you want to delete all of them ?</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+              <Button variant='outlined' color="error" onClick={() => setOpenBulkDeleteModal(false)}>No</Button>
+              <Button variant='contained' onClick={onClickConfirmBulkDelete}>Yes</Button>
+            </Box>
+          </Box>
+        </Box>
+      </Modal>
       {loading ? <PageLoader>Loading...</PageLoader> : 
       
         <div>
              <Box sx={{paddingX: '20px', paddingY:'10px',}}>
                 <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
-                        <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Wage</h5>
+                <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Wage</h5>
+                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '200px', justifyContent: 'space-between' }}>
+                  <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedWage && selectedWage.length === 0}> Bulk Delete</Button>
+                </div>
                         {/* <button onClick={onClickExport} disabled={!employeesLeaveAvailed} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveAvailed ? '#707070': '#ffffff' , color: !employeesLeaveAvailed ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
                     </div>
                     <div style={{display:'flex'}}>
@@ -880,7 +994,9 @@ const EmployeeWageUpload = () => {
                   <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
-                                  <TableRow>
+                        <TableRow>
+                          
+                          <TableCell><Checkbox checked={(selectedWage && selectedWage.length) === (employeesWage && employeesWage.length)} onClick={onClickAllCheckBox} /></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'employeeCode'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'noOfDays'} direction={sortType} onClick={onClickSortNoOfDays}>Month</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'leaveStartDate'} direction={sortType} onClick={onClickSortStartDate}>Standard Days</TableSortLabel></TableCell>
@@ -895,7 +1011,9 @@ const EmployeeWageUpload = () => {
                                   <TableRow
                                   key={each._id}
                                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                  >   
+                                >   
+                                  <TableCell><Checkbox checked={selectedWage.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)} /></TableCell>
+
                                       <TableCell >{each.employeeCode}</TableCell>
                                      
                                       <TableCell >{each.month}</TableCell>

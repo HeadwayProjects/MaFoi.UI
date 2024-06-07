@@ -292,5 +292,10 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
+    // Employee Wage 
+    public async bulkDeleteEmployeeWage(data: any) {
+        const url = `/api/Employee/EmployeeWageBulkDelete`
+        return await api.post(url, data)
+    }
 
 }
