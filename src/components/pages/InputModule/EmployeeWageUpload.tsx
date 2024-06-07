@@ -672,6 +672,8 @@ const EmployeeWageUpload = () => {
     setPage(0);
   };
 
+  console.log('employeewasg: ', employeesWage);
+
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
 

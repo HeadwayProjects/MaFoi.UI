@@ -757,6 +757,8 @@ const EmployeeLeaveAvailedUpload = () => {
     }
   }, [bulkDeleteEmployeeAvailedDetails.status])
 
+  console.log('empleavevailed',employeesLeaveAvailed);
+
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
       <Modal

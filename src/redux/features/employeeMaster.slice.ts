@@ -23,7 +23,6 @@ interface EmployeeMasterState {
         error: string | null
     },
     employeesWageDetails: {
-
         status: string,
         data: any,
         error: string | null
@@ -201,6 +200,8 @@ export const employeeMasterSlice = createSlice({
             state.employeesLeaveCreditDetails.error = action.error.message
         })
 
+
+
         .addCase(getEmployeesLeaveAvailed.pending, (state) => {
             state.employeesLeaveAvailedDetails.status = 'loading'
         })
@@ -217,6 +218,28 @@ export const employeeMasterSlice = createSlice({
             state.employeesLeaveAvailedDetails.status = 'failed'
             state.employeesLeaveAvailedDetails.error = action.error.message
         })
+
+
+        
+
+        .addCase(getEmployeesWage.pending, (state) => {
+            state.employeesWageDetails.status = 'loading'
+        })
+        .addCase(getEmployeesWage.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.employeesWageDetails.status = 'succeeded'
+                state.employeesWageDetails.data = action.payload.data
+            } else {
+                state.employeesWageDetails.status = 'failed'
+                state.employeesWageDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getEmployeesWage.rejected, (state, action: any) => {
+            state.employeesWageDetails.status = 'failed'
+            state.employeesWageDetails.error = action.error.message
+        })
+
+        
     
         .addCase(bulkDeleteEmployees.pending, (state) => {
             state.bulkDeleteEmployeeDetails.status = 'loading'
@@ -285,6 +308,8 @@ export const employeeMasterSlice = createSlice({
             state.bulkDeleteEmployeeAttendance.status = 'failed'
             state.bulkDeleteEmployeeAttendance.error = action.error.message
         })
+
+        
      
 })
 
