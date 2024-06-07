@@ -37,6 +37,16 @@ interface EmployeeMasterState {
         status: string,
         data: any,
         error: string | null
+    },
+    bulkDeleteLeaveAvailed: {
+        status: string,
+        data: any,
+        error: string | null
+    },
+    bulkDeleteEmployeeAttendance: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -75,6 +85,16 @@ const initialState: EmployeeMasterState = {
         status: 'idle',
         data: '',
         error: null
+    },
+    bulkDeleteLeaveAvailed: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    bulkDeleteEmployeeAttendance: {
+        status: 'idle',
+        data: '',
+        error: null
     }
 } as EmployeeMasterState
 
@@ -110,6 +130,16 @@ export const bulkDeleteEmployees = createAsyncThunk('employeeMaster/bulkDeleteEm
 export const bulkDeleteLeaveBalance = createAsyncThunk('employeeMaster/bulkDeleteLeaveBalance', async (id: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.bulkDeleteLeaveBalance(id);
+})
+
+export const bulkDeleteLeaveAvailed = createAsyncThunk('employeeMaster/bulkDeleteLeaveAvailed', async (id: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.bulkDeleteLeaveAvailed(id);
+})
+
+export const bulkDeleteEmployeeAttendance = createAsyncThunk('employeeMaster/bulkDeleteEmployeeAttendance', async (id: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.bulkDeleteEmployeeAttendance(id);
 })
 
 
@@ -221,8 +251,43 @@ export const employeeMasterSlice = createSlice({
             state.bulkDeleteLeaveBalance.status = 'failed'
             state.bulkDeleteLeaveBalance.error = action.error.message
         })
+    
+        .addCase(bulkDeleteLeaveAvailed.pending, (state) => {
+            state.bulkDeleteLeaveAvailed.status = 'loading'
+        })
+        .addCase(bulkDeleteLeaveAvailed.fulfilled, (state, action: any) => {
+            if (action.payload) {
+                state.bulkDeleteLeaveAvailed.status = 'succeeded'
+                state.bulkDeleteLeaveAvailed.data = action.payload.data
+            } else {
+                state.bulkDeleteLeaveAvailed.status = 'failed'
+                state.bulkDeleteLeaveAvailed.error = action.payload.message;
+            }
+        })
+        .addCase(bulkDeleteLeaveAvailed.rejected, (state, action: any) => {
+            state.bulkDeleteLeaveAvailed.status = 'failed'
+            state.bulkDeleteLeaveAvailed.error = action.error.message
+        })
+    
+        .addCase(bulkDeleteEmployeeAttendance.pending, (state) => {
+            state.bulkDeleteEmployeeAttendance.status = 'loading'
+        })
+        .addCase(bulkDeleteEmployeeAttendance.fulfilled, (state, action: any) => {
+            if (action.payload) {
+                state.bulkDeleteEmployeeAttendance.status = 'succeeded'
+                state.bulkDeleteEmployeeAttendance.data = action.payload.data
+            } else {
+                state.bulkDeleteEmployeeAttendance.status = 'failed'
+                state.bulkDeleteEmployeeAttendance.error = action.payload.message;
+            }
+        })
+        .addCase(bulkDeleteEmployeeAttendance.rejected, (state, action: any) => {
+            state.bulkDeleteEmployeeAttendance.status = 'failed'
+            state.bulkDeleteEmployeeAttendance.error = action.error.message
+        })
      
 })
+
   
 export const {  } = employeeMasterSlice.actions
 

@@ -278,4 +278,19 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
+    //leave availed
+
+    public async bulkDeleteLeaveAvailed(data: any) {
+        const url = `/api/Leave/EmployeeAvailedBulkDelete`
+        return await api.post(url, data)
+    }
+
+    //Employee Attendance
+    
+    public async bulkDeleteEmployeeAttendance(data: any) {
+        const url = `/api/Employee/EmployeeAttendanceBulkDelete`
+        return await api.post(url, data)
+    }
+
+
 }
