@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MastersLayout from "../MastersLayout";
-import { GetCompaniesBreadcrumb } from "./Companies.constants";
+import { GetAuditScheduleBreadcrumb } from "./Companies.constants";
 import { useExportAuditSchedule, useGetCompanies, useGetCompanyLocations } from "../../../../backend/masters";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
@@ -24,7 +24,7 @@ const DEFAULT_EXPORT_DATA = {
 function AuditSchedule(this: any) {
     const [form, setForm] = useState<any>({});
     const [importFile, setImportFile] = useState(false);
-    const [breadcrumb] = useState(GetCompaniesBreadcrumb('Audit Schedule'));
+    const [breadcrumb] = useState(GetAuditScheduleBreadcrumb('Audit Schedule'));
     const [exportData, setExportData] = useState<any>({ ...DEFAULT_EXPORT_DATA });
     const [parentCompany, setParentCompany] = useState<any>(null);
     const [associateCompany, setAssociateCompany] = useState<any>(null);

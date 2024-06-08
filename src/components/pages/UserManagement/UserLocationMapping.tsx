@@ -20,14 +20,14 @@ function UserLocationMapping({ user, data, onClose, onSubmit }: any) {
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: (parentCompany || {}).value }]
     }, Boolean((parentCompany || {}).value));
-    const { locations, isFetching } = useGetCompanyLocations({
+    const { locations, isFetching }: any = useGetCompanyLocations({
         ...DEFAULT_OPTIONS_PAYLOAD,
         filters: [{ columnName: 'companyId', value: (associateCompany || {}).value }],
         sort: { columnName: 'locationName', order: 'asc' }
     }, Boolean(associateCompany));
     const { createUserLocationMapping, creating } = useCreateUserLocationMapping((response: any) => {
         if (response.key === API_RESULT.SUCCESS) {
-            toast.success(`${selectedLocations.length} location(s) added successsfully.`);
+            toast.success(`${selectedLocations.length} location(s) added successfully.`);
             onSubmit();
         } else {
             toast.error(response.value || ERROR_MESSAGES.ERROR);

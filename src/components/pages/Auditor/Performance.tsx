@@ -7,6 +7,7 @@ import { useGetAuditorPerformance } from "../../../backend/auditor";
 const PerformanceTabs = [
     { value: 'Today', label: 'Today' },
     { value: 'ThisWeek', label: 'This Week' },
+    { value: 'ThisMonth', label: 'This Month' },
     { value: 'LastMonth', label: ['Last Month'] },
     { value: 'Last3Months', label: ['3 Months'] },
     { value: 'Last6Months', label: ['6 Months'] },

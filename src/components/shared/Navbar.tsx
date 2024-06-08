@@ -14,6 +14,8 @@ import NotificationsModal from './NotificationsModal';
 
 function Navbar({ showUser = true }) {
     const [user] = useState(auth.getUserDetails() || {});
+    const [role, setRole] = useState('');
+    const [roles, setRoles] = useState<any[]>([]);
     const [changePwd, setChangePwd] = useState(false);
     const [newUser, setNewUser] = useState(false);
     const [unreadNotifications, setUnreadNotifications] = useState<any>([]);
@@ -22,7 +24,7 @@ function Navbar({ showUser = true }) {
 
     function logout(event: any) {
         preventDefault(event)
-        auth.clearAuthToken();
+        auth.clearUserSession();
         setTimeout(() => {
             navigate(`${getBasePath()}/`);
             window.location.reload();
@@ -32,6 +34,16 @@ function Navbar({ showUser = true }) {
     function changePassword(event: any) {
         preventDefault(event);
         setChangePwd(true);
+    }
+
+    function changeRole(_role: string) {
+        const { role, pages } = auth.getUserDetails();
+        const index = role.indexOf(_role);
+        auth.setUserRole(_role, pages[index]);
+        setTimeout(() => {
+            navigate(`${getBasePath()}/`);
+            window.location.reload();
+        });
     }
 
     useEffect(() => {
@@ -45,8 +57,20 @@ function Navbar({ showUser = true }) {
         if (notifications) {
             setUnreadNotifications(notifications.filter((x: any) => !x.isRead).length);
         }
+    }, [notifications]);
 
-    }, [notifications])
+    useEffect(() => {
+        if (showUser) {
+            const _role = auth.getUserRole();
+            setRole(_role);
+            const { role } = auth.getUserDetails();
+            if (typeof role === 'string' || role.length === 1) {
+                setRoles([]);
+            } else {
+                setRoles(role.filter((x: string) => x !== _role));
+            }
+        }
+    }, [showUser]);
 
     return (
         <>
@@ -78,19 +102,29 @@ function Navbar({ showUser = true }) {
                                                 <span className='userNameL rounded-circle fw-semibold text-center text-white'>{(user.name || '').charAt(0)}</span> {user.name}
                                             </div>
                                             <div className="dropdown-menu">
-                                                <div className="dropdown-item"><span className="fw-bold">Role: </span>{user.role}</div>
-                                                {/* <div className="dropdown-item" to="">Settings</div> */}
-                                                <a className="dropdown-item" href="/" onClick={changePassword}>Change Password</a>
+                                                <div className="px-3 text-md fw-bold fst-italic">Role:</div>
+                                                <div className="px-3 pb-3">{role}</div>
+                                                {
+                                                    roles.length > 0 &&
+                                                    <>
+                                                        <div className="px-3 text-md fw-bold fst-italic">Login As:</div>
+                                                        {
+                                                            roles.map((_role: string) => {
+                                                                return (
+                                                                    <div className="dropdown-item" key={_role} onClick={() => changeRole(_role)}>{_role}</div>
+                                                                )
+                                                            })
+                                                        }
+                                                    </>
+                                                }
                                                 <hr className="dropdown-divider" />
+                                                <a className="dropdown-item" href="/" onClick={changePassword}>Change Password</a>
                                                 <a className="dropdown-item" href="/" onClick={logout}>Logout</a>
                                             </div>
                                         </div>
                                     </ul>
                                     <img src={mofoi_logo} width={'50px'} height={'50px'} alt='Mofoi Logo' />
                                 </div>
-                                {/* <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navTop" aria-controls="navTop" aria-expanded="false" aria-label="Toggle navigation">
-                                    <span className="navbar-toggler-icon"></span>
-                                </button> */}
                             </>
                         }
                     </div>

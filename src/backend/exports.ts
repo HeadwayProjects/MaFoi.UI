@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { get, post } from "./request";
+import { get, getChartsBaseUrl, post } from "./request";
 
 export function useAuditReport(onSuccess?: any, onError?: any) {
     const { mutate: auditReport, error, isLoading: exporting } = useMutation(
         ['auditReport'],
-        async (payload: any) => await post('/api/Auditor/GetAuditReport', payload, null, true, { responseType: 'blob' }),
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetAuditReport`, payload, null, true, { responseType: 'blob' }),
         {
             onError,
             onSuccess: (response) => {
@@ -44,6 +44,66 @@ export function useExportAct(onSuccess?: any, onError?: any) {
         }
     );
     return { exportAct, error, exporting };
+}
+
+export function useExportHolidayList(onSuccess?: any, onError?: any) {
+    const { mutate: exportHolidayList, error, isLoading: exporting } = useMutation(
+        ['exportHolidayList'],
+        async (payload: any) => await post('/api/Holiday/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportHolidayList, error, exporting };
+}
+
+export function useExportAttendanceConfig(onSuccess?: any, onError?: any) {
+    const { mutate: exportAttendanceConfig, error, isLoading: exporting } = useMutation(
+        ['exportAttendanceConfig'],
+        async (payload: any) => await post('/api/Attendance/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportAttendanceConfig, error, exporting };
+}
+
+export function useExportLeaveConfig(onSuccess?: any, onError?: any) {
+    const { mutate: exportLeaveConfig, error, isLoading: exporting } = useMutation(
+        ['exportLeaveConfig'],
+        async (payload: any) => await post('/api/Leave/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportLeaveConfig, error, exporting };
+}
+
+export function useExportEmployees(onSuccess?: any, onError?: any) {
+    const { mutate: exportEmployees, error, isLoading: exporting } = useMutation(
+        ['exportEmployees'],
+        async (payload: any) => await post('/api/Employee/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportEmployees, error, exporting };
 }
 
 export function useExportActivities(onSuccess?: any, onError?: any) {
@@ -208,4 +268,41 @@ export function useExportUsers(onSuccess?: any, onError?: any) {
         }
     );
     return { exportUsers, error, exporting };
+}
+
+export function useExportVerticals(onSuccess?: any, onError?: any) {
+    const { mutate: exportVertical, error, isLoading: exporting } = useMutation(
+        ['exportVertical'],
+        async (payload: any) => await post('/api/Vertical/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportVertical, error, exporting };
+}
+
+export function useExportDepartments(onSuccess?: any, onError?: any) {
+    const { mutate: exportDepartments, error, isLoading: exporting } = useMutation(
+        ['exportDepartments'],
+        async (payload: any) => await post('/api/Department/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportDepartments, error, exporting };
+}
+
+export function getAuditReportFileName(row: any, contentType: string) {
+    const {company, associateCompany, location, month} = row;
+    let fileNames: string[] = ['Audit_Report', company.code, associateCompany.code, location.code, month];
+    const fileExt = contentType.split('/')[1] || 'pdf';
+    return `${fileNames.join('_')}.${fileExt}`;
 }

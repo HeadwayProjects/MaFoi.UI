@@ -23,7 +23,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
     const { cities } = useGetCities({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'stateId', value: stateId }], t }, Boolean(stateId && action !== ACTIONS.VIEW));
     const { createCompanyLocation, creating } = useCreateCompanyLocation((response: ResponseModel) => {
         if (response.key === API_RESULT.SUCCESS) {
-            toast.success(`Location ${locationDetails.locationName} created successsfully.`);
+            toast.success(`Location ${locationDetails.locationName} created successfully.`);
             onSubmit();
         } else {
             toast.error(response.value || ERROR_MESSAGES.ERROR);
@@ -31,7 +31,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
     }, errorCallback);
     const { updateCompanyLocation, updating } = useUpdateCompanyLocation(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
-            toast.success(`Location ${locationDetails.locationName} updated successsfully.`);
+            toast.success(`Location ${locationDetails.locationName} updated successfully.`);
             onSubmit();
         } else {
             toast.error(value || ERROR_MESSAGES.ERROR);
@@ -64,7 +64,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 content: (associateCompany || {}).label
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action !== ACTIONS.ADD ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'state',
                 label: 'State',
                 options: states,
@@ -72,10 +72,10 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'state.label') : ''
+                content: action !== ACTIONS.ADD ? getValue(locationDetails, 'state.label') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
+                component: action !== ACTIONS.ADD ? componentTypes.PLAIN_TEXT : componentTypes.SELECT,
                 name: 'city',
                 label: 'City',
                 options: cities,
@@ -83,7 +83,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                     { type: validatorTypes.REQUIRED }
                 ],
                 isDisabled: !locationDetails.state,
-                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'city.label') : ''
+                content: action !== ACTIONS.ADD ? getValue(locationDetails, 'city.label') : ''
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
@@ -194,7 +194,6 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
     useEffect(() => {
         if (locationDetails && parentCompany && associateCompany) {
             const { state, city, locationCode } = locationDetails;
-            console.log(state, city)
             const codes = [
                 parentCompany.code || '###',
                 associateCompany.code || '###',

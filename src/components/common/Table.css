@@ -1240,6 +1240,7 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen) {
 .custom-tabulator-footer .page-changer [class*="-singleValue"] {
     color: var(--white);
 }
+
 .custom-tabulator-footer .page-changer [class*="-indicatorContainer"]:hover {
     color: var(--white);
 }
@@ -1247,12 +1248,15 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen) {
 .tabulator-cell .icon.icon-pencil {
     color: var(--blue);
 }
+
 .tabulator-cell .icon.icon-trash {
     color: var(--red);
 }
+
 .tabulator-cell .icon.icon-eye {
     color: var(--green);
 }
+
 .tabulator-cell .icon.icon-download {
     color: var(--orange);
 }
@@ -1261,4 +1265,9 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen) {
     opacity: 0.5;
     font-style: italic;
     font-weight: bold;
+}
+
+.tabulator-row.notice-activity {
+    background: rgb(251, 211, 48);
+    background: linear-gradient(90deg, rgba(251, 211, 48, 0.5) 0%, rgba(255, 236, 177, 1) 33%, rgba(254, 228, 136, 1) 67%, rgba(251, 211, 48, 0.5) 100%);
 }

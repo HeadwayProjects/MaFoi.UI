@@ -22,42 +22,11 @@
 }
 
 .status-btn-group .btn {
-    background-color: var(--white);
     color: var(--white) !important;
     font-weight: 700;
     position: relative;
     top: -4px;
     border: none;
-}
-
-/* .status-btn-group input:checked+.btn {
-    color: var(--white) !important;
-} */
-
-.status-btn-group input[name="ActivitySaved"]+.btn {
-    background-color: var(--gray-500);
-    box-shadow: 0 0 0 1px #959595 inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #636262, 0 8px 8px 1px rgb(199 199 199);
-}
-
-.status-btn-group input[name="Pending"]+.btn {
-    background-color: var(--yellow);
-    box-shadow: 0 0 0 1px #d79a47 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #D79A34, 0 8px 8px 1px rgb(199 199 199);
-}
-
-.status-btn-group input[name="Overdue"]+.btn,
-.status-btn-group input[name="Rejected"]+.btn {
-    background-color: var(--red);
-    box-shadow: 0 0 0 1px #870101 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #8b3f3f, 0 8px 8px 1px rgb(199 199 199);
-}
-
-.status-btn-group input[name="Submitted"]+.btn {
-    background-color: var(--light-green);
-    box-shadow: 0 0 0 1px #52c92a inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #6b9d4b, 0 8px 8px 1px rgb(199 199 199);
-}
-
-.status-btn-group input[name="Approved"]+.btn {
-    background-color: var(--dark-green);
-    box-shadow: 0 0 0 1px #2f7119 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #3d6f1d, 0 8px 8px 1px rgb(199 199 199);
 }
 
 ul.updates {
@@ -87,23 +56,51 @@ ul.updates {
     background-color: var(--gray-300);
     box-shadow: 0 0 0 1px #959595 inset, 0 0 0 2px rgba(255, 255, 255, 0.10) inset, 0 6px 0 0 #9f9e9eb0, 0 8px 8px 1px rgb(199 199 199);
 }
+
 .cardCount.yellow-bg {
     background-color: var(--yellow);
     box-shadow: 0 0 0 1px #d79a47 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #D79A34, 0 8px 8px 1px rgb(199 199 199);
 }
+
 .cardCount.medium-red-bg {
     background-color: var(--medium-red);
     box-shadow: 0 0 0 1px #b93802 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #c114149c, 0 8px 8px 1px rgb(199 199 199);
 }
+
 .cardCount.light-green-bg {
     background-color: var(--light-green);
     box-shadow: 0 0 0 1px #52c92a inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #6b9d4b, 0 8px 8px 1px rgb(199 199 199);
 }
+
 .cardCount.green-bg {
     background-color: var(--green);
     box-shadow: 0 0 0 1px #2f7119 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #3d6f1d, 0 8px 8px 1px rgb(199 199 199);
 }
+
 .cardCount.red-bg {
     background-color: var(--red);
     box-shadow: 0 0 0 1px #870101 inset, 0 0 0 2px rgba(255, 255, 255, 0.15) inset, 0 6px 0 0 #8b3f3f, 0 8px 8px 1px rgb(199 199 199);
+}
+
+.activityPerformance {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.activityPerformance .w-2 {
+    grid-column: 1 / 3;
+}
+
+@media only screen and (max-width: 1366px) {
+    .activityPerformance {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.chartCard {
+    min-width: 400px;
+    padding-top: 0.75rem;
+    height: 275px;
+    overflow: hidden;
 }

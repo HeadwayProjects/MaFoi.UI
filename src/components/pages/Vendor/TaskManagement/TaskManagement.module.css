@@ -1,0 +1,9 @@
+.tableActions {
+    position: absolute !important;
+    z-index: 1;
+    right: 0;
+}
+
+.tableActions  :global(.nav-link){
+    padding: 0.85rem 1.25rem;
+}

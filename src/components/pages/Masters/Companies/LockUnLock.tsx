@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
-import { ACTIONS, FILTERS, STATUS_MAPPING } from "../../../common/Constants";
+import { ACTIONS, ACTIVITY_STATUS, FILTERS, STATUS_MAPPING } from "../../../common/Constants";
 import { useGetAllActivities } from "../../../../backend/query";
-import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS } from "../../../../utils/constants";
+import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER } from "../../../../utils/constants";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
 import AdvanceSearch from "../../../common/AdvanceSearch";
 import { preventDefault } from "../../../../utils/common";
@@ -11,6 +11,10 @@ import Icon from "../../../common/Icon";
 import AdminLocations from "./AdminLocations";
 import UnBlockModal from "./UnBlockModal";
 import BulkUnBlockModal from "./BulkUnBlockModal";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import { GetAuditScheduleBreadcrumb } from "./Companies.constants";
+import MastersLayout from "../MastersLayout";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -33,10 +37,12 @@ function getDefaultPayload() {
         { columnName: 'published', value: 'false' },
         { columnName: 'fromDate', value: dayjs(new Date(fromDate)).local().format() },
         { columnName: 'toDate', value: dayjs(new Date(toDate)).local().format() },
+        { columnName: 'status', value: [ACTIVITY_STATUS.OVERDUE, ACTIVITY_STATUS.REJECTED].join(API_DELIMITER) }
     ]
 }
 
 function LockUnLock() {
+    const [breadcrumb] = useState(GetAuditScheduleBreadcrumb('Un-Block Activities'));
     const [activity, setActivity] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState<any>();
@@ -110,7 +116,7 @@ function LockUnLock() {
     function DueDateTmpl({ cell }: any) {
         const value = cell.getValue();
         return (
-            <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+            <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
         )
     }
 
@@ -128,7 +134,10 @@ function LockUnLock() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                <Icon className="mx-1" type="button" name="lock-open" text="Un-Block" data={row} action={handleUnblock} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.AUDIT_SCHEDULE_UNBLOCK_BLOCKED) &&
+                    <Icon className="mx-1" type="button" name="lock-open" text="Un-Block" data={row} action={handleUnblock} />
+                }
             </div>
         )
     }
@@ -200,7 +209,8 @@ function LockUnLock() {
             title: "Actions", hozAlign: "center", width: 120,
             headerSort: false,
             formatter: reactFormatter(<ActionColumnElements />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            visible: hasUserAccess(USER_PRIVILEGES.AUDIT_SCHEDULE_UNBLOCK_BLOCKED)
         }
     ]
 
@@ -327,19 +337,7 @@ function LockUnLock() {
 
     return (
         <>
-            <div className="d-flex flex-column">
-                <div className="d-flex p-2 align-items-center pageHeading shadow">
-                    <h4 className="mb-0">Block Un-Block</h4>
-                    <div className="d-flex align-items-end h-100">
-                        <nav aria-label="breadcrumb">
-                            <ol className="breadcrumb mb-0 d-flex justify-content-end">
-                                <li className="breadcrumb-item">Home</li>
-                                <li className="breadcrumb-item fw-bold active">Block Un-Block</li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-
+            <MastersLayout title="Un-Block Activities" breadcrumbs={breadcrumb}>
                 <form className="p-0 mx-3 my-2">
                     <div className="card shadow border-0 p-2 mt-2 mb-3 filters">
                         <div className="d-flex flex-row m-0 align-items-end">
@@ -347,19 +345,22 @@ function LockUnLock() {
                             <div >
                                 <AdvanceSearch fields={[FILTERS.MONTH]} payload={getAdvanceSearchPayload()} onSubmit={search} />
                             </div>
-                            <div className="ms-auto">
-                                <button className="btn btn-success" onClick={handleBulkUpdate} disabled={(selectedRows || []).length === 0}>
-                                    <div className="d-flex align-items-center">
-                                        <Icon name={'lock-open'} />
-                                        <span className="ms-2 text-nowrap">Un-Block</span>
-                                    </div>
-                                </button>
-                            </div>
+                            {
+                                hasUserAccess(USER_PRIVILEGES.AUDIT_SCHEDULE_UNBLOCK_BLOCKED) &&
+                                <div className="ms-auto">
+                                    <button className="btn btn-success" onClick={handleBulkUpdate} disabled={(selectedRows || []).length === 0}>
+                                        <div className="d-flex align-items-center">
+                                            <Icon name={'lock-open'} />
+                                            <span className="ms-2 text-nowrap">Un-Block</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            }
                         </div>
                     </div>
                 </form>
                 <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={onSelectionChange} onPageNav={handlePageNav} />
-            </div>
+            </MastersLayout>
             {
                 !!alertMessage &&
                 <AlertModal message={alertMessage} onClose={(e: any) => {

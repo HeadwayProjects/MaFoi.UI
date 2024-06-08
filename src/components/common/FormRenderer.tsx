@@ -21,6 +21,7 @@ export const componentTypes = {
     WIZARD: iComponentTypes.WIZARD,
     TAB_ITEM: iComponentTypes.TAB_ITEM,
     FILE_UPLOAD: 'file-upload',
+    DOCUMENTS_UPLOAD: 'documents-upload',
     ASYNC_SELECT: 'async-select',
     MONTH_PICKER: 'month-picker',
     INPUT_AS_TEXT: 'input-as-text',
@@ -151,6 +152,7 @@ function TextAreaField(props: any) {
             ...input,
             required,
             placeholder: props.placeholder || `Enter ${label}`,
+            disabled: props.disabled,
             onChange: (e: any) => {
                 input.onChange(e);
                 if (props.onChange) {
@@ -165,7 +167,7 @@ function TextAreaField(props: any) {
             <label className="form-label text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
             <div className="input-group">
                 <textarea id={name} className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''}`}
-                    maxLength={maxLength} {...onInput(input)} rows={3} />
+                    maxLength={maxLength} {...onInput(input)} rows={props.rows || 3} />
             </div>
             {
                 props.description &&
@@ -300,7 +302,8 @@ function AsyncSelectField(props: any) {
                 }
             },
             isLoading: props.isLoading,
-            isDisabled: props.isDisabled
+            isDisabled: props.isDisabled,
+            isClearable: props.isClearable
         };
     }
 
@@ -419,6 +422,75 @@ function FileUploadField(props: any) {
     );
 };
 
+function DocumentsWithUploadField(props: any) {
+    const { input, meta, label, name } = useFieldApi(props);
+    const [documents, setDocuments] = useState(props.documents);
+    const required = (props.validate || []).find((x: any) => x.type === validatorTypes.REQUIRED) ? true : false;
+
+    useEffect(() => {
+        if (props.documents) {
+            setDocuments(props.documents)
+        }
+    }, [props.documents]);
+    return (
+        <div className={`form-group ${props.className || ''}`}>
+            {
+                documents !== undefined &&
+                <>
+                    {
+                        (documents || []).length === 0 && <div className="fst-italic text-sm mb-2">No documents available</div>
+                    }
+                    {
+                        (documents || []).length > 0 &&
+                        <div className="d-flex flex-column">
+                            {
+                                (documents || []).map((document: any) => {
+                                    return (
+                                        <div className="d-flex flex-row w-100 align-items-center mb-2 gap-3 justify-content-between" key={document.id}>
+                                            <span className="ellipse">{document.fileName}</span>
+                                            <div className="d-flex flex-row align-items-center gap-3">
+                                                {
+                                                    props.delete && props.deleteDocument &&
+                                                    <Icon action={props.deleteDocument} data={document} name="trash" className="text-error text-md" />
+                                                }
+                                                <Icon action={(event: any) => props.downloadDocument ? props.downloadDocument(event) : {}}
+                                                    data={document} name="download" className="text-appprimary text-md" />
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    }
+                </>
+            }
+            {
+                props.upload &&
+                <>
+                    {
+                        label &&
+                        <label className="text-sm" htmlFor={name}>{label} {required && <span className="text-error">*</span>}</label>
+                    }
+                    <div className={`input-group`}>
+                        <input id={name}
+                            className={`form-control ${meta.touched ? (meta.error ? 'is-invalid' : 'is-valid') : ''} ${props.styleClass || ''}`}
+                            {...input} />
+                    </div>
+                    {
+                        props.description &&
+                        <span className="text-muted form-text">{props.description}</span>
+                    }
+                    {
+                        meta.touched && meta.error && <div className="invalid-feedback d-block">
+                            {meta.error}
+                        </div>
+                    }
+                </>
+            }
+        </div>
+    );
+};
+
 export function DatePickerField(props: any) {
     const { input, meta, label, name } = useFieldApi(props);
     const [value, setValue] = useState(props.initialValue);
@@ -435,6 +507,8 @@ export function DatePickerField(props: any) {
                     props.onChange(e);
                 }
             },
+            minDate: props.minDate,
+            maxDate: props.maxDate,
             disabled: props.disabled
         }
     }
@@ -461,7 +535,7 @@ export function DatePickerField(props: any) {
             }
             <div className={`input-group date-picker`}>
                 <DatePicker range={props.range || false}
-                    minDate={props.minDate} format={'DD/MM/YYYY'} maxDate={props.maxDate} {...onInput(input)} value={value}>
+                    format={'DD/MM/YYYY'} {...onInput(input)} value={value}>
                     {
                         value && props.clearable &&
                         <Button variant="link" className="mb-2" onClick={clearValue}>Clear</Button>
@@ -597,6 +671,7 @@ export const ComponentMapper = {
     },
     [componentTypes.TAB_ITEM]: TabItemField,
     [componentTypes.FILE_UPLOAD]: FileUploadField,
+    [componentTypes.DOCUMENTS_UPLOAD]: DocumentsWithUploadField,
     [componentTypes.ASYNC_SELECT]: AsyncSelectField,
     [componentTypes.MONTH_PICKER]: MonthPickerField,
     [componentTypes.INPUT_AS_TEXT]: InputasTextAreaField,
@@ -605,7 +680,7 @@ export const ComponentMapper = {
 
 
 export function FormTemplate({ formFields }: any) {
-    const { handleSubmit, initialValues = { fullWidth: true }, getState } = useFormApi();
+    const { handleSubmit, onCancel, initialValues = { fullWidth: true }, getState } = useFormApi();
     const { valid, touched } = getState();
 
     return (
@@ -613,11 +688,17 @@ export function FormTemplate({ formFields }: any) {
             {formFields}
             {
                 !initialValues.hideButtons &&
-                <div className="d-flex flex-row mt-4 justify-content-center">
+                <div className={`d-flex flex-row mt-4 gap-3 ${initialValues.buttonWrapStyles || 'justify-content-center'}`}>
                     <Button variant="primary" type="submit" className={`btn btn-primary px-4 ${initialValues.fullWidth ? 'w-100' : ''}`}
                         disabled={!valid || !touched}>
                         {initialValues.submitBtnText || 'Submit'}
                     </Button>
+                    {
+                        initialValues.showCancel &&
+                        <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onCancel}>
+                            {initialValues.cancelBtnText || 'Cancel'}
+                        </Button>
+                    }
                 </div>
             }
         </form>
@@ -625,7 +706,7 @@ export function FormTemplate({ formFields }: any) {
 }
 
 function FormRenderer(props: any) {
-    const validatorMapper = { 'file-size': fileSizeValidator, 'file-type': fileTypeValidator };
+    const validatorMapper = { 'file-size': fileSizeValidator, 'file-type': fileTypeValidator, ...props.customValidators };
     return (
         <>
             <DDFFormRenderer validatorMapper={validatorMapper} {...props} />

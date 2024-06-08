@@ -1,13 +1,14 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "./request";
 
-export function useGetUserCompanies() {
+export function useGetUserCompanies(enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['userCompanies'],
         async () => await api.get('/api/Company/GetUserCompanies'),
         {
             refetchOnMount: false,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
+            enabled
         }
     );
 
@@ -70,4 +71,19 @@ export function useGetAllActivities(payload: any, enabled = true) {
     );
 
     return { activities: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
+}
+
+export function useExportTodos(onSuccess?: any, onError?: any) {
+    const { mutate: exportTodos, error, isLoading: exporting } = useMutation(
+        ['exportTodos'],
+        async (payload: any) => await api.post('/api/ToDo/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportTodos, error, exporting };
 }
