@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { ActivityType, GetMastersBreadcrumb } from "../Master.constants";
+import { ActivityType, EstablishmentTypes, GetMastersBreadcrumb } from "../Master.constants";
 import { useDeleteActStateMapping, useGetStates, useGetRuleMappings } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
@@ -65,6 +65,13 @@ function RuleStateCompanyMapping() {
             label: 'Type',
             name: 'type',
             options: (ActivityType || []).map((x: any) => {
+                return { value: x, label: x };
+            })
+        },
+        {
+            label: 'EstablishmentType',
+            name: 'EstablishmentType',
+            options: (EstablishmentTypes || []).map((x: any) => {
                 return { value: x, label: x };
             })
         }
