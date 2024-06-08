@@ -578,7 +578,7 @@ const StateRegisterConfiguration = () => {
         columnName:'registerType',
         value: type
       })
-    }
+  
 
     const Payload: any =  { 
       search: searchInput, 

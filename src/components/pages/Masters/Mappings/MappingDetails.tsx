@@ -3,7 +3,7 @@ import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../
 import { ACTIONS } from "../../../common/Constants";
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { getValue } from "../../../../utils/common";
-import { CentralId, GetRuleDesc, RuleType, RuleTypeEnum } from "../Master.constants";
+import { CentralId, GetRuleDesc, RuleType, RuleTypeEnum,EstablishmentTypes } from "../Master.constants";
 import { debounce } from "underscore";
 import { getActivities, getActs, getRuleMappings, getRules, useGetStates } from "../../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from "../../../common/Table";
@@ -61,6 +61,7 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
     const [rules, setRules] = useState<any[]>([]);
     const [activities, setActivities] = useState<any[]>([]);
     const [type, setType] = useState(RuleTypeEnum.STATE)
+    const [establishmentType, setEstablishmentType] = useState(EstablishmentTypes[0])
     const { states } = useGetStates({ ...defaultPayload }, Boolean(defaultPayload && action !== ACTIONS.VIEW));
 
     const schema = {
@@ -83,6 +84,26 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
                     }
                 }
             },
+
+            {
+                component: action === ACTIONS.ADD ? componentTypes.SELECT : componentTypes.PLAIN_TEXT,
+                name: 'establishmentType',
+                label: 'Establishment Type',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: action !== ACTIONS.ADD ? getValue(mappingDetails, 'establishmentType.label') : '',
+                options: EstablishmentTypes,
+                onChange: (option: any) => {
+                    const { value } = option;
+                    if (establishmentType !== value) {
+                        setEstablishmentType(value);
+                        setMappingDetails({ ...mappingDetails, establishmentType: option, rule: null });
+                        setRules([]);
+                    }
+                }
+            },
+
             {
                 component: action === ACTIONS.ADD ? componentTypes.ASYNC_SELECT : componentTypes.PLAIN_TEXT,
                 name: 'act',
@@ -93,7 +114,7 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
                 content: action !== ACTIONS.ADD ? getValue(mappingDetails, 'act.label') : '',
                 defaultOptions: acts,
                 loadOptions: debounce((keyword: any, callback: any) => {
-                    getActs({ ...DEFAULT_PAYLOAD, search: keyword }).then(response => {
+                             getActs({ ...DEFAULT_PAYLOAD, search: keyword, filters: [{columnName: 'EstablishmentType', value: establishmentType}]}).then(response => {
                         const list = ((response || {}).data || {}).list || [];
                         const _options = list.map((act: any) => {
                             return { value: act.id, label: act.name, act }

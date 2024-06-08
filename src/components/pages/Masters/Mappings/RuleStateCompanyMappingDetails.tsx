@@ -83,12 +83,13 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
     function handleDocumentsSubmit({ formName, file, sendNotification }: any) {
         setMapping({ ...mapping, formName, file, sendNotification })
         const { id, ruleComplianceDetailId, actRuleActivityMappingId } = data || {};
-        const { act, rule, activity, state, ruleComplianceDetails } = mapping;
+        const { establishmentType,act, rule, activity, state, ruleComplianceDetails } = mapping;
         const { complianceDescription, proofOfCompliance, penalty, risk, maximumPenaltyAmount,
             impriosonment, continuingPenalty, cancellationSuspensionOfLicense,
             statutoryAuthority, complianceNature = '', auditType } = ruleComplianceDetails;
         const _payload: any = {
             id: id ? id : undefined,
+            establishmentType: ACTIONS.ADD ? establishmentType.value : undefined,
             actId: action === ACTIONS.ADD ? act.value : undefined,
             activityId: action === ACTIONS.ADD ? activity.value : undefined,
             stateId: action === ACTIONS.ADD ? (state ? state.value : CentralId) : undefined,
