@@ -144,6 +144,7 @@ function RuleStateCompanyMapping() {
 
     const columns = [
         { title: "State", field: "state", formatter: reactFormatter(<NameTmpl />), headerSort: true },
+        { title: "Establishment Type", field: "establishmentType", formatter: reactFormatter(<NameTmpl />) },
         { title: "Act", field: "act", formatter: reactFormatter(<NameTmpl />) },
         { title: "Rule", field: "rule", formatter: reactFormatter(<RuleTmpl />) },
         { title: "Activity", field: "activity", formatter: reactFormatter(<NameTmpl />) },
@@ -172,7 +173,8 @@ function RuleStateCompanyMapping() {
         list = list.map(map => {
             const { id, state, actRuleActivityMapping, fileName, filePath, formName, ruleComplianceDetailId, ruleComplianceDetails } = map || {};
             const { act, rule, activity } = actRuleActivityMapping || {};
-            return { id, act, rule, activity, state, fileName, filePath, formName, ruleComplianceDetailId, ruleComplianceDetails }
+            const { establishmentType } = act || {};
+            return { id, establishmentType:{name:establishmentType}, act, rule, activity, state, fileName, filePath, formName, ruleComplianceDetailId, ruleComplianceDetails }
         });
         const tdata = {
             data: list,

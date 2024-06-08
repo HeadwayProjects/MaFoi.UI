@@ -124,6 +124,7 @@ export default function MappingDetails(this: any, { action, data = {}, onSubmit 
                     })
                 }, DEBOUNCE_TIME)
             },
+
             {
                 component: action === ACTIONS.ADD ? componentTypes.ASYNC_SELECT : componentTypes.PLAIN_TEXT,
                 name: 'rule',
