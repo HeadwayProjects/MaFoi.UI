@@ -165,7 +165,8 @@ const StateRegisterConfiguration = () => {
         {
           columnName:'stateId',
           value: event.target.value
-        }
+        },
+    
       ],
       pagination: {
         pageSize: rowsPerPage,
@@ -207,15 +208,36 @@ const StateRegisterConfiguration = () => {
 
   const handleChangeStateName = (e:any) => {
     // dispatch(getForms({estalishmentType: establishmentType.value, stateId:  e.value}))
-    dispatch(getForms({
+
+    const getformspayload: any =  { 
+      search: "", 
+      filters: [
+        {
+          columnName:'stateId',
+          value: e.value
+        },
+        {
+          columnName:'EstablishmentType',
+          value: establishmentType.value
+        }
+      ],
       pagination: {
-          pageSize: 20000,
-          pageNumber: 1
+        pageSize: 2000,
+        pageNumber: 1
       },
-      filters: [{columnName: 'stateId', value: e.value}],
-      search: '',
-      sort: { columnName: 'filePath', order: 'asc' }}
-    ))
+      sort: { columnName: 'filePath', order: 'asc' },
+      "includeCentral": true
+    }
+
+    dispatch(getForms(getformspayload))
+    //   pagination: {
+    //       pageSize: 20000,
+    //       pageNumber: 1
+    //   },
+    //   filters: [{columnName: 'stateId', value: e.value},{columnName: 'EstablishmentType', value: establishmentType}],
+    //   search: '',
+    //   sort: { columnName: 'filePath', order: 'asc' }}
+    // ))
     setStateName(e)
     setActName('')
     setRuleName('')
@@ -869,10 +891,10 @@ const StateRegisterConfiguration = () => {
               </Box>
 
                 <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                  <FormLabel  sx={{color:'#000000'}}>Act</FormLabel>
+                  <FormLabel  sx={{color:'#000000'}}>Act &&  (ActivityName)</FormLabel>
                   <Select
                     isDisabled={!stateName}
-                    options={filteredFormsList && filteredFormsList.map((each:any) => {return {label: each.actRuleActivityMapping.act.name, value: each.actRuleActivityMapping.act.id}})}
+                    options={filteredFormsList && filteredFormsList.map((each:any) => {return {label: each.actRuleActivityMapping.act.name + "(" + each.actRuleActivityMapping.activity.name + ")" , value: each.actRuleActivityMapping.act.id}})}
                     className="basic-multi-select"
                     classNamePrefix="select"
                     value={actName}
@@ -1345,6 +1367,9 @@ const StateRegisterConfiguration = () => {
                             <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px'}}>S.no: &nbsp; </Typography>
                             <Typography color="#000000" sx={{fontSize:'20px'}} >{i+1}</Typography>
                           </Box>
+
+                          <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px', mt:1}}>Label Name</Typography>
+                          <Typography color="#000000" sx={{fontSize:'20px'}} >{each.LabelName}</Typography>
 
                           <Typography variant='h5' color='#0F67B1' sx={{fontSize:'22px', mt:1}}>Column Type</Typography>
                           <Typography color="#000000" sx={{fontSize:'20px'}} >{each.ColumnType}</Typography>
