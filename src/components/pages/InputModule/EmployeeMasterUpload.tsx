@@ -14,6 +14,8 @@ import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import { bulkDeleteEmployees, getEmployees } from '../../../redux/features/employeeMaster.slice';
+import { navigate } from 'raviger';
+import { getBasePath } from '../../../App';
 
 
 const style = {
@@ -1310,6 +1312,7 @@ const EmployeeMasterUpload = () => {
     alert(company);
     dispatch(getEmployees(employeesPayload))
   }
+
   useEffect(() => {
     if (bulkDeleteEmployeeDetails.status === 'succeeded') {
       toast.success(`Employees deleted successfully.`)
@@ -1354,6 +1357,9 @@ const EmployeeMasterUpload = () => {
     }
   }, [bulkDeleteEmployeeDetails.status])
 
+  const onClickBackToDashboard = () => {
+    navigate(`${getBasePath()}/inputUploads/dashboard`);
+  }
 
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
@@ -1391,10 +1397,10 @@ const EmployeeMasterUpload = () => {
             <div style={{ backgroundColor: '#E2E3F8', padding: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', marginTop: '10px' }}>
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Master</h5>
-                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '200px', justifyContent: 'space-between' }}>
+                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'space-between' }}>
+                  <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedEmployees && selectedEmployees.length === 0}> Bulk Delete</Button>
                   <button onClick={onClickExport} disabled={!employees} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !employees ? '#707070' : '#ffffff', color: !employees ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
-
                 </div>
 
               </div>

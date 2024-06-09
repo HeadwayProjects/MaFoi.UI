@@ -16,6 +16,7 @@ import { Alert } from 'react-bootstrap';
 import { getLeaveConfiguration } from '../../../redux/features/leaveConfiguration.slice';
 import { addStateRegister, getStateConfigurationDetails, getStateRegister, resetAddStateConfigDetails, resetStateConfigDetails } from '../../../redux/features/stateRegister.slice';
 import Select from "react-select";
+import { EstablishmentTypes } from '../Masters/Master.constants';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -121,6 +122,7 @@ const StateRegisterConfiguration = () => {
 
   const [registerType, setRegisterType] = React.useState('');
   const [processType, setProcessType] = React.useState<any>('');
+  const [establishmentType, setEstablishmentType] = React.useState<any>('');
   const [stateName, setStateName] = React.useState<any>('');
   const [actName, setActName] = React.useState<any>('')
   const [ruleName, setRuleName] = React.useState<any>('')
@@ -204,6 +206,7 @@ const StateRegisterConfiguration = () => {
   }
 
   const handleChangeStateName = (e:any) => {
+    // dispatch(getForms({estalishmentType: establishmentType.value, stateId:  e.value}))
     dispatch(getForms({
       pagination: {
           pageSize: 20000,
@@ -839,8 +842,21 @@ const StateRegisterConfiguration = () => {
                 </FormControl>
 
                 <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                  <FormLabel  sx={{color:'#000000'}}>Establishment Type</FormLabel>
+                  <Select
+                    options={EstablishmentTypes.map((each:any) => {return {label : each, value: each}})}
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    value={establishmentType}
+                    styles={customStyles}
+                    onChange={(e:any) => {setEstablishmentType(e) }}
+                  />
+                </FormControl>
+
+                <FormControl sx={{ m: 1, width:"100%", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                   <FormLabel  sx={{color:'#000000'}}>State</FormLabel>
                   <Select
+                    isDisabled={!establishmentType}
                     options={statesList && statesList.map((each:any) => {return {label : each.name, value: each.id}})}
                     className="basic-multi-select"
                     classNamePrefix="select"

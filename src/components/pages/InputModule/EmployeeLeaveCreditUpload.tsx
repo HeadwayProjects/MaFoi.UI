@@ -14,6 +14,8 @@ import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import { bulkDeleteLeaveBalance, getEmployees, getEmployeesAttendance, getEmployeesLeaveCredit } from '../../../redux/features/employeeMaster.slice';
+import { getBasePath } from '../../../App';
+import { navigate } from 'raviger';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -701,6 +703,10 @@ const EmployeeLeaveCreditUpload = () => {
     }
   }, [bulkDeleteEmployeeCreditDetails.status])
 
+  const onClickBackToDashboard = () => {
+    navigate(`${getBasePath()}/inputUploads/dashboard`);
+  }
+
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
       <Modal
@@ -735,7 +741,8 @@ const EmployeeLeaveCreditUpload = () => {
             <div style={{ backgroundColor: '#E2E3F8', padding: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', marginTop: '10px' }}>
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Leave Credit</h5>
-                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '200px', justifyContent: 'space-between' }}>
+                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
+                  <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedCredit && selectedCredit.length === 0}> Bulk Delete</Button>
                 </div>
                 {/* <button onClick={onClickExport} disabled={!employeesLeaveCredit} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveCredit ? '#707070': '#ffffff' , color: !employeesLeaveCredit ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
