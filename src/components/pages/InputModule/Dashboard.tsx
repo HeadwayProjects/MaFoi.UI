@@ -24,7 +24,8 @@ const Dashboard = () => {
   const employeeInputDashboardDetails = useAppSelector((state) => state.inputDashboard.employeeInputDashboardDetails)
   const employeeBackendCountDetails = useAppSelector((state) => state.inputDashboard.employeeBackendCountDetails)
 
-  const employeeCounts = employeeDashboardCountsDetails.data
+  const employeeCounts = employeeDashboardCountsDetails &&  employeeDashboardCountsDetails.data
+  const inputDashboardList = employeeInputDashboardDetails.data.inputList ? employeeInputDashboardDetails.data.inputList : []
 
   const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
@@ -153,22 +154,10 @@ const Dashboard = () => {
     }
     if(employeeDashboardCountsDetails.status === 'succeeded'){
       
-    }else if(employeeDashboardCountsDetails.status === 'failed'){
+    }else if(employeeDashboardCountsDetails.status === 'failed' || employeeInputDashboardDetails.status === 'failed' || employeeBackendCountDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
       resetEmployeeDashboardCountsDetailsStatus()
-    }
-
-    if(employeeInputDashboardDetails.status === 'succeeded'){
-
-    }else if(employeeInputDashboardDetails.status === 'failed'){
-      toast.error(ERROR_MESSAGES.DEFAULT);
       resetEmployeeInputDashboardDetailsStatus()
-    }
-
-    if(employeeBackendCountDetails.status === 'succeeded'){
-
-    }else if(employeeBackendCountDetails.status === 'failed'){
-      toast.error(ERROR_MESSAGES.DEFAULT);
       resetEmployeeBackendCountDetailsStatus()
     }
 
@@ -216,7 +205,6 @@ const Dashboard = () => {
     navigate(`${getBasePath()}/inputUploads/employeeAttendanceUpload`);
   }
   
-  console.log('employeeDashboardCountsDetails', employeeDashboardCountsDetails)
 
   return (
     <div style={{ backgroundColor:'#ffffff', minHeight:'100vh'}}>
@@ -479,8 +467,53 @@ const Dashboard = () => {
                         <FaRegKeyboard style={{fontSize:'28px'}}/>
                         <Typography ml={2}> Input</Typography>
                       </Box>
+                      
+                      {inputDashboardList.length > 0 ? 
+                        inputDashboardList.map((each:any) => {
+                            let redirectFunction = onClickEmployeeUploadPreview
+                            if(each.inputFiletype === 'Employee master'){
+                              redirectFunction = onClickEmployeeUploadPreview
+                            }else if(each.inputFiletype === 'Leave avail'){
+                              redirectFunction = onClickLeaveAvailedPreview
+                            }else if(each.inputFiletype === 'Leave credit'){
+                              redirectFunction = onClickleaveCreditedPreview
+                            }else if(each.inputFiletype === 'Employee Wage'){
+                              redirectFunction = onClickEmployeeWagePreview
+                            }else if(each.inputFiletype === 'Employee Attendance'){
+                              redirectFunction = onClickEmployeeAttendancePreview
+                            }
+                            return (
+                              <Box mt={1} sx={{display:'flex', justifyContent:'space-between', background:'#24C58A4D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #24C58A'}}>
+                                                  <Typography padding={'8px'}> {each.inputFiletype}</Typography>
+                                                  {each.status === 'Success' ? 
+                                                    <Box sx={{display:'flex'}}>
+                                                      <Box sx={{padding:'8px', background:'#05B474 0% 0% no-repeat padding-box', borderRadius:'8px', mr:1}}>
+                                                        <FaCheck style={{fontSize:'20px'}}/>
+                                                      </Box>
+                                                      <Box sx={{padding:'8px', cursor:'pointer', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}} onClick={redirectFunction}>
+                                                        <FaRegEye style={{fontSize:'20px'}}/>
+                                                      </Box>
+                                                    </Box>
+                                                    : 
+                                                    <Box sx={{display:'flex'}}>
+                                                      <Box sx={{padding:'8px', background:'#F11919 0% 0% no-repeat padding-box', borderRadius:'8px', mr:1}}>
+                                                        <IoMdClose style={{fontSize:'20px'}}/>
+                                                      </Box>
+                                                      <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
+                                                        <FaCloudDownloadAlt style={{fontSize:'20px'}}/>
+                                                      </Box>
+                                                    </Box>
+                                                  }
+                                                </Box>
+                            )
+                        }) 
+                        :
+                        <Box>
+                        <Typography mt={10} ml={12}> NA</Typography>
+                        </Box>
+                      }
 
-                      <Box mt={2} sx={{display:'flex', justifyContent:'space-between', background:'#24C58A4D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #24C58A'}}>
+                      {/* <Box mt={2} sx={{display:'flex', justifyContent:'space-between', background:'#24C58A4D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #24C58A'}}>
                         <Typography padding={'8px'}> Employee Upload</Typography>
                         {true ? 
                           <Box sx={{display:'flex'}}>
@@ -593,7 +626,7 @@ const Dashboard = () => {
                             </Box>
                           </Box>
                         }
-                      </Box>
+                      </Box> */}
 
                   </Box>
                   
