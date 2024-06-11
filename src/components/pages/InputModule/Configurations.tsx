@@ -605,21 +605,23 @@ const Configurations = () => {
             <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}> {configType} Mapping Details </Typography>
             {companies && companies.map((each: any) => {
               if (each.id == company) {
-                return <Typography>Company Name: {each.name}</Typography>
+                return <Typography>Company Name &nbsp; &nbsp; &nbsp; &nbsp;: &nbsp; &nbsp; &nbsp; <span style={{ font: 'normal normal normal 24px/30px Calibri' }}>{each.name}</span> </Typography>
                }
             })} 
+              <Box sx={{ display: "flex", alignItems: 'center'}} >
               {associateCompanies && associateCompanies.map((each: any) => {
                 if (each.id == associateCompany) {
-                  return <Typography>AssociateCompany: {each.name}</Typography>
+                  return <Typography>AssociateCompany &nbsp;: &nbsp; &nbsp; &nbsp; <span style={{ font: 'normal normal normal 24px/30px Calibri', marginRight: '20px' }}>{each.name}</span></Typography>
                 }
               })}
 
               {locations && locations.map((each: any) => {
                 const { name }: any = each.location; 
                 if (each.locationId === location) {
-                  return <Typography>Location: {name}</Typography>
+                  return <Typography>Location &nbsp; : &nbsp; &nbsp; <span style={{ font: 'normal normal normal 24px/30px Calibri' }}>{name}</span> </Typography>
                 }
               })}
+            </Box>
           
              
             </Box>
