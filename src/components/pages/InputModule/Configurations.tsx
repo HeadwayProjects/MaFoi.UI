@@ -322,6 +322,7 @@ const Configurations = () => {
       if(configType === 'Employee'){
         dispatch(getColumns('Employee'))
       }else if(configType === 'Employee attendance'){
+      
         dispatch(getColumns('employeeattendance'))
       }else if(configType === 'Leave credit'){
         dispatch(getColumns('employeeleavecredit'))
