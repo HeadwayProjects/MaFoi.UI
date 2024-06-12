@@ -722,7 +722,7 @@ const EmployeeAttendanceUpload = () => {
       sort: { columnName: 'name', order: type },
       "includeCentral": true
     }
-    dispatch(getEmployees(EmployeePayload))
+    dispatch(getEmployeesAttendance(EmployeePayload))
   }
 
   useEffect(() => {
@@ -741,7 +741,7 @@ const EmployeeAttendanceUpload = () => {
         sort: { columnName: 'name', order: 'asc' },
         "includeCentral": true
       }
-      dispatch(getHolidaysList(EmployeeDefaultPayload))
+      dispatch(getEmployeesAttendance(EmployeeDefaultPayload))
     } else if (bulkDeleteEmployeesAttendanceDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
