@@ -186,7 +186,7 @@ const Dashboard = () => {
   ];
 
   const onClickEmployeeUploadPreview = () => {
-    navigate(`${getBasePath()}/inputUploads/employeeMasterUpload`);
+    navigate(`${getBasePath()}/inputUploads/employeeMasterUpload`, {query: {company, associateCompany, location, stateName}});
   }
 
   const onClickLeaveAvailedPreview = () => {
@@ -471,9 +471,9 @@ const Dashboard = () => {
                       {inputDashboardList.length > 0 ? 
                         inputDashboardList.map((each:any) => {
                             let redirectFunction = onClickEmployeeUploadPreview
-                            if(each.inputFiletype === 'Employee master'){
+                            if(each.inputFiletype === 'Employee'){
                               redirectFunction = onClickEmployeeUploadPreview
-                            }else if(each.inputFiletype === 'Leave avail'){
+                            }else if(each.inputFiletype === 'Leave availed'){
                               redirectFunction = onClickLeaveAvailedPreview
                             }else if(each.inputFiletype === 'Leave credit'){
                               redirectFunction = onClickleaveCreditedPreview
@@ -485,7 +485,7 @@ const Dashboard = () => {
                             return (
                               <Box mt={1} sx={{display:'flex', justifyContent:'space-between', background:'#24C58A4D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #24C58A'}}>
                                                   <Typography padding={'8px'}> {each.inputFiletype}</Typography>
-                                                  {each.status === 'Success' ? 
+                                                  {each.status === 'Completed' ? 
                                                     <Box sx={{display:'flex'}}>
                                                       <Box sx={{padding:'8px', background:'#05B474 0% 0% no-repeat padding-box', borderRadius:'8px', mr:1}}>
                                                         <FaCheck style={{fontSize:'20px'}}/>

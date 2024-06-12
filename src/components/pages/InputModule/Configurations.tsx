@@ -11,6 +11,7 @@ import { Alert } from 'react-bootstrap';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { FaUpload } from 'react-icons/fa';
 import Select from "react-select";
+import Companies from '../Masters/Companies/Companies';
 
 const styleUploadModal = {
   position: 'absolute' as 'absolute',
@@ -540,8 +541,12 @@ const Configurations = () => {
     setTableData([])
   } 
 
-  console.log('UploadDetails', configUploadDetails, employeeUploadDetails, tableData)
+  // console.log('UploadDetails', configUploadDetails, employeeUploadDetails, tableData)
+  // console.log("Company", company, "companies", companies)
 
+  console.log('location', location, "locations", locations) 
+  console.log('Associate', associateCompany, 'assoc', associateCompanies);
+  
   return (
     <div style={{ backgroundColor:'#ffffff', height:'100vh'}}>
 
@@ -596,14 +601,41 @@ const Configurations = () => {
       >
 
         <Box sx={style}> 
-            <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-              <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}> {configType} Mapping Details </Typography>
+          <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{display: "flex", flexDirection: "column"}}>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}> {configType} Mapping Details </Typography>
+            {companies && companies.map((each: any) => {
+              if (each.id == company) {
+                return <Typography>Company Name &nbsp; &nbsp; &nbsp; &nbsp;: &nbsp; &nbsp; &nbsp; <span style={{ font: 'normal normal normal 24px/30px Calibri' }}>{each.name}</span> </Typography>
+               }
+            })} 
+              <Box sx={{ display: "flex", alignItems: 'center'}} >
+              {associateCompanies && associateCompanies.map((each: any) => {
+                if (each.id == associateCompany) {
+                  return <Typography>AssociateCompany &nbsp;: &nbsp; &nbsp; &nbsp; <span style={{ font: 'normal normal normal 24px/30px Calibri', marginRight: '20px' }}>{each.name}</span></Typography>
+                }
+              })}
+
+              {locations && locations.map((each: any) => {
+                const { name }: any = each.location; 
+                if (each.locationId === location) {
+                  return <Typography>Location &nbsp; : &nbsp; &nbsp; <span style={{ font: 'normal normal normal 24px/30px Calibri' }}>{name}</span> </Typography>
+                }
+              })}
+            </Box>
+          
+             
+            </Box>
+            
+
+            
               <IconButton
                 onClick={() => {resetStateValues()}}
               >
                 <IoMdClose />
               </IconButton>
             </Box>
+          
 
             <Box sx={{paddingX: '20px', display: 'flex', flexDirection:'column'}}>
               {
@@ -871,9 +903,11 @@ const Configurations = () => {
                           </Table>
                   </TableContainer>
                 </>
-              }
+            }
+            
               <Button sx={{marginTop:'20px', alignSelf:'flex-end', width:'200px'}} variant='contained' onClick={onClickSave}>Save</Button>  
-            </Box>}
+          </Box>}
+        
 
         </div>
       }
