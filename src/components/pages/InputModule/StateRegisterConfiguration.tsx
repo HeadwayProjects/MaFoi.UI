@@ -811,6 +811,10 @@ const StateRegisterConfiguration = () => {
   }
 
   console.log('selecgtddd', selectedStateConfig)
+
+  
+
+
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
 
@@ -1149,8 +1153,8 @@ const StateRegisterConfiguration = () => {
                                             
                                             {/** Ezycomp Field */}
                                             <TableCell >
-                                              <FormControl sx={{ m: 1, width:"100%", minWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
-                                                <Select
+                                          <FormControl sx={{ m: 1, width: "100%", minWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <Select
                                                   options={columnsList ? columnsList.map((each:any) => {return {label : each, value: each}}): []}
                                                   className="basic-multi-select"
                                                   classNamePrefix="select"
@@ -1163,7 +1167,8 @@ const StateRegisterConfiguration = () => {
                                                       width:'200px'
                                                     })
                                                   }}
-                                                  onChange={(e) => handleChangeEzycompField(e, each)}
+                                              onChange={(e) => handleChangeEzycompField(e, each)}
+                                          
                                                 />
                                               </FormControl>
                                             </TableCell>

@@ -14,7 +14,7 @@ import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import { bulkDeleteEmployeeAttendance, getEmployees, getEmployeesAttendance } from '../../../redux/features/employeeMaster.slice';
-import { navigate } from 'raviger';
+import { navigate, useQueryParams } from 'raviger';
 import { getBasePath } from '../../../App';
 
 const style = {
@@ -48,11 +48,14 @@ const EmployeeAttendanceUpload = () => {
 
   const loading = bulkDeleteEmployeesAttendanceDetails.status === 'loading' || employeesAttendanceDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
-  const [company, setCompany] = React.useState('');
-  const [associateCompany, setAssociateCompany] = React.useState('');
-  const [location, setLocation] = React.useState('');
-  const [year, setYear] = React.useState('');
-  const [month, setMonth] = React.useState('');
+  const [query] = useQueryParams();
+
+
+  const [company, setCompany] = React.useState(query.company ? query.company : '');
+  const [associateCompany, setAssociateCompany] = React.useState(query.associateCompany ? query.associateCompany : '');
+  const [location, setLocation] = React.useState((query.location && query.stateName) ? (query.location + '^' + query.stateName) : '');
+  const [year, setYear] = React.useState(query.year ? query.year : '');
+  const [month, setMonth] = React.useState(query.month ? query.month : '');
   
   const [selectedAttendance, setSelectedAttendance] = React.useState<any>([])
   const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
@@ -258,7 +261,44 @@ const EmployeeAttendanceUpload = () => {
     }else if(employeesAttendanceDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
-  },[employeesAttendanceDetails.status])
+  }, [employeesAttendanceDetails.status])
+  
+  useEffect(() => {
+    if (query.company && query.associateCompany && query.location && query.stateName && query.year && query.month) {
+      const payload = {
+        search: "",
+        filters: [
+          {
+            columnName: 'companyId',
+            value: query.company
+          },
+          {
+            columnName: 'associateCompanyId',
+            value: query.associateCompany
+          },
+          {
+            columnName: 'locationId',
+            value: query.location
+          },
+          {
+            columnName: 'year',
+            value: query.year
+          },
+          {
+            columnName: 'month',
+            value: query.month
+          }
+        ],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'code', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getEmployees(payload))
+    }
+  }, [])
 
   const yearsList = []
   const currentYear = new Date().getFullYear();

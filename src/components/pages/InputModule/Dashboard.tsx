@@ -190,19 +190,20 @@ const Dashboard = () => {
   }
 
   const onClickLeaveAvailedPreview = () => {
-    navigate(`${getBasePath()}/inputUploads/employeeLeaveAvailedUpload`);
+    navigate(`${getBasePath()}/inputUploads/employeeLeaveAvailedUpload`, { query: { company, associateCompany, location,stateName, year, month } });
   }
 
   const onClickleaveCreditedPreview = () => {
-    navigate(`${getBasePath()}/inputUploads/employeeLeaveCreditUpload`);
+    navigate(`${getBasePath()}/inputUploads/employeeLeaveCreditUpload`, { query: { company, associateCompany, location, stateName, year, month } });
   }
 
   const onClickEmployeeWagePreview = () => {
-    navigate(`${getBasePath()}/inputUploads/employeeWageUpload`);
+    navigate(`${getBasePath()}/inputUploads/employeeWageUpload`, { query: { company, associateCompany, location, stateName, year, month } });
   }
 
   const onClickEmployeeAttendancePreview = () => {
-    navigate(`${getBasePath()}/inputUploads/employeeAttendanceUpload`);
+   
+    navigate(`${getBasePath()}/inputUploads/employeeAttendanceUpload`, { query: { company, associateCompany, location, stateName, year, month } });
   }
   
 
@@ -470,7 +471,7 @@ const Dashboard = () => {
                       
                       {inputDashboardList.length > 0 ? 
                         inputDashboardList.map((each:any) => {
-                            let redirectFunction = onClickEmployeeUploadPreview
+                            let redirectFunction = onClickEmployeeAttendancePreview
                             if(each.inputFiletype === 'Employee'){
                               redirectFunction = onClickEmployeeUploadPreview
                             }else if(each.inputFiletype === 'Leave availed'){
