@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getActivities, getActs, getAllCompaniesDetails, getAssociateCompanies, getColumns, getForms, getLocations, getRules, getStates } from '../../../redux/features/inputModule.slice';
@@ -17,6 +17,7 @@ import { getLeaveConfiguration } from '../../../redux/features/leaveConfiguratio
 import { addStateRegister, getStateConfigurationDetails, getStateRegister, resetAddStateConfigDetails, resetStateConfigDetails } from '../../../redux/features/stateRegister.slice';
 import Select from "react-select";
 import { EstablishmentTypes } from '../Masters/Master.constants';
+import { RxCross2 } from "react-icons/rx";
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -154,7 +155,11 @@ const StateRegisterConfiguration = () => {
   const [selectedStateConfig, setSelectedStateConfig] = React.useState<any>({})
 
   const fromsList = formsDetails.data.list ? formsDetails.data.list : []
-  const filteredFormsList = fromsList.filter((each:any) => each.filePath !== '' && each.formName !== '')
+  const filteredFormsList = fromsList.filter((each: any) => each.filePath !== '' && each.formName !== '')
+  
+  const [symbols, setSymbols] = React.useState<any>([])
+
+  const symbol = [', separation', '+ Addition', '- Substraction', '/ division', '* multiplication']
 
   const handleChangeStateValue = (event:any) => {
     setType('')
@@ -255,8 +260,10 @@ const StateRegisterConfiguration = () => {
     })
     setTableData(newTableData)
   }
+  const [storeText, setStoreText] = useState<any>([])
 
-  const handleChangeEzycompField = (event:any, fieldData: any) => {
+  const handleChangeEzycompField = (event: any, fieldData: any) => {
+    
     const newTableData = tableData.map((each:any) => {
       if(each.id === fieldData.id){
         return {...each, ezycompField: event.value}
@@ -265,6 +272,11 @@ const StateRegisterConfiguration = () => {
       }
     })
     setTableData(newTableData)
+  }
+
+
+  const handleOnchangeSymbol = (e: any) => {
+    setSymbols(e.target.value)
   }
 
   const handleChangeStyle = (event:any, fieldData:any) => {
@@ -812,9 +824,6 @@ const StateRegisterConfiguration = () => {
 
   console.log('selecgtddd', selectedStateConfig)
 
-  
-
-
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
 
@@ -1152,12 +1161,14 @@ const StateRegisterConfiguration = () => {
                                             </TableCell>
                                             
                                             {/** Ezycomp Field */}
-                                            <TableCell >
-                                          <FormControl sx={{ m: 1, width: "100%", minWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <TableCell sx = {{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                          <FormControl sx={{ m: 1, width: "100%", minWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px', display: 'flex',
+                                           flexDirection: 'row'}} size="small">
+                                            
                                             <Select
                                                   options={columnsList ? columnsList.map((each:any) => {return {label : each, value: each}}): []}
                                                   className="basic-multi-select"
-                                                  classNamePrefix="select"
+                                                 classNamePrefix="select"
                                                   value={each.ezycompField ? {label: each.ezycompField, value: each.ezycompField} : ''}
                                                   styles={{
                                                     control: (base:any) => ({
@@ -1169,8 +1180,22 @@ const StateRegisterConfiguration = () => {
                                                   }}
                                               onChange={(e) => handleChangeEzycompField(e, each)}
                                           
-                                                />
-                                              </FormControl>
+                                            />
+                                            
+                                            <MSelect displayEmpty value={symbols} onClick={handleOnchangeSymbol}>
+                                              {symbol.map((each: any) => {
+                                                return <MenuItem value={each} key = {each.id}>{each}</MenuItem>
+                                              })}
+                                            </MSelect>
+                                            
+                                          </FormControl>
+                                          <Box sx={{ display: 'flex', alignItems: 'center'}}>
+                                            <TextField size="small" value={storeText} id="outlined-size-small" />
+                                            <Box sx = {{display: 'flex', flexDirection: 'column'}}>
+                                              <Button>Add</Button>
+                                              <Button> <RxCross2 /> </Button>
+                                            </Box>
+                                          </Box>
                                             </TableCell>
 
                                             {/** Style */}

@@ -1584,7 +1584,6 @@ const HolidayList = () => {
                         sx: {
                           maxHeight: 215,
                           width: 230,
-
                           marginTop: '3px'
                         },
                       },
