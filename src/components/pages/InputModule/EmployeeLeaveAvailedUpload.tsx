@@ -159,7 +159,7 @@ const EmployeeLeaveAvailedUpload = () => {
         },
         {
           columnName: 'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName: 'year',
@@ -192,14 +192,14 @@ const EmployeeLeaveAvailedUpload = () => {
         },
         {
           columnName: 'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName: 'year',
           value: year
         },
         {
-          columnName: 'monthId',
+          columnName: 'month',
           value: monthKey
         }
       ],
