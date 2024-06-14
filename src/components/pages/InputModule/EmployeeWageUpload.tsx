@@ -16,6 +16,7 @@ import { Alert } from 'react-bootstrap';
 import { bulkDeleteEmployeeWage, getEmployees, getEmployeesAttendance, getEmployeesLeaveAvailed, getEmployeesLeaveCredit, getEmployeesWage } from '../../../redux/features/employeeMaster.slice';
 import { navigate, useQueryParams } from 'raviger';
 import { getBasePath } from '../../../App';
+import { Console } from 'console';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -56,6 +57,7 @@ const EmployeeWageUpload = () => {
   const [company, setCompany] = React.useState(query.company ? query.company : '');
   const [associateCompany, setAssociateCompany] = React.useState(query.associateCompany ? query.associateCompany : '');
   const [location, setLocation] = React.useState((query.location && query.stateName) ? (query.location + '^' + query.stateName) : '');
+
   const [year, setYear] = React.useState(query.year ? query.year : '');
   const [month, setMonth] = React.useState(query.month ? query.month : '');
 
@@ -119,6 +121,8 @@ const EmployeeWageUpload = () => {
     setYear('')
     setMonth('')
     setLocation(event.target.value);
+
+    
     const payload: any =  { 
       search: searchInput, 
       filters: [
@@ -132,7 +136,8 @@ const EmployeeWageUpload = () => {
         },
         {
           columnName:'locationId',
-          value: event.target.value.split('^')[0]
+        
+          value:  event.target.value.split('^')[0]
         }
       ],
       pagination: {
@@ -144,6 +149,8 @@ const EmployeeWageUpload = () => {
     }
     dispatch(getEmployeesWage(payload))
   };
+
+
   
   const handleChangeYear = (event:any) => {
     setYear('')
@@ -161,7 +168,7 @@ const EmployeeWageUpload = () => {
         },
         {
           columnName:'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName:'year',
@@ -194,7 +201,7 @@ const EmployeeWageUpload = () => {
         },
         {
           columnName:'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName:'year',
