@@ -161,7 +161,7 @@ const EmployeeLeaveCreditUpload = () => {
         },
         {
           columnName: 'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName: 'year',
@@ -194,7 +194,7 @@ const EmployeeLeaveCreditUpload = () => {
         },
         {
           columnName: 'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName: 'year',
