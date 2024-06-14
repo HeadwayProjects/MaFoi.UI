@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getActivities, getActs, getAllCompaniesDetails, getAssociateCompanies, getColumns, getForms, getLocations, getRules, getStates } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography,Tooltip } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
@@ -42,14 +42,14 @@ const StateRegisterConfiguration = () => {
   const dispatch: any = useAppDispatch();
 
   const stateRegisterDetails = useAppSelector((state) => state.stateRegister.stateRegisterDetails)
-  console.log('stateRegisterDetails', stateRegisterDetails)
+  // console.log('stateRegisterDetails', stateRegisterDetails)
   const formsDetails = useAppSelector((state) => state.inputModule.formsDetails)
   const statesDetails = useAppSelector((state) => state.inputModule.statesDetails)
   const stateConfigureDetails = useAppSelector((state) => state.stateRegister.stateConfigureDetails)
   const getColumnsDetails = useAppSelector((state) => state.inputModule.getColumnsDetails);
   const addStateRegisterDetails = useAppSelector((state) => state.stateRegister.addStateRegisterDetails)
 
-  console.log(formsDetails, "formsDetails")
+  // console.log(formsDetails, "formsDetails")
 
   const stateRegister = stateRegisterDetails.data.List
   const stateRegisterCount = stateRegisterDetails.data.Count
@@ -156,10 +156,21 @@ const StateRegisterConfiguration = () => {
 
   const fromsList = formsDetails.data.list ? formsDetails.data.list : []
   const filteredFormsList = fromsList.filter((each: any) => each.filePath !== '' && each.formName !== '')
-  
-  const [symbols, setSymbols] = React.useState<any>([])
 
-  const symbol = [', separation', '+ Addition', '- Substraction', '/ division', '* multiplication']
+  const [isHovered, setIsHovered] = React.useState(false);
+  
+  // const [symbols, setSymbols] = React.useState<any>([])
+
+  // const symbol = [', separation', '+ Addition', '- Substraction', '/ division', '* multiplication']
+
+  const symbols = [
+    { value: ',', label: ', separation' },
+    { value: '+', label: '+ Addition' },
+    { value: '-', label: '- Substraction' },
+    { value: '/', label: '/ division' },
+    { value: '*', label: '* multiplication' }
+  ];
+  
 
   const handleChangeStateValue = (event:any) => {
     setType('')
@@ -263,10 +274,51 @@ const StateRegisterConfiguration = () => {
   const [storeText, setStoreText] = useState<any>([])
 
   const handleChangeEzycompField = (event: any, fieldData: any) => {
+
+    const ezycompFieldValue = getEzycompFieldById(fieldData.id);
+
+    if(ezycompFieldValue!=null){
+
+      const returnvalue = ezycompFieldValue+ event.value;
+      const newTableData = tableData.map((each:any) => {
+        if(each.id === fieldData.id){
+          return {...each, ezycompField: returnvalue}
+        }else{
+          return each
+        }
+      })
+      setTableData(newTableData)
+    }
+    else{
+      const newTableData = tableData.map((each:any) => {
+        if(each.id === fieldData.id){
+          return {...each, ezycompField: event.value}
+        }else{
+          return each
+        }
+      })
+      setTableData(newTableData)
+
+    }
+
+    
+  }
+  const getEzycompFieldById = (id:any) => {
+    const row = tableData.find((each: { id: any; }) => each.id === id);
+    return row ? row.ezycompField : null;
+  };
+  
+  const handleChangeopeator = (event: any, fieldData: any) => {
+
+    // Usage
+    const ezycompFieldValue = getEzycompFieldById(fieldData.id);
+    
+
+    const returnvalue = ezycompFieldValue+ event.value;
     
     const newTableData = tableData.map((each:any) => {
       if(each.id === fieldData.id){
-        return {...each, ezycompField: event.value}
+        return {...each, ezycompField:returnvalue }
       }else{
         return each
       }
@@ -275,8 +327,18 @@ const StateRegisterConfiguration = () => {
   }
 
 
-  const handleOnchangeSymbol = (e: any) => {
-    setSymbols(e.target.value)
+  const handleClearEzycompField = (fieldData:any) => {
+
+ 
+    const newTableData = tableData.map((each:any) => {
+    if (each.id === fieldData.id) {
+      return { ...each, ezycompField: '' };
+    }
+    return each;
+  });
+  setTableData(newTableData);
+
+   // setSymbols(e.target.value)
   }
 
   const handleChangeStyle = (event:any, fieldData:any) => {
@@ -670,7 +732,7 @@ const StateRegisterConfiguration = () => {
   }
 
 
-  const onClickAdd = () => {
+  const onClickAdd  = () => {
     setShowInitialConfig(true)
     setOpenAddModal(true)
   }
@@ -679,10 +741,11 @@ const StateRegisterConfiguration = () => {
     if(!registerType || !processType.value || !stateName || !actName || !ruleName || !activityName || !formName || !formNameValue ){
       return toast.error(ERROR_MESSAGES.FILL_ALL);
     }else{
+   
       const payload = formName.value
       const testUrl = 'https://mafoi.s3.ap-south-1.amazonaws.com/inputtemplates/test3.xlsx'
       dispatch(getStateConfigurationDetails(payload))
-    }
+     }
   }
 
   const onClickSave = () => {
@@ -711,7 +774,7 @@ const StateRegisterConfiguration = () => {
         pageOrientation,
         stateRegisterMappings: tableData
       }
-      console.log('payloda', payload)
+      // console.log('payloda', payload)
       dispatch(addStateRegister(payload))
      }
  }
@@ -822,7 +885,18 @@ const StateRegisterConfiguration = () => {
     dispatch(resetStateConfigDetails())
   }
 
-  console.log('selecgtddd', selectedStateConfig)
+  // console.log('selecgtddd', selectedStateConfig)
+
+  // console.log(tableData);
+  // console.log("columnslist",columnsList);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
 
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
@@ -1181,19 +1255,61 @@ const StateRegisterConfiguration = () => {
                                               onChange={(e) => handleChangeEzycompField(e, each)}
                                           
                                             />
-                                            
+                                            <Select
+                                                  options={symbols ? symbols.map((each:any) => {return {label : each.label, value: each.value}}): []}
+                                                  className=""
+                                                 classNamePrefix="select"
+                                                  value={each.value ? {label: each.label, value: each.value} : ''}
+                                                  styles={{
+                                                    control: (base:any) => ({
+                                                      ...base,
+                                                      maxHeight: 150,
+                                                      overflow:"auto",
+                                                      width:'100px'
+                                                    })
+                                                  }}
+                                              onChange={(e) => handleChangeopeator(e, each)}
+                                          
+                                            />
+                                              
+{/*                                             
                                             <MSelect displayEmpty value={symbols} onClick={handleOnchangeSymbol}>
-                                              {symbol.map((each: any) => {
-                                                return <MenuItem value={each} key = {each.id}>{each}</MenuItem>
+                                              {symbols.map((each: any) => {
+                                                return <MenuItem value={each.value} key = {each.id}>{each.label}</MenuItem>
                                               })}
-                                            </MSelect>
+                                            </MSelect> */}
                                             
                                           </FormControl>
                                           <Box sx={{ display: 'flex', alignItems: 'center'}}>
-                                            <TextField size="small" value={storeText} id="outlined-size-small" />
+                                       
+                                          <Tooltip
+      title={each.ezycompField} // Tooltip content is set to the ezycompField value
+      open={isHovered}
+      disableFocusListener
+      disableTouchListener
+      placement="top"
+    >
+      <TextField
+        size="small"
+        value={each.ezycompField}
+        id={`textfield-${each.id}`}
+        sx={{
+          width: '100%', // Adjust width as needed
+          fontSize: each.ezycompField.length > 20 ? '0.75rem' : '0.875rem', // Example condition for font size adjustment
+          transition: 'font-size 0.3s ease-out', // Smooth transition for font size change
+          '&:hover': {
+            fontSize: '1rem', // Increase font size on hover
+          },
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      />
+    </Tooltip>
+                    
+                                           
                                             <Box sx = {{display: 'flex', flexDirection: 'column'}}>
-                                              <Button>Add</Button>
-                                              <Button> <RxCross2 /> </Button>
+                                              {/* <Button>Add</Button> */}
+                                              <Button> <RxCross2 onClick={() => handleClearEzycompField(each)} /> </Button>
                                             </Box>
                                           </Box>
                                             </TableCell>
