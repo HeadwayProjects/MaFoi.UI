@@ -16,6 +16,11 @@ interface StateConfigurationState {
         status: string,
         data: any,
         error: string | null
+    },
+    updateStateRegisterDetails: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -31,6 +36,11 @@ const initialState: StateConfigurationState = {
         error: null
     },
     addStateRegisterDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    updateStateRegisterDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -50,6 +60,11 @@ export const getStateConfigurationDetails = createAsyncThunk('inputModule/getSta
 export const addStateRegister = createAsyncThunk('inputModule/addStateRegister', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.addStateRegister(data)
+})
+
+export const updateStateRegister = createAsyncThunk('inputModule/updateStateRegister', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.updateStateRegister(data)
 })
 
 export const stateRegisterSlice = createSlice({
@@ -119,8 +134,25 @@ export const stateRegisterSlice = createSlice({
             }
         })
         .addCase(addStateRegister.rejected, (state, action: any) => {
-            state.addStateRegisterDetails.status = 'failed'
-            state.addStateRegisterDetails.error = action.error.message
+            state.updateStateRegisterDetails.status = 'failed'
+            state.updateStateRegisterDetails.error = action.error.message
+        })
+
+        .addCase(updateStateRegister.pending, (state) => {
+            state.updateStateRegisterDetails.status = 'loading'
+        })
+        .addCase(updateStateRegister.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.updateStateRegisterDetails.status = 'succeeded'
+                state.updateStateRegisterDetails.data = action.payload.data
+            } else {
+                state.updateStateRegisterDetails.status = 'failed'
+                state.updateStateRegisterDetails.error = action.payload.message;
+            }
+        })
+        .addCase(updateStateRegister.rejected, (state, action: any) => {
+            state.updateStateRegisterDetails.status = 'failed'
+            state.updateStateRegisterDetails.error = action.error.message
         })
 })
   

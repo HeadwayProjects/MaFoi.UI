@@ -6,18 +6,19 @@ import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButt
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
-import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
-import { useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import { getLeaveConfiguration } from '../../../redux/features/leaveConfiguration.slice';
-import { addStateRegister, getStateConfigurationDetails, getStateRegister, resetAddStateConfigDetails, resetStateConfigDetails } from '../../../redux/features/stateRegister.slice';
+import { updateStateRegister,addStateRegister, getStateConfigurationDetails, getStateRegister, resetAddStateConfigDetails, resetStateConfigDetails } from '../../../redux/features/stateRegister.slice';
 import Select from "react-select";
 import { EstablishmentTypes } from '../Masters/Master.constants';
 import { RxCross2 } from "react-icons/rx";
+import { each } from 'underscore';
+
+
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -48,7 +49,7 @@ const StateRegisterConfiguration = () => {
   const stateConfigureDetails = useAppSelector((state) => state.stateRegister.stateConfigureDetails)
   const getColumnsDetails = useAppSelector((state) => state.inputModule.getColumnsDetails);
   const addStateRegisterDetails = useAppSelector((state) => state.stateRegister.addStateRegisterDetails)
-
+  const updateStateRegisterDetails = useAppSelector((state) => state.stateRegister.updateStateRegisterDetails)
   // console.log(formsDetails, "formsDetails")
 
   const stateRegister = stateRegisterDetails.data.List
@@ -116,7 +117,7 @@ const StateRegisterConfiguration = () => {
     'Wingdings',
     'Yu Gothic',]
 
-  const loading = addStateRegisterDetails.status === 'loading' || formsDetails.status === 'loading' || stateRegisterDetails.status === 'loading' || stateConfigureDetails.status === 'loading' || getColumnsDetails.status === 'loading'
+  const loading = updateStateRegisterDetails.status === 'loading' || addStateRegisterDetails.status === 'loading' || formsDetails.status === 'loading' || stateRegisterDetails.status === 'loading' || stateConfigureDetails.status === 'loading' || getColumnsDetails.status === 'loading'
 
   const [stateValue, setStateValue] = React.useState('');
   const [type, setType] = React.useState('');
@@ -137,9 +138,12 @@ const StateRegisterConfiguration = () => {
   const [totalRowsPerPage, setTotalRowsPerPage] = React.useState<any>('');
   const [pageSize, setPageSize] = React.useState<any>('');
   const [pageOrientation, setPageOrientation] = React.useState<any>('');
+  const [openPreviewModal, setOpenPreviewModal] = React.useState(false);
+  const [openEditModal, setOpenEditModal] = React.useState(false);
 
 
   const [tableData, setTableData] = React.useState<any>([]);
+  const [newtableData, setnewTableData] = React.useState<any>([]);
   const [showInitialConfig, setShowInitialConfig] = React.useState<any>(false);
   const [showConfigTable, setShowConfigTable] = React.useState<any>(false);
 
@@ -303,12 +307,60 @@ const StateRegisterConfiguration = () => {
 
 
   }
+  const handleEditChangeEzycompField = (event: any, fieldData: any) => {
+
+    const ezycompFieldValue = getEzycompFieldById(fieldData.id);
+
+    if (ezycompFieldValue != null) {
+
+      const returnvalue = ezycompFieldValue + event.value;
+      const newTableData = tableData.map((each: any) => {
+        if (each.id === fieldData.id) {
+          return { ...each, ezycompField: returnvalue }
+        } else {
+          return each
+        }
+      })
+      setTableData(newTableData)
+    }
+    else {
+      const newTableData = tableData.map((each: any) => {
+        if (each.id === fieldData.id) {
+          return { ...each, ezycompField: event.value }
+        } else {
+          return each
+        }
+      })
+      setTableData(newTableData)
+
+    }
+
+
+  }
   const getEzycompFieldById = (id: any) => {
     const row = tableData.find((each: { id: any; }) => each.id === id);
     return row ? row.ezycompField : null;
   };
 
   const handleChangeopeator = (event: any, fieldData: any) => {
+
+    // Usage
+    const ezycompFieldValue = getEzycompFieldById(fieldData.id);
+
+
+    const returnvalue = ezycompFieldValue + event.value;
+
+    const newTableData = tableData.map((each: any) => {
+      if (each.id === fieldData.id) {
+        return { ...each, ezycompField: returnvalue }
+      } else {
+        return each
+      }
+    })
+    setTableData(newTableData)
+  }
+
+  const handleEditChangeopeator = (event: any, fieldData: any) => {
 
     // Usage
     const ezycompFieldValue = getEzycompFieldById(fieldData.id);
@@ -429,6 +481,189 @@ const StateRegisterConfiguration = () => {
     setTableData(newTableData)
   }
 
+
+  const onchangeEzycompField =(event : any, fieldData:any) => {
+    // alert("formaula hitted");
+    // alert(fieldData.Id);
+   
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, EzycompField: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+  const handleeditFormulachange =(event : any, fieldData:any) => {
+    // alert("formaula hitted");
+    // alert(fieldData.Id);
+   
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, Formula: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+  const handleeditvalueColumnaddresschange =(event : any, fieldData:any) => {
+
+       
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, ValueColumnAddress: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+
+
+  }
+  const handleeditvalueRowaddresschange =(event : any, fieldData:any) => {
+
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, ValueRowAddress: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+
+  const handleeditvalueMergedrangechange =(event : any, fieldData:any) => {
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, ValueMergedRange: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+
+  const handleeditFontnamechange =(event : any, fieldData:any) => {
+
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, FontName: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+  const handleeditFontsizechange =(event : any, fieldData:any) => {
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, FontSize: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+
+  const handleeditStylechange =(event : any, fieldData:any) => {
+
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, Style: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+
+  }
+
+  const handleSaveEditMappingForm = () => {
+    setTableData(selectedStateConfig.StateRegisterMappingDetails);
+  
+    const StateRegisterMappingDetails = selectedStateConfig.StateRegisterMappingDetails.map((detail : any) => ({
+      ezycompField: detail.EzycompField,
+      columnType: detail.ColumnType,
+      style: detail.Style,
+      formula: detail.Formula,
+      fontName: detail.FontName,
+      fontSize: detail.FontSize,
+      labelName: detail.LabelName,
+      labelMerged: detail.LabelMerged,
+      labelMergedRange: detail.LabelMergedRange,
+      labelRowAddress: detail.LabelRowAddress,
+      lableColumnAddress: detail.LabelColumnAddress,
+      valueMerged: detail.ValueMerged,
+      valueMergedRange: detail.ValueMergedRange,
+      valueRowAddress: detail.ValueRowAddress,
+      valueColumnAddress: detail.ValueColumnAddress,
+      stateRegisterConfigurationId: detail.StateRegisterConfigurationId,
+      stateRegisterConfiguration: detail.StateRegisterConfiguration,
+      id: detail.Id,
+      createdDate: detail.CreatedDate,
+      lastUpdatedDate: detail.LastUpdatedDate,
+    }));
+  
+    const payload = {
+      id: selectedStateConfig.Id,
+      registerType: selectedStateConfig.RegisterType,
+      stateId: selectedStateConfig.StateId,
+      actId: selectedStateConfig.ActId,
+      ruleId: selectedStateConfig.RuleId,
+      activityId: selectedStateConfig.ActivityId,
+      formName: selectedStateConfig.FormName,
+      form: selectedStateConfig.Form,
+      headerStartRow: selectedStateConfig.HeaderStartRow,
+      footerStartRow: selectedStateConfig.FooterStartRow,
+      headerEndRow: selectedStateConfig.HeaderEndRow,
+      footerEndRow: selectedStateConfig.FooterEndRow,
+      totalRowsPerPage: selectedStateConfig.TotalRowsPerPage,
+      processType: selectedStateConfig.ProcessType,
+      filePath: selectedStateConfig.FilePath,
+      pageSize: selectedStateConfig.PageSize,
+      pageOrientation: selectedStateConfig.PageOrientation,
+      StateRegisterMappingDetails: StateRegisterMappingDetails,
+    };
+  
+    console.log(payload); // For debugging purposes
+    dispatch(updateStateRegister(payload));
+  };
+  
+
+  console.log(selectedStateConfig);
+  console.log("tabledata",tableData);
+
   useEffect(() => {
     const stateRegisterDefaultPayload: any = {
       search: "",
@@ -464,6 +699,21 @@ const StateRegisterConfiguration = () => {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [stateConfigureDetails.status])
+
+  useEffect(() => {
+      dispatch(getColumns(''))
+  },[stateConfigureDetails])
+  
+
+  // useEffect(() => {
+
+   
+     
+  //     setTableData(stateConfigureDetails.data)
+  //     setnewTableData(tableData);
+  //     setTableData(newtableData);
+  
+  // }, [tableData])
 
   useEffect(() => {
     if (addStateRegisterDetails.status === 'succeeded') {
@@ -797,9 +1047,24 @@ const StateRegisterConfiguration = () => {
   }
 
   const onclickView = (stateConfig: any) => {
+    // setSelectedStateConfig(stateConfig)
+    // setOpenViewModal(true)
+    
     setSelectedStateConfig(stateConfig)
-    setOpenViewModal(true)
+    setOpenPreviewModal(true)
+  
   }
+  const onclickEditModelButton = (stateConfig: any) => {
+    // setSelectedStateConfig(stateConfig)
+    // setOpenViewModal(true)
+    
+    setSelectedStateConfig(stateConfig)
+    setOpenEditModal(true)
+  
+  }
+
+
+  console.log(columnsList);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     const filters = []
@@ -894,6 +1159,14 @@ const StateRegisterConfiguration = () => {
   };
 
   const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const handleEditMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleEditMouseLeave = () => {
     setIsHovered(false);
   };
 
@@ -1496,6 +1769,343 @@ const StateRegisterConfiguration = () => {
 
       </Modal>
 
+
+
+      
+      {/* Preview Modal */}
+      <Modal
+        open={openPreviewModal}
+        onClose={() => {setOpenPreviewModal(false); setSelectedStateConfig({})}}
+      >
+
+        <Box sx={style}> 
+          <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{display: "flex", flexDirection: "column"}}>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}> {selectedStateConfig.formName } Mapping Details </Typography>
+           
+        
+          
+             
+            </Box>
+            
+
+            
+              <IconButton
+                onClick={() => {setOpenPreviewModal(false); setSelectedStateConfig({})}}
+              >
+                <IoMdClose />
+              </IconButton>
+            </Box>
+          
+
+            <Box sx={{paddingX: '20px', display: 'flex', flexDirection:'column'}}>
+              {
+                selectedStateConfig.StateRegisterMappingDetails && selectedStateConfig.StateRegisterMappingDetails.length <= 0 ? 
+
+                <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
+                  <Typography variant='h5'>No Records Found</Typography>
+                </Box>
+                : 
+                <>
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', maxHeight:'380px', overflowY:'scroll'}}>
+                          <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                                  <TableRow>
+                                      <TableCell > S.no</TableCell>
+                                      <TableCell > LabelName</TableCell>
+                                      <TableCell > LabelColumn</TableCell>
+                                      <TableCell > LabelRow </TableCell>
+                                      <TableCell > LabelMergedRange</TableCell>
+                                      <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} > EzyCompField</TableCell>
+                                      <TableCell > Formula</TableCell>
+                                      <TableCell > ValueColumn</TableCell>
+                                      <TableCell > ValueRow</TableCell>
+                                      <TableCell > ValueMergedRange</TableCell>
+                                      <TableCell > Style</TableCell>
+                                      <TableCell > FontName</TableCell>
+                                      <TableCell > FontSize</TableCell>
+                                      
+
+                                  </TableRow>
+                              </TableHead>
+
+                              <TableBody>
+
+                              {selectedStateConfig.StateRegisterMappingDetails && selectedStateConfig.StateRegisterMappingDetails.map((each: any, index: number) => (
+                                  <TableRow
+                                    key={each._id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >   
+                                      <TableCell >{index+1}</TableCell>
+                                      <TableCell >{each.LabelName}</TableCell>
+                                      <TableCell >{each.LabelColumnAddress}</TableCell>
+                                      <TableCell >{each.LabelRowAddress  }</TableCell>
+                                      <TableCell >{each.LabelMergedRange
+                                      }</TableCell>
+                                      <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} >{each.EzycompField ? each.EzycompField : 'NA'}</TableCell>
+                                      <TableCell >{each.Formula  }</TableCell>
+                                      <TableCell >{each.ValueColumnAddress
+  }</TableCell>
+                                      <TableCell >{each.ValueRowAddress
+  }</TableCell>
+                                      <TableCell >{each.ValueMergedRange
+  }</TableCell>
+  <TableCell >{each.Style
+  }</TableCell>
+  <TableCell >{each.FontName
+  }</TableCell>
+    <TableCell >{each.FontSize
+
+  }</TableCell>
+                                    </TableRow>
+                              ))}
+                              </TableBody>
+                          </Table>
+                  </TableContainer>
+                </>
+              }
+            </Box>
+
+            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:4}}>
+              <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenPreviewModal(false); setSelectedStateConfig({})}}>Cancel</Button>
+            </Box>
+
+        </Box>
+
+      </Modal>
+
+
+
+
+
+
+
+
+
+
+ {/* Edit Modal */}
+ <Modal
+        open={openEditModal}
+        onClose={() => {setOpenEditModal(false); setSelectedStateConfig({})}}
+      >
+
+        <Box sx={style}> 
+          <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box sx={{display: "flex", flexDirection: "column"}}>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}> {selectedStateConfig.formName } Edit Mapping  </Typography>
+           
+           
+            </Box>
+                      
+              <IconButton
+                onClick={() => {setOpenEditModal(false); setSelectedStateConfig({})}}
+              >
+                <IoMdClose />
+              </IconButton>
+            </Box>
+          
+
+            <Box sx={{paddingX: '20px', display: 'flex', flexDirection:'column'}}>
+              {
+                selectedStateConfig.StateRegisterMappingDetails && selectedStateConfig.StateRegisterMappingDetails.length <= 0 ? 
+
+                <Box sx={{height:'60vh', display:'flex', justifyContent:'center', alignItems:'center'}}>
+                  <Typography variant='h5'>No Records Found</Typography>
+                </Box>
+                : 
+                <>
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', maxHeight:'380px', overflowY:'scroll'}}>
+                          <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                                  <TableRow>
+                                      <TableCell > S.no</TableCell>
+                                      <TableCell > LabelName</TableCell>
+                                      <TableCell > LabelColumn</TableCell>
+                                      <TableCell > LabelRow </TableCell>
+                                      <TableCell > LabelMergedRange</TableCell>
+                                      <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} > EzyCompField</TableCell>
+                                      <TableCell > Formula</TableCell>
+                                      <TableCell > Formula</TableCell>
+                                      <TableCell > ValueColumn</TableCell>
+                                      <TableCell > ValueColumn</TableCell>
+                                      <TableCell > ValueRow</TableCell>
+                                      <TableCell > ValueRow</TableCell>
+                                      <TableCell > ValueMergedRange</TableCell>
+                                      <TableCell > ValueMergedRange</TableCell>
+                                      <TableCell > Style</TableCell>
+                                      <TableCell > Style</TableCell>
+                                      <TableCell > FontName</TableCell>
+                                      <TableCell > FontName</TableCell>
+                                      <TableCell > FontSize</TableCell>
+                                      <TableCell > FontSize</TableCell>
+                                      
+
+                                  </TableRow>
+                              </TableHead>
+
+                              <TableBody>
+
+                              {selectedStateConfig.StateRegisterMappingDetails && selectedStateConfig.StateRegisterMappingDetails.map((each: any, index: number) => (
+                                  <TableRow
+                                    key={each._id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >   
+                                      <TableCell >{index+1}</TableCell>
+                                      <TableCell >{each.LabelName}</TableCell>
+                                      <TableCell >{each.LabelColumnAddress}</TableCell>
+                                      <TableCell >{each.LabelRowAddress  }</TableCell>
+                                      <TableCell >{each.LabelMergedRange
+                                      }</TableCell>
+                                      <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} >{each.EzycompField ? each.EzycompField : 'NA'}</TableCell>
+
+                                      <TableCell>
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">                                           
+                                            <OutlinedInput
+                                             
+                                              value={each.Formula}
+                                              onChange={(e)=>handleeditFormulachange(e,each)}
+                                              id={`outlined-adornment-${each._id}`}
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      </TableCell>
+                                      <TableCell >{each.Formula  }</TableCell>
+
+
+                                      <TableCell>
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <OutlinedInput
+                                             
+                                              value={each.ValueColumnAddress}
+                                              onChange={(e)=>handleeditvalueColumnaddresschange(e,each)}
+                                              id={`outlined-adornment-${each._id}`}
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      </TableCell>
+                                      <TableCell >{each.ValueColumnAddress}</TableCell>
+
+
+
+                                      <TableCell>
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <OutlinedInput
+                                           
+                                              value={each.ValueRowAddress}
+                                              onChange={(e)=>handleeditvalueRowaddresschange(e,each)}
+                                              id={`outlined-adornment-${each._id}`}
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      </TableCell>
+                                      <TableCell >{each.ValueRowAddress}</TableCell>
+
+
+                                      <TableCell>
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <OutlinedInput
+                                           
+                                              value={each.ValueMergedRange}
+                                              onChange={(e)=>handleeditvalueMergedrangechange(e,each)}
+                                              id={`outlined-adornment-${each._id}`}
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      </TableCell>
+                                      <TableCell >{each.ValueMergedRange}</TableCell>
+
+
+                                      <TableCell>
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <OutlinedInput
+                                             
+                                              value={each.Style}
+                                              onChange={(e)=>handleeditStylechange(e,each)}
+                                              id={`outlined-adornment-${each._id}`}
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      </TableCell>
+                                      <TableCell >{each.Style}</TableCell>
+
+
+                                      <TableCell>
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <OutlinedInput
+                                            
+                                              value={each.FontName}
+                                              onChange={(e)=>handleeditFontnamechange(e,each)}
+                                              id={`outlined-adornment-${each._id}`}
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      </TableCell>
+                                      <TableCell >{each.FontName}</TableCell>
+
+                                      <TableCell>
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <OutlinedInput
+                                             
+                                              value={each.FontSize}
+                                              onChange={(e)=>handleeditFontsizechange(e,each)}
+                                              id={`outlined-adornment-${each._id}`}
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      </TableCell>
+                                      <TableCell >{each.FontSize}</TableCell>
+
+
+                                    </TableRow>
+                              ))}
+                              </TableBody>
+                          </Table>
+                  </TableContainer>
+                </>
+              }
+            </Box>
+
+            <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'space-between', alignItems:'center', mt:4}}>
+              <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenEditModal(false); setSelectedStateConfig({})}}>Cancel</Button>
+              <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={()=>handleSaveEditMappingForm()}>Save Changes</Button>
+
+            </Box>
+
+        </Box>
+
+      </Modal>
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       {/** View Modal */}
       <Drawer anchor='right' open={openViewModal}>
         <Box sx={{ height: '100%', width: 500, display: 'flex', flexDirection: 'column' }}>
@@ -1701,6 +2311,7 @@ const StateRegisterConfiguration = () => {
                               <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '50px' }}>
                                 {/* <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/> */}
                                 <Icon action={() => onclickView(each)} style={{ color: '#00C853' }} type="button" name={'eye'} text={'View'} />
+                                <Icon action={() => onclickEditModelButton(each)} style={{ color: '#00C853' }} type="button" name={'eye'} text={'View'} />
                               </Box>
                             </TableCell>
                           </TableRow>
