@@ -1812,6 +1812,7 @@ const StateRegisterConfiguration = () => {
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
                                       <TableCell > S.no</TableCell>
+                                      <TableCell> Column Type</TableCell>
                                       <TableCell > LabelName</TableCell>
                                       <TableCell > LabelColumn</TableCell>
                                       <TableCell > LabelRow </TableCell>
@@ -1837,6 +1838,8 @@ const StateRegisterConfiguration = () => {
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >   
                                       <TableCell >{index+1}</TableCell>
+                                      <TableCell >{each.ColumnType
+                                      }</TableCell>
                                       <TableCell >{each.LabelName}</TableCell>
                                       <TableCell >{each.LabelColumnAddress}</TableCell>
                                       <TableCell >{each.LabelRowAddress  }</TableCell>
