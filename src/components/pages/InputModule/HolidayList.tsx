@@ -763,7 +763,7 @@ const HolidayList = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -795,7 +795,7 @@ const HolidayList = () => {
 
   const onClickSortDate = () => {
     let type = 'asc'
-    setActiveSort('day');
+    setActiveSort('year');
     if (sortType === 'asc') {
       setSortType('desc')
       type = 'desc'
@@ -848,7 +848,7 @@ const HolidayList = () => {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'day', order: type },
+      sort: { columnName: 'year', order: type },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload))
