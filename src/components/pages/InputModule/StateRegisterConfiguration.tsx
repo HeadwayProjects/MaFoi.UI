@@ -25,9 +25,11 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
+  height: '80vh',
   width: '97%',
   bgcolor: 'background.paper',
   boxShadow: 24,
+  overflowY: 'auto', // Add this if the content might overflow
 };
 
 const customStyles = {
@@ -140,6 +142,7 @@ const StateRegisterConfiguration = () => {
   const [pageOrientation, setPageOrientation] = React.useState<any>('');
   const [openPreviewModal, setOpenPreviewModal] = React.useState(false);
   const [openEditModal, setOpenEditModal] = React.useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
 
 
   const [tableData, setTableData] = React.useState<any>([]);
@@ -162,6 +165,7 @@ const StateRegisterConfiguration = () => {
   const filteredFormsList = fromsList.filter((each: any) => each.filePath !== '' && each.formName !== '')
 
   const [isHovered, setIsHovered] = React.useState(false);
+  const [hoveredRow, setHoveredRow] = useState(null);
 
   // const [symbols, setSymbols] = React.useState<any>([])
 
@@ -307,36 +311,7 @@ const StateRegisterConfiguration = () => {
 
 
   }
-  const handleEditChangeEzycompField = (event: any, fieldData: any) => {
 
-    const ezycompFieldValue = getEzycompFieldById(fieldData.id);
-
-    if (ezycompFieldValue != null) {
-
-      const returnvalue = ezycompFieldValue + event.value;
-      const newTableData = tableData.map((each: any) => {
-        if (each.id === fieldData.id) {
-          return { ...each, ezycompField: returnvalue }
-        } else {
-          return each
-        }
-      })
-      setTableData(newTableData)
-    }
-    else {
-      const newTableData = tableData.map((each: any) => {
-        if (each.id === fieldData.id) {
-          return { ...each, ezycompField: event.value }
-        } else {
-          return each
-        }
-      })
-      setTableData(newTableData)
-
-    }
-
-
-  }
   const getEzycompFieldById = (id: any) => {
     const row = tableData.find((each: { id: any; }) => each.id === id);
     return row ? row.ezycompField : null;
@@ -347,7 +322,6 @@ const StateRegisterConfiguration = () => {
     // Usage
     const ezycompFieldValue = getEzycompFieldById(fieldData.id);
 
-
     const returnvalue = ezycompFieldValue + event.value;
 
     const newTableData = tableData.map((each: any) => {
@@ -360,27 +334,10 @@ const StateRegisterConfiguration = () => {
     setTableData(newTableData)
   }
 
-  const handleEditChangeopeator = (event: any, fieldData: any) => {
-
-    // Usage
-    const ezycompFieldValue = getEzycompFieldById(fieldData.id);
-
-
-    const returnvalue = ezycompFieldValue + event.value;
-
-    const newTableData = tableData.map((each: any) => {
-      if (each.id === fieldData.id) {
-        return { ...each, ezycompField: returnvalue }
-      } else {
-        return each
-      }
-    })
-    setTableData(newTableData)
-  }
+  
 
 
   const handleClearEzycompField = (fieldData: any) => {
-
 
     const newTableData = tableData.map((each: any) => {
       if (each.id === fieldData.id) {
@@ -392,6 +349,8 @@ const StateRegisterConfiguration = () => {
 
     // setSymbols(e.target.value)
   }
+
+
 
   const handleChangeStyle = (event: any, fieldData: any) => {
     const newTableData = tableData.map((each: any) => {
@@ -499,13 +458,16 @@ const StateRegisterConfiguration = () => {
     });
   }
 
-  const handleeditFormulachange =(event : any, fieldData:any) => {
-    // alert("formaula hitted");
-    // alert(fieldData.Id);
-   
+
+
+
+
+  ///////edit page funtcions
+
+  const handleEditChangeColumnType = (event: any, fieldData: any) => {
     const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
       if (each.Id === fieldData.Id) {
-        return { ...each, Formula: event.target.value }
+        return { ...each, ColumnType: event.target.value }
       } else {
         return each
       }
@@ -516,12 +478,110 @@ const StateRegisterConfiguration = () => {
     });
   }
 
-  const handleeditvalueColumnaddresschange =(event : any, fieldData:any) => {
+  const getEditEzycompFieldById = (id: string) => {
+    alert('getedit'+id);
+    // Assuming selectedStateConfig is properly defined and populated
+    const fieldObject = selectedStateConfig.StateRegisterMappingDetails
+        .find((each: { Id: string; }) => each.Id === id);
+    
+    if (fieldObject) {
+        console.log(fieldObject); // Ensure the correct object is found
+        alert('fieldObject.EzycompField'+fieldObject.EzycompField);
+        return fieldObject.EzycompField; // Access the EzycompField property directly
+    } else {
+        console.log(`No matching object found for id: ${id}`);
+        return ''; // Return null or handle the case where no object is found
+    }
+};
 
-       
+
+
+  const handleEditChangeEzycompField = (event: any, fieldData: any) => {
+    alert(fieldData.Id);
+   const ezycompFieldValue = getEditEzycompFieldById(fieldData.Id);
+
+   if (ezycompFieldValue != null) {
+
+     const returnvalue = ezycompFieldValue + event.value;
+      const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+        if (each.Id === fieldData.Id) {
+          return { ...each, EzycompField: returnvalue }
+        } else {
+          return each
+        }
+      })
+      setSelectedStateConfig({
+        ...selectedStateConfig,
+        StateRegisterMappingDetails: newTableData
+      });
+     // setTableData(selectedStateConfig.StateRegisterMappingDetails);
+    }
+    else {
+      const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+        if (each.Id === fieldData.Id) {
+          return { ...each, EzycompField: event.value }
+        } else {
+          return each
+        }
+      })
+      setSelectedStateConfig({
+        ...selectedStateConfig,
+        StateRegisterMappingDetails: newTableData
+      });
+     // setTableData(selectedStateConfig.StateRegisterMappingDetails);
+
+    }
+
+
+  }
+  
+
+
+  const handleEditChangeopeator = (event: any, fieldData: any) => {
+
+    alert(fieldData.Id);
+    const ezycompFieldValue = getEditEzycompFieldById(fieldData.Id);
+    
+    if (ezycompFieldValue != null) {
+
+    const returnvalue = ezycompFieldValue + event.value;
+
     const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
       if (each.Id === fieldData.Id) {
-        return { ...each, ValueColumnAddress: event.target.value }
+        return { ...each, EzycompField: returnvalue }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+    //setTableData(selectedStateConfig.StateRegisterMappingDetails);
+  }
+    else {
+      const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+        if (each.Id === fieldData.Id) {
+          return { ...each, EzycompField: event.value }
+        } else {
+          return each
+        }
+      })
+      setSelectedStateConfig({
+        ...selectedStateConfig,
+        StateRegisterMappingDetails: newTableData
+      });
+     // setTableData(selectedStateConfig.StateRegisterMappingDetails);
+    }
+  }
+
+
+
+  const handleClearEditEzycompField = (fieldData: any) => {
+
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, EzycompField: '' }
       } else {
         return each
       }
@@ -531,67 +591,7 @@ const StateRegisterConfiguration = () => {
       StateRegisterMappingDetails: newTableData
     });
 
-
   }
-  const handleeditvalueRowaddresschange =(event : any, fieldData:any) => {
-
-    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
-      if (each.Id === fieldData.Id) {
-        return { ...each, ValueRowAddress: event.target.value }
-      } else {
-        return each
-      }
-    })
-    setSelectedStateConfig({
-      ...selectedStateConfig,
-      StateRegisterMappingDetails: newTableData
-    });
-  }
-
-
-  const handleeditvalueMergedrangechange =(event : any, fieldData:any) => {
-    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
-      if (each.Id === fieldData.Id) {
-        return { ...each, ValueMergedRange: event.target.value }
-      } else {
-        return each
-      }
-    })
-    setSelectedStateConfig({
-      ...selectedStateConfig,
-      StateRegisterMappingDetails: newTableData
-    });
-  }
-
-
-  const handleeditFontnamechange =(event : any, fieldData:any) => {
-
-    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
-      if (each.Id === fieldData.Id) {
-        return { ...each, FontName: event.target.value }
-      } else {
-        return each
-      }
-    })
-    setSelectedStateConfig({
-      ...selectedStateConfig,
-      StateRegisterMappingDetails: newTableData
-    });
-  }
-  const handleeditFontsizechange =(event : any, fieldData:any) => {
-    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
-      if (each.Id === fieldData.Id) {
-        return { ...each, FontSize: event.target.value }
-      } else {
-        return each
-      }
-    })
-    setSelectedStateConfig({
-      ...selectedStateConfig,
-      StateRegisterMappingDetails: newTableData
-    });
-  }
-
 
   const handleeditStylechange =(event : any, fieldData:any) => {
 
@@ -608,6 +608,135 @@ const StateRegisterConfiguration = () => {
     });
 
   }
+
+
+  const handleeditFontnamechange =(event : any, fieldData:any) => {
+
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, FontName: event.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+
+
+  const handleeditFontsizechange =(event : any, fieldData:any) => {
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, FontSize: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+  const handleeditFormulachange =(event : any, fieldData:any) => {
+    // alert("formaula hitted");
+     alert(fieldData.Id);
+   
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, Formula: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+  const handleeditChangeValueMerged = (event: any, fieldData: any) => {
+    alert(event.target.value);
+
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, ValueMerged: (event.target.value === 'Yes' ? true : false), ValueMergedRange:'',ValueRowAddress:'',ValueColumnAddress:'' }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+  const handleeditvalueMergedrangechange =(event : any, fieldData:any) => {
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, ValueMergedRange: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+
+  const handleeditvalueRowaddresschange =(event : any, fieldData:any) => {
+
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, ValueRowAddress: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+  }
+ 
+
+  const handleeditvalueColumnaddresschange =(event : any, fieldData:any) => {   
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, ValueColumnAddress: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+
+
+  }
+
+  const handleeditCommentschange =(event : any, fieldData:any) => {   
+    const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
+      if (each.Id === fieldData.Id) {
+        return { ...each, Comments: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setSelectedStateConfig({
+      ...selectedStateConfig,
+      StateRegisterMappingDetails: newTableData
+    });
+
+
+  }
+
+
 
   const handleSaveEditMappingForm = () => {
     setTableData(selectedStateConfig.StateRegisterMappingDetails);
@@ -633,6 +762,7 @@ const StateRegisterConfiguration = () => {
       id: detail.Id,
       createdDate: detail.CreatedDate,
       lastUpdatedDate: detail.LastUpdatedDate,
+      comments : detail.Comments
     }));
   
     const payload = {
@@ -1059,7 +1189,16 @@ const StateRegisterConfiguration = () => {
     // setOpenViewModal(true)
     
     setSelectedStateConfig(stateConfig)
+    //setTableData(stateConfig.StateRegisterMappingDetails)
     setOpenEditModal(true)
+  
+  }
+  const onclickDeleteButton = (stateConfig: any) => {
+
+    
+    setSelectedStateConfig(stateConfig)
+
+    setOpenDeleteModal(true);
   
   }
 
@@ -1162,13 +1301,50 @@ const StateRegisterConfiguration = () => {
     setIsHovered(false);
   };
 
-  const handleEditMouseEnter = () => {
-    setIsHovered(true);
+  const handleEditMouseEnter = (id:any) => {
+    setHoveredRow(id);
+   //setIsHovered(true);
   };
 
-  const handleEditMouseLeave = () => {
-    setIsHovered(false);
+  const handleEditMouseLeave = (id:any) => {
+    setHoveredRow(null);
+    //setIsHovered(false);
   };
+
+  
+  const onClickConfirmDelete = () => {
+    // dispatch(deleteHoliday(holiday.id))
+    // let type = 'asc'
+    // setActiveSort('restricted');
+    // if (sortType === 'asc') {
+    //   setSortType('desc')
+    //   type = 'desc'
+    // } else {
+    //   setSortType('asc')
+    // }
+    // setCompany('')
+    // setAssociateCompany('')
+    // setStateName('')
+    // setLocation('')
+    // setYear('')
+    // setMonth('')
+
+
+    // const HolidayListPayload: any = {
+    //   search: searchInput,
+    //   filters: [],
+    //   pagination: {
+    //     pageSize: rowsPerPage,
+    //     pageNumber: page + 1
+    //   },
+    //   sort: { columnName: 'stateId', order: type },
+    //   "includeCentral": true
+    // }
+    // dispatch(getHolidaysList(HolidayListPayload))
+
+
+  }
+
 
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
@@ -1190,7 +1366,7 @@ const StateRegisterConfiguration = () => {
             </IconButton>
           </Box>
 
-          <Box sx={{ height: '85vh' }}>
+          <Box sx={{ height: '100vh' }}>
             {showInitialConfig && <Box sx={{ padding: '20px', backgroundColor: '#ffffff', }}>
 
               <Box sx={{ display: 'flex' }}>
@@ -1561,8 +1737,10 @@ const StateRegisterConfiguration = () => {
                                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
 
                                     <Tooltip
+                                       key={each.id}
                                       title={each.ezycompField} // Tooltip content is set to the ezycompField value
-                                      open={isHovered}
+                                      //open={isHovered}
+                                      open={hoveredRow === each.id}
                                       disableFocusListener
                                       disableTouchListener
                                       placement="top"
@@ -1594,7 +1772,7 @@ const StateRegisterConfiguration = () => {
                                           },
                                           
                                         }}
-                                        onMouseEnter={handleMouseEnter}
+                                        onMouseEnter={() => handleEditMouseEnter(each.id)}
                                         onMouseLeave={handleMouseLeave}
                                       />
                                     </Tooltip>
@@ -1807,11 +1985,12 @@ const StateRegisterConfiguration = () => {
                 </Box>
                 : 
                 <>
-                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', maxHeight:'380px', overflowY:'scroll'}}>
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', maxHeight:'550px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
                                       <TableCell > S.no</TableCell>
+                                      <TableCell> Column Type</TableCell>
                                       <TableCell > LabelName</TableCell>
                                       <TableCell > LabelColumn</TableCell>
                                       <TableCell > LabelRow </TableCell>
@@ -1837,6 +2016,8 @@ const StateRegisterConfiguration = () => {
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >   
                                       <TableCell >{index+1}</TableCell>
+                                      <TableCell >{each.ColumnType
+                                      }</TableCell>
                                       <TableCell >{each.LabelName}</TableCell>
                                       <TableCell >{each.LabelColumnAddress}</TableCell>
                                       <TableCell >{each.LabelRowAddress  }</TableCell>
@@ -1914,8 +2095,8 @@ const StateRegisterConfiguration = () => {
                 </Box>
                 : 
                 <>
-                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', maxHeight:'380px', overflowY:'scroll'}}>
-                          <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', maxHeight:'650px', overflowY:'scroll'}}>
+                          <Table stickyHeader  sx={{ minWidth: 1050 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
                                   <TableRow>
                                       <TableCell > S.no</TableCell>
@@ -1923,21 +2104,27 @@ const StateRegisterConfiguration = () => {
                                       <TableCell > LabelColumn</TableCell>
                                       <TableCell > LabelRow </TableCell>
                                       <TableCell > LabelMergedRange</TableCell>
+                                      <TableCell > Column Type</TableCell>
                                       <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} > EzyCompField</TableCell>
-                                      <TableCell > Formula</TableCell>
-                                      <TableCell > Formula</TableCell>
-                                      <TableCell > ValueColumn</TableCell>
-                                      <TableCell > ValueColumn</TableCell>
-                                      <TableCell > ValueRow</TableCell>
-                                      <TableCell > ValueRow</TableCell>
-                                      <TableCell > ValueMergedRange</TableCell>
-                                      <TableCell > ValueMergedRange</TableCell>
                                       <TableCell > Style</TableCell>
                                       <TableCell > Style</TableCell>
                                       <TableCell > FontName</TableCell>
                                       <TableCell > FontName</TableCell>
-                                      <TableCell > FontSize</TableCell>
-                                      <TableCell > FontSize</TableCell>
+                                      <TableCell > Font Size</TableCell>
+                                      <TableCell > Font Size</TableCell>
+                                      <TableCell > Formula</TableCell>
+                                      <TableCell > Formula</TableCell>
+                                      <TableCell > Value Merged </TableCell>
+                                      <TableCell > ValueMergedRange</TableCell>
+                                      <TableCell > Value Row</TableCell>
+                                      <TableCell > Value Row</TableCell>
+                                      <TableCell > Value Column</TableCell>
+                                      <TableCell > Value Column</TableCell>
+                                      <TableCell > Comments</TableCell>
+                                      <TableCell > Comments</TableCell>
+                                     
+                                     
+                                    
                                       
 
                                   </TableRow>
@@ -1956,8 +2143,188 @@ const StateRegisterConfiguration = () => {
                                       <TableCell >{each.LabelRowAddress  }</TableCell>
                                       <TableCell >{each.LabelMergedRange
                                       }</TableCell>
-                                      <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} >{each.EzycompField ? each.EzycompField : 'NA'}</TableCell>
 
+
+                                       {/** Column Type */}
+                                <TableCell >
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                    <MSelect
+                                      value={each.ColumnType ? each.ColumnType : ''}
+                                      displayEmpty
+                                      onChange={(e) => { handleEditChangeColumnType(e, each) }}
+                                    >
+                                      <MenuItem disabled sx={{ display: 'none' }} value="">
+                                        Select Column type
+                                      </MenuItem>
+                                      {['Header', 'Footer', 'Detail', 'Formula'].map((each: any) => {
+                                        return <MenuItem value={each}>{each}</MenuItem>
+                                      })}
+                                    </MSelect>
+                                  </FormControl>
+                                </TableCell>
+
+                                     
+                                {/** Ezycomp Field */}
+                                <TableCell sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                  <FormControl sx={{
+                                    m: 1, width: "100%", minWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px', display: 'flex',
+                                    flexDirection: 'row'
+                                  }} size="small">
+
+                                    <Select
+                                      options={columnsList ? columnsList.map((each: any) => { return { label: each, value: each } }) : []}
+                                      id={`outlined-adornment-${each._id}`}
+                                      className="basic-multi-select"
+                                      classNamePrefix="select"
+                                      value={each.EzycompField ? { label: each.EzycompField, value: each.EzycompField } : ''}
+                                      styles={{
+                                        control: (base: any) => ({
+                                          ...base,
+                                          maxHeight: 150,
+                                          overflow: "auto",
+                                          width: '200px'
+                                        })
+                                      }}
+                                      onChange={(e) => handleEditChangeEzycompField(e, each)}
+
+                                    />
+                                
+                                    <Select
+                                      options={symbols ? symbols.map((each: any) => { return { label: each.label, value: each.value } }) : []}
+                                      className=""
+                                      classNamePrefix="select"
+                                      value={each.value ? { label: each.label, value: each.value } : ''}
+
+                                      id="demo-simple-select-autowidth"
+                                      styles={{
+                                        control: (base: any) => ({
+                                          ...base,
+                                          maxHeight: 150,
+                                          overflow: "auto",
+                                          width: '100px'
+                                        })
+                                      }}
+                                      onChange={(e) => handleEditChangeopeator(e, each)}
+
+                                    />
+                                    
+
+                                    {/*                                             
+                                            <MSelect displayEmpty value={symbols} onClick={handleOnchangeSymbol}>
+                                              {symbols.map((each: any) => {
+                                                return <MenuItem value={each.value} key = {each.id}>{each.label}</MenuItem>
+                                              })}
+                                            </MSelect> */}
+
+                                  </FormControl>
+                                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+                                    <Tooltip
+                                      key={each.Id}
+                                      title={each.EzycompField} // Tooltip content is set to the ezycompField value
+                                      open={hoveredRow === each.Id}
+                                     // open={isHovered}
+                                      disableFocusListener
+                                      disableTouchListener
+                                      placement="top"
+                                      arrow
+                                      PopperProps={{
+                                        sx: {
+                                          '& .MuiTooltip-tooltip': {
+                                            backgroundColor: 'blue', // Change to your desired background color
+                                            color: 'white', // Change to your desired text color
+                                            fontSize: '16px', // Change to your desired font size
+                                          },
+                                          '& .MuiTooltip-arrow': {
+                                            color: 'blue', // Ensure the arrow color matches the tooltip background
+                                          },
+                                        },
+                                      }}
+                                    >
+                                      <TextField
+                                        size="small"
+                                        value={each.EzycompField}
+                                        id={`textfield-${each.Id}`}
+                                        sx={{
+                                          // width: '100%', // Adjust width as needed
+                                          width: '250px',
+                                          //fontSize: each.ezycompField.length > 20 ? '0.75rem' : '0.875rem', // Example condition for font size adjustment
+                                          transition: 'font-size 0.3s ease-out', // Smooth transition for font size change
+                                          '&:hover': {
+                                            fontSize: '1rem', // Increase font size on hover
+                                          },
+                                          
+                                        }}
+                                        onMouseEnter={() => handleEditMouseEnter(each.Id)}
+                                        onMouseLeave={handleEditMouseLeave}
+                                      />
+                                    </Tooltip>
+
+
+                                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                                      {/* <Button>Add</Button> */}
+                                      <Button> <RxCross2 onClick={() => handleClearEditEzycompField(each)} /> </Button>
+                                    </Box>
+                                  </Box>
+                                </TableCell>
+
+
+                                  {/** Style */}
+                                  <TableCell >
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                    <MSelect
+                                      value={each.Style ? each.Style : ''}
+                                      displayEmpty
+                                      onChange={(e) => { handleeditStylechange(e, each) }}
+                                    >
+                                      <MenuItem disabled sx={{ display: 'none' }} value="">
+                                        Select Style
+                                      </MenuItem>
+                                      {['Bold', 'Italic', 'Underline'].map((each: any) => {
+                                        return <MenuItem value={each}>{each}</MenuItem>
+                                      })}
+                                    </MSelect>
+                                  </FormControl>
+                                </TableCell>
+                                      <TableCell >{each.Style}</TableCell>
+
+
+                                       {/** Font Name */}
+                                <TableCell >
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '190px', minWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                    <Select
+                                      options={fontList.map((each: any) => { return { label: each, value: each } })}
+                                      className="basic-multi-select"
+                                      classNamePrefix="select"
+                                      value={each.FontName ? { label: each.FontName, value: each.FontName } : ''}
+                                      styles={customStyles}
+                                      onChange={(e) => handleeditFontnamechange(e, each)}
+                                    />
+                                  </FormControl>
+                                </TableCell>
+                                      <TableCell >{each.FontName}</TableCell>
+
+
+                                      {/** Font Size */}
+                                <TableCell >
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '190px', minWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                    <OutlinedInput
+                                      sx={{
+                                        '& input::placeholder': {
+                                          FontSize: '14px'
+                                        }
+                                      }}
+                                      type='number'
+                                      placeholder='Font Size'
+                                      value={each.FontSize ? each.FontSize : ''}
+                                      onChange={(e) => handleeditFontsizechange(e, each)}
+                                      id="outlined-adornment-name"
+                                    />
+                                  </FormControl>
+                                </TableCell>
+                                      <TableCell >{each.FontSize}</TableCell>
+
+ {/** Formula */}
                                       <TableCell>
                                       <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">                                           
                                             <OutlinedInput
@@ -1972,39 +2339,32 @@ const StateRegisterConfiguration = () => {
                                       <TableCell >{each.Formula  }</TableCell>
 
 
-                                      <TableCell>
+
+                                       {/** Value Merged */}
+                                <TableCell >
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                    <MSelect
+                                      value={each.ValueMerged ? "Yes" : "No"}
+                                      displayEmpty
+                                      onChange={(e) => { handleeditChangeValueMerged(e, each) }}
+                                    >
+                                      {/* <MenuItem disabled sx={{ display: 'none' }} value=""> */}
+                                           <MenuItem disabled sx={{ display: 'none' }} > 
+                                        Select Value Merged
+                                      </MenuItem>
+                                      {['Yes', 'No'].map((each: any) => {
+                                        return <MenuItem value={each}>{each}</MenuItem>
+                                      })}
+                                    </MSelect>
+                                  </FormControl>
+                                </TableCell>
+
+  {/** Value Merged Range*/}
+                                <TableCell>
                                       <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                                             <OutlinedInput
-                                             
-                                              value={each.ValueColumnAddress}
-                                              onChange={(e)=>handleeditvalueColumnaddresschange(e,each)}
-                                              id={`outlined-adornment-${each._id}`}
-                                              type='text'
-                                            />
-                                      </FormControl>
-                                      </TableCell>
-                                      <TableCell >{each.ValueColumnAddress}</TableCell>
-
-
-
-                                      <TableCell>
-                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
-                                            <OutlinedInput
-                                           
-                                              value={each.ValueRowAddress}
-                                              onChange={(e)=>handleeditvalueRowaddresschange(e,each)}
-                                              id={`outlined-adornment-${each._id}`}
-                                              type='text'
-                                            />
-                                      </FormControl>
-                                      </TableCell>
-                                      <TableCell >{each.ValueRowAddress}</TableCell>
-
-
-                                      <TableCell>
-                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
-                                            <OutlinedInput
-                                           
+                                            placeholder='Value Merged Range'
+                                            disabled={!each.ValueMerged}
                                               value={each.ValueMergedRange}
                                               onChange={(e)=>handleeditvalueMergedrangechange(e,each)}
                                               id={`outlined-adornment-${each._id}`}
@@ -2014,46 +2374,65 @@ const StateRegisterConfiguration = () => {
                                       </TableCell>
                                       <TableCell >{each.ValueMergedRange}</TableCell>
 
+                                        {/** Value Row Address*/}
+                                      <TableCell>
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <OutlinedInput
+                                            disabled={each.ValueMerged}
+                                      placeholder='Value Row'
+                                              value={each.ValueRowAddress ? each.ValueRowAddress : ''}
+                                              onChange={(e)=>handleeditvalueRowaddresschange(e,each)}
+                                              id={`outlined-adornment-${each._id}`}
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      </TableCell>
+                                      <TableCell >{each.ValueRowAddress}</TableCell>
 
+ {/** Value Column Address*/}
+
+                                      <TableCell>
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                            <OutlinedInput
+                                              disabled={each.ValueMerged}
+                                      placeholder='Value Column'
+                                              value={each.ValueColumnAddress ? each.ValueColumnAddress : ''}
+                                              onChange={(e)=>handleeditvalueColumnaddresschange(e,each)}
+                                              id={`outlined-adornment-${each._id}`}
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      </TableCell>
+                                      <TableCell >{each.ValueColumnAddress}</TableCell>
+
+
+ {/** Comments*/}
                                       <TableCell>
                                       <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                                             <OutlinedInput
                                              
-                                              value={each.Style}
-                                              onChange={(e)=>handleeditStylechange(e,each)}
+                                              value={each.Comments}
+                                              onChange={(e)=>handleeditCommentschange(e,each)}
                                               id={`outlined-adornment-${each._id}`}
                                               type='text'
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.Style}</TableCell>
+                                      <TableCell >{each.Comments}</TableCell>
 
 
-                                      <TableCell>
-                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
-                                            <OutlinedInput
-                                            
-                                              value={each.FontName}
-                                              onChange={(e)=>handleeditFontnamechange(e,each)}
-                                              id={`outlined-adornment-${each._id}`}
-                                              type='text'
-                                            />
-                                      </FormControl>
-                                      </TableCell>
-                                      <TableCell >{each.FontName}</TableCell>
 
-                                      <TableCell>
-                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
-                                            <OutlinedInput
-                                             
-                                              value={each.FontSize}
-                                              onChange={(e)=>handleeditFontsizechange(e,each)}
-                                              id={`outlined-adornment-${each._id}`}
-                                              type='text'
-                                            />
-                                      </FormControl>
-                                      </TableCell>
-                                      <TableCell >{each.FontSize}</TableCell>
+
+
+                                    
+
+
+                                    
+
+
+                                     
+
+                                   
 
 
                                     </TableRow>
@@ -2073,6 +2452,36 @@ const StateRegisterConfiguration = () => {
 
         </Box>
 
+      </Modal>
+
+
+
+
+       {/* Delete Modal */}
+       <Modal
+        open={openDeleteModal}
+        onClose={() => setOpenDeleteModal(false)}
+      >
+        <Box sx={style}>
+          <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Delete Mapping</Typography>
+            <IconButton
+              onClick={() => setOpenDeleteModal(false)}
+            >
+              <IoMdClose />
+            </IconButton>
+          </Box>
+          <Box sx={{ padding: '20px', backgroundColor: '#ffffff' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography >Are you sure you want to delete the  <h5>{selectedStateConfig.Form}</h5> of <h4>{selectedStateConfig.Activity} </h4>, &nbsp;</Typography>
+              {/* <Typography variant='h5'>{selectedStateConfig.Form && holiday.name}</Typography> */}
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+              <Button variant='outlined' color="error" onClick={() => setOpenDeleteModal(false)}>No</Button>
+              <Button variant='contained' onClick={onClickConfirmDelete}>Yes</Button>
+            </Box>
+          </Box>
+        </Box>
       </Modal>
 
 
@@ -2320,7 +2729,8 @@ const StateRegisterConfiguration = () => {
                               <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '50px' }}>
                                 {/* <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/> */}
                                 <Icon action={() => onclickView(each)} style={{ color: '#00C853' }} type="button" name={'eye'} text={'View'} />
-                                <Icon action={() => onclickEditModelButton(each)} style={{ color: '#00C853' }} type="button" name={'eye'} text={'View'} />
+                                <Icon action={() => onclickEditModelButton(each)} style={{ color: '#039BE5' }} type="button" name={'pencil'} text={'Edit'} />
+                                <Icon action={() => onclickDeleteButton(each)} style={{ color: '#EB1010' }} type="button" name={'trash'} text={'Delete'} />
                               </Box>
                             </TableCell>
                           </TableRow>

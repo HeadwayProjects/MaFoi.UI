@@ -203,7 +203,7 @@ const EmployeeMasterUpload = () => {
         },
         {
           columnName: 'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName: 'year',
@@ -262,7 +262,7 @@ const EmployeeMasterUpload = () => {
         },
         {
           columnName: 'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName: 'year',
@@ -454,7 +454,7 @@ const EmployeeMasterUpload = () => {
           },
           {
             columnName: 'locationId',
-            value: query.location
+            value: query.location.split('^')[0]
           }
         ],
         pagination: {
@@ -509,7 +509,7 @@ const EmployeeMasterUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -593,7 +593,7 @@ const EmployeeMasterUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -648,7 +648,7 @@ const EmployeeMasterUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -704,7 +704,7 @@ const EmployeeMasterUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -759,7 +759,7 @@ const EmployeeMasterUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -814,7 +814,7 @@ const EmployeeMasterUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -870,7 +870,7 @@ const EmployeeMasterUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -926,7 +926,7 @@ const EmployeeMasterUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -982,7 +982,7 @@ const EmployeeMasterUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
