@@ -1723,9 +1723,9 @@ console.log(locations);
                   </MSelect>
                   </FormControl>
                   </Box>
-s
+
                       <Box sx={{ mr:1}}>
-                        <Typography mb={1}>Employment Types</Typography>
+                  <Typography mb={1}>Employment Types</Typography>
                         <FormControl sx={{ width:"220px", backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <MSelect
                             sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}

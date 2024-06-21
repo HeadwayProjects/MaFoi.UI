@@ -364,6 +364,349 @@ const SalaryComponents = () => {
 
   console.log(salaryComponentMappingDetails, 'UploadDetails', salaryConfigUploadDetails, salaryUploadDetails, tableData)
 
+  const onClickSortCode = () => {
+    let type = 'asc'
+    setActiveSort('code');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '', 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'employeeCode', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+
+  const onClickSortDOB = () => {
+    let type = 'asc'
+    setActiveSort('dateOfBirth');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'dateofBirth', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+
+  const onClickSortGender = () => {
+    let type = 'asc'
+    setActiveSort('gender');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'gender', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+  const onClickSortDesignation = () => {
+    let type = 'asc'
+    setActiveSort('designation');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'designation', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+
+  const onClickSortPanNumber = () => {
+    let type = 'asc'
+    setActiveSort('panNumber');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'ctC_PA', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+
+  // ctC_PM
+
+  const onClickSortPan = () => {
+    let type = 'asc'
+    setActiveSort('aadharNumber');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'ctC_PM', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+
+  }
+
+  const onClickSortMonth = () => {
+    let type = 'asc'
+    setActiveSort('aadharNumber');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'monthly_Gross', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+
+  const onClickSortDay = () => {
+    let type = 'asc'
+    setActiveSort('aadharNumber');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'presentDays', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+
+  const onClickSortGrossPay = () => {
+    let type = 'asc'
+    setActiveSort('aadharNumber');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'grosspay', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+
+  const onClickSortTotal = () => {
+    let type = 'asc'
+    setActiveSort('aadharNumber');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'total_Deductions', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+
+  const onClickSortNet = () => {
+    let type = 'asc'
+    setActiveSort('aadharNumber');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+
+    const salaryPayload: any = {
+      search: '',
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'netPayable', order: type },
+      "includeCentral": true
+    }
+    dispatch(getSalaryComponentsDetails(salaryPayload))
+  }
+
   return (
     <div style={{ backgroundColor:'#ffffff', height:'100vh'}}>
 
@@ -665,18 +1008,21 @@ const SalaryComponents = () => {
                   <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
                               <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
-                                  <TableRow>
-                                      <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} >Employee Code</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} > DOB</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} > Gender</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'designation'} direction={sortType} > Designation</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'panNumber'} direction={sortType} > CTC PA</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > CTC PM</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Monthly Gross</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Present Days</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Gross Pay</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Total Deductions </TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} > Net Payable </TableSortLabel></TableCell>
+                        <TableRow>
+                         
+                          <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode} >Employee Code</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB} > DOB</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender} > Gender</TableSortLabel></TableCell>
+                          
+                          <TableCell > <TableSortLabel active={activeSort === 'designation'} direction={sortType} onClick={onClickSortDesignation} > Designation</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'panNumber'} direction={sortType} onClick={onClickSortPanNumber} > CTC PA</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortPan} > CTC PM</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortMonth} > Monthly Gross</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortDay} > Present Days</TableSortLabel></TableCell>
+                          {/* grossPay */}
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortGrossPay} > Gross Pay</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortTotal} > Total Deductions </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortNet} > Net Payable </TableSortLabel></TableCell>
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>

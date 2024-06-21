@@ -803,6 +803,7 @@ const HolidayList = () => {
       setSortType('asc')
     }
 
+  
     const filters = []
     if (company) {
       filters.push({
@@ -1592,7 +1593,7 @@ const HolidayList = () => {
                     onChange={(e) => { setCompany(e.target.value), setAssociateCompany(''), setLocation('') }}
                   >
                     {companies && companies.map((each: any) => {
-                      return <MenuItem value={each.id}>{each.name}</MenuItem>
+                      return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }}  value={each.id}>{each.name}</MenuItem>
                     })}
                   </Select>
                 </FormControl>
@@ -1606,9 +1607,19 @@ const HolidayList = () => {
                     label="Associate Company"
                     disabled={!company}
                     onChange={(e) => setAssociateCompany(e.target.value)}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          maxHeight: 215,
+                          width: 230,
+                          marginTop: '3px'
+                        },
+                      },
+                    }}
+
                   >
                     {associateCompanies && associateCompanies.map((each: any) => {
-                      return <MenuItem value={each.id}>{each.name}</MenuItem>
+                      return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                     })}
                   </Select>
                 </FormControl>
@@ -1624,7 +1635,7 @@ const HolidayList = () => {
                     onChange={(e) => setStateName(e.target.value)}
                   >
                     {states && states.map((each: any) => {
-                      return <MenuItem value={each.id}>{each.name}</MenuItem>
+                      return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                     })}
                   </Select>
                 </FormControl>
@@ -1643,7 +1654,7 @@ const HolidayList = () => {
                       const { id, name, code, cities }: any = each.location || {};
                       const { state } = cities || {};
                       if (state.id === stateName) {
-                        return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                        return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                       }
                     })}
                   </Select>
@@ -1670,7 +1681,7 @@ const HolidayList = () => {
                       onChange={handleYear}
                     >
                       {yearsList && yearsList.map((each: any) =>
-                        <MenuItem value={each}>{each}</MenuItem>
+                        <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each}>{each}</MenuItem>
                       )}
                     </Select>
                   </FormControl>
@@ -1696,7 +1707,7 @@ const HolidayList = () => {
                       onChange={handleMonth}
                     >
                       {monthList && monthList.map((each: any) =>
-                        <MenuItem value={each}>{each}</MenuItem>
+                        <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each}>{each}</MenuItem>
                       )}
                     </Select>
                   </FormControl>
@@ -1720,7 +1731,7 @@ const HolidayList = () => {
                       onChange={(e) => setDay(e.target.value)}
                     >
                       {originalDayList && originalDayList.map((each: any) =>
-                        <MenuItem value={each}>{each}</MenuItem>
+                        <MenuItem  value={each}>{each}</MenuItem>
                       )}
                     </Select>
                   </FormControl>

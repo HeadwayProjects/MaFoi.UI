@@ -883,12 +883,22 @@ const EmployeeLeaveAvailedUpload = () => {
                       value={associateCompany}
                       disabled={!company}
                       onChange={handleChangeAssociateCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            // marginLeft: "27px",
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                     >
                       <MenuItem disabled sx={{ display: 'none' }} value="">
                         Select Associate Company
                       </MenuItem>
                       {associateCompanies && associateCompanies.map((each: any) => {
-                        return <MenuItem value={each.id}>{each.name}</MenuItem>
+                        return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                       })}
                     </Select>
                   </FormControl>

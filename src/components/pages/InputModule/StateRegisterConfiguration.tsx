@@ -2201,12 +2201,21 @@ const StateRegisterConfiguration = () => {
                       value={stateValue}
                       displayEmpty
                       onChange={handleChangeStateValue}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                     >
                       <MenuItem disabled sx={{ display: 'none' }} value="">
                         Select state
                       </MenuItem>
                       {statesList && statesList.map((each: any) => {
-                        return <MenuItem value={each.id}>{each.name}</MenuItem>
+                        return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                       })}
                     </MSelect>
                   </FormControl>

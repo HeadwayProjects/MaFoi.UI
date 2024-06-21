@@ -516,7 +516,7 @@ const EmployeeWageUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'noOfDays', order: type },
+      sort: { columnName: 'month', order: type },
       "includeCentral": true
     }
     dispatch(getEmployeesWage(payload))
@@ -572,7 +572,7 @@ const EmployeeWageUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'leaveStartDate', order: type },
+      sort: { columnName: 'standardDays', order: type },
       "includeCentral": true
     }
     dispatch(getEmployeesWage(payload))
@@ -628,12 +628,69 @@ const EmployeeWageUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'leaveEndDate', order: type },
+      sort: { columnName: 'workDays', order: type },
       "includeCentral": true
     }
     dispatch(getEmployeesWage(payload))
     
   }
+
+  const onClickSortHouseRent = () => {
+    let type = 'asc'
+    setActiveSort('leaveEndDate');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
+
+    const payload: any = {
+      search: searchInput,
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'houseRentAllowance', order: type },
+      "includeCentral": true
+    }
+    dispatch(getEmployeesWage(payload))
+
+  }
+  
   
   const handleChangePage = (event: unknown, newPage: number) => {
 
@@ -812,6 +869,7 @@ const EmployeeWageUpload = () => {
     navigate(`${getBasePath()}/inputUploads/dashboard`);
   }
 
+
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
 
@@ -893,13 +951,23 @@ const EmployeeWageUpload = () => {
                             displayEmpty
                             value={associateCompany}
                             disabled={!company}
-                            onChange={handleChangeAssociateCompany}
+                      onChange={handleChangeAssociateCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            // marginLeft: "21px", 
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                           >
                             <MenuItem disabled sx={{display:'none'}} value="">
                               Select Associate Company
                             </MenuItem>
                             {associateCompanies && associateCompanies.map((each:any) => {
-                              return <MenuItem value={each.id}>{each.name}</MenuItem>
+                              return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
@@ -1054,7 +1122,7 @@ const EmployeeWageUpload = () => {
                                       <TableCell > <TableSortLabel active={activeSort === 'noOfDays'} direction={sortType} onClick={onClickSortNoOfDays}>Month</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'leaveStartDate'} direction={sortType} onClick={onClickSortStartDate}>Standard Days</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortEndDate}>WorkDays</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortEndDate}>House Rent Allowance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>

@@ -227,7 +227,16 @@ const Dashboard = () => {
                           sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                           value={company}
                           displayEmpty
-                          onChange={handleChangeCompany}
+                      onChange={handleChangeCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Company
@@ -247,13 +256,22 @@ const Dashboard = () => {
                           displayEmpty
                           value={associateCompany}
                           disabled={!company}
-                          onChange={handleChangeAssociateCompany}
+                      onChange={handleChangeAssociateCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Associate Company
                           </MenuItem>
                           {associateCompanies && associateCompanies.map((each:any) => {
-                            return <MenuItem value={each.id}>{each.name}</MenuItem>
+                            return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                           })}
                         </Select>
                       </FormControl>
@@ -267,13 +285,22 @@ const Dashboard = () => {
                           displayEmpty
                           value={stateName}
                           disabled={!associateCompany}
-                          onChange={handleChangeStateName}
+                      onChange={handleChangeStateName}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select State
                           </MenuItem>
                           {states && states.map((each:any) => {
-                            return <MenuItem value={each.id}>{each.name}</MenuItem>
+                            return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                           })}
                         </Select>
                       </FormControl>
@@ -287,7 +314,16 @@ const Dashboard = () => {
                           displayEmpty
                           value={location}
                           disabled={!stateName}
-                          onChange={handleChangeLocation}
+                      onChange={handleChangeLocation}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Location
@@ -296,7 +332,7 @@ const Dashboard = () => {
                             const { id, name, code, cities }: any = each.location || {};
                             const { state } = cities || {};
                             if(state.id === stateName){
-                              return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                              return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                             }
                           })}
                         </Select>
@@ -311,13 +347,22 @@ const Dashboard = () => {
                           displayEmpty
                           value={year}
                           disabled={!location}
-                          onChange={handleChangeYear}
+                      onChange={handleChangeYear}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 150,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Year
                           </MenuItem>
                           {yearsList && yearsList.map((each:any) => 
-                            <MenuItem value={each}>{each}</MenuItem>
+                            <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each}>{each}</MenuItem>
                           )}
                         </Select>
                       </FormControl>
@@ -331,13 +376,22 @@ const Dashboard = () => {
                           displayEmpty
                           value={month}
                           disabled={!year}
-                          onChange={handleChangeMonth}
+                      onChange={handleChangeMonth}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 150,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Month
                           </MenuItem>
                           {monthList && monthList.map((each:any) => 
-                            <MenuItem value={each}>{each}</MenuItem>
+                            <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each}>{each}</MenuItem>
                           )}
                         </Select>
                       </FormControl>

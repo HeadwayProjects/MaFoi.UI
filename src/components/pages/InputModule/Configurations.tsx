@@ -711,13 +711,22 @@ const Configurations = () => {
                           sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
                           displayEmpty
                           value={configType}
-                          onChange={handleChangeConfigType}
+                      onChange={handleChangeConfigType}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Configuration Type
                           </MenuItem>
                           {configurationTypes && configurationTypes.map((each:any) => 
-                            <MenuItem value={each}>{each}</MenuItem>
+                            <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each}>{each}</MenuItem>
                           )}
                         </MSelect>
                       </FormControl>
@@ -731,7 +740,16 @@ const Configurations = () => {
                           value={company}
                           displayEmpty
                           disabled={!configType}
-                          onChange={handleChangeCompany}
+                      onChange={handleChangeCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Company
@@ -751,13 +769,22 @@ const Configurations = () => {
                           displayEmpty
                           value={associateCompany}
                           disabled={!company}
-                          onChange={handleChangeAssociateCompany}
+                      onChange={handleChangeAssociateCompany}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 230,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Associate Company
                           </MenuItem>
                           {associateCompanies && associateCompanies.map((each:any) => {
-                            return <MenuItem value={each.id}>{each.name}</MenuItem>
+                            return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                           })}
                         </MSelect>
                       </FormControl>
@@ -791,7 +818,16 @@ const Configurations = () => {
                           displayEmpty
                           value={location}
                           disabled={!stateName}
-                          onChange={handleChangeLocation}
+                      onChange={handleChangeLocation}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 150,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Location
@@ -800,7 +836,7 @@ const Configurations = () => {
                             const { id, name, code, cities }: any = each.location || {};
                             const { state } = cities || {};
                             if(state.id === stateName){
-                              return <MenuItem value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                              return <MenuItem sx={{  whiteSpace: 'initial' }} value={each.locationId}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                             }
                           })}
                         </MSelect>
@@ -816,12 +852,21 @@ const Configurations = () => {
                           value={year}
                           disabled={!location}
                           onChange={handleChangeYear}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 150,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Year
                           </MenuItem>
                           {yearsList && yearsList.map((each:any) => 
-                            <MenuItem value={each}>{each}</MenuItem>
+                            <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each}>{each}</MenuItem>
                           )}
                         </MSelect>
                       </FormControl>
@@ -835,7 +880,16 @@ const Configurations = () => {
                           displayEmpty
                           value={month}
                           disabled={!year}
-                          onChange={handleChangeMonth}
+                      onChange={handleChangeMonth}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            maxHeight: 200,
+                            width: 150,
+                            marginTop: "3px"
+                          }
+                        }
+                      }}
                         >
                           <MenuItem disabled sx={{display:'none'}} value="">
                             Select Month

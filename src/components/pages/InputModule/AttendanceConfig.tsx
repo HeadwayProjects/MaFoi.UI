@@ -1281,19 +1281,19 @@ console.log('locaname',locationdetails);
                       id="demo-select-small"
                       value={company}
                       label="Company"
+                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
                       MenuProps={{
                         PaperProps: {
                           sx: {
                             maxHeight: 200,
-                            width: 115,
+                            width: 230,
                             marginTop: '3px'
                           },
                         },
                       }}
-                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
                     >
                       {companies && companies.map((each:any) => {
-                          return <MenuItem value={each.id}>{each.name}</MenuItem>
+                        return <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                       })}
                     </MSelect>
                   </FormControl>
@@ -1307,10 +1307,19 @@ console.log('locaname',locationdetails);
                       label="Associate Company"
                       disabled={!company}
 
-                      onChange={(e) => setAssociateCompany(e.target.value)}
+                    onChange={(e) => setAssociateCompany(e.target.value)}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          maxHeight: 200,
+                          width: 230,
+                          marginTop: '3px'
+                        },
+                      },
+                    }}
                     >
                       {associateCompanies && associateCompanies.map((each:any) => {
-                          return <MenuItem value={each.id}>{each.name}</MenuItem>
+                        return <MenuItem sx={{ whiteSpace: 'initial' }} value={each.id}>{each.name}</MenuItem>
                       })}
                     </MSelect>
                   </FormControl>
@@ -1337,7 +1346,7 @@ console.log('locaname',locationdetails);
                       {locations && locations.map((each:any) => {
                           const { id, name, code, cities }: any = each.location || {};
                           const { state } = cities || {};
-                          return <MenuItem value={each.locationId+'^'+state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
+                          return <MenuItem sx={{ whiteSpace: 'initial' }} value={each.locationId+'^'+state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
                       })}
                     </MSelect>
                   </FormControl>
@@ -1393,7 +1402,14 @@ console.log('locaname',locationdetails);
             labelId="minute-label"
             value={sesssion1startminute}
             onChange={Session1StartTimehandleMinuteChange}
-            label="Minute"
+                          label="Minute"
+                          MenuProps={{
+                            PaperProps: {
+                              style: {
+                                maxHeight: 200, // Max height for the dropdown menu
+                              },
+                            },
+                          }}
           >
             {generateOptions(60)}
           </MSelect>
@@ -1427,7 +1443,14 @@ console.log('locaname',locationdetails);
 labelId="hour-label"
 value={sesssion1endhour}
 onChange={Session1EndTimehandleHourChange}
-label="Hour"
+                          label="Hour"
+                          MenuProps={{
+                            PaperProps: {
+                              style: {
+                                maxHeight: 200, // Max height for the dropdown menu
+                              },
+                            },
+                          }}
 >
 {generateOptions(13)}
 </MSelect>
@@ -1440,7 +1463,14 @@ label="Hour"
 labelId="minute-label"
 value={sesssion1endminute}
 onChange={Session1EndTimehandleMinuteChange}
-label="Minute"
+                          label="Minute"
+                          MenuProps={{
+                            PaperProps: {
+                              style: {
+                                maxHeight: 200, // Max height for the dropdown menu
+                              },
+                            },
+                          }}
 >
 {generateOptions(60)}
 </MSelect>
@@ -1474,7 +1504,14 @@ label="AM/PM"
             labelId="hour-label"
             value={sesssion2starthour}
             onChange={Session2StartTimehandleHourChange}
-            label="Hour"
+                          label="Hour"
+                          MenuProps={{
+                            PaperProps: {
+                              style: {
+                                maxHeight: 200, // Max height for the dropdown menu
+                              },
+                            },
+                          }}
           >
             {generateOptions(12)}
           </MSelect>
@@ -1487,7 +1524,14 @@ label="AM/PM"
             labelId="minute-label"
             value={sesssion2startminute}
             onChange={Session2StartTimehandleMinuteChange}
-            label="Minute"
+                          label="Minute"
+                          MenuProps={{
+                            PaperProps: {
+                              style: {
+                                maxHeight: 200, // Max height for the dropdown menu
+                              },
+                            },
+                          }}
           >
             {generateOptions(60)}
           </MSelect>
@@ -1521,7 +1565,14 @@ label="AM/PM"
 labelId="hour-label"
 value={sesssion2endhour}
 onChange={Session2EndTimehandleHourChange}
-label="Hour"
+                          label="Hour"
+                          MenuProps={{
+                            PaperProps: {
+                              style: {
+                                maxHeight: 200, // Max height for the dropdown menu
+                              },
+                            },
+                          }}
 >
 {generateOptions(12)}
 </MSelect>
@@ -1534,7 +1585,14 @@ label="Hour"
 labelId="minute-label"
 value={sesssion2endminute}
 onChange={Session2EndTimehandleMinuteChange}
-label="Minute"
+                          label="Minute"
+                          MenuProps={{
+                            PaperProps: {
+                              style: {
+                                maxHeight: 200, // Max height for the dropdown menu
+                              },
+                            },
+                          }}
 >
 {generateOptions(60)}
 </MSelect>
