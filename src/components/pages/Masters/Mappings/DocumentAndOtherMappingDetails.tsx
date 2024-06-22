@@ -3,6 +3,11 @@ import { ACTIONS, ALLOWED_FILES_REGEX, FILE_SIZE } from "../../../common/Constan
 import FormRenderer, { ComponentMapper, FormTemplate, componentTypes } from "../../../common/FormRenderer";
 import { download, getValue } from "../../../../utils/common";
 import { toast } from "react-toastify";
+import { useAppDispatch, useAppSelector } from "../../../../redux/hook";
+import { ERROR_MESSAGES } from '../../../../utils/constants';
+import {  resetdeleteActStateMappingFormdetails,resetdeleteActStateMappingFormdetailsStatus,deleteActStateMappingForm } from "../../../../redux/features/Stateactruleactivitymapping.slice";
+import { useDeleteActStateMappingForm } from "../../../../backend/masters";
+
 
 const BtnConfig = {
     buttonWrapStyles: 'justify-content-end flex-row-reverse',
@@ -10,9 +15,9 @@ const BtnConfig = {
     cancelBtnText: 'Previous'
 }
 
-export default function DocumentAndOtherMappingDetails({ action, data, onSubmit, onCancel }: any) {
+export default function DocumentAndOtherMappingDetails(this: any, { action, data, onSubmit, onCancel, onDelete}: any) {
     const [formData, setFormData] = useState<any>();
-    const [documents, setDocuments] = useState<{ fileName: string, filePath: string, id: string }[]>([])
+    const [documents, setDocuments] = useState<{ fileName: string, filePath: string, id: string, mappingId?: any }[]>([])
     const schema = {
         fields: [
             {
@@ -38,6 +43,7 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
                 name: 'uploadFile',
                 type: 'file',
                 upload: false,
+                delete: action === ACTIONS.EDIT,
                 documents,
                 condition: {
                     when: 'formName',
@@ -46,7 +52,8 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
                 },
                 downloadDocument: ({ fileName, filePath }: any) => {
                     download(fileName, filePath);
-                }
+                },
+                deleteDocument: action === ACTIONS.EDIT ? handleDeleteDocument.bind(this): null
             },
             {
                 component: componentTypes.FILE_UPLOAD,
@@ -89,6 +96,9 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
         setFormData({ ...(formData || {}), ...values, file: formName ? file : null })
     }
 
+   // const loading =  deleteActStateMappingFormdetails.status === 'loading' 
+
+
     function handleSubmit({ formName, file, sendNotification }: any) {
         if ((formName || '').trim() && !documents.length && !file) {
             toast.error('Please upload relevant file.');
@@ -97,15 +107,20 @@ export default function DocumentAndOtherMappingDetails({ action, data, onSubmit,
         onSubmit({ formName, file, sendNotification });
     }
 
+    function handleDeleteDocument({mappingId}: any) {
+        onDelete(mappingId);
+    }
+
     useEffect(() => {
         if (data) {
-            const { fileName, filePath } = data;
+            const { fileName, filePath, id } = data;
             setFormData({ ...(formData || {}), ...data });
             if (fileName && filePath) {
                 setDocuments([{
                     fileName,
                     filePath,
-                    id: `${new Date().getTime()}`
+                    id: `${new Date().getTime()}`,
+                    mappingId: id
                 }]);
             }
         }

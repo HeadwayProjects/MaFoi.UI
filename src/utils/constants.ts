@@ -3,7 +3,8 @@ export const ERROR_MESSAGES = {
     ERROR: 'Error!!!',
     UPLOAD_FILE: 'Error in uploading',
     DUPLICATE: 'DUPLICATE',
-    FILL_ALL: 'Please Fill All Details'
+    FILL_ALL: 'Please Fill All Details',
+    DELETE_FILE:'Error in Deleting File'
 };
 
 export const API_RESULT = {

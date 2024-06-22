@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import { validatorTypes } from "@data-driven-forms/react-form-renderer";
 import { Button } from "react-bootstrap";
 import { toast } from 'react-toastify';
-import { useCreateCompanyLocation, useGetCities, useGetStates, useUpdateCompanyLocation } from "../../../../backend/masters";
+import { useCreateCompanyLocation, useGetCities, useGetStates, useUpdateCompanyLocation, useUploadLocationMappingDigitalSign } from "../../../../backend/masters";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
 import { ACTIONS, PATTERNS } from "../../../common/Constants";
 import { getValue, preventDefault } from "../../../../utils/common";
@@ -19,24 +19,49 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
     const [locationDetails, setLocationDetails] = useState<any>({ hideButtons: true });
     const [companyLocationAddress, setCompanyLocationAddress] = useState<any>();
     const [stateId, setStateId] = useState<any>();
+
+    const [file, setFile] = useState<any>();
+
     const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD, t }, Boolean(action !== ACTIONS.VIEW));
     const { cities } = useGetCities({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'stateId', value: stateId }], t }, Boolean(stateId && action !== ACTIONS.VIEW));
-    const { createCompanyLocation, creating } = useCreateCompanyLocation((response: ResponseModel) => {
-        if (response.key === API_RESULT.SUCCESS) {
-            toast.success(`Location ${locationDetails.locationName} created successfully.`);
+
+    const { uploadDigitalSign, uploading } = useUploadLocationMappingDigitalSign(({ key, value }: ResponseModel) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success('Digital Sign uploaded successfully.');
             onSubmit();
         } else {
-            toast.error(response.value || ERROR_MESSAGES.ERROR);
+            toast.error(value || ERROR_MESSAGES.UPLOAD_FILE);
         }
     }, errorCallback);
-    const { updateCompanyLocation, updating } = useUpdateCompanyLocation(({ key, value }: ResponseModel) => {
+
+
+    const { createCompanyLocation, creating } = useCreateCompanyLocation(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
-            toast.success(`Location ${locationDetails.locationName} updated successfully.`);
-            onSubmit();
+            toast.success(`Location created successfully.`);
+            if (file) {
+                uploadDigitalSignature(value);
+            } else {
+                onSubmit();
+            }
         } else {
             toast.error(value || ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
+
+    const { updateCompanyLocation, updating } = useUpdateCompanyLocation(({ key, value }: ResponseModel) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`Location ${locationDetails.locationName} updated successfully.`);
+            if (file && value) {
+                uploadDigitalSignature(value)
+            } else {
+                onSubmit();
+            }
+        } else {
+            toast.error(value || ERROR_MESSAGES.ERROR);
+        }
+    }, errorCallback);
+
+
 
     function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
@@ -113,6 +138,21 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 content: `${companyLocationAddress}`
             },
             {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
+                name: 'address',
+                label: 'Address',
+                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'address') : '',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+            },
+            {
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader1',
+                content: 'POC Details',
+                className: 'grid-col-100 text-md fw-bold pb-0'
+            },
+            {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'contactPersonName',
                 label: 'Contact Person Name',
@@ -144,15 +184,64 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 content: action === ACTIONS.VIEW ? getValue(locationDetails, 'contactPersonEmail') : ''
             },
             {
-                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXTAREA,
-                name: 'address',
-                label: 'Address',
-                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'address') : '',
+                component: componentTypes.TAB_ITEM,
+                name: 'subHeader2',
+                content: 'Owner Details',
+                className: 'grid-col-100 text-md fw-bold pb-0'
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'registrationCertificateNo',
+                label: 'Registartion Certificate No',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
+                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'registrationCertificateNo') : ''
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'pfCode',
+                label: 'PF Code',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'pfCode') : ''
+            },
+            ,
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'esicCode',
+                label: 'ESIC Code',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'esicCode') : ''
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'employerName',
+                label: 'Employer Name',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'employerName') : ''
+            },
+            {
+                component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                name: 'designation',
+                label: 'Designation',
+                validate: [
+                    { type: validatorTypes.REQUIRED }
+                ],
+                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'Designation') : ''
+            },
+            {
+                component: componentTypes.FILE_UPLOAD,
+                label: 'Upload Digtal Signature',
+                name: 'file',
+                type: 'file'
             }
-        ],
+        ]
     };
 
     function submit(e: any) {
@@ -160,7 +249,14 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
         if (form.valid) {
             const {
                 locationName, locationCode, city,
-                contactPersonName, contactPersonMobile, contactPersonEmail, address
+                contactPersonName, contactPersonMobile,
+                contactPersonEmail, address,
+                employerName,
+                Designation,
+                registrationCertificateNo,
+                pfCode,
+                esicCode,
+                file
             } = locationDetails;
             const payload: any = {
                 associateCompanyId: associateCompany.value,
@@ -171,10 +267,22 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 contactPersonName,
                 contactPersonMobile,
                 contactPersonEmail,
+                employerName,
+                Designation,
+                registrationCertificateNo,
+                pfCode,
+                esicCode,
                 address
+         
             };
             delete payload.city;
             delete payload.state;
+            if (file) {
+                setFile(file);
+            }
+
+            console.log(payload, file);
+
             if (action === ACTIONS.EDIT) {
                 payload['locationId'] = data.locationId;
                 updateCompanyLocation(payload)
@@ -182,6 +290,15 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 createCompanyLocation(payload);
             }
         }
+    }
+
+    function uploadDigitalSignature(id: any) {
+        const formData = new FormData();
+        const files = [...file.inputFiles];
+        files.forEach(file => {
+            formData.append('file', file, file.name);
+        });
+        uploadDigitalSign({ id , formData });
     }
 
     function debugForm(_form: any) {
@@ -247,6 +364,9 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
             {
                 (creating || updating) &&
                 <PageLoader>{creating ? 'Creating...' : 'Updating...'}</PageLoader>
+            }
+            {
+                uploading && <PageLoader>Uploading Digital Signture..</PageLoader>
             }
         </>
     )

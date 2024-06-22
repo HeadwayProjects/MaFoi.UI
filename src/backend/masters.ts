@@ -656,6 +656,21 @@ export function useUploadActStateMappingTemplate(onSuccess?: any, onError?: any)
     return { uploadActStateMappingTemplate, error, uploading };
 }
 
+export function useDeleteActStateMappingForm(onSuccess?: any, onError?: any) {
+    const { mutate: deleteActStateMappingForm, error, isLoading: deleting } = useMutation(
+        ['deleteActStateMappingForm'],
+        async (id: any) => await api.del(`/api/ActStateMapping/DeleteForm?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteActStateMappingForm, error, deleting };
+}
+
 export function useDeleteActStateMapping(onSuccess?: any, onError?: any) {
     const { mutate: deleteActStateMapping, error, isLoading: deleting } = useMutation(
         ['deleteActStateMapping'],
@@ -728,6 +743,21 @@ export function useUpdateCompanyLocation(onSuccess?: any, onError?: any) {
         }
     );
     return { updateCompanyLocation, error, updating };
+}
+
+export function useUploadLocationMappingDigitalSign(onSuccess?: any, onError?: any) {
+    const { mutate: uploadDigitalSign, error, isLoading: uploading } = useMutation(
+        ['uploadDigitalSign'],
+        async ({ id, formData }: any) => await api.put(`/api/Mappings/UploadLogo?id=${id}`, formData),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { uploadDigitalSign, error, uploading };
 }
 
 export function useDeleteCompanyLocation(onSuccess?: any, onError?: any) {

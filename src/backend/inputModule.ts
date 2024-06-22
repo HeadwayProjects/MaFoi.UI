@@ -303,4 +303,12 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
+
+   //  state act rule activity mapping 
+   public async deleteActStateMappingForm(id: any) {
+    const url = `/api/ActStateMapping/DeleteForm?id=${id}`
+    return await api.del(url) 
+   }
+
+
 }

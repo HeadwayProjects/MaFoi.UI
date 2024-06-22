@@ -7,6 +7,7 @@ import stateRegisterSlice from './features/stateRegister.slice'
 import inputDashboardSlice from './features/dashboard.slice'
 import employeeMasterSlice from './features/employeeMaster.slice'
 import salaryComponentSlice from './features/salaryComponents.slice'
+import StateactruleactivitymappingSlice from './features/Stateactruleactivitymapping.slice'
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     inputDashboard: inputDashboardSlice,
     employeeMaster: employeeMasterSlice,
     salaryComponent: salaryComponentSlice,
+    stateactruleactivitymapping:StateactruleactivitymappingSlice
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import {
     useCreateRuleMapping,
     useUpdateRuleMapping,
-    useUploadActStateMappingTemplate
+    useUploadActStateMappingTemplate,
+    useDeleteActStateMappingForm
 } from "../../../../backend/masters";
 import { toast } from "react-toastify";
 import { API_RESULT, ERROR_MESSAGES } from "../../../../utils/constants";
@@ -22,6 +23,15 @@ const DefaultRule = RuleTypeEnum.STATE;
 function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose, onSubmit }: any) {
     const [activeStep, setActiveStep] = useState(Steps.MAPPING);
     const [mapping, setMapping] = useState<any>({ type: { value: DefaultRule, label: DefaultRule } });
+    const {deleteActStateMappingForm, deleting} = useDeleteActStateMappingForm(({ key, value }: ResponseModel) => {
+        if (key === API_RESULT.SUCCESS) {
+            toast.success(`File deleted successfully.`);
+            onSubmit();
+        } else {
+            toast.error(value || ERROR_MESSAGES.UPLOAD_FILE);
+        }
+    }, errorCallback);
+
     const { uploadActStateMappingTemplate, uploading } = useUploadActStateMappingTemplate(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Template uploaded successfully.`);
@@ -30,6 +40,7 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
             toast.error(value || ERROR_MESSAGES.UPLOAD_FILE);
         }
     }, errorCallback);
+
     const { createRuleMapping, creating } = useCreateRuleMapping(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Mapping created successfully.`);
@@ -42,6 +53,7 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
             toast.error(value || ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
+
     const { updateRuleMapping, updating } = useUpdateRuleMapping(({ key, value }: ResponseModel) => {
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Mapping updated successfully.`);
@@ -54,7 +66,6 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
             toast.error(value || ERROR_MESSAGES.ERROR);
         }
     }, errorCallback);
-
 
     function errorCallback() {
         toast.error(ERROR_MESSAGES.DEFAULT);
@@ -173,14 +184,14 @@ function RuleStateCompanyMappingDetails(this: any, { step, action, data, onClose
                             {
                                 (activeStep === Steps.DOCUMENTS || activeStep === Steps.ALL) && Boolean(mapping) &&
                                 <DocumentAndOtherMappingDetails action={action} data={mapping} onSubmit={handleDocumentsSubmit}
-                                    onCancel={() => setActiveStep(Steps.RULE_COMPLIANCE)} />
+                                    onCancel={() => setActiveStep(Steps.RULE_COMPLIANCE)} onDelete={deleteActStateMappingForm} />
                             }
                         </StepperItem>
                     </Stepper>
                 </Modal.Body>
             </Modal>
             {
-                (creating || uploading || updating) && <PageLoader />
+                (creating || uploading || updating || deleting) && <PageLoader />
             }
         </>
     )
