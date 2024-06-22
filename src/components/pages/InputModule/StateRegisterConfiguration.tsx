@@ -385,6 +385,8 @@ const StateRegisterConfiguration = () => {
     setTableData(newTableData)
   }
 
+
+
   const handleChangeFormula = (event: any, fieldData: any) => {
     const newTableData = tableData.map((each: any) => {
       if (each.id === fieldData.id) {
@@ -433,6 +435,17 @@ const StateRegisterConfiguration = () => {
     const newTableData = tableData.map((each: any) => {
       if (each.id === fieldData.id) {
         return { ...each, valueColumnAddress: event.target.value }
+      } else {
+        return each
+      }
+    })
+    setTableData(newTableData)
+  }
+
+  const handleChangeComment = (event: any, fieldData: any) => {
+    const newTableData = tableData.map((each: any) => {
+      if (each.id === fieldData.id) {
+        return { ...each, comments: event.target.value }
       } else {
         return each
       }
@@ -1130,7 +1143,7 @@ const StateRegisterConfiguration = () => {
 
   const onClickSave = () => {
     const check = tableData.find((each: any) => each.columnType === '' || each.ezycompField === '' || each.style === '' || each.fontName === '' || each.fontSize === '' || each.formula === '')
-    if (check || !registerType || !stateName || !actName || !ruleName || !activityName || !formNameValue || !formName || !headerStartRow || !headerEndRow || !footerStartRow || !footerEndRow)
+    if (check || !registerType || !stateName || !actName || !ruleName || !activityName || !formNameValue || !formName || !headerStartRow || !headerEndRow )
       if (!registerType) {
         //return toast.error('Please Select and Fill All Fields');
       } else {
@@ -1647,6 +1660,7 @@ const StateRegisterConfiguration = () => {
                               <TableCell > Value Merged Range </TableCell>
                               <TableCell > Value Row Address </TableCell>
                               <TableCell > Value Column Address </TableCell>
+                              <TableCell > Comments </TableCell>
                             </TableRow>
                           </TableHead>
 
@@ -1931,6 +1945,27 @@ const StateRegisterConfiguration = () => {
                                   </FormControl>
                                 </TableCell>
 
+
+                                  {/** Comments */}
+                                  <TableCell >
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '190px', minWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                    <OutlinedInput
+                                      sx={{
+                                        '& input::placeholder': {
+                                          fontSize: '14px'
+                                        }
+                                      }}
+                                      type='text'
+                                      placeholder='Comments'
+                                      value={each.comments ? each.comments : ''}
+                                      onChange={(e) => handleChangeComment(e, each)}
+                                      id="outlined-adornment-name"
+                                    />
+                                  </FormControl>
+                                </TableCell>
+
+                                
+
                               </TableRow>
                             ))}
                           </TableBody>
@@ -2115,6 +2150,7 @@ const StateRegisterConfiguration = () => {
                                       <TableCell > Formula</TableCell>
                                       <TableCell > Formula</TableCell>
                                       <TableCell > Value Merged </TableCell>
+                                      <TableCell > ValueMergedRange</TableCell>
                                       <TableCell > ValueMergedRange</TableCell>
                                       <TableCell > Value Row</TableCell>
                                       <TableCell > Value Row</TableCell>
@@ -2726,7 +2762,7 @@ const StateRegisterConfiguration = () => {
                             <TableCell >{each.RegisterType && each.RegisterType ? each.RegisterType : 'NA'}</TableCell>
 
                             <TableCell >
-                              <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '50px' }}>
+                              <Box sx={{  display: 'flex', justifyContent: 'space-between', width: '100px'  }}>
                                 {/* <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/> */}
                                 <Icon action={() => onclickView(each)} style={{ color: '#00C853' }} type="button" name={'eye'} text={'View'} />
                                 <Icon action={() => onclickEditModelButton(each)} style={{ color: '#039BE5' }} type="button" name={'pencil'} text={'Edit'} />

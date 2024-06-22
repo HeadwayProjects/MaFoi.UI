@@ -162,7 +162,7 @@ const EmployeeAttendanceUpload = () => {
         },
         {
           columnName:'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName:'year',
@@ -195,7 +195,7 @@ const EmployeeAttendanceUpload = () => {
         },
         {
           columnName:'locationId',
-          value: location
+          value: location.split('^')[0]
         },
         {
           columnName:'year',
