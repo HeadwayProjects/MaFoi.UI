@@ -21,7 +21,12 @@ interface StateConfigurationState {
         status: string,
         data: any,
         error: string | null
-    }
+    } ,
+     deleteStateRegisterMappingDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
 }
 
 const initialState: StateConfigurationState = { 
@@ -41,6 +46,10 @@ const initialState: StateConfigurationState = {
         error: null
     },
     updateStateRegisterDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },deleteStateRegisterMappingDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -67,6 +76,12 @@ export const updateStateRegister = createAsyncThunk('inputModule/updateStateRegi
     return await inputModuleService.updateStateRegister(data)
 })
 
+export const deleteStateRegisterMapping = createAsyncThunk('inputModule/deleteStateRegisterMapping', async (id: any) => {
+
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.deleteStateRegisterMapping(id);
+})
+
 export const stateRegisterSlice = createSlice({
     name: 'stateRegister',
     initialState,
@@ -84,7 +99,13 @@ export const stateRegisterSlice = createSlice({
             data: '',
             error: null
         }
-   }
+   }, resetDeleteStateregisterMappingConfigDetails: (state) => {
+    state.deleteStateRegisterMappingDetails = {
+        status: 'idle',
+        data: '',
+        error: null
+    }
+}
     },
     extraReducers: (builder) => builder
         .addCase(getStateRegister.pending, (state) => {
@@ -154,8 +175,25 @@ export const stateRegisterSlice = createSlice({
             state.updateStateRegisterDetails.status = 'failed'
             state.updateStateRegisterDetails.error = action.error.message
         })
+
+        .addCase(deleteStateRegisterMapping.pending, (state) => {
+            state.deleteStateRegisterMappingDetails.status = 'loading'
+        })
+        .addCase(deleteStateRegisterMapping.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.deleteStateRegisterMappingDetails.status = 'succeeded'
+                state.deleteStateRegisterMappingDetails.data = action.payload.data
+            } else {
+                state.deleteStateRegisterMappingDetails.status = 'failed'
+                state.deleteStateRegisterMappingDetails.error = action.payload.message;
+            }
+        })
+        .addCase(deleteStateRegisterMapping.rejected, (state, action: any) => {
+            state.deleteStateRegisterMappingDetails.status = 'failed'
+            state.deleteStateRegisterMappingDetails.error = action.error.message
+        })
 })
   
-export const { resetStateConfigDetails, resetAddStateConfigDetails} = stateRegisterSlice.actions
+export const { resetStateConfigDetails, resetAddStateConfigDetails,resetDeleteStateregisterMappingConfigDetails} = stateRegisterSlice.actions
 
 export default stateRegisterSlice.reducer

@@ -304,11 +304,21 @@ export class InputModuleService {
     }
 
 
+    
    //  state act rule activity mapping 
    public async deleteActStateMappingForm(id: any) {
     const url = `/api/ActStateMapping/DeleteForm?id=${id}`
     return await api.del(url) 
    }
+
+   //delete state register comnfiguration mapping 
+   public async deleteStateRegisterMapping(id:any) {
+
+    const url =  `/api/StateRegisterConfiguration/Delete?Id=${id}`
+    return await api.del(url)
+}
+
+  
 
 
 }

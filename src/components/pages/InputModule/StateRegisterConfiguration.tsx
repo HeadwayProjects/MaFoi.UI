@@ -12,13 +12,14 @@ import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import { getLeaveConfiguration } from '../../../redux/features/leaveConfiguration.slice';
-import { updateStateRegister,addStateRegister, getStateConfigurationDetails, getStateRegister, resetAddStateConfigDetails, resetStateConfigDetails } from '../../../redux/features/stateRegister.slice';
+import { updateStateRegister,addStateRegister, getStateConfigurationDetails, getStateRegister, resetAddStateConfigDetails, resetStateConfigDetails,deleteStateRegisterMapping } from '../../../redux/features/stateRegister.slice';
 import Select from "react-select";
 import { EstablishmentTypes } from '../Masters/Master.constants';
 import { RxCross2 } from "react-icons/rx";
 import { each } from 'underscore';
-import { green } from '@mui/material/colors';
 import { relative } from 'path';
+import { deleteActStateMappingForm } from '../../../redux/features/Stateactruleactivitymapping.slice';
+
 
 
 
@@ -32,6 +33,18 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   overflowY: 'hidden'// Add this if the content might overflow
+};
+
+
+const deleteboxstyle = {
+  position: 'absolute' as 'absolute',
+  top: '25%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 600,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  
 };
 
 
@@ -55,6 +68,7 @@ const StateRegisterConfiguration = () => {
   const getColumnsDetails = useAppSelector((state) => state.inputModule.getColumnsDetails);
   const addStateRegisterDetails = useAppSelector((state) => state.stateRegister.addStateRegisterDetails)
   const updateStateRegisterDetails = useAppSelector((state) => state.stateRegister.updateStateRegisterDetails)
+  const deleteStateRegisterMappingDetails = useAppSelector((state) => state.stateRegister.deleteStateRegisterMappingDetails)
   // console.log(formsDetails, "formsDetails")
 
   const stateRegister = stateRegisterDetails.data.List
@@ -122,7 +136,7 @@ const StateRegisterConfiguration = () => {
     'Wingdings',
     'Yu Gothic',]
 
-  const loading = updateStateRegisterDetails.status === 'loading' || addStateRegisterDetails.status === 'loading' || formsDetails.status === 'loading' || stateRegisterDetails.status === 'loading' || stateConfigureDetails.status === 'loading' || getColumnsDetails.status === 'loading'
+  const loading = deleteStateRegisterMappingDetails.status === 'loading' ||  updateStateRegisterDetails.status === 'loading' || addStateRegisterDetails.status === 'loading' || formsDetails.status === 'loading' || stateRegisterDetails.status === 'loading' || stateConfigureDetails.status === 'loading' || getColumnsDetails.status === 'loading'
 
   const [stateValue, setStateValue] = React.useState('');
   const [type, setType] = React.useState('');
@@ -404,7 +418,14 @@ const StateRegisterConfiguration = () => {
   const handleChangeValueMerged = (event: any, fieldData: any) => {
     const newTableData = tableData.map((each: any) => {
       if (each.id === fieldData.id) {
-        return { ...each, valueMerged: (event.target.value === 'Yes' ? true : false) }
+        return { 
+          ...each, 
+          valueMerged: (event.target.value === 'Yes' ? true : false),
+          valueMergedRange: 0 , // Update valueMergedRange to 0 whenever valueMerged changes
+          valueRowAddress : 0,
+          valueColumnAddress:""
+
+        }
       } else {
         return each
       }
@@ -554,8 +575,6 @@ const StateRegisterConfiguration = () => {
 
 
   const handleEditChangeopeator = (event: any, fieldData: any) => {
-
-   // alert(fieldData.Id);
     const ezycompFieldValue = getEditEzycompFieldById(fieldData.Id);
     
     if (ezycompFieldValue != null) {
@@ -658,9 +677,6 @@ const StateRegisterConfiguration = () => {
   }
 
   const handleeditFormulachange =(event : any, fieldData:any) => {
-    // alert("formaula hitted");
-   //  alert(fieldData.Id);
-   
     const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
       if (each.Id === fieldData.Id) {
         return { ...each, Formula: event.target.value }
@@ -675,11 +691,9 @@ const StateRegisterConfiguration = () => {
   }
 
   const handleeditChangeValueMerged = (event: any, fieldData: any) => {
-  //  alert(event.target.value);
-
     const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
       if (each.Id === fieldData.Id) {
-        return { ...each, ValueMerged: (event.target.value === 'Yes' ? true : false), ValueMergedRange:'',ValueRowAddress:'',ValueColumnAddress:'' }
+        return { ...each, ValueMerged: (event.target.value === 'Yes' ? true : false), ValueMergedRange:'',ValueRowAddress:0,ValueColumnAddress:'' }
       } else {
         return each
       }
@@ -771,7 +785,7 @@ const StateRegisterConfiguration = () => {
       lableColumnAddress: detail.LabelColumnAddress,
       valueMerged: detail.ValueMerged,
       valueMergedRange: detail.ValueMergedRange,
-      valueRowAddress: detail.ValueRowAddress,
+      valueRowAddress: detail.ValueRowAddress === null ? 0 : detail.ValueRowAddress,
       valueColumnAddress: detail.ValueColumnAddress,
       stateRegisterConfigurationId: detail.StateRegisterConfigurationId,
       stateRegisterConfiguration: detail.StateRegisterConfiguration,
@@ -865,6 +879,26 @@ const StateRegisterConfiguration = () => {
     if (addStateRegisterDetails.status === 'succeeded') {
       resetStateValues()
       toast.success(`Added Successfully`)
+     // alert(stateValue);
+     // alert(type);
+     setStateValue('');
+      const stateRegisterDefaultPayload: any = {
+        search: "",
+        filters: [
+         
+        ],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'stateId', order: 'asc' },
+        "includeCentral": true
+      }
+  console.log(stateRegisterDefaultPayload);
+   //  alert(stateValue);
+    // alert(type);
+      dispatch(getStateRegister(stateRegisterDefaultPayload))
+     
     } else if (addStateRegisterDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
@@ -1329,37 +1363,77 @@ const StateRegisterConfiguration = () => {
 
   
   const onClickConfirmDelete = () => {
-    // dispatch(deleteHoliday(holiday.id))
-    // let type = 'asc'
-    // setActiveSort('restricted');
-    // if (sortType === 'asc') {
-    //   setSortType('desc')
-    //   type = 'desc'
-    // } else {
-    //   setSortType('asc')
-    // }
-    // setCompany('')
-    // setAssociateCompany('')
-    // setStateName('')
-    // setLocation('')
-    // setYear('')
-    // setMonth('')
+   
+    dispatch(deleteStateRegisterMapping(selectedStateConfig.Id))
 
 
-    // const HolidayListPayload: any = {
-    //   search: searchInput,
-    //   filters: [],
-    //   pagination: {
-    //     pageSize: rowsPerPage,
-    //     pageNumber: page + 1
-    //   },
-    //   sort: { columnName: 'stateId', order: type },
-    //   "includeCentral": true
-    // }
-    // dispatch(getHolidaysList(HolidayListPayload))
+ 
 
 
   }
+
+  useEffect(() => {
+
+    if (deleteStateRegisterMappingDetails.status === 'succeeded') {
+      toast.success(`${selectedStateConfig.Form} deleted successfully.`)
+      setSelectedStateConfig('')
+      dispatch(resetStateConfigDetails())
+      setOpenDeleteModal(false)
+    
+      setStateValue('');
+      const stateRegisterDefaultPayload: any = {
+        search: "",
+        filters: [
+         
+        ],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'stateId', order: 'asc' },
+        "includeCentral": true
+      }
+  console.log(stateRegisterDefaultPayload);
+   //  alert(stateValue);
+    // alert(type);
+      dispatch(getStateRegister(stateRegisterDefaultPayload))
+     
+    } else if (deleteStateRegisterMappingDetails.status === 'failed') {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [deleteStateRegisterMappingDetails.status])
+
+  
+  useEffect(() => {
+
+    if (updateStateRegisterDetails.status === 'succeeded') {
+      toast.success(`${selectedStateConfig.Form} Updated successfully.`)
+      setSelectedStateConfig('')
+      dispatch(resetStateConfigDetails())
+      setOpenEditModal(false)
+    
+      setStateValue('');
+      const stateRegisterDefaultPayload: any = {
+        search: "",
+        filters: [
+         
+        ],
+        pagination: {
+          pageSize: 10,
+          pageNumber: 1
+        },
+        sort: { columnName: 'stateId', order: 'asc' },
+        "includeCentral": true
+      }
+  console.log(stateRegisterDefaultPayload);
+   //  alert(stateValue);
+    // alert(type);
+      dispatch(getStateRegister(stateRegisterDefaultPayload))
+     
+    } else if (updateStateRegisterDetails.status === 'failed') {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [updateStateRegisterDetails.status])
 
 
   return (
@@ -2115,7 +2189,10 @@ const StateRegisterConfiguration = () => {
             backgroundColor: '#E2E3F8', padding: '5px', px: '10px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
 }}>
             <Box sx={{display: "flex", flexDirection: "column"}}>
-             <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}> {selectedStateConfig.formName } Edit Mapping  </Typography> 
+
+
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Form :  {selectedStateConfig.FormName } Edit Mapping  </Typography>
+
            
            
             </Box>
@@ -2491,7 +2568,7 @@ const StateRegisterConfiguration = () => {
         open={openDeleteModal}
         onClose={() => setOpenDeleteModal(false)}
       >
-        <Box sx={style}>
+        <Box sx={deleteboxstyle}>
           <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Delete Mapping</Typography>
             <IconButton
@@ -2502,7 +2579,7 @@ const StateRegisterConfiguration = () => {
           </Box>
           <Box sx={{ padding: '20px', backgroundColor: '#ffffff' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography >Are you sure you want to delete the  <h5>{selectedStateConfig.Form}</h5> of <h4>{selectedStateConfig.Activity} </h4>, &nbsp;</Typography>
+              <Typography >Are you sure you want to delete the  <h5>{selectedStateConfig.Form}</h5> &nbsp;</Typography>
               {/* <Typography variant='h5'>{selectedStateConfig.Form && holiday.name}</Typography> */}
             </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
