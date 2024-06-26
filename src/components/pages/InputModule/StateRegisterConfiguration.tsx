@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getActivities, getActs, getAllCompaniesDetails, getAssociateCompanies, getColumns, getForms, getLocations, getRules, getStates } from '../../../redux/features/inputModule.slice';
-import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography, Tooltip, makeStyles, TableFooter } from '@mui/material';
+import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, InputLabel, MenuItem, Modal, OutlinedInput, Radio, RadioGroup, Select as MSelect, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Typography, Tooltip, makeStyles } from '@mui/material';
 import { FaUpload, FaDownload } from "react-icons/fa";
 import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
@@ -46,7 +46,6 @@ const deleteboxstyle = {
   boxShadow: 24,
   
 };
-
 
 const customStyles = {
   control: (base: any) => ({
@@ -415,13 +414,14 @@ const StateRegisterConfiguration = () => {
     setTableData(newTableData)
   }
 
+
   const handleChangeValueMerged = (event: any, fieldData: any) => {
     const newTableData = tableData.map((each: any) => {
       if (each.id === fieldData.id) {
         return { 
           ...each, 
           valueMerged: (event.target.value === 'Yes' ? true : false),
-          valueMergedRange: 0 , // Update valueMergedRange to 0 whenever valueMerged changes
+          valueMergedRange: "" , // Update valueMergedRange to 0 whenever valueMerged changes
           valueRowAddress : 0,
           valueColumnAddress:""
 
@@ -2153,15 +2153,15 @@ const StateRegisterConfiguration = () => {
                                     </TableRow>
                               ))}
                               </TableBody>
-                    </Table>
+                          </Table>
                   </TableContainer>
                 </>
               }
             </Box>
-              
+
                 <Box sx={{ display: 'flex', padding: '20px', borderTop: '1px solid #6F6F6F', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-      <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenPreviewModal(false); setSelectedStateConfig({})}}>Cancel</Button>
-    </Box>
+              <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenPreviewModal(false); setSelectedStateConfig({})}}>Cancel</Button>
+            </Box>
         
 
 
@@ -2224,7 +2224,7 @@ const StateRegisterConfiguration = () => {
                                       <TableCell > LabelRow </TableCell>
                                       <TableCell > LabelMergedRange</TableCell>
                                       <TableCell > Column Type</TableCell>
-                          <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} > EzyCompField</TableCell>
+                                      <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} > EzyCompField</TableCell>
                                       <TableCell > Style</TableCell>
                                       <TableCell > Style</TableCell>
                                       <TableCell > FontName</TableCell>
@@ -2242,11 +2242,11 @@ const StateRegisterConfiguration = () => {
                                       <TableCell > Value Column</TableCell>
                                       <TableCell > Comments</TableCell>
                                       <TableCell > Comments</TableCell>
-                          </TableRow>
-                        </TableHead>
+                                  </TableRow>
+                              </TableHead>
 
-                 
-                      <TableBody>
+
+                              <TableBody>
 
                               {selectedStateConfig.StateRegisterMappingDetails && selectedStateConfig.StateRegisterMappingDetails.map((each: any, index: number) => (
                                   <TableRow
@@ -2511,7 +2511,7 @@ const StateRegisterConfiguration = () => {
                                       <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                                             <OutlinedInput
                                               disabled={each.ValueMerged}
-                                              placeholder='Value Column'
+                                      placeholder='Value Column'
                                               value={each.ValueColumnAddress ? each.ValueColumnAddress : ''}
                                               onChange={(e)=>handleeditvalueColumnaddresschange(e,each)}
                                               id={`outlined-adornment-${each._id}`}
@@ -2534,8 +2534,8 @@ const StateRegisterConfiguration = () => {
                                       <TableCell >{each.Comments}</TableCell>
                                     </TableRow>
                               ))}
-                      </TableBody> 
-                    </Table>
+                              </TableBody>
+                          </Table>
                   
                     
                      
@@ -2553,8 +2553,8 @@ const StateRegisterConfiguration = () => {
                       <Button variant='contained' sx={{ backgroundColor: '#707070' }} onClick={() => handleSaveEditMappingForm()}>Save Changes</Button>
                         </Box>
                         </TableRow>
-          </Box>
-                    
+            </Box>
+
 
         </Box>
 
