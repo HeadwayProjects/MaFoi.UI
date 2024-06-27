@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PageLoader from '../../shared/PageLoader'
 import { useAppDispatch, useAppSelector } from '../../../redux/hook';
 import { getAllCompaniesDetails, getAssociateCompanies, getLocations, getStates } from '../../../redux/features/inputModule.slice';
@@ -15,6 +15,7 @@ import { MdOutput } from "react-icons/md";
 import { IoMdClose } from 'react-icons/io';
 import { getBasePath } from '../../../App';
 import { navigate } from 'raviger';
+import axios from 'axios';
 
 const Dashboard = () => {
 
@@ -47,6 +48,7 @@ const Dashboard = () => {
   })
   
   const loading = employeeBackendCountDetails.status === 'loading' || employeeInputDashboardDetails.status === 'loading' || employeeDashboardCountsDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading' || statesDetails.status === 'loading'
+  const [downloading,setDownloading]= useState(false);
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -207,9 +209,141 @@ const Dashboard = () => {
   }
   
 
+  const fileUrls = [
+    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx',
+    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/b21fb1d8-a634-4420-adc5-14361cd94790/Form A - reg of wages.xlsx',
+    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx',
+    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx',
+    // 'https://mafoi.s3.ap-south-1.amazonaws.com/templates/96d650d7-d1e1-476d-8728-385c9ed5a2cc/POW Form 2 for Deduction.xlsx',
+    // 'https://mafoi.s3.ap-south-1.amazonaws.com/templates/f8c6ebf9-9f57-413d-a22b-c6b76e3c62a2/POW Form III Reg of Advance  .xlsx'
+    
+
+  ];
+
+  const handleProcessRegisters=async ()=>{
+    setDownloading(true);
+    let parentcompanyid = company;
+    let associatecompanyid = associateCompany;
+    let stateid=stateName;
+    let locationid= location;
+    let yearid = year;
+    const monthKey = (monthList.findIndex((each) => each === month) + 1).toString();
+    const fileUrl = 'https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx';
+
+    try {
+      // Step 1: Get the access token
+      const params = new URLSearchParams();
+      params.append('grant_type', 'password');
+      params.append('username', 'admin');
+      params.append('password', 'admin');
+
+      const tokenResponse = await axios.post('http://54.85.8.113:8081/oauth/token', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Basic ' + btoa('client:secret'),
+          'User-Agent': 'PostmanRuntime/7.39.0',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Connection': 'keep-alive'
+        }
+      });
+
+      console.log(tokenResponse.data);
+
+      const accessToken = tokenResponse.data.access_token;
+
+      for (const fileUrl of fileUrls) {
+
+        let formResponseUrl= "";
+        if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx'){
+          formResponseUrl='http://54.85.8.113:8081/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
+        }
+        else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/b21fb1d8-a634-4420-adc5-14361cd94790/Form A - reg of wages.xlsx'){
+          formResponseUrl='http://54.85.8.113:8081/rest/services/bws_Reporting_Controller/fileFormARegofWages';
+        }
+        else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx'){
+formResponseUrl='http://54.85.8.113:8081/rest/services/bws_Reporting_Controller/fileFormTPart1Regoffines';
+        }
+        else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'){
+          formResponseUrl='http://54.85.8.113:8081/rest/services/bws_Reporting_Controller/fileFormTPart2RegofFines';
+                  }
+                  else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/96d650d7-d1e1-476d-8728-385c9ed5a2cc/POW Form 2 for Deduction.xlsx'){
+                    formResponseUrl='http://54.85.8.113:8081/rest/files?fileRef=fs://2024/06/27/d5a1eecb-4417-d4b1-32ad-08018b0fc5e8.xlsx?name=POW_Form_2_All_Employees.xlsx';
+                            }
+                            else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/f8c6ebf9-9f57-413d-a22b-c6b76e3c62a2/POW Form III Reg of Advance  .xlsx'){
+                              formResponseUrl='http://54.85.8.113:8081/rest/files?fileRef=fs://2024/06/27/cc7fb010-e95e-2db5-ca0e-81efdcbb6107.xlsx?name=POW_Form_2_All_Employees.xlsx';
+                                      }
+          
+console.log('formResonseUrl',formResponseUrl);
+      const formResponse = await axios.post(
+      formResponseUrl,
+        {
+          companyID: company,
+          associatedCompanyID: associateCompany,
+          stateId: stateName,
+          locationID: location,
+          formURL: fileUrl,
+          year: year,
+          month: "January"
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        }
+      );
+    
+      console.log(formResponse.data);
+
+      const fileRef = formResponse.data.body.match(/fs:\/\/[^"]+/)[0];
+     // Extract the file name from the fileRef
+     const fileNameMatch = fileRef.match(/name=([^&]+)/);
+     const fileName = fileNameMatch ? fileNameMatch[1] : 'downloaded_file.xlsx';
+
+
+     console.log('fileRef',fileRef);
+     console.log('fileNameMatch',fileNameMatch);
+     console.log('fileName',fileName);
+     
+      // alert(fileNameMatch);
+      // alert(fileName);
+
+       // Step 3: Use the file reference to download the file
+       const fileDownloadResponse = await axios.get('http://54.85.8.113:8081/rest/files', {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        params: {
+          fileRef: fileRef
+        },
+        responseType: 'blob' // Important for downloading files
+      });
+
+      // Step 4: Create a link to download the file
+      const url = window.URL.createObjectURL(new Blob([fileDownloadResponse.data], { type: 'application/xml' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success(`${fileName} downloaded successfully`);
+
+    }
+    setDownloading(false);
+  } catch (error) {
+    console.error('Error processing registers:', error);
+    toast.error("Error in downloading files");
+  }
+
+  }
+  
+
   return (
     <div style={{ backgroundColor:'#ffffff', minHeight:'100vh'}}>
       {loading ? <PageLoader>Loading...</PageLoader> : 
+      <div>
+        {downloading ? <PageLoader>Downloading...</PageLoader> :
+
         <div style={{paddingBottom:'100px'}}>
 
             {/* Filter Box*/}
@@ -685,7 +819,7 @@ const Dashboard = () => {
 
                   </Box>
                   
-                  <Button sx={{mt:2, width:'90%'}} variant='outlined'>
+                  <Button sx={{mt:2, width:'90%'}} variant='outlined' onClick={handleProcessRegisters}>
                     {/* <Typography padding={'8px'} color={'#0654AD'}> Process Registers</Typography> */}
                     Process Registers
                   </Button>
@@ -830,6 +964,8 @@ const Dashboard = () => {
 
             
         </div>
+}
+</div>
       }
     </div>
   )

@@ -690,6 +690,8 @@ const StateRegisterConfiguration = () => {
     });
   }
 
+
+
   const handleeditChangeValueMerged = (event: any, fieldData: any) => {
     const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
       if (each.Id === fieldData.Id) {
@@ -719,7 +721,6 @@ const StateRegisterConfiguration = () => {
   }
 
   const handleeditvalueRowaddresschange =(event : any, fieldData:any) => {
-
     const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
       if (each.Id === fieldData.Id) {
         return { ...each, ValueRowAddress: event.target.value }
@@ -770,7 +771,6 @@ const StateRegisterConfiguration = () => {
 
   const handleSaveEditMappingForm = () => {
     setTableData(selectedStateConfig.StateRegisterMappingDetails);
-  
     const StateRegisterMappingDetails = selectedStateConfig.StateRegisterMappingDetails.map((detail : any) => ({
       ezycompField: detail.EzycompField,
       columnType: detail.ColumnType,
@@ -835,7 +835,6 @@ const StateRegisterConfiguration = () => {
       sort: { columnName: 'stateId', order: 'asc' },
       "includeCentral": true
     }
-
     const statesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD }
     dispatch(getStateRegister(stateRegisterDefaultPayload))
     dispatch(getStates(statesPayload))
@@ -865,15 +864,7 @@ const StateRegisterConfiguration = () => {
   },[stateConfigureDetails])
   
 
-  // useEffect(() => {
-
-   
-     
-  //     setTableData(stateConfigureDetails.data)
-  //     setnewTableData(tableData);
-  //     setTableData(newtableData);
-  
-  // }, [tableData])
+ 
 
   useEffect(() => {
     if (addStateRegisterDetails.status === 'succeeded') {
@@ -895,8 +886,7 @@ const StateRegisterConfiguration = () => {
         "includeCentral": true
       }
   console.log(stateRegisterDefaultPayload);
-   //  alert(stateValue);
-    // alert(type);
+
       dispatch(getStateRegister(stateRegisterDefaultPayload))
      
     } else if (addStateRegisterDetails.status === 'failed') {
