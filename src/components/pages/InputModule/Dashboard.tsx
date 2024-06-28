@@ -237,7 +237,7 @@ const Dashboard = () => {
       params.append('username', 'admin');
       params.append('password', 'admin');
 
-      const tokenResponse = await axios.post('http://54.85.8.113:8081/oauth/token', params.toString(), {
+      const tokenResponse = await axios.post('https://ezycomp.buoyantworx.com/oauth/token', params.toString(), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Basic ' + btoa('client:secret'),
@@ -255,22 +255,25 @@ const Dashboard = () => {
 
         let formResponseUrl= "";
         if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx'){
-          formResponseUrl='http://54.85.8.113:8081/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
+          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
         }
         else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/b21fb1d8-a634-4420-adc5-14361cd94790/Form A - reg of wages.xlsx'){
-          formResponseUrl='http://54.85.8.113:8081/rest/services/bws_Reporting_Controller/fileFormARegofWages';
+          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormARegofWages';
         }
         else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx'){
-formResponseUrl='http://54.85.8.113:8081/rest/services/bws_Reporting_Controller/fileFormTPart1Regoffines';
+formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormTPart1Regoffines';
         }
         else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'){
-          formResponseUrl='http://54.85.8.113:8081/rest/services/bws_Reporting_Controller/fileFormTPart2RegofFines';
+          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormTPart2RegofFines';
+                  }
+                  else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'){
+                    formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileESIForm11RegofAccident';
                   }
                   else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/96d650d7-d1e1-476d-8728-385c9ed5a2cc/POW Form 2 for Deduction.xlsx'){
-                    formResponseUrl='http://54.85.8.113:8081/rest/files?fileRef=fs://2024/06/27/d5a1eecb-4417-d4b1-32ad-08018b0fc5e8.xlsx?name=POW_Form_2_All_Employees.xlsx';
+                    formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/filePOW_Part2RegofDeduction';
                             }
                             else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/f8c6ebf9-9f57-413d-a22b-c6b76e3c62a2/POW Form III Reg of Advance  .xlsx'){
-                              formResponseUrl='http://54.85.8.113:8081/rest/files?fileRef=fs://2024/06/27/cc7fb010-e95e-2db5-ca0e-81efdcbb6107.xlsx?name=POW_Form_2_All_Employees.xlsx';
+                              formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/filePOW_Part2RegofDeduction';
                                       }
           
 console.log('formResonseUrl',formResponseUrl);
@@ -332,8 +335,23 @@ console.log('formResonseUrl',formResponseUrl);
     setDownloading(false);
   } catch (error) {
     console.error('Error processing registers:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error details:', {
+        message: error.message,
+        name: error.name,
+        code: error.code,
+        config: error.config,
+        request: error.request,
+        response: error.response ? {
+          data: error.response.data,
+          status: error.response.status,
+          headers: error.response.headers,
+        } : null,
+      });
     toast.error("Error in downloading files");
+    setDownloading(false);
   }
+}
 
   }
   
