@@ -301,9 +301,30 @@ console.log('locaname',locationdetails);
       setAtttendanceDetails({})
       dispatch(resetDeleteAttendanceDetails())
       setOpenDeleteModal(false)
+
+      const filters = []
+      if (company) {
+        filters.push({
+          columnName: 'companyId',
+          value: company
+        })
+      }
+      if (associateCompany) {
+        filters.push({
+          columnName: 'associateCompanyId',
+          value: associateCompany
+        })
+      }
+      if (location) {
+        filters.push({
+          columnName: 'locationId',
+          value: location
+        })
+      }
+      
       const attendancePayload: any =  { 
-        search: "",
-        filters: [],
+        search: searchInput,
+        filters: filters,
         pagination: {
           pageSize: 10,
           pageNumber: 1
@@ -1054,9 +1075,6 @@ console.log('locaname',locationdetails);
  
   const onClickConfirmDelete = () => {
     dispatch(deleteAttendance(attendanceDetails.id))
-    setCompany('')
-    setAssociateCompany('')
-    setLocation('')
     setSearchInput('')
 
 
@@ -1081,8 +1099,8 @@ console.log('locaname',locationdetails);
     }
 
     const attendancePayload: any =  { 
-      search: '', 
-      filters,
+      search: searchInput, 
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
