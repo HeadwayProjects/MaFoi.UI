@@ -320,14 +320,47 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
       setLeaveDetails({})
       dispatch(resetDeleteLeaveDetails())
       setOpenDeleteModal(false)
+      let type = 'asc'
+      setActiveSort('employeeType');
+      if (sortType === 'asc') {
+        setSortType('desc')
+        type = 'desc'
+      } else {
+        setSortType('asc')
+      }
+      const filters = []
+      if (company) {
+        filters.push({
+          columnName: 'companyId',
+          value: company
+        })
+      }
+      if (associateCompany) {
+        filters.push({
+          columnName: 'associateCompanyId',
+          value: associateCompany
+        })
+      }
+      if (location) {
+        filters.push({
+          columnName: 'locationId',
+          value: location
+        })
+      }
+      if (employmentType) {
+        filters.push({
+          columnName: 'employeeType',
+          value: employmentType
+        })
+      }
       const leavesPayload: any =  { 
-        search: "",
-        filters: [],
+        search: searchInput,
+        filters: filters,
         pagination: {
           pageSize: 10,
           pageNumber: 1
         },
-        sort: { columnName: 'ezycompLeave', order: 'asc' },
+        sort: { columnName: 'companyId', order: type },
         "includeCentral": true
       }
       dispatch(getLeaveConfiguration(leavesPayload))
@@ -967,17 +1000,47 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
  
   const onClickConfirmDelete = () => {
     dispatch(deleteLeave(leaveDetails.id))
-    setCompany('')
-    setAssociateCompany('')
-    setEmploymentType('')
+    let type = 'asc'
+    setActiveSort('employeeType');
+    if (sortType === 'asc') {
+      setSortType('desc')
+      type = 'desc'
+    } else {
+      setSortType('asc')
+    }
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location
+      })
+    }
+    if (employmentType) {
+      filters.push({
+        columnName: 'employeeType',
+        value: employmentType
+      })
+    }
     const leavesPayload: any =  { 
-      search: "", 
-      filters: [],
+      search: searchInput, 
+      filters: filters,
       pagination: {
         pageSize: 10,
         pageNumber: 1
       },
-      sort: { columnName: 'ezycompLeave', order: 'asc' },
+      sort: { columnName: 'companyId', order: type },
       "includeCentral": true
     }
     dispatch(getLeaveConfiguration(leavesPayload))

@@ -174,6 +174,9 @@ const StateRegisterConfiguration = () => {
   const [page, setPage] = React.useState(0);
 
   const [openAddModal, setOpenAddModal] = React.useState(false);
+  const [openAddModal2, setOpenAddModal2] = React.useState(false);
+  const [openAddExport, setOpenAddExport] = React.useState(false)
+
   const [openViewModal, setOpenViewModal] = React.useState(false);
   const [selectedStateConfig, setSelectedStateConfig] = React.useState<any>({})
 
@@ -1234,12 +1237,8 @@ const StateRegisterConfiguration = () => {
   
   }
   const onclickDeleteButton = (stateConfig: any) => {
-
-    
     setSelectedStateConfig(stateConfig)
-
     setOpenDeleteModal(true);
-  
   }
 
 
@@ -1353,29 +1352,31 @@ const StateRegisterConfiguration = () => {
 
   
   const onClickConfirmDelete = () => {
-   
     dispatch(deleteStateRegisterMapping(selectedStateConfig.Id))
-
-
- 
-
-
   }
 
   useEffect(() => {
-
     if (deleteStateRegisterMappingDetails.status === 'succeeded') {
       toast.success(`${selectedStateConfig.Form} deleted successfully.`)
       setSelectedStateConfig('')
       dispatch(resetStateConfigDetails())
       setOpenDeleteModal(false)
-    
-      setStateValue('');
+      const filters = []
+      if (stateValue) {
+        filters.push({
+          columnName: 'stateId',
+          value: stateValue
+        })
+      }
+      if (type) {
+        filters.push({
+          columnName: 'registerType',
+          value: type
+        })
+      }
       const stateRegisterDefaultPayload: any = {
-        search: "",
-        filters: [
-         
-        ],
+        search: searchInput,
+        filters: filters,
         pagination: {
           pageSize: 10,
           pageNumber: 1
@@ -1426,8 +1427,163 @@ const StateRegisterConfiguration = () => {
   }, [updateStateRegisterDetails.status])
 
 
+
+   const onClickConfigure2 = () => {
+     setOpenAddModal(false);
+     setOpenAddModal2(true);
+  }
+
+  const onClickExport = () => {
+    setOpenAddExport(true)
+  }
+
+
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
+
+      
+       <Modal
+        open={openAddModal2}
+        onClose={() => { setOpenAddModal2(false); resetStateValues() }}
+      >
+
+        <Box sx={style}>
+
+          <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Excel Configure</Typography>
+            <IconButton
+              onClick={() => { setOpenAddModal2(false); resetStateValues() }}
+            >
+              <IoMdClose />
+            </IconButton>
+          </Box>
+          <Box>
+            <Button variant='contained' sx={{ margin: 2 }} onClick={onClickExport}>Export</Button>
+            {openAddExport &&
+              <Box>
+              
+              <Box sx={{ display: 'flex' }} onClick={() => { setOpenAddExport(false) }}>
+                <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                  <FormLabel id="demo-select-small-label" sx={{ color: '#000000' }}>Header Start Row</FormLabel>
+                  <OutlinedInput
+                    sx={{
+                      '& input::placeholder': {
+                        fontSize: '14px'
+                      }
+                    }}
+                    placeholder='Header Start Row'
+                    value={headerStartRow}
+                    onChange={(e) => setHeaderStartRow(e.target.value)}
+                    id="outlined-adornment-name"
+                    type='number'
+                  />
+                </FormControl>
+
+                <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                  <FormLabel id="demo-select-small-label" sx={{ color: '#000000' }}>Header End Row</FormLabel>
+                  <OutlinedInput
+                    sx={{
+                      '& input::placeholder': {
+                        fontSize: '14px'
+                      }
+                    }}
+                    placeholder='Header End Row'
+                    value={headerEndRow}
+                    onChange={(e) => setHeaderEndRow(e.target.value)}
+                    id="outlined-adornment-name"
+                    type='number'
+                  />
+                </FormControl>
+
+                <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                  <FormLabel id="demo-select-small-label" sx={{ color: '#000000' }}>Footer Start Row</FormLabel>
+                  <OutlinedInput
+                    sx={{
+                      '& input::placeholder': {
+                        fontSize: '14px'
+                      }
+                    }}
+                    placeholder='Footer Start Row'
+                    value={footerStartRow}
+                    onChange={(e) => setFooterStartRow(e.target.value)}
+                    id="outlined-adornment-name"
+                    type='number'
+                  />
+                </FormControl>
+
+                <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                  <FormLabel id="demo-select-small-label" sx={{ color: '#000000' }}>Footer End Row</FormLabel>
+                  <OutlinedInput
+                    sx={{
+                      '& input::placeholder': {
+                        fontSize: '14px'
+                      }
+                    }}
+                    placeholder='Footer End Row'
+                    value={footerEndRow}
+                    onChange={(e) => setFooterEndRow(e.target.value)}
+                    id="outlined-adornment-name"
+                    type='number'
+                  />
+                </FormControl>
+
+                <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                  <FormLabel id="demo-select-small-label" sx={{ color: '#000000' }}>Total Rows Per Page</FormLabel>
+                  <OutlinedInput
+                    sx={{
+                      '& input::placeholder': {
+                        fontSize: '14px'
+                      }
+                    }}
+                    placeholder='Total Rows Per Page'
+                    value={totalRowsPerPage}
+                    onChange={(e) => setTotalRowsPerPage(e.target.value)}
+                    id="outlined-adornment-name"
+                    type='number'
+                  />
+                </FormControl>
+
+                <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                  <FormLabel sx={{ color: '#000000' }}>Page Size</FormLabel>
+                  <MSelect
+                    value={pageSize}
+                    displayEmpty
+                    onChange={(e) => { setPageSize(e.target.value) }}
+                  >
+                    <MenuItem disabled sx={{ display: 'none' }} value="">
+                      Select
+                    </MenuItem>
+                    {['A4', 'A6'].map((each: any) => {
+                      return <MenuItem value={each}>{each}</MenuItem>
+                    })}
+                  </MSelect>
+                </FormControl>
+
+                <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                  <FormLabel sx={{ color: '#000000' }}>Page Orientation</FormLabel>
+                  <MSelect
+                    value={pageOrientation}
+                    displayEmpty
+                    onChange={(e) => { setPageOrientation(e.target.value) }}
+                  >
+                    <MenuItem disabled sx={{ display: 'none' }} value="">
+                      Select
+                    </MenuItem>
+                    {['LandScape', 'Portrait'].map((each: any) => {
+                      return <MenuItem value={each}>{each}</MenuItem>
+                    })}
+                  </MSelect>
+                </FormControl>
+
+              </Box>
+              <Button variant='contained' sx={ {margin: 2}}>Import</Button>
+              </Box>
+            
+            }
+        
+            </Box>
+          </Box>
+</Modal>
 
       {/** Add Configure modal */}
       <Modal
@@ -1573,8 +1729,9 @@ const StateRegisterConfiguration = () => {
                 />
               </FormControl>
 
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
                 <Button variant='contained' onClick={onClickConfigure}>Configure</Button>
+                <Button variant='contained' sx={ {marginLeft: 10}} onClick={onClickConfigure2}>Configure2</Button>
               </Box>
             </Box>}
 
@@ -2041,7 +2198,10 @@ const StateRegisterConfiguration = () => {
                     </>
                   }
                 </Box>}
-              {showConfigTable && <Button sx={{ ml: 2, marginTop: '10px', marginBottom: '10px', alignSelf: 'flex-end', width: '200px' }} variant='contained' onClick={onClickSave}>Save</Button>}
+              <TableRow sx = {{position: 'sticky', bottom: 0}}>
+                <Button sx={{ ml: 2, marginTop: '10px', marginBottom: '10px', alignSelf: 'flex-end', width: '200px' }} variant='contained' onClick={onClickSave}>Save</Button>
+              </TableRow>
+              {/* {showConfigTable && <Button sx={{ ml: 2, marginTop: '10px', marginBottom: '10px', alignSelf: 'flex-end', width: '200px' }} variant='contained' onClick={onClickSave}>Save</Button>} */}
             </Box>
           </Box>
 
@@ -2537,8 +2697,7 @@ const StateRegisterConfiguration = () => {
                 </>
               }
                       <TableRow sx={{ position: 'sticky', bottom: 0 }}>
-                        <Box sx={{display: 'flex', padding: '20px', justifyContent: 'space-between', alignItems: 'center' }}>
-
+                        <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Button variant='contained' sx={{ backgroundColor: '#707070' }} onClick={() => { setOpenEditModal(false); setSelectedStateConfig({}) }}>Cancel</Button>
                       <Button variant='contained' sx={{ backgroundColor: '#707070' }} onClick={() => handleSaveEditMappingForm()}>Save Changes</Button>
                         </Box>

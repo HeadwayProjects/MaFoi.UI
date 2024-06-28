@@ -434,17 +434,66 @@ const HolidayList = () => {
       setHoliday({})
       dispatch(resetDeleteHolidayDetails())
       setOpenDeleteModal(false)
-      const HolidayListDefaultPayload: any = {
-        search: "",
-        filters: [],
+      let type = 'asc'
+      setActiveSort('restricted');
+      if (sortType === 'asc') {
+        setSortType('desc')
+        type = 'desc'
+      } else {
+        setSortType('asc')
+      }
+
+      const filters = []
+      if (company) {
+        filters.push({
+          columnName: 'companyId',
+          value: company
+        })
+      }
+      if (associateCompany) {
+        filters.push({
+          columnName: 'associateCompanyId',
+          value: associateCompany
+        })
+      }
+      if (stateName) {
+        filters.push({
+          columnName: 'stateId',
+          value: stateName
+        })
+      }
+      if (location) {
+        filters.push({
+          columnName: 'locationId',
+          value: location
+        })
+      }
+      if (year) {
+        filters.push({
+          columnName: 'year',
+          value: year
+        })
+      }
+      if (month) {
+        filters.push({
+          columnName: 'month',
+          value: (monthList.findIndex((each) => each === month) + 1).toString()
+        })
+      }
+
+
+      const HolidayListPayload: any = {
+        search: searchInput,
+        filters: filters,
         pagination: {
-          pageSize: 10,
-          pageNumber: 1
+          pageSize: rowsPerPage,
+          pageNumber: page + 1
         },
-        sort: { columnName: 'name', order: 'asc' },
+        sort: { columnName: 'companyId', order: type },
         "includeCentral": true
       }
-      dispatch(getHolidaysList(HolidayListDefaultPayload))
+      dispatch(getHolidaysList(HolidayListPayload))
+
     } else if (deleteHolidayDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
@@ -532,7 +581,7 @@ const HolidayList = () => {
       dispatch(resetBulkDeleteHolidaysDetails())
       setOpenBulkDeleteModal(false)
       const HolidayListDefaultPayload: any = {
-        search: "",
+        search: searchInput,
         filters: [],
         pagination: {
           pageSize: 10,
@@ -1309,22 +1358,55 @@ const HolidayList = () => {
     } else {
       setSortType('asc')
     }
-    setCompany('')
-    setAssociateCompany('')
-    setStateName('')
-    setLocation('')
-    setYear('')
-    setMonth('')
+   
+ 
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (stateName) {
+      filters.push({
+        columnName: 'stateId',
+        value: stateName
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: (monthList.findIndex((each) => each === month) + 1).toString()
+      })
+    }
 
-
-    const HolidayListPayload: any = {
-      search: searchInput,
-      filters: [],
+  
+      const HolidayListPayload: any = {
+        search: searchInput,
+        filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'stateId', order: type },
+      sort: { columnName: 'companyId', order: type },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload))
@@ -1364,7 +1446,7 @@ const HolidayList = () => {
     } else {
       setSortType('asc')
     }
-    setCompany('')
+    // setCompany('')
     setAssociateCompany('')
     setStateName('')
     setLocation('')
