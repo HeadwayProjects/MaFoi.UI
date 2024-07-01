@@ -174,7 +174,7 @@ const StateRegisterConfiguration = () => {
   const [page, setPage] = React.useState(0);
 
   const [openAddModal, setOpenAddModal] = React.useState(false);
-  const [openAddModal2, setOpenAddModal2] = React.useState(false);
+  const [openImportExportModal, setImportExportModal] = React.useState(false);
   const [openAddExport, setOpenAddExport] = React.useState(false)
 
   const [openViewModal, setOpenViewModal] = React.useState(false);
@@ -239,7 +239,7 @@ const StateRegisterConfiguration = () => {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'stateId', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getStateRegister(stateRegisterPayload))
@@ -898,9 +898,22 @@ const StateRegisterConfiguration = () => {
   }, [addStateRegisterDetails.status])
 
   const onClickSearch = () => {
+    const filters = []
+    if (stateValue) {
+      filters.push({
+        columnName: 'stateId',
+        value: stateValue
+      })
+    }
+    if (registerType) {
+      filters.push({
+        columnName: 'registerType',
+        value: registerType
+      })
+    }
     const payload: any = {
       search: searchInput,
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
@@ -912,9 +925,22 @@ const StateRegisterConfiguration = () => {
   }
 
   const onClickClearSearch = () => {
+    const filters = []
+    if (stateValue) {
+      filters.push({
+        columnName: 'stateId',
+        value: stateValue
+      })
+    }
+    if (registerType) {
+      filters.push({
+        columnName: 'registerType',
+        value: registerType
+      })
+    }
     const payload: any = {
       search: '',
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
@@ -1430,7 +1456,7 @@ const StateRegisterConfiguration = () => {
 
    const onClickConfigure2 = () => {
      setOpenAddModal(false);
-     setOpenAddModal2(true);
+     setImportExportModal(true);
   }
 
   const onClickExport = () => {
@@ -1443,8 +1469,8 @@ const StateRegisterConfiguration = () => {
 
       
        <Modal
-        open={openAddModal2}
-        onClose={() => { setOpenAddModal2(false); resetStateValues() }}
+        open={openImportExportModal}
+        onClose={() => { setImportExportModal(false); resetStateValues() }}
       >
 
         <Box sx={style}>
@@ -1452,7 +1478,7 @@ const StateRegisterConfiguration = () => {
           <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Excel Configure</Typography>
             <IconButton
-              onClick={() => { setOpenAddModal2(false); resetStateValues() }}
+              onClick={() => { setImportExportModal(false); resetStateValues() }}
             >
               <IoMdClose />
             </IconButton>
@@ -2265,6 +2291,8 @@ const StateRegisterConfiguration = () => {
                                       <TableCell > Style</TableCell>
                                       <TableCell > FontName</TableCell>
                                       <TableCell > FontSize</TableCell>
+                                      <TableCell > Comments</TableCell>
+
                                       
 
                                   </TableRow>
@@ -2299,7 +2327,9 @@ const StateRegisterConfiguration = () => {
   }</TableCell>
     <TableCell >{each.FontSize
 
-  }</TableCell>
+                                  }</TableCell>
+                                  <TableCell >{each.Comments
+                                  }</TableCell>
                                     </TableRow>
                               ))}
                               </TableBody>
@@ -2372,26 +2402,26 @@ const StateRegisterConfiguration = () => {
                                       <TableCell > LabelName</TableCell>
                                       <TableCell > LabelColumn</TableCell>
                                       <TableCell > LabelRow </TableCell>
-                                      <TableCell > LabelMergedRange</TableCell>
+                                      <TableCell > Label Merged Range</TableCell>
                                       <TableCell > Column Type</TableCell>
                                       <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} > EzyCompField</TableCell>
                                       <TableCell > Style</TableCell>
-                                      <TableCell > Style</TableCell>
+                                      {/* <TableCell > Style</TableCell> */}
                                       <TableCell > FontName</TableCell>
-                                      <TableCell > FontName</TableCell>
+                                      {/* <TableCell > FontName</TableCell> */}
                                       <TableCell > Font Size</TableCell>
-                                      <TableCell > Font Size</TableCell>
+                                      {/* <TableCell > Font Size</TableCell> */}
                                       <TableCell > Formula</TableCell>
-                                      <TableCell > Formula</TableCell>
+                                      {/* <TableCell > Formula</TableCell> */}
                                       <TableCell > Value Merged </TableCell>
-                                      <TableCell > ValueMergedRange</TableCell>
-                                      <TableCell > ValueMergedRange</TableCell>
+                                      <TableCell > Value Merged Range</TableCell>
+                                      {/* <TableCell > ValueMergedRange</TableCell> */}
                                       <TableCell > Value Row</TableCell>
-                                      <TableCell > Value Row</TableCell>
+                                      {/* <TableCell > Value Row</TableCell> */}
                                       <TableCell > Value Column</TableCell>
-                                      <TableCell > Value Column</TableCell>
+                                      {/* <TableCell > Value Column</TableCell> */}
                                       <TableCell > Comments</TableCell>
-                                      <TableCell > Comments</TableCell>
+                                      {/* <TableCell > Comments</TableCell> */}
                                   </TableRow>
                               </TableHead>
 
@@ -2552,7 +2582,7 @@ const StateRegisterConfiguration = () => {
                                     </MSelect>
                                   </FormControl>
                                 </TableCell>
-                                      <TableCell >{each.Style}</TableCell>
+                                      {/* <TableCell >{each.Style}</TableCell> */}
 
 
                                        {/** Font Name */}
@@ -2568,12 +2598,12 @@ const StateRegisterConfiguration = () => {
                                     />
                                   </FormControl>
                                 </TableCell>
-                                      <TableCell >{each.FontName}</TableCell>
+                                      {/* <TableCell >{each.FontName}</TableCell> */}
 
 
                                       {/** Font Size */}
                                 <TableCell >
-                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '190px', minWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '20px', minWidth: '79px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                                     <OutlinedInput
                                       sx={{
                                         '& input::placeholder': {
@@ -2588,11 +2618,11 @@ const StateRegisterConfiguration = () => {
                                     />
                                   </FormControl>
                                 </TableCell>
-                                      <TableCell >{each.FontSize}</TableCell>
+                                      {/* <TableCell >{each.FontSize}</TableCell> */}
 
  {/** Formula */}
                                       <TableCell>
-                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">                                           
+                                      <FormControl sx={{ m: 1, maxWidth: "190px", minWidth: '150px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">                                           
                                             <OutlinedInput
                                              
                                               value={each.Formula}
@@ -2602,7 +2632,7 @@ const StateRegisterConfiguration = () => {
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.Formula  }</TableCell>
+                                      {/* <TableCell >{each.Formula  }</TableCell> */}
 
 
 
@@ -2638,7 +2668,7 @@ const StateRegisterConfiguration = () => {
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.ValueMergedRange}</TableCell>
+                                      {/* <TableCell >{each.ValueMergedRange}</TableCell> */}
 
                                         {/** Value Row Address*/}
                                       <TableCell>
@@ -2653,7 +2683,7 @@ const StateRegisterConfiguration = () => {
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.ValueRowAddress}</TableCell>
+                                      {/* <TableCell >{each.ValueRowAddress}</TableCell> */}
 
  {/** Value Column Address*/}
 
@@ -2669,19 +2699,63 @@ const StateRegisterConfiguration = () => {
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.ValueColumnAddress}</TableCell>
+                                       {/* <TableCell >{each.ValueColumnAddress}</TableCell> */}
  {/** Comments*/}
-                                      <TableCell>
-                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
-                                            <OutlinedInput
-                                              value={each.Comments}
-                                              onChange={(e)=>handleeditCommentschange(e,each)}
-                                              id={`outlined-adornment-${each._id}`}
-                                              type='text'
-                                            />
-                                      </FormControl>
-                                      </TableCell>
-                                      <TableCell >{each.Comments}</TableCell>
+                                  <TableCell>
+                                    <FormControl
+                                      sx={{
+                                        m: 1,
+                                        maxWidth: "100%",
+                                        minWidth: '180px',
+                                        backgroundColor: '#ffffff',
+                                        borderRadius: '5px'
+                                      }}
+                                      size="small"
+                                    >
+                                      <Tooltip
+                                        key={each.Id}
+                                        title={each.Comments} // Tooltip content is set to the comments value
+                                        open={hoveredRow === each.Id}
+                                        // open={isHovered}
+                                        disableFocusListener
+                                        disableTouchListener
+                                        placement="top"
+                                        arrow
+                                        PopperProps={{
+                                          sx: {
+                                            '&.MuiTooltip-tooltip': {
+                                              backgroundColor: 'blue', // Change to your desired background color
+                                              color: 'white', // Change to your desired text color
+                                              fontSize: '16px', // Change to your desired font size
+                                            },
+                                            '&.MuiTooltip-arrow': {
+                                              color: 'blue', // Ensure the arrow color matches the tooltip background
+                                            },
+                                          },
+                                        }}
+                                      >
+                                        <OutlinedInput
+                                          value={each.Comments}
+                                          sx={{
+                                          
+                                            fontSize: each.Comments ? (each.Comments.length > 20 ? '0.75rem' : '0.875rem') : '0.875rem', // Example condition for font size adjustment
+                                            transition: 'font-size 0.3s ease-out', // Smooth transition for font size change
+                                            '&:hover': {
+                                              fontSize: '1rem', // Increase font size on hover
+                                            },
+                                          }}
+                                          onChange={(e) => handleeditCommentschange(e, each)}
+                                          id={`outlined-adornment-${each._id}`}
+                                          type='text'
+                                          onMouseEnter={() => handleEditMouseEnter(each.Id)}
+                                          onMouseLeave={handleEditMouseLeave}
+                                        />
+                                      </Tooltip>
+                                    </FormControl>
+                                  </TableCell>
+                                      
+                                  {/* <TableCell >{each.Comments}</TableCell> */}
+                                  
                                     </TableRow>
                               ))}
                               </TableBody>
