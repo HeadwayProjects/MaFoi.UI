@@ -2265,6 +2265,7 @@ const StateRegisterConfiguration = () => {
                                       <TableCell > Style</TableCell>
                                       <TableCell > FontName</TableCell>
                                       <TableCell > FontSize</TableCell>
+                                      <TableCell > Comments</TableCell>
                                       
 
                                   </TableRow>
@@ -2300,6 +2301,9 @@ const StateRegisterConfiguration = () => {
     <TableCell >{each.FontSize
 
   }</TableCell>
+   <TableCell >{each.Comments
+
+}</TableCell>
                                     </TableRow>
                               ))}
                               </TableBody>
@@ -2376,22 +2380,14 @@ const StateRegisterConfiguration = () => {
                                       <TableCell > Column Type</TableCell>
                                       <TableCell sx={{ maxWidth: 200, wordWrap: 'break-word' }} > EzyCompField</TableCell>
                                       <TableCell > Style</TableCell>
-                                      <TableCell > Style</TableCell>
                                       <TableCell > FontName</TableCell>
-                                      <TableCell > FontName</TableCell>
-                                      <TableCell > Font Size</TableCell>
-                                      <TableCell > Font Size</TableCell>
-                                      <TableCell > Formula</TableCell>
+                                      <TableCell > Font Size</TableCell>                             
                                       <TableCell > Formula</TableCell>
                                       <TableCell > Value Merged </TableCell>
-                                      <TableCell > ValueMergedRange</TableCell>
-                                      <TableCell > ValueMergedRange</TableCell>
+                                      <TableCell > ValueMergedRange</TableCell>               
                                       <TableCell > Value Row</TableCell>
-                                      <TableCell > Value Row</TableCell>
-                                      <TableCell > Value Column</TableCell>
-                                      <TableCell > Value Column</TableCell>
-                                      <TableCell > Comments</TableCell>
-                                      <TableCell > Comments</TableCell>
+                                      <TableCell > Value Column</TableCell>                                
+                                     <TableCell > Comments</TableCell>
                                   </TableRow>
                               </TableHead>
 
@@ -2552,7 +2548,7 @@ const StateRegisterConfiguration = () => {
                                     </MSelect>
                                   </FormControl>
                                 </TableCell>
-                                      <TableCell >{each.Style}</TableCell>
+                                     
 
 
                                        {/** Font Name */}
@@ -2568,7 +2564,7 @@ const StateRegisterConfiguration = () => {
                                     />
                                   </FormControl>
                                 </TableCell>
-                                      <TableCell >{each.FontName}</TableCell>
+                                 
 
 
                                       {/** Font Size */}
@@ -2588,7 +2584,7 @@ const StateRegisterConfiguration = () => {
                                     />
                                   </FormControl>
                                 </TableCell>
-                                      <TableCell >{each.FontSize}</TableCell>
+                                    
 
  {/** Formula */}
                                       <TableCell>
@@ -2602,7 +2598,7 @@ const StateRegisterConfiguration = () => {
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.Formula  }</TableCell>
+                                 
 
 
 
@@ -2638,7 +2634,7 @@ const StateRegisterConfiguration = () => {
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.ValueMergedRange}</TableCell>
+                                  
 
                                         {/** Value Row Address*/}
                                       <TableCell>
@@ -2653,7 +2649,7 @@ const StateRegisterConfiguration = () => {
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.ValueRowAddress}</TableCell>
+                                
 
  {/** Value Column Address*/}
 
@@ -2669,7 +2665,7 @@ const StateRegisterConfiguration = () => {
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.ValueColumnAddress}</TableCell>
+                               
  {/** Comments*/}
                                       <TableCell>
                                       <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
@@ -2681,7 +2677,7 @@ const StateRegisterConfiguration = () => {
                                             />
                                       </FormControl>
                                       </TableCell>
-                                      <TableCell >{each.Comments}</TableCell>
+                                
                                     </TableRow>
                               ))}
                               </TableBody>

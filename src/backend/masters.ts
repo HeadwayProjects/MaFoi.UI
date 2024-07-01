@@ -718,7 +718,7 @@ export function useGetCompanyLocations(payload: any, enabled = true) {
 export function useCreateCompanyLocation(onSuccess?: any, onError?: any) {
     const { mutate: createCompanyLocation, error, isLoading: creating } = useMutation(
         ['createCompanyLocation'],
-        async (payload) => await api.post('/api/Mappings/AddCompanyLocation', payload),
+        async (payload) => await api.post('/api/Mappings/AddCompanyLocationDetails', payload),
         {
             onError,
             onSuccess: (response) => {

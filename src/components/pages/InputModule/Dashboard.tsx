@@ -209,17 +209,49 @@ const Dashboard = () => {
   }
   
 
-  const fileUrls = [
-    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/b21fb1d8-a634-4420-adc5-14361cd94790/Form A - reg of wages.xlsx',
-    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx',
-    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx',
-    //'https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx',
-    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/919ccacd-e50d-4906-ad74-28aeb8fca1a7/ESI_Form 11_Reg of Accident.xlsx',
-     'https://mafoi.s3.ap-south-1.amazonaws.com/templates/96d650d7-d1e1-476d-8728-385c9ed5a2cc/POW Form 2 for Deduction.xlsx',
-     'https://mafoi.s3.ap-south-1.amazonaws.com/templates/f8c6ebf9-9f57-413d-a22b-c6b76e3c62a2/POW Form III Reg of Advance  .xlsx'
+  const fileNames = [
+    'FormARegofWages',
+     'FormBRegofWages',
+     'FormTPart1Regoffines',
+     'FormTPart2RegofFines',
+     'ESIForm11RegofAccident',
+     'POW_Part2RegofDeduction',
+     'POW_Part3RegofAdvance',
+     'Form_1_RegisterForSuspendedEmployees',
+     'Form_Q',
+     'MaintainCombinedRegisterofMusterRollFormTPart2',
+     'MaintainCombinedRegisterofMusterRollFormTPart1'
+   ]
+
+  // const fileNames2 = [
+  //  //'fileFormARegofWages',
+  //   'fileFormBRegofWages',
+  //   'fileFormTPart1Regoffines',
+  //   'fileFormTPart2RegofFines',
+  //   'fileESIForm11RegofAccident',
+  //   'filePOW_Part2RegofDeduction',
+  //   'filePOW_Part3RegofAdvance',
+  //   'fileForm_1_RegisterForSuspendedEmployees',
+  //   'fileForm_Q',
+  //   'fileMaintainCombinedRegisterofMusterRollFormTPart2',
+  //   'fileMaintainCombinedRegisterofMusterRollFormTPart1'
+  // ]
+
+  // const fileUrls = [
+  //   //'https://mafoi.s3.ap-south-1.amazonaws.com/templates/b21fb1d8-a634-4420-adc5-14361cd94790/Form A - reg of wages.xlsx',
+  //   'https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx',
+  //   'https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx',
+  //   //'https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx',
+  //   'https://mafoi.s3.ap-south-1.amazonaws.com/templates/919ccacd-e50d-4906-ad74-28aeb8fca1a7/ESI_Form 11_Reg of Accident.xlsx',
+  //    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/96d650d7-d1e1-476d-8728-385c9ed5a2cc/POW Form 2 for Deduction.xlsx',
+  //    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/f8c6ebf9-9f57-413d-a22b-c6b76e3c62a2/POW Form III Reg of Advance  .xlsx',
+  //    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/e5484c2d-884b-47b3-9e42-6392377f490a/Form 1.xlsx',
+  //    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/5eb524bb-04c4-4f39-b15d-fe462eb67b50/Form Q.xlsx',
+  //    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx',
+  //    'https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'
     
 
-  ];
+  // ];
 
   const handleProcessRegisters=async ()=>{
     setDownloading(true);
@@ -252,34 +284,59 @@ const Dashboard = () => {
 
       const accessToken = tokenResponse.data.access_token;
 
-      for (const fileUrl of fileUrls) {
+      for (const filename of fileNames) {
 
         let formResponseUrl= "";
-        if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx'){
+      let fileUrl="";
+        if(filename == 'FormBRegofWages'){
+          fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx'
           formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
         }
-        else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/b21fb1d8-a634-4420-adc5-14361cd94790/Form A - reg of wages.xlsx'){
+        else if(filename=='FormARegofWages'){
+          fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/b21fb1d8-a634-4420-adc5-14361cd94790/Form A - reg of wages.xlsx'
           formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormARegofWages';
         }
-        else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx'){
+        else if(filename=='FormTPart1Regoffines'){
+          fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx'
 formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormTPart1Regoffines';
         }
-        else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'){
-          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormTPart2RegofFines';
-                  }
-                  else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/919ccacd-e50d-4906-ad74-28aeb8fca1a7/ESI_Form 11_Reg of Accident.xlsx'){
-                    formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileESIForm11RegofAccident';
-                  }
-                  else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/96d650d7-d1e1-476d-8728-385c9ed5a2cc/POW Form 2 for Deduction.xlsx'){
-                    formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/filePOW_Part2RegofDeduction';
-                            }
-                            else if(fileUrl=='https://mafoi.s3.ap-south-1.amazonaws.com/templates/f8c6ebf9-9f57-413d-a22b-c6b76e3c62a2/POW Form III Reg of Advance  .xlsx'){
-                              formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/filePOW_Part3RegofAdvance';
-                                      }
-                                      else{
-                                        formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
-                                      }
+        else if(filename=='FormTPart2RegofFines'){
+          fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'
+        formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormTPart2RegofFines';
+        }
+        else if(filename=='ESIForm11RegofAccident'){
+            fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/919ccacd-e50d-4906-ad74-28aeb8fca1a7/ESI_Form 11_Reg of Accident.xlsx'
+          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileESIForm11RegofAccident';
+        }
+        else if(filename=='POW_Part2RegofDeduction'){
+          fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/96d650d7-d1e1-476d-8728-385c9ed5a2cc/POW Form 2 for Deduction.xlsx'
+          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/filePOW_Part2RegofDeduction';
+        }
+        else if(filename=='POW_Part3RegofAdvance'){
+          fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/f8c6ebf9-9f57-413d-a22b-c6b76e3c62a2/POW Form III Reg of Advance  .xlsx'
+        formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/filePOW_Part3RegofAdvance';
+        }
+        else if(filename=='Form_1_RegisterForSuspendedEmployees'){
+          fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/e5484c2d-884b-47b3-9e42-6392377f490a/Form 1.xlsx'
+        formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileForm_1_RegisterForSuspendedEmployees';
+        }
+        else if(filename=='Form_Q'){
+          fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/5eb524bb-04c4-4f39-b15d-fe462eb67b50/Form Q.xlsx'
+          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileForm_Q';
+        }
+        else if(filename=='MaintainCombinedRegisterofMusterRollFormTPart2'){
+          fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'
+        formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart2';
+        }
+        else if(filename=='MaintainCombinedRegisterofMusterRollFormTPart1'){
+            fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx'
+          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart1';
+          }
+        else{
+          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
+        }
           
+console.log('filrUrl',fileUrl);        
 console.log('formResonseUrl',formResponseUrl);
       const formResponse = await axios.post(
       formResponseUrl,
@@ -299,41 +356,47 @@ console.log('formResonseUrl',formResponseUrl);
         }
       );
     
-      console.log(formResponse.data);
+  
 
-      const fileRef = formResponse.data.body.match(/fs:\/\/[^"]+/)[0];
-     // Extract the file name from the fileRef
-     const fileNameMatch = fileRef.match(/name=([^&]+)/);
-     const fileName = fileNameMatch ? fileNameMatch[1] : 'downloaded_file.xlsx';
+      console.log(formResponse.data.body);
 
+      const filedownloadresponseURL= formResponse.data.body;
+     // alert('filedownloadresponseURL : ' +filedownloadresponseURL);
 
-     console.log('fileRef',fileRef);
-     console.log('fileNameMatch',fileNameMatch);
-     console.log('fileName',fileName);
-     
-      // alert(fileNameMatch);
-      // alert(fileName);
+       // Extract the fileRef from the URL in the formResponse
+       const fileRefMatch = filedownloadresponseURL.match(/fileRef=([^&]+)/);
+       if (!fileRefMatch) {
+         throw new Error('fileRef not found in form response');
+       }
+       const fileRef = decodeURIComponent(fileRefMatch[1]);
+       console.log('fileRef', fileRef);
+
+      // alert(fileRef);
 
        // Step 3: Use the file reference to download the file
-       const fileDownloadResponse = await axios.get('http://54.85.8.113:8081/rest/files', {
+       const fileDownloadResponse = await axios.get('https://ezycomp.buoyantworx.com/rest/files', {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         },
         params: {
           fileRef: fileRef
         },
-        responseType: 'blob' // Important for downloading files
+        responseType: 'blob' // Ensure binary data handling
       });
 
+      // Verify the content of the response
+      console.log('fileDownloadResponse', fileDownloadResponse);
+
       // Step 4: Create a link to download the file
-      const url = window.URL.createObjectURL(new Blob([fileDownloadResponse.data], { type: 'application/xml' }));
+      const url = window.URL.createObjectURL(new Blob([fileDownloadResponse.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', fileName);
+      // link.setAttribute('download', `${filename}.xlsx`);
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast.success(`${fileName} downloaded successfully`);
+      toast.success(`${filename} downloaded successfully`);
 
     }
     setDownloading(false);
@@ -364,7 +427,7 @@ console.log('formResonseUrl',formResponseUrl);
     <div style={{ backgroundColor:'#ffffff', minHeight:'100vh'}}>
       {loading ? <PageLoader>Loading...</PageLoader> : 
       <div>
-        {downloading ? <PageLoader>Downloading...</PageLoader> :
+        {downloading ? <PageLoader>Processing Registers...</PageLoader> :
 
         <div style={{paddingBottom:'100px'}}>
 

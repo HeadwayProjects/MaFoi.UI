@@ -34,7 +34,13 @@ function mapLocation(x: any) {
         contactPersonName: x.contactPersonName,
         contactPersonMobile: x.contactPersonMobile,
         contactPersonEmail: x.contactPersonEmail,
-        address: x.address
+        address: x.address,
+        digitalSignature: x.digitalSignature,
+        employerDesignation: x.employerDesignation,
+        employerName :x.employerName,
+        pfCode : x.pfCode,
+        esicCode : x.esicCode,
+        registrationCertificateNo : x.registrationCertificateNo,
     }
 };
 
@@ -173,6 +179,34 @@ function CompanyLocationMappings() {
         },
         {
             title: "Email Address", field: "contactPersonEmail", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        
+        {
+            title: "Employer Name", field: "employerName", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        
+        {
+            title: "Employer Designation", field: "employerDesignation", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "PF Code", field: "pfCode", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        
+        {
+            title: "ESIC Code", field: "esicCode", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Reg.Certificate No", field: "registrationCertificateNo", minWidth: 140,
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },

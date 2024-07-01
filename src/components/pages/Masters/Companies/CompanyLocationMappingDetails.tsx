@@ -12,6 +12,7 @@ import { GetActionTitle } from "../Master.constants";
 import PageLoader from "../../../shared/PageLoader";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import { ResponseModel } from "../../../../models/responseModel";
+import { Console } from "console";
 
 function CompanyLocationDetails(this: any, { action, parentCompany, associateCompany, data, onClose, onSubmit }: any) {
     const [t] = useState(new Date().getTime());
@@ -73,6 +74,8 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
             setStateId(state.value);
         }
     }
+
+
 
     const schema = {
         fields: [
@@ -228,12 +231,12 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
             },
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'designation',
+                name: 'employerDesignation',
                 label: 'Designation',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
-                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'Designation') : ''
+                content: action === ACTIONS.VIEW ? getValue(locationDetails, 'employerDesignation') : ''
             },
             {
                 component: componentTypes.FILE_UPLOAD,
@@ -244,6 +247,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
         ]
     };
 
+    console.log(locationDetails);
     function submit(e: any) {
         preventDefault(e);
         if (form.valid) {
@@ -252,7 +256,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 contactPersonName, contactPersonMobile,
                 contactPersonEmail, address,
                 employerName,
-                Designation,
+                employerDesignation,
                 registrationCertificateNo,
                 pfCode,
                 esicCode,
@@ -266,9 +270,9 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 companyLocationAddress,
                 contactPersonName,
                 contactPersonMobile,
-                contactPersonEmail,
+                contactPersonEmail, 
                 employerName,
-                Designation,
+                employerDesignation,
                 registrationCertificateNo,
                 pfCode,
                 esicCode,
