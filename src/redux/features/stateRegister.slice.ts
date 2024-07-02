@@ -35,7 +35,7 @@ interface StateConfigurationState {
     ,
     importStateRegisterMappingDetails: {
         status: string,
-        data: Blob | null,
+        data: any,
         error: string | null
     }
 }
@@ -73,7 +73,7 @@ const initialState: StateConfigurationState = {
 ,
 importStateRegisterMappingDetails: {
         status: 'idle',
-        data: null,
+        data: '',
         error: null
     }
 } as StateConfigurationState

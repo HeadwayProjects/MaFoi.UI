@@ -335,7 +335,7 @@ export class InputModuleService {
   // import State Register Mapping
   public async importStateRegisterMapping(data: any) {
     const url = `/api/StateRegisterConfiguration/ImportStateRegisterConfigurationRequest`
-    return await api.post(url, data, null, true)
+    return await api.post(url, data, null, true,{ responseType: 'blob' })
 }
 
   

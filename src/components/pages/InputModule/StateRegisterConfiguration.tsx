@@ -1570,16 +1570,48 @@ const StateRegisterConfiguration = () => {
 
 const downloadErrors = (e: any) => {
   preventDefault(e);
-  const data = "";
-  const blob = new Blob([data])
-  const URL = window.URL || window.webkitURL;
-  const downloadUrl = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = downloadUrl;
-  a.download = 'Errors.xlsx';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  // const data = importStateRegisterMappingDetails.data;
+  // const blob = new Blob([data])
+  // const URL = window.URL || window.webkitURL;
+  // const downloadUrl = URL.createObjectURL(blob);
+  // const a = document.createElement("a");
+  // a.href = downloadUrl;
+  // a.download = 'Errors.xlsx';
+  // document.body.appendChild(a);
+  // a.click();
+  // document.body.removeChild(a);
+
+  const response = importStateRegisterMappingDetails.data;
+
+  // Ensure the response type is set to 'blob' when making the API call
+  const data = response.data;
+console.log(data.size);
+  console.log(typeof data);
+console.log(data.byteLength); // or data.length if it's an ArrayBuffer
+
+  
+  const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const link = document.createElement('a');
+  const url = window.URL.createObjectURL(blob);
+  link.href = url;
+  link.setAttribute('download', 'Errors.xlsx');
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+
+
+
+  // const data = importStateRegisterMappingDetails.data;
+  // const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  // const link = document.createElement('a');
+  // const url = window.URL.createObjectURL(blob);
+  // link.href = url;
+  // link.setAttribute('download', 'StateRegisterMappingDetails.xlsx');
+  // document.body.appendChild(link);
+  // link.click();
+  // link.remove();
+  // window.URL.revokeObjectURL(url);
 }
 
 const onClickSubmitImportUpload=()=>{
@@ -1596,7 +1628,7 @@ const onClickSubmitImportUpload=()=>{
   formData.append('FormName', formName.value)
   formData.append('ProcessType', processType.value)
   formData.append('FilePath', formFilePath.value)
-  formData.append('Form', formName.value)
+  formData.append('Form', formNameValue)
   formData.append('HeaderStartRow', headerStartRow)
   formData.append('FooterStartRow', footerStartRow)
   formData.append('HeaderEndRow', headerEndRow)
@@ -1614,31 +1646,37 @@ console.log(formData);
 
 useEffect(() => {
   if(importStateRegisterMappingDetails.status === 'succeeded'){
-    
+
+    const response = importStateRegisterMappingDetails.data;
+
+    // Ensure the response type is set to 'blob' when making the API call
+    const data = response.data;
+  console.log(data.size);
+    if (data.size === 0) {
     toast.success("Mapping Done SUccessfully");
     dispatch(resetImportFileDetails());
-    const stateRegisterPayload: any = {
-      search: searchInput,
-      filters: [
-        {
-          columnName: 'stateId',
-          value: stateName
-        },
-       
-
-      ],
+    setopenImportFileUploadModal(false);
+    setOpenAddExport(false);
+    setOpenAddModal(false);
+    setImportExportModal(false);
+    const stateRegisterDefaultPayload: any = {
+      search: "",
+      filters: [],
       pagination: {
-        pageSize: rowsPerPage,
-        pageNumber: page + 1
+        pageSize: 10,
+        pageNumber: 1
       },
       sort: { columnName: 'stateId', order: 'asc' },
       "includeCentral": true
     }
-    setopenImportFileUploadModal(false);
-    setOpenAddExport(false);
-    setOpenAddModal(false);
-    
-    dispatch(getStateRegister(stateRegisterPayload))
+    const statesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD }
+    dispatch(getStateRegister(stateRegisterDefaultPayload))
+    dispatch(getStates(statesPayload))
+  }
+  else {
+    setUploadError(true)
+    setUploadImportData({})
+  }
   }else if (importStateRegisterMappingDetails.status === 'failed'){
     toast.error(ERROR_MESSAGES.DEFAULT);
   }
