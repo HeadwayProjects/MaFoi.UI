@@ -27,6 +27,17 @@ interface StateConfigurationState {
         data: any,
         error: string | null
     },
+    exportFile: {
+        status: string,
+        data: Blob | null,
+        error: string | null
+    }
+    ,
+    importStateRegisterMappingDetails: {
+        status: string,
+        data: Blob | null,
+        error: string | null
+    }
 }
 
 const initialState: StateConfigurationState = { 
@@ -52,6 +63,17 @@ const initialState: StateConfigurationState = {
     },deleteStateRegisterMappingDetails: {
         status: 'idle',
         data: '',
+        error: null
+    },
+    exportFile: {
+        status: 'idle',
+        data: null,
+        error: null
+    }
+,
+importStateRegisterMappingDetails: {
+        status: 'idle',
+        data: null,
         error: null
     }
 } as StateConfigurationState
@@ -82,6 +104,19 @@ export const deleteStateRegisterMapping = createAsyncThunk('inputModule/deleteSt
     return await inputModuleService.deleteStateRegisterMapping(id);
 })
 
+export const exportStateRegisterMapping = createAsyncThunk('stateRegister/exportStateRegisterMapping', async (url: string) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.exportStateRegisterMapping(url);
+})
+
+export const importStateRegisterMapping = createAsyncThunk('stateRegister/importStateRegisterMapping', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.importStateRegisterMapping(data)
+})
+
+
+
+
 export const stateRegisterSlice = createSlice({
     name: 'stateRegister',
     initialState,
@@ -105,7 +140,21 @@ export const stateRegisterSlice = createSlice({
         data: '',
         error: null
     }
-}
+}, resetImportFileDetails: (state) => {
+    state.deleteStateRegisterMappingDetails = {
+        status: 'idle',
+        data: '',
+        error: null
+    }
+},
+
+       resetExportFileDetails: (state) => {
+            state.exportFile = {
+                status: 'idle',
+                data: null,
+                error: null
+            }
+       }
     },
     extraReducers: (builder) => builder
         .addCase(getStateRegister.pending, (state) => {
@@ -192,8 +241,33 @@ export const stateRegisterSlice = createSlice({
             state.deleteStateRegisterMappingDetails.status = 'failed'
             state.deleteStateRegisterMappingDetails.error = action.error.message
         })
+        .addCase(exportStateRegisterMapping.pending, (state) => {
+            state.exportFile.status = 'loading'
+        })
+        .addCase(exportStateRegisterMapping.fulfilled, (state, action: any) => {
+            state.exportFile.status = 'succeeded'
+            state.exportFile.data = action.payload
+        })
+        .addCase(exportStateRegisterMapping.rejected, (state, action: any) => {
+            state.exportFile.status = 'failed'
+            state.exportFile.error = action.error.message
+        })
+        
+
+
+        .addCase(importStateRegisterMapping.pending, (state) => {
+            state.importStateRegisterMappingDetails.status = 'loading'
+        })
+        .addCase(importStateRegisterMapping.fulfilled, (state, action: any) => {
+            state.importStateRegisterMappingDetails.status = 'succeeded'
+            state.importStateRegisterMappingDetails.data = action.payload
+        })
+        .addCase(importStateRegisterMapping.rejected, (state, action: any) => {
+            state.importStateRegisterMappingDetails.status = 'failed'
+            state.importStateRegisterMappingDetails.error = action.error.message
+        })
 })
   
-export const { resetStateConfigDetails, resetAddStateConfigDetails,resetDeleteStateregisterMappingConfigDetails} = stateRegisterSlice.actions
+export const { resetStateConfigDetails, resetImportFileDetails ,  resetExportFileDetails,resetAddStateConfigDetails,resetDeleteStateregisterMappingConfigDetails} = stateRegisterSlice.actions
 
 export default stateRegisterSlice.reducer

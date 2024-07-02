@@ -1,3 +1,4 @@
+import axios from "axios";
 import * as api from "./request";
 
 export class InputModuleService {
@@ -316,6 +317,25 @@ export class InputModuleService {
 
     const url =  `/api/StateRegisterConfiguration/Delete?Id=${id}`
     return await api.del(url)
+}
+
+
+   // Export State Register Mapping
+   public async exportStateRegisterMapping(url: string) {
+          const exportUrl = `/api/StateRegisterConfiguration/ExportStateRegisterMapping?url=${url}`
+    //const exportUrl = `/api/StateRegisterConfiguration/ExportStateRegisterMapping?url=${encodeURIComponent(url)}`;
+       //return await api.post(exporturl, null, null, true, { responseType: 'blob' })
+  //  const response = await  api.post(exporturl, {}, { responseType: 'blob' });
+    //return response.data; // This will be the blob
+    //const response = await api.post(exportUrl, {}, { responseType: 'blob' });
+    const response = await api.post(exportUrl, {}, null, true, { responseType: 'blob' })
+    return response.data; // This will be the blob
+}
+
+  // import State Register Mapping
+  public async importStateRegisterMapping(data: any) {
+    const url = `/api/StateRegisterConfiguration/ImportStateRegisterConfigurationRequest`
+    return await api.post(url, data, null, true)
 }
 
   

@@ -12,7 +12,7 @@ import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import { getLeaveConfiguration } from '../../../redux/features/leaveConfiguration.slice';
-import { updateStateRegister,addStateRegister, getStateConfigurationDetails, getStateRegister, resetAddStateConfigDetails, resetStateConfigDetails,deleteStateRegisterMapping } from '../../../redux/features/stateRegister.slice';
+import { resetImportFileDetails,updateStateRegister,addStateRegister, getStateConfigurationDetails, getStateRegister, resetAddStateConfigDetails, resetStateConfigDetails,deleteStateRegisterMapping, exportStateRegisterMapping, resetExportFileDetails, importStateRegisterMapping } from '../../../redux/features/stateRegister.slice';
 import Select from "react-select";
 import { EstablishmentTypes } from '../Masters/Master.constants';
 import { RxCross2 } from "react-icons/rx";
@@ -21,6 +21,16 @@ import { relative } from 'path';
 import { deleteActStateMappingForm } from '../../../redux/features/Stateactruleactivitymapping.slice';
 
 
+
+const styleUploadModal = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 800,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+};
 
 
 const style = {
@@ -68,6 +78,9 @@ const StateRegisterConfiguration = () => {
   const addStateRegisterDetails = useAppSelector((state) => state.stateRegister.addStateRegisterDetails)
   const updateStateRegisterDetails = useAppSelector((state) => state.stateRegister.updateStateRegisterDetails)
   const deleteStateRegisterMappingDetails = useAppSelector((state) => state.stateRegister.deleteStateRegisterMappingDetails)
+  const exportFile = useAppSelector(state => state.stateRegister.exportFile);
+  const  importStateRegisterMappingDetails = useAppSelector((state) => state.stateRegister.importStateRegisterMappingDetails);
+
   // console.log(formsDetails, "formsDetails")
 
   const stateRegister = stateRegisterDetails.data.List
@@ -135,7 +148,7 @@ const StateRegisterConfiguration = () => {
     'Wingdings',
     'Yu Gothic',]
 
-  const loading = deleteStateRegisterMappingDetails.status === 'loading' ||  updateStateRegisterDetails.status === 'loading' || addStateRegisterDetails.status === 'loading' || formsDetails.status === 'loading' || stateRegisterDetails.status === 'loading' || stateConfigureDetails.status === 'loading' || getColumnsDetails.status === 'loading'
+  const loading = importStateRegisterMappingDetails.status === 'loading' ||   deleteStateRegisterMappingDetails.status === 'loading' ||  updateStateRegisterDetails.status === 'loading' || addStateRegisterDetails.status === 'loading' || formsDetails.status === 'loading' || stateRegisterDetails.status === 'loading' || stateConfigureDetails.status === 'loading' || getColumnsDetails.status === 'loading'
 
   const [stateValue, setStateValue] = React.useState('');
   const [type, setType] = React.useState('');
@@ -148,6 +161,7 @@ const StateRegisterConfiguration = () => {
   const [ruleName, setRuleName] = React.useState<any>('')
   const [activityName, setActivityName] = React.useState<any>('')
   const [formName, setFormName] = React.useState<any>('');
+  const [formFilePath, setFormFilePath] = React.useState<any>('');
   const [formNameValue, setFormNameValue] = React.useState<any>('');
   const [headerStartRow, setHeaderStartRow] = React.useState<any>('');
   const [headerEndRow, setHeaderEndRow] = React.useState<any>('');
@@ -159,7 +173,9 @@ const StateRegisterConfiguration = () => {
   const [openPreviewModal, setOpenPreviewModal] = React.useState(false);
   const [openEditModal, setOpenEditModal] = React.useState(false);
   const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
-
+  const [openImportFileUploadModal, setopenImportFileUploadModal] = React.useState(false);
+  const [uploadError, setUploadError] = React.useState(false);
+  const [uploadImportData, setUploadImportData] = React.useState<any>();
 
   const [tableData, setTableData] = React.useState<any>([]);
   const [newtableData, setnewTableData] = React.useState<any>([]);
@@ -197,6 +213,9 @@ const StateRegisterConfiguration = () => {
     { value: '/', label: '/ division' },
     { value: '*', label: '* multiplication' }
   ];
+
+
+
 
 
   const handleChangeStateValue = (event: any) => {
@@ -1187,6 +1206,7 @@ const StateRegisterConfiguration = () => {
   }
 
   const onClickConfigure = () => {
+   
     if (!registerType || !processType.value || !stateName || !actName || !ruleName || !activityName || !formName || !formNameValue) {
       return toast.error(ERROR_MESSAGES.FILL_ALL);
     } else {
@@ -1455,19 +1475,230 @@ const StateRegisterConfiguration = () => {
 
 
    const onClickConfigure2 = () => {
+    alert(formFilePath);
      setOpenAddModal(false);
      setImportExportModal(true);
+    
   }
 
-  const onClickExport = () => {
-    setOpenAddExport(true)
+  const onClickExport = async (e:any) => {
+    const payload = {
+      registerType,
+      processType: processType.value,
+      stateId: stateName.value,
+      actId: actName.value,
+      ruleId: ruleName.value,
+      activityId: activityName.value,
+      selectedFormName : formName.label,
+      formName: formNameValue,
+      form: formName.label,
+      filePath: formName.value,
+      headerStartRow,
+      headerEndRow,
+      footerStartRow,
+      footerEndRow,
+      totalRowsPerPage,
+      pageSize,
+      pageOrientation,
+      stateRegisterMappings: tableData
+    }
+
+    console.log(payload);
+    
+    preventDefault(e);
+    const fileUrl = formFilePath;
+    await dispatch(exportStateRegisterMapping(fileUrl)); 
+    setOpenAddExport(true); 
+    
   }
+
+  const onClickExportTemplate = async (e:any) => {
+ 
+    preventDefault(e);
+    const fileUrl = formFilePath;
+
+    // Open the URL in a new tab to download the file
+    window.open(fileUrl, '_blank');
+    
+  }
+
+  const onClickImport = async (e:any) => {
+ setopenImportFileUploadModal(true);
+
+   
+    
+  }
+
+
+  useEffect(() => {
+    if (exportFile.status === 'succeeded' && exportFile.data) {
+        // const blob = new Blob([exportFile.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        // const link = document.createElement('a');
+        // const objectURL = window.URL.createObjectURL(blob);
+
+        // link.href = objectURL;
+        // link.setAttribute('download', 'StateRegisterMappingDetails.xlsx');
+        // document.body.appendChild(link);
+        // link.click();
+        // link.remove();
+
+
+        const blob = new Blob([exportFile.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        const url = window.URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute('download', 'StateRegisterMappingDetails.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+
+        // const url = window.URL.createObjectURL(new Blob([exportFile.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+        // const link = document.createElement('a');
+        // link.href = url;
+        // // link.setAttribute('download', `${filename}.xlsx`);
+        // link.setAttribute('download', 'StateRegisterMappingDetails.xlsx');
+        // document.body.appendChild(link);
+        // link.click();
+        // link.remove();
+
+        // Reset the state after download
+        dispatch(resetExportFileDetails());
+    }
+}, [exportFile, dispatch]);
+
+
+const downloadErrors = (e: any) => {
+  preventDefault(e);
+  const data = "";
+  const blob = new Blob([data])
+  const URL = window.URL || window.webkitURL;
+  const downloadUrl = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = downloadUrl;
+  a.download = 'Errors.xlsx';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+const onClickSubmitImportUpload=()=>{
+
+  alert(actName);
+  const formData = new FormData();
+  const data = uploadImportData ? uploadImportData[0] : []
+  formData.append('file', data);
+  formData.append('RegisterType', registerType)
+  formData.append('StateId', stateName.value)
+  formData.append('ActId', actName.value)
+  formData.append('RuleId', ruleName.value)
+  formData.append('ActivityId', activityName.value)
+  formData.append('FormName', formName.value)
+  formData.append('ProcessType', processType.value)
+  formData.append('FilePath', formFilePath.value)
+  formData.append('Form', formName.value)
+  formData.append('HeaderStartRow', headerStartRow)
+  formData.append('FooterStartRow', footerStartRow)
+  formData.append('HeaderEndRow', headerEndRow)
+  formData.append('FooterEndRow', headerEndRow)
+  formData.append('TotalRowsPerPage', totalRowsPerPage)
+  formData.append('PageSize', pageSize)
+  formData.append('PageOrientation', pageOrientation)
+console.log(formData);
+
+  dispatch(importStateRegisterMapping(formData))
+}
+
+
+
+
+useEffect(() => {
+  if(importStateRegisterMappingDetails.status === 'succeeded'){
+    
+    toast.success("Mapping Done SUccessfully");
+    dispatch(resetImportFileDetails());
+    const stateRegisterPayload: any = {
+      search: searchInput,
+      filters: [
+        {
+          columnName: 'stateId',
+          value: stateName
+        },
+       
+
+      ],
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'stateId', order: 'asc' },
+      "includeCentral": true
+    }
+    setopenImportFileUploadModal(false);
+    setOpenAddExport(false);
+    setOpenAddModal(false);
+    
+    dispatch(getStateRegister(stateRegisterPayload))
+  }else if (importStateRegisterMappingDetails.status === 'failed'){
+    toast.error(ERROR_MESSAGES.DEFAULT);
+  }
+}, [importStateRegisterMappingDetails.status])
+
+  
+
+
 
 
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
 
-      
+
+
+      {/* ImportUploadModal */}
+
+      <Modal
+        open={openImportFileUploadModal}
+        onClose={() => { setopenImportFileUploadModal(false); setUploadError(false); setUploadImportData(null) }}
+      >
+        <Box sx={styleUploadModal}>
+          <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Upload Holiday List</Typography>
+            <IconButton
+              onClick={() => { setopenImportFileUploadModal(false); setUploadError(false); setUploadImportData(null) }}
+            >
+              <IoMdClose />
+            </IconButton>
+          </Box>
+
+          {uploadError &&
+            <Alert variant="danger" className="mx-4 my-4">
+              There are few errors identified in the file uploaded. Correct the errors and upload again. <a href="/" onClick={downloadErrors}>Click here</a> to download the errors.
+            </Alert>
+          }
+          <Box sx={{ padding: '20px', backgroundColor: '#ffffff', display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography mb={1} color={'#0F67B1'} fontWeight={'bold'} sx={{ font: 'normal normal normal 24px/28px Calibri' }}>Upload File <span style={{ color: 'red' }}>*</span></Typography>
+              <input
+                style={{ border: '1px solid #0F67B1', width: '500px', height: '40px', borderRadius: '5px' }}
+                type="file"
+                accept='.xlsx, .xls, .csv'
+                onClick={(e: any) => e.target.value = ''}
+                onChange={(e) => { console.log('chandeeddd', e.target.files); setUploadImportData(e.target.files) }}
+              />
+            </Box>
+          </Box>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 5 }}>
+            <Button variant='contained' disabled={!uploadImportData} onClick={onClickSubmitImportUpload}>Submit</Button>
+          </Box>
+
+          <Box sx={{ display: 'flex', padding: '20px', borderTop: '1px solid #6F6F6F', justifyContent: 'flex-end', alignItems: 'center', mt: 4 }}>
+            <Button variant='contained' sx={{ backgroundColor: '#707070' }} onClick={() => { setopenImportFileUploadModal(false); setUploadError(false); setUploadImportData(null) }}>Cancel</Button>
+          </Box>
+        </Box>
+      </Modal>
+
+      {/* Import / Export Modal */}
        <Modal
         open={openImportExportModal}
         onClose={() => { setImportExportModal(false); resetStateValues() }}
@@ -1484,11 +1715,12 @@ const StateRegisterConfiguration = () => {
             </IconButton>
           </Box>
           <Box>
-            <Button variant='contained' sx={{ margin: 2 }} onClick={onClickExport}>Export</Button>
+            <Button variant='contained' sx={{ margin: 2 }} onClick={onClickExport}>Export Mapping File</Button>
+            <Button variant='contained' sx={{ margin: 2 }} onClick={onClickExportTemplate}>Export  Template</Button>
             {openAddExport &&
               <Box>
               
-              <Box sx={{ display: 'flex' }} onClick={() => { setOpenAddExport(false) }}>
+              <Box sx={{ display: 'flex' }} >
                 <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                   <FormLabel id="demo-select-small-label" sx={{ color: '#000000' }}>Header Start Row</FormLabel>
                   <OutlinedInput
@@ -1602,7 +1834,7 @@ const StateRegisterConfiguration = () => {
                 </FormControl>
 
               </Box>
-              <Button variant='contained' sx={ {margin: 2}}>Import</Button>
+              <Button variant='contained' sx={ {margin: 2}} onClick={onClickImport}>Import</Button>
               </Box>
             
             }
@@ -1735,7 +1967,7 @@ const StateRegisterConfiguration = () => {
                   classNamePrefix="select"
                   value={formName}
                   styles={customStyles}
-                  onChange={(e: any) => { setFormName(e) }}
+                  onChange={(e: any) => { setFormName(e) , setFormFilePath(e.value)}}
                 />
               </FormControl>
 
@@ -1752,7 +1984,7 @@ const StateRegisterConfiguration = () => {
                   onChange={(e) => setFormNameValue(e.target.value)}
                   id="outlined-adornment-name"
                   type='text'
-                />
+                />  
               </FormControl>
 
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
