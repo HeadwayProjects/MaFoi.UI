@@ -1276,7 +1276,7 @@ const StateRegisterConfiguration = () => {
   const onclickEditModelButton = (stateConfig: any) => {
     // setSelectedStateConfig(stateConfig)
     // setOpenViewModal(true)
-    
+    console.log(stateConfig);
     setSelectedStateConfig(stateConfig)
     //setTableData(stateConfig.StateRegisterMappingDetails)
     setOpenEditModal(true)
@@ -1475,7 +1475,7 @@ const StateRegisterConfiguration = () => {
 
 
    const onClickConfigure2 = () => {
-    alert(formFilePath);
+   // alert(formFilePath);
      setOpenAddModal(false);
      setImportExportModal(true);
     
@@ -1616,7 +1616,7 @@ console.log(data.byteLength); // or data.length if it's an ArrayBuffer
 
 const onClickSubmitImportUpload=()=>{
 
-  alert(actName);
+ // alert(actName);
   const formData = new FormData();
   const data = uploadImportData ? uploadImportData[0] : []
   formData.append('file', data);
