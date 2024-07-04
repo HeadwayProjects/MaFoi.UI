@@ -1084,7 +1084,7 @@ const EmployeeLeaveAvailedUpload = () => {
                 </Box>
 
                 <Box sx={{ mr: 1 }}>
-                  <Typography mb={1}>Search (Emp Name)</Typography>
+                  <Typography mb={1}>Search (Emp Code)</Typography>
                   <FormControl sx={{ width: '100%', maxWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                     <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                     <OutlinedInput

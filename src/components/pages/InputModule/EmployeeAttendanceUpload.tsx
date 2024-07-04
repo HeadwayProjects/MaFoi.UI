@@ -97,7 +97,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployeesAttendance(payload))
@@ -124,7 +124,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployeesAttendance(payload))
@@ -154,7 +154,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployeesAttendance(payload))
@@ -187,7 +187,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployeesAttendance(payload))
@@ -224,7 +224,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployeesAttendance(payload))
@@ -242,7 +242,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: 10,
         pageNumber: 1
       },
-      sort: { columnName: 'EmployeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
 
@@ -344,7 +344,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployeesAttendance(payload))
@@ -358,7 +358,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getEmployeesAttendance(payload))
@@ -469,7 +469,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page+1
       },
-      sort: { columnName: 'employeeName', order: type },
+      sort: { columnName: 'employeeCode', order: type },
       "includeCentral": true
     }
     dispatch(getEmployeesAttendance(employeesAttendancePayload))
@@ -630,7 +630,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: newPage+1
       },
-      sort: { columnName: 'EmployeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
 
@@ -680,7 +680,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: parseInt(event.target.value, 10),
         pageNumber: 1
       },
-      sort: { columnName: 'EmployeeName', order: 'asc' },
+      sort: { columnName: 'employeeCode', order: 'asc' },
       "includeCentral": true
     }
 
@@ -733,7 +733,7 @@ const EmployeeAttendanceUpload = () => {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'name', order: type },
+      sort: { columnName: 'employeeCode', order: type },
       "includeCentral": true
     }
     dispatch(getEmployeesAttendance(EmployeePayload))
@@ -752,7 +752,7 @@ const EmployeeAttendanceUpload = () => {
           pageSize: 10,
           pageNumber: 1
         },
-        sort: { columnName: 'name', order: 'asc' },
+        sort: { columnName: 'employeeCode', order: 'asc' },
         "includeCentral": true
       }
       dispatch(getEmployeesAttendance(EmployeeDefaultPayload))
