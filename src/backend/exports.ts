@@ -106,6 +106,67 @@ export function useExportEmployees(onSuccess?: any, onError?: any) {
     return { exportEmployees, error, exporting };
 }
 
+export function useExportEmployeesLeaveCredit(onSuccess?: any, onError?: any) {
+    const { mutate: exportEmployeesLeaveCredit, error, isLoading: exporting } = useMutation(
+        ['exportEmployeesLeaveCredit'],
+        async (payload: any) => await post('/api/Leave/EmployeeLeaveCreditExport', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportEmployeesLeaveCredit, error, exporting };
+}
+
+export function useExportEmployeesLeaveAvailed(onSuccess?: any, onError?: any) {
+    const { mutate: exportEmployeesLeaveAvailed, error, isLoading: exporting } = useMutation(
+        ['exportEmployeesLeaveAvailed'],
+        async (payload: any) => await post('/api/Leave/EmployeeAvailedExport', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportEmployeesLeaveAvailed, error, exporting };
+}
+
+export function useExportEmployeesAttendance(onSuccess?: any, onError?: any) {
+    const { mutate: exportEmployeesAttendance, error, isLoading: exporting } = useMutation(
+        ['exportEmployeesAttendance'],
+        async (payload: any) => await post('/api/Employee/EmployeeAttendanceexport', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportEmployeesAttendance, error, exporting };
+}
+
+export function useExportEmployeesWage(onSuccess?: any, onError?: any) {
+    const { mutate: exportEmployeesWage, error, isLoading: exporting } = useMutation(
+        ['exportEmployeesWage'],
+        async (payload: any) => await post('/api/Employee/EmployeeWagesexport', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportEmployeesWage, error, exporting };
+}
+
+
 export function useExportActivities(onSuccess?: any, onError?: any) {
     const { mutate: exportActivity, error, isLoading: exporting } = useMutation(
         ['exportActivity'],

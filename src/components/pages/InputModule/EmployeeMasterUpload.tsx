@@ -340,7 +340,7 @@ const EmployeeMasterUpload = () => {
 
   useEffect(() => {
     if (employeeDetails.status === 'succeeded') {
-
+      
     } else if (employeeDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }

@@ -8,7 +8,7 @@ import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetBulkDeleteHolidaysDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
-import { useExportEmployees, useExportHolidayList } from '../../../backend/exports';
+import { useExportEmployees, useExportEmployeesWage, useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
@@ -41,15 +41,28 @@ const EmployeeWageUpload = () => {
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
   const bulkDeleteEmployeeWageDetails = useAppSelector((state) => state.employeeMaster.bulkDeleteEmployeeWage)
 
+  const uploadHolidayDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
+
+  const { exportEmployeesWage, exporting } = useExportEmployeesWage((response: any) => {
+    downloadFileContent({
+      name: 'employeeWage.xlsx',
+      type: response.headers['content-type'],
+      content: response.data
+    });
+  }, () => {
+    toast.error(ERROR_MESSAGES.DEFAULT);
+  });
+
   const employeesWage = employeesWageDetails.data.list
   const employeesWageCount = employeesWageDetails.data.count 
   console.log("employeesLeaveAvailed", employeesWage, 'employeesLeaveAvailedCount', employeesWageCount)
+
 
   const companies = companiesDetails.data.list
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading =  bulkDeleteEmployeeWageDetails.status === 'loading' ||employeesWageDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || uploadHolidayDetails.status === 'loading' || bulkDeleteEmployeeWageDetails.status === 'loading' ||employeesWageDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [query] = useQueryParams();
 
@@ -69,6 +82,9 @@ const EmployeeWageUpload = () => {
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [page, setPage] = React.useState(0);
+
+  const [uploadError, setUploadError] = React.useState(false);
+  const [openUploadModal, setOpenUploadModal] = React.useState(false);
 
   const handleChangeCompany = (event:any) => {
     setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setCompany(event.target.value);
@@ -869,6 +885,78 @@ const EmployeeWageUpload = () => {
     navigate(`${getBasePath()}/inputUploads/dashboard`);
   }
 
+  useEffect(() => {
+    if (uploadHolidayDetails.status === 'succeeded') {
+      if (uploadHolidayDetails.data.size === 0) {
+        toast.success(`Holiday List Uploaded successfully.`)
+        dispatch(resetUploadHolidayDetails())
+        setOpenUploadModal(false)
+        setUploadError(false)
+        const HolidayListDefaultPayload: any = {
+          search: "",
+          filters: [],
+          pagination: {
+            pageSize: 10,
+            pageNumber: 1
+          },
+          sort: { columnName: 'name', order: 'asc' },
+          "includeCentral": true
+        }
+        dispatch(getHolidaysList(HolidayListDefaultPayload))
+      } else {
+        setUploadError(true)
+      }
+    } else if (uploadHolidayDetails.status === 'failed') {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [uploadHolidayDetails])
+
+  const onClickExport = () => {
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
+
+    const employeesPayload: any = {
+      search: searchInput,
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: activeSort, order: sortType },
+      "includeCentral": true
+    }
+    exportEmployeesWage({ ...employeesPayload, pagination: null });
+  }
+
 
   return (
     <div style={{ height:'100vh', backgroundColor:'#ffffff'}}>
@@ -908,8 +996,8 @@ const EmployeeWageUpload = () => {
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
                   <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedWage && selectedWage.length === 0}> Bulk Delete</Button>
+                        <button onClick={onClickExport} disabled={!company} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !company ? '#707070': '#ffffff' , color: !company ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                 </div>
-                        {/* <button onClick={onClickExport} disabled={!employeesLeaveAvailed} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveAvailed ? '#707070': '#ffffff' , color: !employeesLeaveAvailed ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
                     </div>
                     <div style={{display:'flex'}}>
 

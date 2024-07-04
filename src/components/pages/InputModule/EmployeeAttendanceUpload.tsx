@@ -8,7 +8,7 @@ import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetBulkDeleteHolidaysDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
-import { useExportEmployees, useExportHolidayList } from '../../../backend/exports';
+import { useExportEmployees, useExportEmployeesAttendance, useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
@@ -37,16 +37,27 @@ const EmployeeAttendanceUpload = () => {
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
   const bulkDeleteEmployeesAttendanceDetails = useAppSelector((state) => state.employeeMaster.bulkDeleteEmployeeAttendance)
+  const uploadHolidayDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
 
   const employeesAttendance = employeesAttendanceDetails.data.list
   const employeesAttendanceCount = employeesAttendanceDetails.data.count 
   console.log("employeesAttendance", employeesAttendance, 'employeesAttendanceCount', employeesAttendanceCount)
 
+  const { exportEmployeesAttendance, exporting } = useExportEmployeesAttendance((response: any) => {
+    downloadFileContent({
+      name: 'EmployeesAttendance.xlsx',
+      type: response.headers['content-type'],
+      content: response.data
+    });
+  }, () => {
+    toast.error(ERROR_MESSAGES.DEFAULT);
+  });
+
   const companies = companiesDetails.data.list
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading = bulkDeleteEmployeesAttendanceDetails.status === 'loading' || employeesAttendanceDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || uploadHolidayDetails.status === 'loading' ||bulkDeleteEmployeesAttendanceDetails.status === 'loading' || employeesAttendanceDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   const [query] = useQueryParams();
 
@@ -59,6 +70,9 @@ const EmployeeAttendanceUpload = () => {
   
   const [selectedAttendance, setSelectedAttendance] = React.useState<any>([])
   const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
+
+  const [uploadError, setUploadError] = React.useState(false);
+  const [openUploadModal, setOpenUploadModal] = React.useState(false);
 
 
   const [searchInput, setSearchInput] = React.useState('');
@@ -751,6 +765,79 @@ const EmployeeAttendanceUpload = () => {
     navigate(`${getBasePath()}/inputUploads/dashboard`);
   }
 
+
+  useEffect(() => {
+    if (uploadHolidayDetails.status === 'succeeded') {
+      if (uploadHolidayDetails.data.size === 0) {
+        toast.success(`Holiday List Uploaded successfully.`)
+        dispatch(resetUploadHolidayDetails())
+        setOpenUploadModal(false)
+        setUploadError(false)
+        const HolidayListDefaultPayload: any = {
+          search: "",
+          filters: [],
+          pagination: {
+            pageSize: 10,
+            pageNumber: 1
+          },
+          sort: { columnName: 'name', order: 'asc' },
+          "includeCentral": true
+        }
+        dispatch(getHolidaysList(HolidayListDefaultPayload))
+      } else {
+        setUploadError(true)
+      }
+    } else if (uploadHolidayDetails.status === 'failed') {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [uploadHolidayDetails])
+
+  const onClickExport = () => {
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
+
+    const employeesPayload: any = {
+      search: searchInput,
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: activeSort, order: sortType },
+      "includeCentral": true
+    }
+    exportEmployeesAttendance({ ...employeesPayload, pagination: null });
+  }
+
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
       
@@ -790,9 +877,9 @@ const EmployeeAttendanceUpload = () => {
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
                   <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAttendance && selectedAttendance.length === 0}> Bulk Delete</Button>
+                  <button onClick={onClickExport} disabled={!company} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !company ? '#707070' : '#ffffff', color: !company ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                 </div>
                 
-                        {/* <button onClick={onClickExport} disabled={!employeesAttendance} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesAttendance ? '#707070': '#ffffff' , color: !employeesAttendance ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
                     </div>
                     <div style={{display:'flex'}}>
 

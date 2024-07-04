@@ -1523,10 +1523,7 @@ const StateRegisterConfiguration = () => {
   }
 
   const onClickImport = async (e:any) => {
- setopenImportFileUploadModal(true);
-
-   
-    
+    setopenImportFileUploadModal(true);
   }
 
 
@@ -1541,8 +1538,6 @@ const StateRegisterConfiguration = () => {
         // document.body.appendChild(link);
         // link.click();
         // link.remove();
-
-
         const blob = new Blob([exportFile.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const link = document.createElement('a');
         const url = window.URL.createObjectURL(blob);
@@ -1636,9 +1631,9 @@ const onClickSubmitImportUpload=()=>{
   formData.append('TotalRowsPerPage', totalRowsPerPage)
   formData.append('PageSize', pageSize)
   formData.append('PageOrientation', pageOrientation)
-console.log(formData);
-
+  console.log(formData);
   dispatch(importStateRegisterMapping(formData))
+ 
 }
 
 
@@ -1651,7 +1646,7 @@ useEffect(() => {
 
     // Ensure the response type is set to 'blob' when making the API call
     const data = response.data;
-  console.log(data.size);
+    console.log(data.size);
     if (data.size === 0) {
     toast.success("Mapping Done SUccessfully");
     dispatch(resetImportFileDetails());
@@ -1659,6 +1654,15 @@ useEffect(() => {
     setOpenAddExport(false);
     setOpenAddModal(false);
     setImportExportModal(false);
+    setRegisterType('')
+    setProcessType('')
+    setEstablishmentType('')
+    setStateName('')
+    setActName('')
+    setRuleName('')
+    setActivityName('')
+    setFormName('')
+    setFormNameValue('')
     const stateRegisterDefaultPayload: any = {
       search: "",
       filters: [],
@@ -1682,25 +1686,16 @@ useEffect(() => {
   }
 }, [importStateRegisterMappingDetails.status])
 
-  
-
-
-
-
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
-
-
-
       {/* ImportUploadModal */}
-
       <Modal
         open={openImportFileUploadModal}
         onClose={() => { setopenImportFileUploadModal(false); setUploadError(false); setUploadImportData(null) }}
       >
         <Box sx={styleUploadModal}>
           <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Upload Holiday List</Typography>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Upload Mapping File</Typography>
             <IconButton
               onClick={() => { setopenImportFileUploadModal(false); setUploadError(false); setUploadImportData(null) }}
             >

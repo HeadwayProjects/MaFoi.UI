@@ -8,7 +8,7 @@ import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetBulkDeleteHolidaysDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
-import { useExportEmployees, useExportHolidayList } from '../../../backend/exports';
+import { useExportEmployees, useExportEmployeesLeaveAvailed, useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
@@ -41,6 +41,18 @@ const EmployeeLeaveAvailedUpload = () => {
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
   const bulkDeleteEmployeeAvailedDetails = useAppSelector((state) => state.employeeMaster.bulkDeleteLeaveAvailed)
 
+  const uploadLeaveAvailedDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
+
+  const { exportEmployeesLeaveAvailed, exporting } = useExportEmployeesLeaveAvailed((response: any) => {
+    downloadFileContent({
+      name: 'LeaveAvailed.xlsx',
+      type: response.headers['content-type'],
+      content: response.data
+    });
+  }, () => {
+    toast.error(ERROR_MESSAGES.DEFAULT);
+  });
+
   const employeesLeaveAvailed = employeesLeaveAvailedDetails.data.list
   const employeesLeaveAvailedCount = employeesLeaveAvailedDetails.data.count
   console.log("employeesLeaveAvailed", employeesLeaveAvailed, 'employeesLeaveAvailedCount', employeesLeaveAvailedCount)
@@ -49,7 +61,7 @@ const EmployeeLeaveAvailedUpload = () => {
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading = bulkDeleteEmployeeAvailedDetails.status === 'loading' || employeesLeaveAvailedDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || bulkDeleteEmployeeAvailedDetails.status === 'loading' || uploadLeaveAvailedDetails.status === 'loading' || employeesLeaveAvailedDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
   const [query] = useQueryParams();
   const [company, setCompany] = React.useState(query.company ? query.company : '');
   const [associateCompany, setAssociateCompany] = React.useState(query.associateCompany ? query.associateCompany : '');
@@ -60,6 +72,9 @@ const EmployeeLeaveAvailedUpload = () => {
   const [searchInput, setSearchInput] = React.useState('');
   const [activeSort, setActiveSort] = React.useState('code')
   const [sortType, setSortType] = React.useState<any>('asc')
+
+  const [uploadError, setUploadError] = React.useState(false);
+  const [openUploadModal, setOpenUploadModal] = React.useState(false);
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [page, setPage] = React.useState(0);
@@ -800,6 +815,78 @@ const EmployeeLeaveAvailedUpload = () => {
     navigate(`${getBasePath()}/inputUploads/dashboard`);
   }
 
+  useEffect(() => {
+    if (uploadLeaveAvailedDetails.status === 'succeeded') {
+      if (uploadLeaveAvailedDetails.data.size === 0) {
+        toast.success(`Uploaded successfully.`)
+        dispatch(resetUploadHolidayDetails())
+        setOpenUploadModal(false)
+        setUploadError(false)
+        const leaveDefaultPayload: any = {
+          search: "",
+          filters: [],
+          pagination: {
+            pageSize: 10,
+            pageNumber: 1
+          },
+          sort: { columnName: 'name', order: 'asc' },
+          "includeCentral": true
+        }
+        dispatch(getHolidaysList(leaveDefaultPayload))
+      } else {
+        setUploadError(true)
+      }
+    } else if (uploadLeaveAvailedDetails.status === 'failed') {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [uploadLeaveAvailedDetails])
+
+  const onclickExport = () => {
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
+
+    const employeesLeavePayload: any = {
+      search: searchInput,
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: activeSort, order: sortType },
+      "includeCentral": true
+    }
+    exportEmployeesLeaveAvailed({ ...employeesLeavePayload, pagination: null });
+  }
+
   console.log('empleavevailed',employeesLeaveAvailed);
 
   return (
@@ -840,8 +927,8 @@ const EmployeeLeaveAvailedUpload = () => {
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
                   <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAvailed && selectedAvailed.length === 0}> Bulk Delete</Button>
+                  <button onClick={onclickExport} disabled={!company} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !company ? '#707070' : '#ffffff', color: !company ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                 </div>
-                {/* <button onClick={onClickExport} disabled={!employeesLeaveAvailed} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveAvailed ? '#707070': '#ffffff' , color: !employeesLeaveAvailed ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
               </div>
               <div style={{ display: 'flex' }}>
 

@@ -8,7 +8,7 @@ import { IoMdAdd, IoMdClose, IoMdSearch } from "react-icons/io";
 import { DEFAULT_OPTIONS_PAYLOAD, DEFAULT_PAYLOAD } from '../../common/Table';
 import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetBulkDeleteHolidaysDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 import Icon from '../../common/Icon';
-import { useExportEmployees, useExportHolidayList } from '../../../backend/exports';
+import { useExportEmployees, useExportEmployeesLeaveCredit, useExportHolidayList } from '../../../backend/exports';
 import { download, downloadFileContent, preventDefault } from '../../../utils/common';
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
@@ -37,6 +37,18 @@ const EmployeeLeaveCreditUpload = () => {
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
   const bulkDeleteEmployeeCreditDetails = useAppSelector((state) => state.employeeMaster.bulkDeleteLeaveBalance)
+  const uploadLeaveDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
+ 
+
+  const { exportEmployeesLeaveCredit, exporting } = useExportEmployeesLeaveCredit((response: any) => {
+    downloadFileContent({
+      name: 'Leave.xlsx',
+      type: response.headers['content-type'],
+      content: response.data
+    });
+  }, () => {
+    toast.error(ERROR_MESSAGES.DEFAULT);
+  });
 
   const employeesLeaveCredit = employeesLeaveCreditDetails.data.list
   const employeesLeaveCreditCount = employeesLeaveCreditDetails.data.count
@@ -46,7 +58,7 @@ const EmployeeLeaveCreditUpload = () => {
   const associateCompanies = associateCompaniesDetails.data.list
   const locations = locationsDetails.data.list
 
-  const loading = bulkDeleteEmployeeCreditDetails.status === 'loading' || employeesLeaveCreditDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
+  const loading = exporting || bulkDeleteEmployeeCreditDetails.status === 'loading' || uploadLeaveDetails.status === 'loading' ||  employeesLeaveCreditDetails.status === 'loading' || companiesDetails.status === 'loading' || associateCompaniesDetails.status === 'loading' || locationsDetails.status === 'loading'
 
   console.log('employeesLeaveCreditDetails', employeesLeaveCredit);
 
@@ -62,6 +74,12 @@ const EmployeeLeaveCreditUpload = () => {
   const [searchInput, setSearchInput] = React.useState('');
   const [activeSort, setActiveSort] = React.useState('code')
   const [sortType, setSortType] = React.useState<any>('asc')
+
+
+  const [uploadError, setUploadError] = React.useState(false);
+  const [openUploadModal, setOpenUploadModal] = React.useState(false);
+  
+
 
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [page, setPage] = React.useState(0);
@@ -747,6 +765,79 @@ const EmployeeLeaveCreditUpload = () => {
     navigate(`${getBasePath()}/inputUploads/dashboard`);
   }
 
+  useEffect(() => {
+    if (uploadLeaveDetails.status === 'succeeded') {
+      if (uploadLeaveDetails.data.size === 0) {
+        toast.success(`Uploaded successfully.`)
+        dispatch(resetUploadHolidayDetails())
+        setOpenUploadModal(false)
+        setUploadError(false)
+        const leaveDefaultPayload: any = {
+          search: "",
+          filters: [],
+          pagination: {
+            pageSize: 10,
+            pageNumber: 1
+          },
+          sort: { columnName: 'name', order: 'asc' },
+          "includeCentral": true
+        }
+        dispatch(getHolidaysList(leaveDefaultPayload))
+      } else {
+        setUploadError(true)
+      }
+    } else if (uploadLeaveDetails.status === 'failed') {
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [uploadLeaveDetails])
+
+  const onclickExport = () => {
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
+
+    const employeesLeavePayload: any = {
+      search: searchInput,
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: activeSort, order: sortType },
+      "includeCentral": true
+    }
+    exportEmployeesLeaveCredit({ ...employeesLeavePayload, pagination: null });
+
+  }
+
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
       <Modal
@@ -784,6 +875,7 @@ const EmployeeLeaveCreditUpload = () => {
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
                   <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedCredit && selectedCredit.length === 0}> Bulk Delete</Button>
+                  <button onClick={onclickExport} disabled={!company} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !company ? '#707070' : '#ffffff', color: !company ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
                 </div>
                 {/* <button onClick={onClickExport} disabled={!employeesLeaveCredit} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveCredit ? '#707070': '#ffffff' , color: !employeesLeaveCredit ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
               </div>
