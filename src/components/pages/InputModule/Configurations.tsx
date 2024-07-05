@@ -168,6 +168,8 @@ const Configurations = () => {
   }
 
   useEffect(() => {
+    setUploadError(false);
+
     resetStateValues()
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
     dispatch(getAllCompaniesDetails(companiesPayload))
@@ -240,11 +242,14 @@ const Configurations = () => {
         {
   setUploadError(true);
   alert("employeeUploadDetails.data.filePath!= null hitted");
+  dispatch(resetEmployeeUploadDetails());
       
       }
       else if (employeeUploadDetails.data.status === 'FAILURE'){
         alert("employeeUploadDetails.status === 'FAILURE' hitted");
         toast.error(ERROR_MESSAGES.DEFAULT);
+        dispatch(resetEmployeeUploadDetails());
+        dispatch(resetConfigUploadDetails());
       }
      
     }
