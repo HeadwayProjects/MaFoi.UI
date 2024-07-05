@@ -191,9 +191,37 @@ const Configurations = () => {
     }
   }, [associateCompany])
 
+  // useEffect(() => {
+  //   if(employeeUploadDetails.status === 'succeeded'){
+  //     if(employeeUploadDetails.data.key === 'FAILURE'){
+  //       const formData = new FormData();
+  //       const data = uploadData ? uploadData[0] : []
+  //       formData.append('file', data);
+  //       formData.append('Remarks', 'NA')
+  //       formData.append('Year', year)
+  //       formData.append('Month', month)
+  //       formData.append('Mapped', 'false')
+  //       formData.append('ConfigurationType', configType)
+  //       formData.append('CompanyId', company)
+  //       formData.append('AssociateCompanyId', associateCompany)
+  //       formData.append('LocationId', location)
+  //       formData.append('StateId', stateName)
+  //       dispatch(configUpload(formData))
+  //     }else{
+  //       resetStateValues()
+  //       toast.success(`Upload Successfull`)
+  //     }
+  //   }else if (employeeUploadDetails.status === 'failed'){
+  //     toast.error(ERROR_MESSAGES.DEFAULT);
+  //   }
+  // }, [employeeUploadDetails.status])
+
+
   useEffect(() => {
     if(employeeUploadDetails.status === 'succeeded'){
-      if(employeeUploadDetails.data.key === 'FAILURE'){
+      alert("employeeUploadDetails hitted");
+      console.log(employeeUploadDetails.data);
+      if(employeeUploadDetails.data.status === 'NOTSETUP'){
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
@@ -207,13 +235,26 @@ const Configurations = () => {
         formData.append('LocationId', location)
         formData.append('StateId', stateName)
         dispatch(configUpload(formData))
-      }else{
-        resetStateValues()
-        toast.success(`Upload Successfull`)
       }
-    }else if (employeeUploadDetails.status === 'failed'){
-      toast.error(ERROR_MESSAGES.DEFAULT);
+      else if(employeeUploadDetails.data.filePath!= null )
+        {
+  setUploadError(true);
+  alert("employeeUploadDetails.data.filePath!= null hitted");
+      
+      }
+      else if (employeeUploadDetails.data.status === 'FAILURE'){
+        alert("employeeUploadDetails.status === 'FAILURE' hitted");
+        toast.error(ERROR_MESSAGES.DEFAULT);
+      }
+     
     }
+    else if (employeeUploadDetails.status === 'failed'){
+      alert("employeeUploadDetails.status === 'failed hitted");
+      toast.error(ERROR_MESSAGES.DEFAULT);
+      dispatch(resetEmployeeUploadDetails());
+      dispatch(resetConfigUploadDetails());
+    }
+    
   }, [employeeUploadDetails.status])
 
   useEffect(() => {
@@ -318,12 +359,12 @@ const Configurations = () => {
 
   useEffect(() => {
     if(configUploadDetails.status === 'succeeded'){
+      alert("configuploadstatus hitted");
       setTableData(configUploadDetails.data.list)
       resetUploadDetails()
       if(configType === 'Employee'){
         dispatch(getColumns('Employee'))
       }else if(configType === 'Employee attendance'){
-      
         dispatch(getColumns('employeeattendance'))
       }else if(configType === 'Leave credit'){
         dispatch(getColumns('employeeleavecredit'))
@@ -333,10 +374,25 @@ const Configurations = () => {
         dispatch(getColumns('employeewage'))
       }
       setOpenUploadModal(false)
-    }else if (configUploadDetails.status === 'failed'){
+    }
+    else if(configUploadDetails.data.filePath!= null )
+      {
+setUploadError(true);
+alert("employeeUploadDetails.data.filePath!= null hitted"); 
+    }
+  else if (configUploadDetails.status === 'failed'){
+    alert("employeeUploadDetails.status === 'failed hitted");
+    toast.error(ERROR_MESSAGES.DEFAULT);
+    dispatch(resetEmployeeUploadDetails());
+    dispatch(resetConfigUploadDetails());
+  }
+else if (configUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
   }, [configUploadDetails.status])
+
+
+
 
   useEffect(() => {
     if(excelHeaderToDbColumnsDetails.status === 'succeeded'){
@@ -486,7 +542,32 @@ const Configurations = () => {
 
   const downloadErrors = (e: any) => {
     preventDefault(e);
+    const filepath =  employeeUploadDetails.data.filePath;
+    
+    const filename = 'ErrosList.xlsx'
+    // download('Sample Holidays.xlsx', url)
+
+    preventDefault(e);
+   // const fileUrl = formFilePath;
+
+    // Open the URL in a new tab to download the file
+    window.open(filepath, '_blank');
+
+    // if (filename && filepath) {
+    //   const link = document.createElement('a');
+    //   link.href = filepath;
+    //   link.download = filename;
+    //   link.target = "_blank"
+    //   document.body.appendChild(link);
+    //   link.click();
+    //   document.body.removeChild(link);
+ // }
+}
+
+  const downloadErrorsold = (e: any) => {
+    preventDefault(e);
     const data: any = {};
+    employeeUploadDetails.data.status
     const blob = new Blob([data])
     const URL = window.URL || window.webkitURL;
     const downloadUrl = URL.createObjectURL(blob);
