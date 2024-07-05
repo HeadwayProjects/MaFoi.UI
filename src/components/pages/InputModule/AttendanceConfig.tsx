@@ -48,17 +48,17 @@ const AttendanceConfig = () => {
 
   const dispatch = useAppDispatch();
 
-  const attendanceConfigurationDetails = useAppSelector((state) => state.attendanceConfiguration.attendanceConfigurationDetails)
-  const uploadAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.uploadAttendanceDetails)
-  const deleteAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.deleteAttendanceDetails)
-  const addAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.addAttendanceDetails)
-  const editAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.editAttendanceDetails)
+  const attendanceConfigurationDetails = useAppSelector((state: { attendanceConfiguration: { attendanceConfigurationDetails: any; }; }) => state.attendanceConfiguration.attendanceConfigurationDetails)
+  const uploadAttendanceDetails = useAppSelector((state: { attendanceConfiguration: { uploadAttendanceDetails: any; }; }) => state.attendanceConfiguration.uploadAttendanceDetails)
+  const deleteAttendanceDetails = useAppSelector((state: { attendanceConfiguration: { deleteAttendanceDetails: any; }; }) => state.attendanceConfiguration.deleteAttendanceDetails)
+  const addAttendanceDetails = useAppSelector((state: { attendanceConfiguration: { addAttendanceDetails: any; }; }) => state.attendanceConfiguration.addAttendanceDetails)
+  const editAttendanceDetails = useAppSelector((state: { attendanceConfiguration: { editAttendanceDetails: any; }; }) => state.attendanceConfiguration.editAttendanceDetails)
 
-  const companiesDetails = useAppSelector((state) => state.inputModule.companiesDetails);
-  const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
-  const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
+  const companiesDetails = useAppSelector((state: { inputModule: { companiesDetails: any; }; }) => state.inputModule.companiesDetails);
+  const associateCompaniesDetails = useAppSelector((state: { inputModule: { associateCompaniesDetails: any; }; }) => state.inputModule.associateCompaniesDetails);
+  const locationsDetails = useAppSelector((state: { inputModule: { locationsDetails: any; }; }) => state.inputModule.locationsDetails);
 
-  const bulkDeleteAttendanceDetails = useAppSelector((state) => state.attendanceConfiguration.bulkDeleteAttendanceDetails)
+  const bulkDeleteAttendanceDetails = useAppSelector((state: { attendanceConfiguration: { bulkDeleteAttendanceDetails: any; }; }) => state.attendanceConfiguration.bulkDeleteAttendanceDetails)
 
 
   const [sesssion1starthour, setsesssion1startHour] = useState('');
@@ -1299,7 +1299,7 @@ console.log('locaname',locationdetails);
                       id="demo-select-small"
                       value={company}
                       label="Company"
-                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
+                      onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
                       MenuProps={{
                         PaperProps: {
                           sx: {
@@ -1325,7 +1325,7 @@ console.log('locaname',locationdetails);
                       label="Associate Company"
                       disabled={!company}
 
-                    onChange={(e) => setAssociateCompany(e.target.value)}
+                    onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setAssociateCompany(e.target.value)}
                     MenuProps={{
                       PaperProps: {
                         sx: {
@@ -1359,7 +1359,7 @@ console.log('locaname',locationdetails);
                           },
                         },
                       }}
-                      onChange={(e) => setLocation(e.target.value)}
+                      onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setLocation(e.target.value)}
                     >
                       {locations && locations.map((each:any) => {
                           const { id, name, code, cities }: any = each.location || {};
@@ -1379,7 +1379,7 @@ console.log('locaname',locationdetails);
                       }}
                       placeholder='Shift Name'
                       value={shiftName}
-                      onChange={(e) => setShiftName(e.target.value)}
+                      onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setShiftName(e.target.value)}
                       id="outlined-adornment-name"
                       type='text'
                       inputProps={{
@@ -1727,7 +1727,7 @@ label="AM/PM"
                       id="demo-select-small"
                       value={company}
                       label="Company"
-                      onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
+                      onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
                     >
                       {companies && companies.map((each:any) => {
                           return <MenuItem value={each.id}>{each.name}</MenuItem>
@@ -1743,7 +1743,7 @@ label="AM/PM"
                       value={associateCompany}
                       label="Associate Company"
                       disabled={!company}
-                      onChange={(e) => setAssociateCompany(e.target.value)}
+                      onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setAssociateCompany(e.target.value)}
                     >
                       {associateCompanies && associateCompanies.map((each:any) => {
                           return <MenuItem value={each.id}>{each.name}</MenuItem>
@@ -1759,7 +1759,7 @@ label="AM/PM"
                       value={location}
                       label="Location"
                       disabled={!associateCompany}
-                      onChange={(e) => setLocation(e.target.value)}
+                      onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setLocation(e.target.value)}
                     >
                       {locations && locations.map((each:any) => {
                           const { id, name, code, cities }: any = each.location || {};
@@ -1779,7 +1779,7 @@ label="AM/PM"
                       }}
                       placeholder='Shift Name'
                       value={shiftName}
-                      onChange={(e) => setShiftName(e.target.value)}
+                      onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setShiftName(e.target.value)}
                       id="outlined-adornment-name"
                       type='text'
                     />
@@ -1791,7 +1791,7 @@ label="AM/PM"
                       <OutlinedInput
                         placeholder='Start Time'
                         value={sessionOneStartTime}
-                        onChange={(e) => setSessionOneStartTime(e.target.value)}
+                        onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setSessionOneStartTime(e.target.value)}
                         id="outlined-adornment-name"
                         type='text'
                       />
@@ -1802,7 +1802,7 @@ label="AM/PM"
                       <OutlinedInput
                         placeholder='End Time'
                         value={sessionOneEndTime}
-                        onChange={(e) => setSessionOneEndTime(e.target.value)}
+                        onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setSessionOneEndTime(e.target.value)}
                         id="outlined-adornment-name"
                         type='text'
                       />
@@ -1815,7 +1815,7 @@ label="AM/PM"
                       <OutlinedInput
                         placeholder='Start Time'
                         value={sessionTwoStartTime}
-                        onChange={(e) => setSessionTwoStartTime(e.target.value)}
+                        onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setSessionTwoStartTime(e.target.value)}
                         id="outlined-adornment-name"
                         type='text'
                       />
@@ -1826,7 +1826,7 @@ label="AM/PM"
                       <OutlinedInput
                         placeholder='End Time'
                         value={sessionTwoEndTime}
-                        onChange={(e) => setSessionTwoEndTime(e.target.value)}
+                        onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setSessionTwoEndTime(e.target.value)}
                         id="outlined-adornment-name"
                         type='text'
                       />
@@ -1838,7 +1838,7 @@ label="AM/PM"
                     <OutlinedInput
                       placeholder='Work days'
                       value={workDays}
-                      onChange={(e) => setWorkDays(e.target.value)}
+                      onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setWorkDays(e.target.value)}
                       id="outlined-adornment-name"
                       type='text'
                     />
@@ -2198,7 +2198,7 @@ label="AM/PM"
                       }}
                 
                       labelRowsPerPage='Show'
-                      labelDisplayedRows={(page) =>
+                      labelDisplayedRows={(page: { from: any; to: number; count: any; }) =>
                         `Showing ${page.from}-${page.to === -1 ? page.count : page.to} of ${page.count}`
                       }
                       rowsPerPageOptions={[10, 25, 50, 100]}
