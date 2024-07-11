@@ -889,6 +889,13 @@ const EmployeeLeaveAvailedUpload = () => {
 
   console.log('empleavevailed',employeesLeaveAvailed);
 
+  
+  const formatDate = (dateString: string | number | Date) => {
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-GB', options); // 'en-GB' for DD-MM-YYYY format
+  };
+  
+
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
       <Modal
@@ -1155,8 +1162,10 @@ const EmployeeLeaveAvailedUpload = () => {
                             <TableCell >{each.employeeCode}</TableCell>
                             <TableCell >{each.employeeName}</TableCell>
                             <TableCell >{each.noOfDays}</TableCell>
-                            <TableCell >{each.leaveStartDate}</TableCell>
-                            <TableCell >{each.leaveEndDate}</TableCell>
+                            <TableCell >{formatDate(each.leaveStartDate)}</TableCell>
+                            {/* <TableCell >{each.leaveStartDate}</TableCell> */}
+                            <TableCell >{formatDate(each.leaveEndDate)}</TableCell>
+                            {/* <TableCell >{each.leaveEndDate}</TableCell> */}
                             {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>

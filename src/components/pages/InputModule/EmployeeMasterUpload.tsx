@@ -1393,6 +1393,38 @@ const EmployeeMasterUpload = () => {
     navigate(`${getBasePath()}/inputUploads/dashboard`);
   }
 
+
+  const formatDate = (dateString: string | number | Date) => {
+    if (!dateString) {
+      return ''; // or 'Invalid Date', or any placeholder you prefer
+    }
+  
+    const options: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    const date = new Date(dateString);
+  
+    if (isNaN(date.getTime())) {
+      return ''; // handle invalid date formats
+    }
+  
+    return date.toLocaleDateString('en-GB', options); // 'en-GB' for DD-MM-YYYY format
+  };
+
+
+  const formatTime = (timeString: string | number | Date) => {
+    if (!timeString) {
+      return ''; // or any placeholder you prefer, e.g., 'Invalid Time'
+    }
+  
+    const date = new Date(timeString);
+  
+    if (isNaN(date.getTime())) {
+      return ''; // handle invalid date formats
+    }
+  
+    return date.toLocaleTimeString('en-GB'); // 'en-GB' for 24-hour format
+  };
+  
+
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
 
@@ -1644,12 +1676,37 @@ const EmployeeMasterUpload = () => {
 
                           <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB}> DOB</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender}> Gender</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'designation'} direction={sortType} onClick={onClickSortDesignation}> Designation</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'dateOfJoining'} direction={sortType} onClick={onClickSortDOJ}> DOJ</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'panNumber'} direction={sortType} onClick={onClickSortPan}> PAN no.</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}> Aadhar no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB}>DOB</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender}>Gender</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'designation'} direction={sortType} onClick={onClickSortDesignation}>Designation</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender}>Department</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'dateOfJoining'} direction={sortType} onClick={onClickSortDOJ}>DOJ</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'panNumber'} direction={sortType} onClick={onClickSortPan}>PAN no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Aadhar no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Date of Leave</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Reason of Exit</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Age</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>FatherName</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Bank Account no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>BankName</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>PF UAN no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>ESI no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Office In TIME</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Office Out Time</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Interval In Time</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}> Interval Out Time</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Date Of Payment</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Date Of Payment</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Date of Notice</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>ESi Time of Notice</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Cause</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Nature</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Time</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Place</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Vendor Nature Of Work</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Branch</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Establishment Type</TableSortLabel></TableCell>
                           {/* <TableCell > Actions</TableCell> */}
                         </TableRow>
                       </TableHead>
@@ -1662,12 +1719,41 @@ const EmployeeMasterUpload = () => {
                             <TableCell><Checkbox checked={selectedEmployees.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)} /></TableCell>
                             <TableCell >{each.code}</TableCell>
                             <TableCell >{each.name}</TableCell>
-                            <TableCell >{new Date(each.dateOfBirth).toLocaleDateString()}</TableCell>
+                            <TableCell >{formatDate(each.dateOfBirth)}</TableCell>
                             <TableCell >{each.gender}</TableCell>
                             <TableCell >{each.designation}</TableCell>
-                            <TableCell >{new Date(each.dateOfJoining).toLocaleDateString()}</TableCell>
+                            <TableCell >{each.department}</TableCell>
+                            {/* <TableCell >{new Date(each.dateOfJoining).toLocaleDateString()}</TableCell> */}
+                            <TableCell >{formatDate(each.dateOfJoining)}</TableCell>
                             <TableCell >{each.panNumber}</TableCell>
                             <TableCell >{each.aadharNumber}</TableCell>
+                            <TableCell >{formatDate(each.dateOfLeave)}</TableCell>
+                            <TableCell >{each.reasonOfExit}</TableCell>
+                            <TableCell >{each.age}</TableCell>
+                            <TableCell >{each.fatherName}</TableCell>
+                            <TableCell >{each.bankAccountNumber}</TableCell>
+                            <TableCell >{each.bankName}</TableCell>
+                            <TableCell >{each.pfuanNumber}</TableCell>
+                            <TableCell >{each.esiNumber}</TableCell>
+                            <TableCell >{new Date(each.officeInTime).toLocaleTimeString()}</TableCell>
+                            {/* <TableCell >{formatTime(each.officeInTime)}</TableCell> */}
+                            <TableCell >{new Date(each.officeOutTime).toLocaleTimeString()}</TableCell>
+                            <TableCell >{new Date(each.intervalInTime).toLocaleTimeString()}</TableCell>
+                            <TableCell >{new Date(each.intervalOutTime).toLocaleTimeString()}</TableCell>
+                            <TableCell >{formatDate(each.dateOfPayment)}</TableCell>
+                            <TableCell >{formatDate(each.esiDateOfPayment)}</TableCell>
+                            <TableCell >{formatDate(each.esiDateOfNotice)}</TableCell>
+                            <TableCell >{formatTime(each.esiTimeOfNotice)}</TableCell>
+                            <TableCell >{each.esiCause}</TableCell>
+                            <TableCell >{each.esiNature}</TableCell>
+                            <TableCell >{formatDate(each.esiDate)}</TableCell>
+                            
+                            <TableCell >{formatTime(each.esiTime)}</TableCell>
+                            <TableCell >{each.esiPlace}</TableCell>
+                            <TableCell >{each.vendorNatureOfWork}</TableCell>
+                            <TableCell >{each.branch}</TableCell>
+                            <TableCell >{each.establishmentType}</TableCell>
+                        
                             {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>

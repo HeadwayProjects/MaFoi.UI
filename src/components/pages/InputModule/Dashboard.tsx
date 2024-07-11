@@ -57,9 +57,21 @@ const Dashboard = () => {
   const [year, setYear] = React.useState('');
   const [month, setMonth] =  React.useState<any>('');
 
+  
+  const [companyName, setCompanyName] = React.useState('');
+  const [associateCompanyName, setAssociateCompanyName] = React.useState('');
+  const [locationName, setLocationName] = React.useState('');
+
   const [showDashboardDetails, setShowDashboardDetails] = React.useState(false);
 
   const handleChangeCompany = (event:any) => {
+
+    const selectedCompanyId = event.target.value as string;
+    const selectedCompanyName = getCompanyNameById(selectedCompanyId, companies);
+  
+
+    
+  
     setShowDashboardDetails(false)
     setAssociateCompany('')
     setStateName('')
@@ -67,14 +79,36 @@ const Dashboard = () => {
     setYear('')
     setMonth('')
     setCompany(event.target.value);
+    setCompanyName(selectedCompanyName);
+  };
+  const getCompanyNameById = (id: string, companies: { id: string; name: string; }[]) => {
+    for (let i = 0; i < companies.length; i++) {
+      if (companies[i].id === id) {
+        return companies[i].name;
+      }
+    }
+    return '';
   };
 
   const handleChangeAssociateCompany = (event:any) => {
+    const selectedCompanyId = event.target.value as string;
+    const selectedCompanyName = getAssocCompanyNameById(selectedCompanyId, associateCompanies);
+  
+    //alert(selectedCompanyName);
     setShowDashboardDetails(false)
     setLocation('')
     setYear('')
     setMonth('')
     setAssociateCompany(event.target.value);
+    setAssociateCompanyName(selectedCompanyName);
+  };
+  const getAssocCompanyNameById = (id: string, associateCompanies: { id: string; name: string; }[]) => {
+    for (let i = 0; i < associateCompanies.length; i++) {
+      if (associateCompanies[i].id === id) {
+        return associateCompanies[i].name;
+      }
+    }
+    return '';
   };
 
   const handleChangeStateName = (event:any) => {
@@ -86,11 +120,28 @@ const Dashboard = () => {
   }
 
   const handleChangeLocation = (event:any) => {
+    const selectedCompanyId = event.target.value as string;
+   // alert(event.target.value);
+    const selectedCompanyName = getLocationById(selectedCompanyId, locations);
+  
+  //  alert(selectedCompanyName);
+
     setShowDashboardDetails(false)
     setYear('')
     setMonth('')
     setLocation(event.target.value);
+    setLocationName(selectedCompanyName);
   };
+
+const getLocationById = (id: string, locations: any[]) => {
+  for (let i = 0; i < locations.length; i++) {
+    if (locations[i].locationId === id) {
+      return locations[i].location.name;
+    }
+  }
+  return '';
+};
+
   
   const handleChangeYear = (event:any) => {
     setShowDashboardDetails(false)
@@ -399,6 +450,138 @@ console.log('formResonseUrl',formResponseUrl);
       toast.success(`${filename} downloaded successfully`);
 
     }
+    setDownloading(false);
+  } catch (error) {
+    console.error('Error processing registers:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Axios error details:', {
+        message: error.message,
+        name: error.name,
+        code: error.code,
+        config: error.config,
+        request: error.request,
+        response: error.response ? {
+          data: error.response.data,
+          status: error.response.status,
+          headers: error.response.headers,
+        } : null,
+      });
+    toast.error("Error in downloading files");
+    setDownloading(false);
+  }
+}
+
+  }
+
+
+  const handleProcessRegisters2=async ()=>{
+
+
+    setDownloading(true);
+    const fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/getAllKarnatakaForms';
+
+    try {
+      // Step 1: Get the access token
+      const params = new URLSearchParams();
+      params.append('grant_type', 'password');
+      params.append('username', 'admin');
+      params.append('password', 'admin');
+
+      const tokenResponse = await axios.post('https://ezycomp.buoyantworx.com/oauth/token', params.toString(), {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Basic ' + btoa('client:secret'),
+          'User-Agent': 'PostmanRuntime/7.39.0',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Connection': 'keep-alive'
+        }
+      });
+
+      console.log(tokenResponse.data);
+
+      const accessToken = tokenResponse.data.access_token;
+
+      // const formResponse = await axios.post(
+      //   fileUrl,
+      //   {
+      //     companyID: company,
+      //     associatedCompanyID: associateCompany,
+      //     stateId: stateName,
+      //     locationID: location,
+      //     year: year,
+      //     month: "March"
+      //   },
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       'Authorization': `Bearer ${accessToken}`,
+      //       'Connection': `keep-alive`
+      //     }
+      //   }
+      // );
+
+       // Step 2: Make the request to get the Karnataka forms
+    const formResponse = await axios.post(
+      fileUrl,
+      {
+        companyID: company,
+        associatedCompanyID: associateCompany,
+        locationID: location,
+        stateID: stateName,
+        year: year,
+        month: month
+      },
+      {
+        headers: {
+          'Content-Type': 'application/xml', // Ensure the Content-Type matches the cURL request
+          'Authorization': `Bearer ${accessToken}`,
+          'Cookie': 'JSESSIONID=7D50AD68329785DF351FE423A440A45E; JSESSIONID=7CE95831E685227D3FED93436D4A7136',
+          'Connection': 'keep-alive'
+        }
+      }
+    );
+    
+  
+
+      console.log(formResponse.data.body);
+
+      const filedownloadresponseURL= formResponse.data.body;
+  //   alert('filedownloadresponseURL : ' +filedownloadresponseURL);
+
+       // Extract the fileRef from the URL in the formResponse
+      //  const fileRefMatch = filedownloadresponseURL.match(/fileRef=([^&]+)/);
+      //  if (!fileRefMatch) {
+      //    throw new Error('fileRef not found in form response');
+      //  }
+      //  const fileRef = decodeURIComponent(fileRefMatch[1]);
+      //  console.log('fileRef', fileRef);
+
+      // alert(fileRef);
+
+       // Step 3: Use the file reference to download the file
+       const fileDownloadResponse = await axios.get(filedownloadresponseURL, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        
+        responseType: 'blob' // Ensure binary data handling
+      });
+
+      // Verify the content of the response
+      console.log('fileDownloadResponse', fileDownloadResponse);
+
+      // Step 4: Create a link to download the file
+      const url = window.URL.createObjectURL(new Blob([fileDownloadResponse.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+      const link = document.createElement('a');
+      link.href = url;
+      let zipfilename = associateCompanyName+'_'+locationName+'_'+year+'_'+month+'.zip';
+
+
+      link.setAttribute('download', zipfilename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success(`ZipFile downloaded successfully`); 
     setDownloading(false);
   } catch (error) {
     console.error('Error processing registers:', error);
@@ -904,7 +1087,11 @@ console.log('formResonseUrl',formResponseUrl);
 
                   </Box>
                   
-                  <Button sx={{mt:2, width:'90%'}} variant='outlined' onClick={handleProcessRegisters}>
+                  {/*<Button sx={{mt:2, width:'90%'}} variant='outlined' onClick={handleProcessRegisters}>
+                    {/* <Typography padding={'8px'} color={'#0654AD'}> Process Registers</Typography> 
+                    Process Registers
+                  </Button>*/}
+                  <Button sx={{mt:2, width:'90%'}} variant='outlined' onClick={handleProcessRegisters2}>
                     {/* <Typography padding={'8px'} color={'#0654AD'}> Process Registers</Typography> */}
                     Process Registers
                   </Button>

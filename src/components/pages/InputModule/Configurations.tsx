@@ -96,7 +96,9 @@ const Configurations = () => {
 
   const [openPreviewModal, setOpenPreviewModal] = React.useState(false);
 
-  const [tableData, setTableData] = React.useState<any>([])
+  const [tableData, setTableData] = React.useState<any>([]);
+
+  const [errorfilepath,setErrorFilePath]=React.useState('');
 
   const handleChangeConfigType = (event:any) => {
     setCompany('')
@@ -221,9 +223,10 @@ const Configurations = () => {
 
   useEffect(() => {
     if(employeeUploadDetails.status === 'succeeded'){
-      alert("employeeUploadDetails hitted");
+     // alert("employeeUploadDetails hitted");
       console.log(employeeUploadDetails.data);
       if(employeeUploadDetails.data.status === 'NOTSETUP'){
+        alert("not set up hitted");
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
@@ -240,21 +243,28 @@ const Configurations = () => {
       }
       else if(employeeUploadDetails.data.filePath!= null )
         {
+         // alert("file path not null hitted")
   setUploadError(true);
-  alert("employeeUploadDetails.data.filePath!= null hitted");
+  setErrorFilePath(employeeUploadDetails.data.filePath);
+  //alert("employeeUploadDetails.data.filePath!= null hitted");
   dispatch(resetEmployeeUploadDetails());
       
       }
       else if (employeeUploadDetails.data.status === 'FAILURE'){
-        alert("employeeUploadDetails.status === 'FAILURE' hitted");
+     //  alert("employeeUploadDetails.status === 'FAILURE' hitted");
         toast.error(ERROR_MESSAGES.DEFAULT);
         dispatch(resetEmployeeUploadDetails());
         dispatch(resetConfigUploadDetails());
       }
+      else if(employeeUploadDetails.data.status === 'SUCCESS'){
+       // alert("employee sccess hitted")
+        resetStateValues()
+        toast.success(`Upload Successfull`)
+      }
      
     }
     else if (employeeUploadDetails.status === 'failed'){
-      alert("employeeUploadDetails.status === 'failed hitted");
+     // alert("employeeUploadDetails.status === 'failed hitted");
       toast.error(ERROR_MESSAGES.DEFAULT);
       dispatch(resetEmployeeUploadDetails());
       dispatch(resetConfigUploadDetails());
@@ -264,7 +274,9 @@ const Configurations = () => {
 
   useEffect(() => {
     if(employeeAttendanceUploadDetails.status === 'succeeded'){
-      if(employeeAttendanceUploadDetails.data.key === 'FAILURE'){
+        // alert("employeeUploadDetails hitted");
+        console.log(employeeAttendanceUploadDetails.data);
+      if(employeeAttendanceUploadDetails.data.status === 'NOTSETUP'){
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
@@ -278,14 +290,54 @@ const Configurations = () => {
         formData.append('LocationId', location)
         formData.append('StateId', stateName)
         dispatch(configUpload(formData))
-      }else{
-        resetStateValues()
-        toast.success(`Upload Successfull`)
+      }
+      else if(employeeAttendanceUploadDetails.data.filePath!= null )
+        {
+          alert("failpeath not null hitted");
+  setUploadError(true);
+  setErrorFilePath(employeeAttendanceUploadDetails.data.filePath);
+  //alert("employeeUploadDetails.data.filePath!= null hitted");
+ // dispatch(resetEmployeeAttendanceUploadDetails());
+      
+      }
+      else if (employeeUploadDetails.data.status === 'FAILURE'){
+      //  alert("employeeUploadDetails.status === 'FAILURE' hitted");
+        toast.error(ERROR_MESSAGES.DEFAULT);
+        dispatch(resetEmployeeAttendanceUploadDetails());
+        dispatch(resetConfigUploadDetails());
       }
     }else if (employeeAttendanceUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
+      dispatch(resetEmployeeAttendanceUploadDetails());
+      dispatch(resetConfigUploadDetails());
     }
   }, [employeeAttendanceUploadDetails.status])
+
+
+  // useEffect(() => {
+  //   if(employeeAttendanceUploadDetails.status === 'succeeded'){
+  //     if(employeeAttendanceUploadDetails.data.key === 'FAILURE'){
+  //       const formData = new FormData();
+  //       const data = uploadData ? uploadData[0] : []
+  //       formData.append('file', data);
+  //       formData.append('Remarks', 'NA')
+  //       formData.append('Year', year)
+  //       formData.append('Month', month)
+  //       formData.append('Mapped', 'false')
+  //       formData.append('ConfigurationType', configType)
+  //       formData.append('CompanyId', company)
+  //       formData.append('AssociateCompanyId', associateCompany)
+  //       formData.append('LocationId', location)
+  //       formData.append('StateId', stateName)
+  //       dispatch(configUpload(formData))
+  //     }else{
+  //       resetStateValues()
+  //       toast.success(`Upload Successfull`)
+  //     }
+  //   }else if (employeeAttendanceUploadDetails.status === 'failed'){
+  //     toast.error(ERROR_MESSAGES.DEFAULT);
+  //   }
+  // }, [employeeAttendanceUploadDetails.status])
 
   useEffect(() => {
     if(employeeLeaveCreditUploadDetails.status === 'succeeded'){
@@ -364,7 +416,7 @@ const Configurations = () => {
 
   useEffect(() => {
     if(configUploadDetails.status === 'succeeded'){
-      alert("configuploadstatus hitted");
+    //  alert("configuploadstatus hitted");
       setTableData(configUploadDetails.data.list)
       resetUploadDetails()
       if(configType === 'Employee'){
@@ -383,10 +435,10 @@ const Configurations = () => {
     else if(configUploadDetails.data.filePath!= null )
       {
 setUploadError(true);
-alert("employeeUploadDetails.data.filePath!= null hitted"); 
+//alert("employeeUploadDetails.data.filePath!= null hitted"); 
     }
   else if (configUploadDetails.status === 'failed'){
-    alert("employeeUploadDetails.status === 'failed hitted");
+    //alert("employeeUploadDetails.status === 'failed hitted");
     toast.error(ERROR_MESSAGES.DEFAULT);
     dispatch(resetEmployeeUploadDetails());
     dispatch(resetConfigUploadDetails());
@@ -486,6 +538,7 @@ else if (configUploadDetails.status === 'failed'){
     formData.append('AssociateCompanyId', associateCompany)
     formData.append('LocationId', location)
     formData.append('StateId', stateName)
+    console.log(formData);
     if(configType === 'Employee'){
       dispatch(employeeUpload(formData))
     }else if(configType === 'Employee attendance'){
@@ -547,16 +600,36 @@ else if (configUploadDetails.status === 'failed'){
 
   const downloadErrors = (e: any) => {
     preventDefault(e);
-    const filepath =  employeeUploadDetails.data.filePath;
+    // alert("dwn err hitted");
+    // const response = employeeUploadDetails.data;
+    // alert(response.filePath);
+    // console.log("response in dnwnld error ",response);
+    // console.log(response);
+
+
+    // if(employeeUploadDetails.data.filePath!=null){
+    //     const filename = 'ErrosList.xlsx'
+    //   const filepath =  employeeUploadDetails.data.filePath;
+    //   window.open(filepath, '_blank');
+    // }
+    // else if(employeeAttendanceUploadDetails.data.filePath!=null){
+    //   alert("donwloaderrors hittsed")
+    //   alert(employeeUploadDetails.data.filePath);
+
+    //   const filepath =  employeeUploadDetails.data.filePath;
+    //   alert(filepath);
+    //   window.open(filepath, '_blank');
+    // }
     
-    const filename = 'ErrosList.xlsx'
+    
+    const filepath = errorfilepath;
     // download('Sample Holidays.xlsx', url)
 
-    preventDefault(e);
+   // preventDefault(e);
    // const fileUrl = formFilePath;
 
     // Open the URL in a new tab to download the file
-    window.open(filepath, '_blank');
+     window.open(filepath, '_blank');
 
     // if (filename && filepath) {
     //   const link = document.createElement('a');

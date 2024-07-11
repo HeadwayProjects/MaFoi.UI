@@ -1620,10 +1620,10 @@ const onClickSubmitImportUpload=()=>{
   formData.append('ActId', actName.value)
   formData.append('RuleId', ruleName.value)
   formData.append('ActivityId', activityName.value)
-  formData.append('FormName', formName.value)
+  formData.append('FormName', formNameValue)
   formData.append('ProcessType', processType.value)
   formData.append('FilePath', formFilePath.value)
-  formData.append('Form', formNameValue)
+  formData.append('Form', formName)
   formData.append('HeaderStartRow', headerStartRow)
   formData.append('FooterStartRow', footerStartRow)
   formData.append('HeaderEndRow', headerEndRow)
@@ -1632,6 +1632,14 @@ const onClickSubmitImportUpload=()=>{
   formData.append('PageSize', pageSize)
   formData.append('PageOrientation', pageOrientation)
   console.log(formData);
+  setHeaderEndRow('');
+  setHeaderStartRow('');
+  setFooterEndRow('');
+  setFooterStartRow('');
+
+  setTotalRowsPerPage('');
+setPageOrientation('');
+setPageSize('');
   dispatch(importStateRegisterMapping(formData))
  
 }
@@ -2021,8 +2029,8 @@ useEffect(() => {
               </FormControl>
 
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                <Button variant='contained' onClick={onClickConfigure}>Configure</Button>
-                <Button variant='contained' sx={ {marginLeft: 10}} onClick={onClickConfigure2}>Configure2</Button>
+                <Button variant='contained' onClick={onClickConfigure}>Configure-UI</Button>
+                <Button variant='contained' sx={ {marginLeft: 10}} onClick={onClickConfigure2}>Configure-Excel</Button>
               </Box>
             </Box>}
 
@@ -3300,6 +3308,7 @@ useEffect(() => {
                           <TableCell > <TableSortLabel active={activeSort === 'ruleId'} direction={sortType} onClick={onClickSortRule}>Rule</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'activityId'} direction={sortType} onClick={onClickSortActivity}>Activity</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'form'} direction={sortType} onClick={onClickSortForm}>Form</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'form'} direction={sortType} onClick={onClickSortForm}>FormName</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'registerType'} direction={sortType} onClick={onClickSortRegisterType}>Type</TableSortLabel></TableCell>
                           <TableCell > Actions</TableCell>
                         </TableRow>
@@ -3317,6 +3326,7 @@ useEffect(() => {
                             <TableCell >{each.Rule && each.Rule.Name ? each.Rule.Name : 'NA'}</TableCell>
                             <TableCell >{each.Activity && each.Activity.Name ? each.Activity.Name : 'NA'}</TableCell>
                             <TableCell >{each.Form && each.Form ? each.Form : 'NA'}</TableCell>
+                            <TableCell >{each.FormName && each.FormName ? each.FormName : 'NA'}</TableCell>
                             <TableCell >{each.RegisterType && each.RegisterType ? each.RegisterType : 'NA'}</TableCell>
 
                             <TableCell >

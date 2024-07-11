@@ -1121,6 +1121,7 @@ const EmployeeAttendanceUpload = () => {
                                       <TableCell > <TableSortLabel > Day 29</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel > Day 30</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel > Day 31</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel > Present Days</TableSortLabel></TableCell>
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
@@ -1167,6 +1168,7 @@ const EmployeeAttendanceUpload = () => {
                                       <TableCell >{each.day29}</TableCell>
                                       <TableCell >{each.day30}</TableCell>
                                       <TableCell >{each.day31}</TableCell>
+                                      <TableCell >{each.presentDays}</TableCell>
 
                                       {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>

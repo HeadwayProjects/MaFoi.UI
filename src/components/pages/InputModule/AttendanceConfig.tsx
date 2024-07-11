@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import {bulkDeleteAttendance, resetBulkDeleteAttendanceDetails, addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetGetAttendanceDetailsStatus, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
 import  Select from "react-select";
+import { RootState } from '../../../redux/store';
 
 
 const style = {
@@ -54,9 +55,13 @@ const AttendanceConfig = () => {
   const addAttendanceDetails = useAppSelector((state: { attendanceConfiguration: { addAttendanceDetails: any; }; }) => state.attendanceConfiguration.addAttendanceDetails)
   const editAttendanceDetails = useAppSelector((state: { attendanceConfiguration: { editAttendanceDetails: any; }; }) => state.attendanceConfiguration.editAttendanceDetails)
 
-  const companiesDetails = useAppSelector((state: { inputModule: { companiesDetails: any; }; }) => state.inputModule.companiesDetails);
-  const associateCompaniesDetails = useAppSelector((state: { inputModule: { associateCompaniesDetails: any; }; }) => state.inputModule.associateCompaniesDetails);
-  const locationsDetails = useAppSelector((state: { inputModule: { locationsDetails: any; }; }) => state.inputModule.locationsDetails);
+  // const companiesDetails = useAppSelector((state: { inputModule: { companiesDetails: any; }; }) => state.inputModule.companiesDetails);
+  // const associateCompaniesDetails = useAppSelector((state: { inputModule: { associateCompaniesDetails: any; }; }) => state.inputModule.associateCompaniesDetails);
+  // const locationsDetails = useAppSelector((state: { inputModule: { locationsDetails: any; }; }) => state.inputModule.locationsDetails);
+
+  const companiesDetails = useAppSelector((state: RootState) => state.inputModule.companiesDetails);
+const associateCompaniesDetails = useAppSelector((state: RootState) => state.inputModule.associateCompaniesDetails);
+const locationsDetails = useAppSelector((state: RootState) => state.inputModule.locationsDetails);
 
   const bulkDeleteAttendanceDetails = useAppSelector((state: { attendanceConfiguration: { bulkDeleteAttendanceDetails: any; }; }) => state.attendanceConfiguration.bulkDeleteAttendanceDetails)
 

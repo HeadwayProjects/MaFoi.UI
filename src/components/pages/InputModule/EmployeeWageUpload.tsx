@@ -1211,6 +1211,10 @@ const EmployeeWageUpload = () => {
                                       <TableCell > <TableSortLabel active={activeSort === 'leaveStartDate'} direction={sortType} onClick={onClickSortStartDate}>Standard Days</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortEndDate}>WorkDays</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
