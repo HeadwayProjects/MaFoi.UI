@@ -274,9 +274,10 @@ const Configurations = () => {
 
   useEffect(() => {
     if(employeeAttendanceUploadDetails.status === 'succeeded'){
-        // alert("employeeUploadDetails hitted");
+       alert("employeeUploadDetails hitted");
         console.log(employeeAttendanceUploadDetails.data);
       if(employeeAttendanceUploadDetails.data.status === 'NOTSETUP'){
+        alert("not set up hitted");
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
@@ -300,12 +301,17 @@ const Configurations = () => {
  // dispatch(resetEmployeeAttendanceUploadDetails());
       
       }
-      else if (employeeUploadDetails.data.status === 'FAILURE'){
-      //  alert("employeeUploadDetails.status === 'FAILURE' hitted");
+      else if (employeeAttendanceUploadDetails.data.status === 'FAILURE'){
+        alert("employeeUploadDetails.status === 'FAILURE' hitted");
         toast.error(ERROR_MESSAGES.DEFAULT);
         dispatch(resetEmployeeAttendanceUploadDetails());
         dispatch(resetConfigUploadDetails());
       }
+      else if(employeeAttendanceUploadDetails.data.status === 'SUCCESS'){
+        alert("employee sccess hitted")
+         resetStateValues()
+         toast.success(`Upload Successfull`)
+       }
     }else if (employeeAttendanceUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
       dispatch(resetEmployeeAttendanceUploadDetails());

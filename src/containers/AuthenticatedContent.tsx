@@ -53,6 +53,7 @@ import SalaryComponents from "../components/pages/InputModule/SalaryComponents";
 import Dashboard from "../components/pages/InputModule/Dashboard";
 import Configurations from "../components/pages/InputModule/Configurations";
 import EmployeeWageUpload from "../components/pages/InputModule/EmployeeWageUpload";
+import RegisterDownload from "../components/pages/InputModule/RegisterDownload";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -121,6 +122,7 @@ function AuthenticatedContent() {
         '/setupInput/salaryComponents': () => (layout(<SalaryComponents />)),
         '/setupInput/stateRegisterConfiguration': () => (layout(<StateRegisterConfiguration />)),
         '/inputUploads/employeeMasterUpload': () => (layout(<EmployeeMasterUpload />)),
+        '/inputUploads/registerDownload' : () => (layout(<RegisterDownload/>)),
         '/inputUploads/employeeLeaveCreditUpload': () => (layout(<EmployeeLeaveCreditUpload />)),
         '/inputUploads/employeeLeaveAvailedUpload': () => (layout(<EmployeeLeaveAvailedUpload />)),
         '/inputUploads/employeeAttendanceUpload': () => (layout(<EmployeeAttendanceUpload />)),

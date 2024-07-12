@@ -21,7 +21,6 @@ const SideNavMenu = [
             { id: 'setupInput/leaveConfiguration', url: '/setupInput/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'setupInput/attendanceConfig', url: '/setupInput/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'setupInput/salaryComponents', url: '/setupInput/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'setupInput/stateRegisterConfiguration', url: '/setupInput/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'setupInput/inputModuleUploads', url: '/setupInput/inputModuleUploads', label: 'Input Module Uploads', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
         ]
     },
@@ -29,6 +28,7 @@ const SideNavMenu = [
         id: 'inputUploads', url: '/inputUploads', icon: 'eye', label: 'Input Uploads',
         children: [
             { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'inputUploads/registerDownload', url: '/inputUploads/registerDownload', label: 'Register Download', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'inputUploads/employeeMasterUpload', url: '/inputUploads/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'inputUploads/employeeLeaveCreditUpload', url: '/inputUploads/employeeLeaveCreditUpload', label: 'Employee Leave Credit', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             { id: 'inputUploads/employeeLeaveAvailedUpload', url: '/inputUploads/employeeLeaveAvailedUpload', label: 'Employee Leave Availed', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
@@ -47,7 +47,8 @@ const SideNavMenu = [
             { id: 'masters/state', url: '/masters/state', label: 'State', privilege: USER_PRIVILEGES.VIEW_STATES },
             { id: 'masters/city', url: '/masters/city', label: 'City', privilege: USER_PRIVILEGES.VIEW_CITIES },
             // { id: 'masters/compliance', url: '/masters/compliance', label: 'Rule Compliance', privilege: USER_PRIVILEGES.VIEW_RULE_COMPLIANCE },
-            { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings', privilege: USER_PRIVILEGES.VIEW_MAPPINGS }
+            { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings', privilege: USER_PRIVILEGES.VIEW_MAPPINGS },
+            { id: 'setupInput/stateRegisterConfiguration', url: '/setupInput/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY }
         ]
     },
     {

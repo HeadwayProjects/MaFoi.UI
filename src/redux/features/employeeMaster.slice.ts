@@ -162,6 +162,13 @@ export const employeeMasterSlice = createSlice({
     name: 'employeeMaster',
     initialState,
     reducers: {
+        resetBulkDeleteEmployees: (state) => {
+            state.bulkDeleteEmployeeDetails = {
+                status: 'idle',
+                data: '',
+                error: null
+            }
+        },
        
     },
     extraReducers: (builder) => builder
@@ -347,6 +354,6 @@ export const employeeMasterSlice = createSlice({
 })
 
   
-export const {  } = employeeMasterSlice.actions
+export const { resetBulkDeleteEmployees } = employeeMasterSlice.actions
 
 export default employeeMasterSlice.reducer

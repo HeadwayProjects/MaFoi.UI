@@ -1128,7 +1128,7 @@ console.log('formResonseUrl',formResponseUrl);
                         </Box>
                       </Box>
 
-                      <Box mt={1} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
+                      {/* <Box mt={1} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
                         <Typography padding={'8px'}> DOB</Typography>
                         <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
                           <FaCloudUploadAlt style={{fontSize:'20px'}}/>
@@ -1140,7 +1140,7 @@ console.log('formResonseUrl',formResponseUrl);
                         <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
                           <FaCloudUploadAlt style={{fontSize:'20px'}}/>
                         </Box>
-                      </Box>
+                      </Box> */}
 
                   </Box>
 
@@ -1153,7 +1153,7 @@ console.log('formResonseUrl',formResponseUrl);
 
                 </Box>
 
-                {/* Backend Box */}
+                {/* Backend Box
                 <Box sx={{padding:'25px', width:'24%', height:'330px', background:'#0001BB 0% 0% no-repeat padding-box', boxShadow:'0px 6px 10px #00000029', borderRadius:'10px'}}>
                     <Box sx={{display:'flex', alignItems:'center'}}>
                       <FaCode style={{fontSize:'28px'}}/>
@@ -1181,7 +1181,7 @@ console.log('formResonseUrl',formResponseUrl);
                     </Box>
                     
 
-                </Box>
+                </Box> */}
 
                 {/* Output Box */}
                 <Box sx={{width:'24%', display:'flex', flexDirection:'column', alignItems:'center'}}>

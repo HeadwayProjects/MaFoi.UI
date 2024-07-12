@@ -13,7 +13,7 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
-import { bulkDeleteEmployees, getEmployees } from '../../../redux/features/employeeMaster.slice';
+import { bulkDeleteEmployees, getEmployees,resetBulkDeleteEmployees } from '../../../redux/features/employeeMaster.slice';
 import { navigate, useQueryParams } from 'raviger';
 import { getBasePath } from '../../../App';
 
@@ -304,6 +304,7 @@ const EmployeeMasterUpload = () => {
   }
 
   useEffect(() => {
+   
     const employeesPayload: any = {
       search: "",
       filters: [],
@@ -1319,21 +1320,42 @@ const EmployeeMasterUpload = () => {
     } else {
       setSortType('asc')
     }
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
  
-
-
     const employeesPayload: any = {
       search: searchInput,
-      filters: [
-        {
-          columnName: 'companyId',
-          value: company
-        },
-        {
-          columnName: 'associateCompanyId',
-          value: associateCompany
-        }
-      ],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
@@ -1341,29 +1363,53 @@ const EmployeeMasterUpload = () => {
       sort: { columnName: 'code', order: 'asc' },
       "includeCentral": true
     }
-    alert(company);
+    //alert(company);
     dispatch(getEmployees(employeesPayload))
   }
 
   useEffect(() => {
     if (bulkDeleteEmployeeDetails.status === 'succeeded') {
+     
       toast.success(`Employees deleted successfully.`)
       setSelectedEmployees([])
-      dispatch(resetBulkDeleteHolidaysDetails())
+      dispatch(resetBulkDeleteEmployees())
       setOpenBulkDeleteModal(false)
+
+      const filters = []
+      if (company) {
+        filters.push({
+          columnName: 'companyId',
+          value: company
+        })
+      }
+      if (associateCompany) {
+        filters.push({
+          columnName: 'associateCompanyId',
+          value: associateCompany
+        })
+      }
+      if (location) {
+        filters.push({
+          columnName: 'locationId',
+          value: location.split('^')[0]
+        })
+      }
+      if (year) {
+        filters.push({
+          columnName: 'year',
+          value: year
+        })
+      }
+      if (month) {
+        filters.push({
+          columnName: 'month',
+          value: month
+        })
+      }
 
       const employeesPayload: any = {
         search: searchInput,
-        filters: [
-          {
-            columnName: 'companyId',
-            value: company
-          },
-          {
-            columnName: 'associateCompanyId',
-            value: associateCompany
-          }
-        ],
+        filters,
         pagination: {
           pageSize: rowsPerPage,
           pageNumber: page + 1
@@ -1371,7 +1417,7 @@ const EmployeeMasterUpload = () => {
         sort: { columnName: 'code', order: 'asc' },
         "includeCentral": true
       }
-      alert(company);
+      //alert(company);
 
       // const EmployeeDefaultPayload: any = {
       //   search: "",
@@ -1383,7 +1429,8 @@ const EmployeeMasterUpload = () => {
       //   sort: { columnName: 'name', order: 'asc' },
       //   "includeCentral": true
       // }
-      dispatch(getHolidaysList(employeesPayload))
+      dispatch(resetBulkDeleteEmployees())
+      dispatch(getEmployees(employeesPayload))
     } else if (bulkDeleteEmployeeDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
@@ -1670,10 +1717,9 @@ const EmployeeMasterUpload = () => {
                 <>
                   <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '385px', overflowY: 'scroll' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
-                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' } }}>
+                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7',maxHeight: '10px' } }}>
                         <TableRow>
                           <TableCell><Checkbox checked={(selectedEmployees && selectedEmployees.length) === (employees && employees.length)} onClick={onClickAllCheckBox} /></TableCell>
-
                           <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB}>DOB</TableSortLabel></TableCell>
