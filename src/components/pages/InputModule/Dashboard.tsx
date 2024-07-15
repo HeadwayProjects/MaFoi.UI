@@ -62,17 +62,14 @@ const Dashboard = () => {
   const [associateCompanyName, setAssociateCompanyName] = React.useState('');
   const [locationName, setLocationName] = React.useState('');
 
-  const [showDashboardDetails, setShowDashboardDetails] = React.useState(false);
+  const [showDashboardDetails, setShowDashboardDetails] = React.useState(true);
 
   const handleChangeCompany = (event:any) => {
 
     const selectedCompanyId = event.target.value as string;
     const selectedCompanyName = getCompanyNameById(selectedCompanyId, companies);
   
-
-    
-  
-    setShowDashboardDetails(false)
+   // setShowDashboardDetails(false)
     setAssociateCompany('')
     setStateName('')
     setLocation('')
@@ -95,7 +92,7 @@ const Dashboard = () => {
     const selectedCompanyName = getAssocCompanyNameById(selectedCompanyId, associateCompanies);
   
     //alert(selectedCompanyName);
-    setShowDashboardDetails(false)
+ //   setShowDashboardDetails(false)
     setLocation('')
     setYear('')
     setMonth('')
@@ -112,7 +109,7 @@ const Dashboard = () => {
   };
 
   const handleChangeStateName = (event:any) => {
-    setShowDashboardDetails(false)
+  //  setShowDashboardDetails(false)
     setYear('')
     setMonth('')
     setLocation('')
@@ -126,7 +123,7 @@ const Dashboard = () => {
   
   //  alert(selectedCompanyName);
 
-    setShowDashboardDetails(false)
+  //  setShowDashboardDetails(false)
     setYear('')
     setMonth('')
     setLocation(event.target.value);
@@ -144,13 +141,13 @@ const getLocationById = (id: string, locations: any[]) => {
 
   
   const handleChangeYear = (event:any) => {
-    setShowDashboardDetails(false)
+  //  setShowDashboardDetails(false)
     setMonth('')
     setYear(event.target.value.toString());
   };
   
   const handleChangeMonth = (event:any) => {
-    setShowDashboardDetails(false)
+  //  setShowDashboardDetails(false)
     setMonth(event.target.value);
     const dashboardPayloadDefault: any =  { 
       companyId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
@@ -173,9 +170,13 @@ const getLocationById = (id: string, locations: any[]) => {
     dispatch(getEmployeeDashboardCounts(dashboardPayload))
     dispatch(getEmployeeInputDashboard(dashboardPayload))
     dispatch(getEmployeeBackendCount(dashboardPayload))
+    
   };
 
   useEffect(() => {
+    resetEmployeeDashboardCountsDetailsStatus()
+    resetEmployeeInputDashboardDetailsStatus()
+    resetEmployeeBackendCountDetailsStatus()
     const companiesPayload: any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] }
     dispatch(getAllCompaniesDetails(companiesPayload))
   },[])
@@ -202,13 +203,14 @@ const getLocationById = (id: string, locations: any[]) => {
   }, [associateCompany])
 
   useEffect(() => {
+    
     if(employeeDashboardCountsDetails.status === 'succeeded' || employeeInputDashboardDetails.status === 'succeeded' || employeeBackendCountDetails.status === 'succeeded'){
-      setShowDashboardDetails(true)
+      //setShowDashboardDetails(true)
     }
     if(employeeDashboardCountsDetails.status === 'succeeded'){
       
     }else if(employeeDashboardCountsDetails.status === 'failed' || employeeInputDashboardDetails.status === 'failed' || employeeBackendCountDetails.status === 'failed'){
-      toast.error(ERROR_MESSAGES.DEFAULT);
+      //toast.error(ERROR_MESSAGES.DEFAULT);
       resetEmployeeDashboardCountsDetailsStatus()
       resetEmployeeInputDashboardDetailsStatus()
       resetEmployeeBackendCountDetailsStatus()
@@ -939,6 +941,7 @@ console.log('formResonseUrl',formResponseUrl);
                             }else if(each.inputFiletype === 'Employee Attendance'){
                               redirectFunction = onClickEmployeeAttendancePreview
                             }
+
                             return (
                               <Box mt={1} sx={{display:'flex', justifyContent:'space-between', background:'#24C58A4D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #24C58A'}}>
                                                   <Typography padding={'8px'}> {each.inputFiletype}</Typography>
@@ -1108,25 +1111,40 @@ console.log('formResonseUrl',formResponseUrl);
                       </Box>
 
                       <Box mt={2} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
-                        <Typography padding={'8px'}> Employee Pan</Typography>
+                        <Typography padding={'8px'}> Employee Pan ( {employeeCounts.employeePanCount ? employeeCounts.employeePanCount : "0" } nos )</Typography>
                         <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
                           <FaCloudUploadAlt style={{fontSize:'20px'}}/>
                         </Box>
                       </Box>
                       
                       <Box mt={1} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
-                        <Typography padding={'8px'}> Aadhar</Typography>
+                        <Typography padding={'8px'}> Aadhar ( {employeeCounts.employeeAadharCount ? employeeCounts.employeeAadharCount : "0" } nos )</Typography>
                         <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
                           <FaCloudUploadAlt style={{fontSize:'20px'}}/>
                         </Box>
                       </Box>
 
                       <Box mt={1} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
-                        <Typography padding={'8px'}> Gender</Typography>
+                        <Typography padding={'8px'}> ESIC ( {employeeCounts.employeeESICount ? employeeCounts.employeeESICount : "0" } nos )</Typography>
                         <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
                           <FaCloudUploadAlt style={{fontSize:'20px'}}/>
                         </Box>
                       </Box>
+
+                      <Box mt={1} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
+                        <Typography padding={'8px'}> PF NO ( {employeeCounts.employeePFnumberCount ? employeeCounts.employeePFnumberCount : "0" } nos )</Typography>
+                        <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
+                          <FaCloudUploadAlt style={{fontSize:'20px'}}/>
+                        </Box>
+                      </Box>
+
+                      <Box mt={1} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
+                        <Typography padding={'8px'}>UAN NO ( {employeeCounts.employeeUANnumberCount ? employeeCounts.employeeUANnumberCount : "0" } nos )</Typography>
+                        <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
+                          <FaCloudUploadAlt style={{fontSize:'20px'}}/>
+                        </Box>
+                      </Box>
+                    
 
                       {/* <Box mt={1} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
                         <Typography padding={'8px'}> DOB</Typography>

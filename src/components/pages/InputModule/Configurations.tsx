@@ -223,10 +223,10 @@ const Configurations = () => {
 
   useEffect(() => {
     if(employeeUploadDetails.status === 'succeeded'){
-     // alert("employeeUploadDetails hitted");
+     //alert("employeeUploadDetails hitted");
       console.log(employeeUploadDetails.data);
       if(employeeUploadDetails.data.status === 'NOTSETUP'){
-        alert("not set up hitted");
+       // alert("not set up hitted");
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
@@ -243,15 +243,15 @@ const Configurations = () => {
       }
       else if(employeeUploadDetails.data.filePath!= null )
         {
-         // alert("file path not null hitted")
+         //alert("file path not null hitted")
   setUploadError(true);
   setErrorFilePath(employeeUploadDetails.data.filePath);
-  //alert("employeeUploadDetails.data.filePath!= null hitted");
+ // alert("employeeUploadDetails.data.filePath!= null hitted");
   dispatch(resetEmployeeUploadDetails());
       
       }
       else if (employeeUploadDetails.data.status === 'FAILURE'){
-     //  alert("employeeUploadDetails.status === 'FAILURE' hitted");
+     // alert("employeeUploadDetails.status === 'FAILURE' hitted");
         toast.error(ERROR_MESSAGES.DEFAULT);
         dispatch(resetEmployeeUploadDetails());
         dispatch(resetConfigUploadDetails());
@@ -264,7 +264,7 @@ const Configurations = () => {
      
     }
     else if (employeeUploadDetails.status === 'failed'){
-     // alert("employeeUploadDetails.status === 'failed hitted");
+    // alert("employeeUploadDetails.status === 'failed hitted");
       toast.error(ERROR_MESSAGES.DEFAULT);
       dispatch(resetEmployeeUploadDetails());
       dispatch(resetConfigUploadDetails());
@@ -274,10 +274,10 @@ const Configurations = () => {
 
   useEffect(() => {
     if(employeeAttendanceUploadDetails.status === 'succeeded'){
-       alert("employeeUploadDetails hitted");
+      //alert("employeeUploadDetails hitted");
         console.log(employeeAttendanceUploadDetails.data);
       if(employeeAttendanceUploadDetails.data.status === 'NOTSETUP'){
-        alert("not set up hitted");
+     // alert("not set up hitted");
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
@@ -294,7 +294,7 @@ const Configurations = () => {
       }
       else if(employeeAttendanceUploadDetails.data.filePath!= null )
         {
-          alert("failpeath not null hitted");
+         // alert("failpeath not null hitted");
   setUploadError(true);
   setErrorFilePath(employeeAttendanceUploadDetails.data.filePath);
   //alert("employeeUploadDetails.data.filePath!= null hitted");
@@ -302,13 +302,13 @@ const Configurations = () => {
       
       }
       else if (employeeAttendanceUploadDetails.data.status === 'FAILURE'){
-        alert("employeeUploadDetails.status === 'FAILURE' hitted");
+       // alert("employeeUploadDetails.status === 'FAILURE' hitted");
         toast.error(ERROR_MESSAGES.DEFAULT);
         dispatch(resetEmployeeAttendanceUploadDetails());
         dispatch(resetConfigUploadDetails());
       }
       else if(employeeAttendanceUploadDetails.data.status === 'SUCCESS'){
-        alert("employee sccess hitted")
+         // alert("employee sccess hitted")
          resetStateValues()
          toast.success(`Upload Successfull`)
        }

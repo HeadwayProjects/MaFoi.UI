@@ -947,11 +947,8 @@ const EmployeeWageUpload = () => {
     const employeesPayload: any = {
       search: searchInput,
       filters,
-      pagination: {
-        pageSize: rowsPerPage,
-        pageNumber: page + 1
-      },
-      sort: { columnName: activeSort, order: sortType },
+      pagination: null,
+      sort: { columnName: "EmployeeCode", order: "asc" },
       "includeCentral": true
     }
     exportEmployeesWage({ ...employeesPayload, pagination: null });

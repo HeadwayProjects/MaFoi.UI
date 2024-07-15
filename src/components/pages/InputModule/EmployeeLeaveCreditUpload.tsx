@@ -827,11 +827,8 @@ const EmployeeLeaveCreditUpload = () => {
     const employeesLeavePayload: any = {
       search: searchInput,
       filters,
-      pagination: {
-        pageSize: rowsPerPage,
-        pageNumber: page + 1
-      },
-      sort: { columnName: activeSort, order: sortType },
+      pagination: null,
+      sort: { columnName: "Employeecode", order: "asc" },
       "includeCentral": true
     }
     exportEmployeesLeaveCredit({ ...employeesLeavePayload, pagination: null });
