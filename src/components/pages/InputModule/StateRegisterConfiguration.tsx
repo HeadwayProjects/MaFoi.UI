@@ -202,6 +202,9 @@ const StateRegisterConfiguration = () => {
   const [isHovered, setIsHovered] = React.useState(false);
   const [hoveredRow, setHoveredRow] = useState(null);
 
+  const [selectedstateconfigFormName,setSelectedStateConfigFormName] = React.useState('');
+  const [selectedstateconfigForm,setSelectedStateConfigForm] = React.useState('');
+
   // const [symbols, setSymbols] = React.useState<any>([])
 
   // const symbol = [', separation', '+ Addition', '- Substraction', '/ division', '* multiplication']
@@ -211,7 +214,8 @@ const StateRegisterConfiguration = () => {
     { value: '+', label: '+ Addition' },
     { value: '-', label: '- Substraction' },
     { value: '/', label: '/ division' },
-    { value: '*', label: '* multiplication' }
+    { value: '*', label: '* multiplication' },
+    { value: '&', label: '& Symbol' }
   ];
 
 
@@ -258,7 +262,7 @@ const StateRegisterConfiguration = () => {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'stateId', order: 'asc' },
+      sort: { columnName: 'StateId', order: 'asc' },
       "includeCentral": true
     }
     dispatch(getStateRegister(stateRegisterPayload))
@@ -824,8 +828,9 @@ const StateRegisterConfiguration = () => {
       actId: selectedStateConfig.ActId,
       ruleId: selectedStateConfig.RuleId,
       activityId: selectedStateConfig.ActivityId,
-      formName: selectedStateConfig.FormName,
-      form: selectedStateConfig.Form,
+      // formName: selectedStateConfig.FormName,
+      formName :selectedstateconfigFormName,
+      form: selectedstateconfigForm,
       headerStartRow: selectedStateConfig.HeaderStartRow,
       footerStartRow: selectedStateConfig.FooterStartRow,
       headerEndRow: selectedStateConfig.HeaderEndRow,
@@ -841,6 +846,14 @@ const StateRegisterConfiguration = () => {
     console.log(payload); // For debugging purposes
     dispatch(updateStateRegister(payload));
   };
+
+
+  useEffect(() => {
+    if (selectedStateConfig.FormName) {
+      setSelectedStateConfigFormName(selectedStateConfig.FormName);
+      setSelectedStateConfigForm(selectedStateConfig.Form)
+    }
+  }, [selectedStateConfig.FormName]);
   
 
   console.log(selectedStateConfig);
@@ -1291,6 +1304,7 @@ const StateRegisterConfiguration = () => {
   console.log(columnsList);
 
   const handleChangePage = (event: unknown, newPage: number) => {
+   // alert(stateValue);
     const filters = []
     if (stateValue) {
       filters.push({
@@ -1320,6 +1334,7 @@ const StateRegisterConfiguration = () => {
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+ //   alert(stateValue);
     const filters = []
     if (stateValue) {
       filters.push({
@@ -1335,7 +1350,7 @@ const StateRegisterConfiguration = () => {
     }
     const payload: any = {
       search: '',
-      filters: [],
+      filters,
       pagination: {
         pageSize: parseInt(event.target.value, 10),
         pageNumber: 1
@@ -1450,22 +1465,30 @@ const StateRegisterConfiguration = () => {
       setOpenEditModal(false)
     
       setStateValue('');
-      const stateRegisterDefaultPayload: any = {
-        search: "",
-        filters: [
-         
-        ],
-        pagination: {
-          pageSize: 10,
-          pageNumber: 1
-        },
-        sort: { columnName: 'stateId', order: 'asc' },
-        "includeCentral": true
-      }
-  console.log(stateRegisterDefaultPayload);
-   //  alert(stateValue);
-    // alert(type);
-      dispatch(getStateRegister(stateRegisterDefaultPayload))
+      const filters = []
+    if (stateValue) {
+      filters.push({
+        columnName: 'stateId',
+        value: stateValue
+      })
+    }
+    if (registerType) {
+      filters.push({
+        columnName: 'registerType',
+        value: registerType
+      })
+    }
+    const payload: any = {
+      search: searchInput,
+      filters: filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'stateId', order: 'asc' },
+      "includeCentral": true
+    }
+      dispatch(getStateRegister(payload))
      
     } else if (updateStateRegisterDetails.status === 'failed') {
       toast.error(ERROR_MESSAGES.DEFAULT);
@@ -2626,11 +2649,6 @@ useEffect(() => {
 
 
 
-
-
-
-
-
  {/* Edit Modal */}
  <Modal
         open={openEditModal}
@@ -2641,10 +2659,30 @@ useEffect(() => {
           <Box sx={{
             backgroundColor: '#E2E3F8', padding: '5px', px: '10px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center'
 }}>
-            <Box sx={{display: "flex", flexDirection: "column"}}>
+            <Box sx={{display: "flex", flexDirection: "row"}}>
 
 
-            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Form :  {selectedStateConfig.FormName } Edit Mapping  </Typography>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Form :  {selectedStateConfig.FormName } </Typography>
+            FormName: <FormControl sx={{ m: 1, maxWidth: "190px", minWidth: '150px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">                                           
+                                            <OutlinedInput
+                                             
+                                             // value={selectedStateConfig.FormName}
+                                              value={selectedstateconfigFormName}
+                                              onChange={(e)=>setSelectedStateConfigFormName(e.target.value)}
+                                             
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                     Form : <FormControl sx={{ m: 1, maxWidth: "190px", minWidth: '150px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">                                           
+                                            <OutlinedInput
+                                             
+                                             // value={selectedStateConfig.FormName}
+                                              value={selectedstateconfigForm}
+                                              onChange={(e)=>setSelectedStateConfigForm(e.target.value)}
+                                             
+                                              type='text'
+                                            />
+                                      </FormControl>
 
            
            
@@ -3090,30 +3128,6 @@ useEffect(() => {
 
 
 
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3310,6 +3324,7 @@ useEffect(() => {
                           <TableCell > <TableSortLabel active={activeSort === 'form'} direction={sortType} onClick={onClickSortForm}>Form</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'form'} direction={sortType} onClick={onClickSortForm}>FormName</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'registerType'} direction={sortType} onClick={onClickSortRegisterType}>Type</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'Formurl'} direction={sortType} onClick={onClickSortRegisterType}>FilePath</TableSortLabel></TableCell>
                           <TableCell > Actions</TableCell>
                         </TableRow>
                       </TableHead>
@@ -3323,11 +3338,12 @@ useEffect(() => {
                           >
                             <TableCell >{each.State && each.State.Name ? each.State.Name : 'NA'}</TableCell>
                             <TableCell >{each.Act && each.Act.Name ? each.Act.Name : 'NA'}</TableCell>
-                            <TableCell >{each.Rule && each.Rule.Name ? each.Rule.Name : 'NA'}</TableCell>
+                            <TableCell >{each.Rule && each.Rule.Name+'/'+ each.Rule.RuleNo+', sec' + each.Rule.SectionNo ? each.Rule.Name+ '/'+each.Rule.RuleNo+', sec' + each.Rule.SectionNo : 'NA' }</TableCell>
                             <TableCell >{each.Activity && each.Activity.Name ? each.Activity.Name : 'NA'}</TableCell>
                             <TableCell >{each.Form && each.Form ? each.Form : 'NA'}</TableCell>
                             <TableCell >{each.FormName && each.FormName ? each.FormName : 'NA'}</TableCell>
                             <TableCell >{each.RegisterType && each.RegisterType ? each.RegisterType : 'NA'}</TableCell>
+                            <TableCell >{each.FilePath && each.FilePath ? each.FilePath : 'NA'}</TableCell>
 
                             <TableCell >
                               <Box sx={{  display: 'flex', justifyContent: 'space-between', width: '100px'  }}>

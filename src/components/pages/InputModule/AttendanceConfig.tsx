@@ -197,6 +197,30 @@ console.log('locaname',locationdetails);
     dispatch(getAttendanceConfiguration(attendancePayload))
   };
 
+
+  const handleEditChangeCompany = (event:any) => {
+    setAssociateCompany('')
+    setLocation('')
+    setCompany(event.target.value);
+    const attendancePayload: any =  { 
+      search: searchInput, 
+      filters: [
+        {
+          columnName:'companyId',
+          value: event.target.value
+        }
+      ],
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'companyId', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getAttendanceConfiguration(attendancePayload))
+  };
+
+
   const handleChangeAssociateCompany = (event:any) => {
     setLocation('')
     setAssociateCompany(event.target.value);
@@ -274,6 +298,7 @@ console.log('locaname',locationdetails);
   },[])
 
   useEffect(() => {
+    
     const payload:any = { ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: company }] }
     if(company){
       dispatch(getAssociateCompanies(payload))
@@ -1045,9 +1070,9 @@ console.log('locaname',locationdetails);
 
   const onClickSubmitEdit = () => {
 
-    if(addButtonDisable){
-      return toast.error(ERROR_MESSAGES.FILL_ALL);
-    }
+    // if(addButtonDisable){
+    //   return toast.error(ERROR_MESSAGES.FILL_ALL);
+    // }
     const nameOfWeekDays = weekDays.map((each:any) => each.value).join(', ')
     const payload = {
       shiftName,
@@ -1732,7 +1757,9 @@ label="AM/PM"
                       id="demo-select-small"
                       value={company}
                       label="Company"
-                      onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
+                      // onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => {setCompany(e.target.value), setAssociateCompany(''), setLocation('')}}
+                      onChange={handleEditChangeCompany}
+                      disabled
                     >
                       {companies && companies.map((each:any) => {
                           return <MenuItem value={each.id}>{each.name}</MenuItem>
@@ -1747,8 +1774,9 @@ label="AM/PM"
                       id="demo-select-small"
                       value={associateCompany}
                       label="Associate Company"
-                      disabled={!company}
+                      // disabled={!company}
                       onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setAssociateCompany(e.target.value)}
+                      disabled
                     >
                       {associateCompanies && associateCompanies.map((each:any) => {
                           return <MenuItem value={each.id}>{each.name}</MenuItem>
@@ -1763,8 +1791,10 @@ label="AM/PM"
                       id="demo-select-small"
                       value={location}
                       label="Location"
-                      disabled={!associateCompany}
+                      // disabled={!company}
                       onChange={(e: { target: { value: React.SetStateAction<string>; }; }) => setLocation(e.target.value)}
+                      disabled
+                      
                     >
                       {locations && locations.map((each:any) => {
                           const { id, name, code, cities }: any = each.location || {};

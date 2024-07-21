@@ -181,7 +181,7 @@ const HolidayList = () => {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'year', order: 'desc' },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload))
@@ -209,7 +209,7 @@ const HolidayList = () => {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'year', order: 'desc' },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload))
@@ -274,7 +274,7 @@ const HolidayList = () => {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'name', order: 'asc' },
+      sort: { columnName: 'year', order: 'desc' },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload))
@@ -1145,7 +1145,7 @@ const HolidayList = () => {
         pageSize: rowsPerPage,
         pageNumber: page + 1
       },
-      sort: { columnName: 'stateId', order: type },
+      sort: { columnName: 'state.name', order: type },
       "includeCentral": true
     }
     dispatch(getHolidaysList(HolidayListPayload))
@@ -1620,6 +1620,14 @@ const HolidayList = () => {
     document.body.removeChild(a);
   }
 
+  const handleNameChange = (e:any) => {
+    const regex = /^[a-zA-Z0-9\s]*$/; // Regex to allow only alphanumeric characters and spaces
+    const value = e.target.value;
+    if (regex.test(value)) {
+      setName(value);
+    }
+  };
+
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
 
@@ -1645,7 +1653,8 @@ const HolidayList = () => {
                   <OutlinedInput
                     placeholder='Holiday Name'
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    // onChange={(e) => setName(e.target.value)}
+                    onChange={handleNameChange}
                     id="outlined-adornment-name"
                     type='text'
                     label="Name"
@@ -2436,7 +2445,7 @@ const HolidayList = () => {
                           <TableCell><Checkbox checked={(selectedHolidays && selectedHolidays.length) === (holidays && holidays.length)} onClick={onClickAllCheckBox} /></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Year</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'day'} direction={sortType} onClick={onClickSortDate}> Date</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'company'} direction={sortType} onClick={onClickSortassociateCompanyName}> Company</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'company'} direction={sortType} onClick={onClickSortCompanyName}> Company</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'associatecompany'} direction={sortType} onClick={onClickSortassociateCompanyName}>Associate Company</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Holiday Name</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'stateId'} direction={sortType} onClick={onClickSortState}> State</TableSortLabel></TableCell>
