@@ -12,6 +12,7 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { FaUpload } from 'react-icons/fa';
 import Select from "react-select";
 import Companies from '../Masters/Companies/Companies';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 const styleUploadModal = {
   position: 'absolute' as 'absolute',
@@ -99,6 +100,8 @@ const Configurations = () => {
   const [tableData, setTableData] = React.useState<any>([]);
 
   const [errorfilepath,setErrorFilePath]=React.useState('');
+
+  const [showmappinglne,setShowMappingLine]= React.useState(false);
 
   const handleChangeConfigType = (event:any) => {
     setCompany('')
@@ -259,7 +262,7 @@ const Configurations = () => {
       else if(employeeUploadDetails.data.status === 'SUCCESS'){
        // alert("employee sccess hitted")
         resetStateValues()
-        toast.success(`Upload Successfull`)
+        toast.success(`Employee Data Upload Successfull`)
       }
      
     }
@@ -397,7 +400,10 @@ const Configurations = () => {
 
   useEffect(() => {
     if(employeeWageUploadDetails.status === 'succeeded'){
-      if(employeeWageUploadDetails.data.key === 'FAILURE'){
+      console.log(employeeUploadDetails.data);
+      if(employeeWageUploadDetails.data.status === 'NOTSETUP'){
+        //alert("employeewageupload details hitted");
+        //alert(configType);
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
@@ -411,19 +417,42 @@ const Configurations = () => {
         formData.append('LocationId', location)
         formData.append('StateId', stateName)
         dispatch(configUpload(formData))
-      }else{
-        resetStateValues()
-        toast.success(`Upload Successfull`)
       }
+      else if(employeeWageUploadDetails.data.filePath!= null )
+        {
+               //alert("file path not null hitted")
+  setUploadError(true);
+  setErrorFilePath(employeeWageUploadDetails.data.filePath);
+ // alert("employeeUploadDetails.data.filePath!= null hitted");
+  dispatch(resetEmployeeWageUploadDetails());
+        }
+        else if (employeeWageUploadDetails.data.status === 'FAILURE'){
+          // alert("employeeUploadDetails.status === 'FAILURE' hitted");
+             toast.error(ERROR_MESSAGES.DEFAULT);
+             dispatch(resetEmployeeWageUploadDetails());
+             dispatch(resetConfigUploadDetails());
+           }
+           else if(employeeWageUploadDetails.data.status === 'SUCCESS'){
+            // alert("employee sccess hitted")
+             resetStateValues()
+             toast.success(`Wage Data Upload Successfull`)
+           }
+        
     }else if (employeeWageUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
+      dispatch(resetEmployeeUploadDetails());
+      dispatch(resetConfigUploadDetails());
     }
   }, [employeeWageUploadDetails.status])
 
+
+
+
   useEffect(() => {
     if(configUploadDetails.status === 'succeeded'){
-    //  alert("configuploadstatus hitted");
+   //alert("429 configuploadstatus hitted");
       setTableData(configUploadDetails.data.list)
+      setShowMappingLine(true);
       resetUploadDetails()
       if(configType === 'Employee'){
         dispatch(getColumns('Employee'))
@@ -444,7 +473,7 @@ setUploadError(true);
 //alert("employeeUploadDetails.data.filePath!= null hitted"); 
     }
   else if (configUploadDetails.status === 'failed'){
-    //alert("employeeUploadDetails.status === 'failed hitted");
+    //alert(" 448 employeeUploadDetails.status === 'failed hitted");
     toast.error(ERROR_MESSAGES.DEFAULT);
     dispatch(resetEmployeeUploadDetails());
     dispatch(resetConfigUploadDetails());
@@ -459,29 +488,33 @@ else if (configUploadDetails.status === 'failed'){
 
   useEffect(() => {
     if(excelHeaderToDbColumnsDetails.status === 'succeeded'){
-      const formData = new FormData();
-      const data = uploadData ? uploadData[0] : []
-      formData.append('file', data);
-      formData.append('Remarks', 'NA')
-      formData.append('Year', year)
-      formData.append('Month', month)
-      formData.append('Mapped', 'true')
-      formData.append('ConfigurationType', configType)
-      formData.append('CompanyId', company)
-      formData.append('AssociateCompanyId', associateCompany)
-      formData.append('LocationId', location)
-      formData.append('StateId', stateName)
-      if(configType === 'Employee'){
-        dispatch(employeeUpload(formData))
-      }else if(configType === 'Employee attendance'){
-        dispatch(employeeAttendanceUpload(formData))
-      }else if(configType === 'Leave credit'){
-        dispatch(employeeLeaveCreditUpload(formData))
-      }else if(configType === 'Leave availed'){
-        dispatch(employeeLeaveAvailedUpload(formData))
-      }else if(configType === 'Employee Wage'){
-        dispatch(employeeWageUpload(formData))
-      }
+       toast.success("Mappings Updated Successfully");
+       toast.info("Upload the Data Now");
+      setTableData([]);
+      // alert("466excelheaderto db col hitted ")
+      // const formData = new FormData();
+      // const data = uploadData ? uploadData[0] : []
+      // formData.append('file', data);
+      // formData.append('Remarks', 'NA')
+      // formData.append('Year', year)
+      // formData.append('Month', month)
+      // formData.append('Mapped', 'true')
+      // formData.append('ConfigurationType', configType)
+      // formData.append('CompanyId', company)
+      // formData.append('AssociateCompanyId', associateCompany)
+      // formData.append('LocationId', location)
+      // formData.append('StateId', stateName)
+      // if(configType === 'Employee'){
+      //   dispatch(employeeUpload(formData))
+      // }else if(configType === 'Employee attendance'){
+      //   dispatch(employeeAttendanceUpload(formData))
+      // }else if(configType === 'Leave credit'){
+      //   dispatch(employeeLeaveCreditUpload(formData))
+      // }else if(configType === 'Leave availed'){
+      //   dispatch(employeeLeaveAvailedUpload(formData))
+      // }else if(configType === 'Employee Wage'){
+      //   dispatch(employeeWageUpload(formData))
+      // }
     }else if(excelHeaderToDbColumnsDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
     }
@@ -490,6 +523,7 @@ else if (configUploadDetails.status === 'failed'){
   
   useEffect(() => {
     if(configMappingDetails.status === 'succeeded'){
+     //alert("495 config mapp details hitted")
       if(configMappingDetails.data.status !== 'FAILURE'){        
         setTableData(configMappingList)
       }
@@ -564,7 +598,9 @@ else if (configUploadDetails.status === 'failed'){
     if(check){
       return toast.error('Please Select All Ezycomp Fields');
     } else{
+     
       dispatch(callExcelHeaderToDbColumns({listExcelHeadertoDBColumnsMapp : tableData}))
+      setShowMappingLine(false);
     }
   }
 
@@ -673,6 +709,24 @@ else if (configUploadDetails.status === 'failed'){
     dispatch(resetEmployeeWageUploadDetails())
   }
 
+  const closeMappingPreview =()=>{
+    //alert("hitted close mapping preview");
+    dispatch(resetConfigUploadDetails())
+    dispatch(resetGetColumnsDetails())
+    dispatch(resetExcelHeaderToDbColumnsDetails())
+    dispatch(resetEmployeeUploadDetails())  
+    dispatch(resetEmployeeAttendanceUploadDetails())
+    dispatch(resetEmployeeLeaveCreditUploadDetails())
+    dispatch(resetEmployeeLeaveAvailedUploadDetails())
+    dispatch(resetEmployeeWageUploadDetails())
+    dispatch(resetGetConfigMappingDetails())
+    setOpenPreviewModal(false);
+    setOpenPreviewModal(false);
+    setUploadData(null)
+    setTableData([])
+    setShowMappingLine(false);
+  }
+
   const resetStateValues = () => {
     dispatch(resetConfigUploadDetails())
     dispatch(resetGetColumnsDetails())
@@ -762,7 +816,7 @@ else if (configUploadDetails.status === 'failed'){
       {/* Preview Modal */}
       <Modal
         open={openPreviewModal}
-        onClose={() => {resetStateValues()}}
+        onClose={() => {closeMappingPreview()}}
       >
 
         <Box sx={style}> 
@@ -795,7 +849,7 @@ else if (configUploadDetails.status === 'failed'){
 
             
               <IconButton
-                onClick={() => {resetStateValues()}}
+                onClick={() => {closeMappingPreview()}}
               >
                 <IoMdClose />
               </IconButton>
@@ -862,7 +916,9 @@ else if (configUploadDetails.status === 'failed'){
               <Box sx={{backgroundColor:'#E2E3F8', paddingX: '20px', paddingY:'10px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                   <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'5px'}}>
                       <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Input Module Uploads</h5>
+                      {showmappinglne ? <p style={{ color: 'white', backgroundColor: 'rgb(6, 84, 173)', fontWeight: 'bold' }}>Do the Mappings , needed for first time uploading</p> : ""}
                       <Box sx={{marginRight:'12px', display:'flex', alignItems:'center', width:'260px', justifyContent: 'space-between'}}>
+                       
                         <Button onClick={onClickPreview} disabled={!configType || !company || !associateCompany || !location} variant='contained' > Preview </Button>
                         <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                       </Box>
