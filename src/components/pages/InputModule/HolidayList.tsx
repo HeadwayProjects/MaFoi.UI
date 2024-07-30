@@ -13,6 +13,8 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
+import { hasUserAccess } from '../../../backend/auth';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
 
 
 const style = {
@@ -2193,10 +2195,23 @@ const HolidayList = () => {
             <div style={{ backgroundColor: '#E2E3F8', padding: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', marginTop: '10px' }}>
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Holiday List</h5>
+
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'space-between' }}>
-                  <Button onClick={onClickUpload} title='Import Data' variant='contained' style={{ backgroundColor: '#E9704B', display: 'flex', alignItems: 'center' }}> <FaUpload /> &nbsp; Upload</Button>
+
+                {
+                    hasUserAccess(USER_PRIVILEGES.ADD_HOLIDAY_LIST) &&
+                    <>
+                      <Button onClick={onClickUpload} title='Import Data' variant='contained' style={{ backgroundColor: '#E9704B', display: 'flex', alignItems: 'center' }}> <FaUpload /> &nbsp; Upload</Button>
+                      <Button onClick={onClickAdd} variant='contained' style={{ backgroundColor: '#0654AD', display: 'flex', alignItems: 'center' }}> <IoMdAdd /> &nbsp; Add</Button>
+                    </>
+                  }
+                  {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_HOLIDAY_LIST) &&
+                    <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedHolidays && selectedHolidays.length === 0}> Bulk Delete</Button>
+                  }
+                  {/* <Button onClick={onClickUpload} title='Import Data' variant='contained' style={{ backgroundColor: '#E9704B', display: 'flex', alignItems: 'center' }}> <FaUpload /> &nbsp; Upload</Button>
                   <Button onClick={onClickAdd} variant='contained' style={{ backgroundColor: '#0654AD', display: 'flex', alignItems: 'center' }}> <IoMdAdd /> &nbsp; Add</Button>
-                  <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedHolidays && selectedHolidays.length === 0}> Bulk Delete</Button>
+                  <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedHolidays && selectedHolidays.length === 0}> Bulk Delete</Button> */}
                   <button onClick={onClickExport} title='Export Data' disabled={(holidays && holidays.length <= 0) || !company || !associateCompany || !stateName} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: ((holidays && holidays.length <= 0) || !company || !associateCompany) ? '#707070' : '#ffffff', color: ((holidays && holidays.length <= 0) || !company || !associateCompany) ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
                 </div>
               </div>
@@ -2470,8 +2485,20 @@ const HolidayList = () => {
                             <TableCell >{each.restricted ? 'Yes' : 'No'}</TableCell>
                             <TableCell >
                               <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100px' }}>
+
+                              {
+                                  hasUserAccess(USER_PRIVILEGES.EDIT_HOLIDAY_LIST) &&
                                 <Icon action={() => onclickEdit(each)} style={{ color: '#039BE5' }} type="button" name={'pencil'} text={'Edit'} />
+                                }
+                                {
+                                  hasUserAccess(USER_PRIVILEGES.DELETE_HOLIDAY_LIST) &&
                                 <Icon action={() => onclickDelete(each)} style={{ color: '#EB1010' }} type="button" name={'trash'} text={'Delete'} />
+                                }
+
+
+
+                                {/* <Icon action={() => onclickEdit(each)} style={{ color: '#039BE5' }} type="button" name={'pencil'} text={'Edit'} />
+                                <Icon action={() => onclickDelete(each)} style={{ color: '#EB1010' }} type="button" name={'trash'} text={'Delete'} /> */}
                                 <Icon action={() => onclickView(each)} style={{ color: '#00C853' }} type="button" name={'eye'} text={'View'} />
                               </Box>
                             </TableCell>

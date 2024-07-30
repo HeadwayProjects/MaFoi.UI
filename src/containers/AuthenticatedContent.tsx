@@ -54,6 +54,7 @@ import Dashboard from "../components/pages/InputModule/Dashboard";
 import Configurations from "../components/pages/InputModule/Configurations";
 import EmployeeWageUpload from "../components/pages/InputModule/EmployeeWageUpload";
 import RegisterDownload from "../components/pages/InputModule/RegisterDownload";
+import InputsDashboard from "../components/pages/InputModule/Dashboard";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
@@ -88,7 +89,11 @@ function AuthenticatedContent() {
                 auth.hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)
             ) {
                 return layout(<ComplianceOwnerDashboard />);
-            } else {
+            }
+            // else if (auth.hasUserAccess(USER_PRIVILEGES.INPUT_DASHBOARD)) {
+            //     return layout(<InputsDashboard />);
+            // }
+             else {
                 return layout(<Home />)
             }
         }

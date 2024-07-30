@@ -120,10 +120,166 @@ export enum USER_PRIVILEGES {
     ADD_NOTICE = 'ADD_NOTICE',
     ASSIGN_NOTICE = 'ASSIGN_NOTICE',
     EDIT_NOTICE = 'EDIT_NOTICE',
-    DELETE_NOTICE = 'DELETE_NOTICE'
+    DELETE_NOTICE = 'DELETE_NOTICE',
+    INPUT_DASHBOARD = 'INPUT_DASHBOARD',
+    VIEW_HOLIDAY_LIST = 'VIEW_HOLIDAY_LIST',
+    ADD_HOLIDAY_LIST = 'ADD_HOLIDAY_LIST',
+    EDIT_HOLIDAY_LIST = 'EDIT_HOLIDAY_LIST',
+    DELETE_HOLIDAY_LIST = 'DELETE_HOLIDAY_LIST',
+    VIEW_LEAVE_CONFIGURATION = 'VIEW_LEAVE_CONFIGURATION',
+    ADD_LEAVE_CONFIGURATION = 'ADD_LEAVE_CONFIGURATION',
+    EDIT_LEAVE_CONFIGURATION = 'EDIT_LEAVE_CONFIGURATION',
+    DELETE_LEAVE_CONFIGURATION = 'DELETE_LEAVE_CONFIGURATION',
+    VIEW_ATTENDANCE_CONFIGURATION = 'VIEW_ATTENDANCE_CONFIGURATION',
+    ADD_ATTENDANCE_CONFIGURATION = 'ADD_ATTENDANCE_CONFIGURATION',
+    EDIT_ATTENDANCE_CONFIGURATION = 'EDIT_ATTENDANCE_CONFIGURATION',
+    DELETE_ATTENDANCE_CONFIGURATION = 'DELETE_ATTENDANCE_CONFIGURATION',
+    VIEW_SALARY_COMPONENTS = 'VIEW_SALARY_COMPONENTS',
+    ADD_SALARY_COMPONENTS = 'ADD_SALARY_COMPONENTS',
+    VIEW_INPUT_MODULE_UPLOAD = 'VIEW_INPUT_MODULE_UPLOAD',
+    ADD_INPUT_MODULE_UPLOAD = 'ADD_INPUT_MODULE_UPLOAD',
+    VIEW_EMPLOYEE_DASHBOARD = 'VIEW_EMPLOYEE_DASHBOARD',
+    REGISTER_EMPLOYEE_DASHBOARD = 'REGISTER_EMPLOYEE_DASHBOARD',
+    VIEW_EMPLOYEE_MASTER = 'VIEW_EMPLOYEE_MASTER',
+    DELETE_EMPLOYEE_MASTER = 'DELETE_EMPLOYEE_MASTER',
+    VIEW_EMPLOYEE_LEAVE_CREDIT = 'VIEW_EMPLOYEE_LEAVE_CREDIT',
+    DELETE_EMPLOYEE_LEAVE_CREDIT = 'DELETE_EMPLOYEE_LEAVE_CREDIT',
+    VIEW_EMPLOYEE_LEAVE_AVAILED = 'VIEW_EMPLOYEE_LEAVE_AVAILED',
+    DELETE_EMPLOYEE_LEAVE_AVAILED = 'DELETE_EMPLOYEE_LEAVE_AVAILED',
+    VIEW_EMPLOYEE_ATTENDANCE = 'VIEW_EMPLOYEE_ATTENDANCE',
+    DELETE_EMPLOYEE_ATTENDANCE = 'DELETE_EMPLOYEE_ATTENDANCE',
+    VIEW_EMPLOYEE_WAGE = 'VIEW_EMPLOYEE_WAGE',
+    DELETE_EMPLOYEE_WAGE = 'DELETE_EMPLOYEE_WAGE'
 }
 
 export const PAGES_CONFIGURATION = [
+    {
+        id: "SETUP_INPUT",
+        name: "Setup input",
+        isMulti: true,
+        privileges: [
+            {
+                id: USER_PRIVILEGES.VIEW_HOLIDAY_LIST,
+                name: 'View Holiday List'
+            },
+            {
+                id: USER_PRIVILEGES.ADD_HOLIDAY_LIST,
+                name: 'Add Holiday List'
+            },
+            {
+                id: USER_PRIVILEGES.EDIT_HOLIDAY_LIST,
+                name: 'Edit Holiday List'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_HOLIDAY_LIST,
+                name: 'Delete Holiday List'
+            },
+                {
+                    id: USER_PRIVILEGES.VIEW_LEAVE_CONFIGURATION,
+                    name: 'View Leave Configuration'
+                },
+                {
+                    id: USER_PRIVILEGES.ADD_LEAVE_CONFIGURATION,
+                    name: 'Add Leave Configuration'
+                },
+                {
+                    id: USER_PRIVILEGES.EDIT_LEAVE_CONFIGURATION,
+                    name: 'Edit Leave Configuration'
+                },
+                {
+                    id: USER_PRIVILEGES.DELETE_LEAVE_CONFIGURATION,
+                    name: 'Delete Leave Configuration'
+                },
+                {
+                    id: USER_PRIVILEGES.VIEW_ATTENDANCE_CONFIGURATION,
+                    name: 'View Attendance Configuration'
+                },
+                {
+                    id: USER_PRIVILEGES.ADD_ATTENDANCE_CONFIGURATION,
+                    name: 'Add Attendance Configuration'
+                },
+                {
+                    id: USER_PRIVILEGES.EDIT_ATTENDANCE_CONFIGURATION,
+                    name: 'Edit Attendance Configuration'
+                },
+                {
+                    id: USER_PRIVILEGES.DELETE_ATTENDANCE_CONFIGURATION,
+                    name: 'Delete Attendance Configuration'
+                },
+                {
+                    id: USER_PRIVILEGES.VIEW_SALARY_COMPONENTS,
+                    name: 'View Salary Components'
+                },
+                {
+                    id: USER_PRIVILEGES.ADD_SALARY_COMPONENTS,
+                    name: 'Add Salary Components'
+                },
+                {
+                    id: USER_PRIVILEGES.VIEW_INPUT_MODULE_UPLOAD,
+                    name: 'View Input Module Upload'
+                },
+                {
+                    id: USER_PRIVILEGES.ADD_INPUT_MODULE_UPLOAD,
+                    name: 'Add Input Module Upload'
+                }
+        ]
+    },
+    {
+        id: "INPUT_UPLOAD",
+        name: "Input upload",
+        isMulti: true,
+        privileges: [
+        
+            {
+                id: USER_PRIVILEGES.VIEW_EMPLOYEE_DASHBOARD,
+                name: 'View Employee Dashboard'
+            },
+            {
+                id: USER_PRIVILEGES.REGISTER_EMPLOYEE_DASHBOARD,
+                name: 'Register Employee Master'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_EMPLOYEE_MASTER,
+                name: 'View Employee Master'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_EMPLOYEE_MASTER,
+                name: 'Delete Employee Master'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_EMPLOYEE_LEAVE_CREDIT,
+                name: 'View Employee Leave Credit'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_EMPLOYEE_LEAVE_CREDIT,
+                name: 'Delete Employee Leave Credit'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_EMPLOYEE_LEAVE_AVAILED,
+                name: 'View Employee Leave Availed'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_EMPLOYEE_LEAVE_AVAILED,
+                name: 'Delete Employee Leave Availed'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_EMPLOYEE_ATTENDANCE,
+                name: 'View Employee Attendance'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_EMPLOYEE_ATTENDANCE,
+                name: 'Delete Employee Attendance'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_EMPLOYEE_WAGE,
+                name: 'View Employee WAGE'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_EMPLOYEE_WAGE,
+                name: 'Delete Employee WAGE'
+            },
+    ]
+    },
     {
         id: 'MASTER',
         name: 'Masters',
@@ -134,7 +290,7 @@ export const PAGES_CONFIGURATION = [
                 name: 'View Law Categories'
             },
             {
-                id: USER_PRIVILEGES.ADD_LAW_CATEGORY,
+                id: USER_PRIVILEGES.ADD_LAW_CATEGORY,   
                 name: 'Add Law Category'
             },
             {

@@ -13,6 +13,8 @@ import { FaUpload } from 'react-icons/fa';
 import Select from "react-select";
 import Companies from '../Masters/Companies/Companies';
 import { faL } from '@fortawesome/free-solid-svg-icons';
+import { hasUserAccess } from '../../../backend/auth';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
 
 const styleUploadModal = {
   position: 'absolute' as 'absolute',
@@ -920,7 +922,12 @@ else if (configUploadDetails.status === 'failed'){
                       <Box sx={{marginRight:'12px', display:'flex', alignItems:'center', width:'260px', justifyContent: 'space-between'}}>
                        
                         <Button onClick={onClickPreview} disabled={!configType || !company || !associateCompany || !location} variant='contained' > Preview </Button>
+                        {
+                    hasUserAccess(USER_PRIVILEGES.ADD_INPUT_MODULE_UPLOAD) &&
                         <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
+                  }
+
+                        {/* <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button> */}
                       </Box>
                   </div>
                   <div style={{display:'flex', marginBottom:'10px'}}>

@@ -15,6 +15,9 @@ import { Alert } from 'react-bootstrap';
 import {bulkDeleteAttendance, resetBulkDeleteAttendanceDetails, addAttendance, deleteAttendance, editAttendance, getAttendanceConfiguration, resetAddAttendanceDetails, resetDeleteAttendanceDetails, resetEditAttendanceDetails, resetGetAttendanceDetailsStatus, resetUploadAttendanceDetails, uploadAttendance } from '../../../redux/features/attendanceConfiguration.slice';
 import  Select from "react-select";
 import { RootState } from '../../../redux/store';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
+import { hasUserAccess } from '../../../backend/auth';
+
 
 
 const style = {
@@ -2021,9 +2024,24 @@ label="AM/PM"
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
                         <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Attendance Configuration</h5>
                         <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'400px', justifyContent: 'space-between'}}>
+
+                        {
+                    hasUserAccess(USER_PRIVILEGES.ADD_ATTENDANCE_CONFIGURATION) &&
+                    <>
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
+                    </>
+                  }
+                  {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_ATTENDANCE_CONFIGURATION) &&
                           <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAttendance && selectedAttendance.length === 0}> Bulk Delete</Button>
+                  }
+
+
+                          {/* <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
+                          <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
+                          <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAttendance && selectedAttendance.length === 0}> Bulk Delete</Button> */}
+                          
                           <button onClick={onClickExport} disabled={(attendance && attendance.length <=0) || !company || !associateCompany || !location}  style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((attendance && attendance.length <=0) || !company || !associateCompany ||!location) ? '#707070': '#ffffff' , color: ((attendance && attendance.length <=0) || !company || !associateCompany ||!location) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
@@ -2200,8 +2218,19 @@ label="AM/PM"
                                       <TableCell >{each.workDaysPerWeek}</TableCell>
                                       <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
-                                          <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
+
+                                        {
+                                        hasUserAccess(USER_PRIVILEGES.EDIT_ATTENDANCE_CONFIGURATION) &&
+                                      <Icon action={() => onclickEdit(each)} style={{ color: '#039BE5' }} type="button" name={'pencil'} text={'Edit'} />
+                                      }
+                                      {
+                                        hasUserAccess(USER_PRIVILEGES.DELETE_ATTENDANCE_CONFIGURATION) &&
                                           <Icon action={() => onclickDelete(each)} style={{color:'#EB1010'}} type="button" name={'trash'} text={'Delete'}/>
+                                      }
+
+
+                                          {/* <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
+                                          <Icon action={() => onclickDelete(each)} style={{color:'#EB1010'}} type="button" name={'trash'} text={'Delete'}/> */}
                                           <Icon action={() => onclickView(each)}  style={{color:'#00C853'}} type="button" name={'eye'} text={'View'}/>
                                         </Box>
                                       </TableCell>

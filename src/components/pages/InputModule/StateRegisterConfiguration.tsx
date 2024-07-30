@@ -38,11 +38,12 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  height: '80vh',
+  height: '90vh',
   width: '97%',
   bgcolor: 'background.paper',
   boxShadow: 24,
-  overflowY: 'hidden'// Add this if the content might overflow
+  // overflowY: 'hidden'// Add this if the content might overflow
+  overflowY: 'scroll'
 };
 
 
@@ -204,6 +205,7 @@ const StateRegisterConfiguration = () => {
 
   const [selectedstateconfigFormName,setSelectedStateConfigFormName] = React.useState('');
   const [selectedstateconfigForm,setSelectedStateConfigForm] = React.useState('');
+  const [selectedstateconfigRegisterType,setSelectedStateConfigRegisterType] = React.useState('');
 
   // const [symbols, setSymbols] = React.useState<any>([])
 
@@ -823,7 +825,7 @@ const StateRegisterConfiguration = () => {
   
     const payload = {
       id: selectedStateConfig.Id,
-      registerType: selectedStateConfig.RegisterType,
+      registerType: selectedstateconfigRegisterType,
       stateId: selectedStateConfig.StateId,
       actId: selectedStateConfig.ActId,
       ruleId: selectedStateConfig.RuleId,
@@ -852,6 +854,7 @@ const StateRegisterConfiguration = () => {
     if (selectedStateConfig.FormName) {
       setSelectedStateConfigFormName(selectedStateConfig.FormName);
       setSelectedStateConfigForm(selectedStateConfig.Form)
+      setSelectedStateConfigRegisterType(selectedStateConfig.RegisterType)
     }
   }, [selectedStateConfig.FormName]);
   
@@ -2662,7 +2665,7 @@ useEffect(() => {
             <Box sx={{display: "flex", flexDirection: "row"}}>
 
 
-            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Form :  {selectedStateConfig.FormName } </Typography>
+            {/* <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}>Form :  {selectedStateConfig.FormName } </Typography> */}
             FormName: <FormControl sx={{ m: 1, maxWidth: "190px", minWidth: '150px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">                                           
                                             <OutlinedInput
                                              
@@ -2679,6 +2682,16 @@ useEffect(() => {
                                              // value={selectedStateConfig.FormName}
                                               value={selectedstateconfigForm}
                                               onChange={(e)=>setSelectedStateConfigForm(e.target.value)}
+                                             
+                                              type='text'
+                                            />
+                                      </FormControl>
+                                      Type : <FormControl sx={{ m: 1, maxWidth: "190px", minWidth: '150px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">                                           
+                                            <OutlinedInput
+                                             
+                                             // value={selectedStateConfig.FormName}
+                                              value={selectedstateconfigRegisterType}
+                                              onChange={(e)=>setSelectedStateConfigRegisterType(e.target.value)}
                                              
                                               type='text'
                                             />
@@ -2705,7 +2718,7 @@ useEffect(() => {
                 </Box>
                 : 
                 <>
-                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '550px', overflowY: 'auto' }}>
+                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '700px', overflowY: 'auto' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
                       <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' }}}>
                                   <TableRow>
@@ -3313,7 +3326,7 @@ useEffect(() => {
                 </Box>
                 :
                 <>
-                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '385px', overflowY: 'scroll' }}>
+                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '570px', overflowY: 'scroll' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
                       <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' } }}>
                         <TableRow>

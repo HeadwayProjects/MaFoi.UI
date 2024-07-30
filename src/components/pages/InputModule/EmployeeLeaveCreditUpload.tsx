@@ -16,6 +16,8 @@ import { Alert } from 'react-bootstrap';
 import { bulkDeleteLeaveBalance, getEmployees, getEmployeesAttendance, getEmployeesLeaveCredit } from '../../../redux/features/employeeMaster.slice';
 import { getBasePath } from '../../../App';
 import { navigate, useQueryParams } from 'raviger';
+import { hasUserAccess } from '../../../backend/auth';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -296,7 +298,7 @@ const EmployeeLeaveCreditUpload = () => {
           },
           {
             columnName: 'locationId',
-            value: query.location
+            value: location.split('^')[0]
           },
           {
             columnName: 'year',
@@ -341,9 +343,42 @@ const EmployeeLeaveCreditUpload = () => {
   ];
 
   const onClickSearch = () => {
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
+
+    
     const payload: any = {
       search: searchInput,
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
@@ -395,7 +430,7 @@ const EmployeeLeaveCreditUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -450,7 +485,7 @@ const EmployeeLeaveCreditUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -506,7 +541,7 @@ const EmployeeLeaveCreditUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -562,7 +597,7 @@ const EmployeeLeaveCreditUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -610,7 +645,7 @@ const EmployeeLeaveCreditUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+          value: location.split('^')[0]
       })
     }
     if (year) {
@@ -659,7 +694,7 @@ const EmployeeLeaveCreditUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+          value: location.split('^')[0]
       })
     }
     if (year) {
@@ -871,7 +906,11 @@ const EmployeeLeaveCreditUpload = () => {
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Leave Credit</h5>
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
                   <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
+                  {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_LEAVE_CREDIT) &&
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedCredit && selectedCredit.length === 0}> Bulk Delete</Button>
+                  }
+                  {/* <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedCredit && selectedCredit.length === 0}> Bulk Delete</Button> */}
                   <button onClick={onclickExport} disabled={!company} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !company ? '#707070' : '#ffffff', color: !company ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
                 </div>
                 {/* <button onClick={onClickExport} disabled={!employeesLeaveCredit} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveCredit ? '#707070': '#ffffff' , color: !employeesLeaveCredit ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
@@ -1030,7 +1069,7 @@ const EmployeeLeaveCreditUpload = () => {
                 </Box>
 
                 <Box sx={{ mr: 1 }}>
-                  <Typography mb={1}>Search (Wage Month)</Typography>
+                  <Typography mb={1}>Search (EmployeeCode)</Typography>
                   <FormControl sx={{ width: '100%', maxWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                     <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                     <OutlinedInput
@@ -1076,7 +1115,7 @@ const EmployeeLeaveCreditUpload = () => {
                 </Box>
                 :
                 <>
-                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '385px', overflowY: 'scroll' }}>
+                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '570px', overflowY: 'scroll' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
                       <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' } }}>
                         <TableRow>
@@ -1084,8 +1123,17 @@ const EmployeeLeaveCreditUpload = () => {
                           <TableCell > <TableSortLabel active={activeSort === 'employeeCode'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'wageMonth'} direction={sortType} onClick={onClickSortWageMonth}> Wage Year</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'wageMonth'} direction={sortType} onClick={onClickSortWageMonth}> Wage Month</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'pL_EL_AL_MonthlyCredit'} direction={sortType} onClick={onClickSortPlElAlCredit}> PL-EL-AL Credit</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'slMonthlyCredit'} direction={sortType} onClick={onClickSortSlCredit}> SL Credit</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > PL-EL-AL Credit</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > PL-EL-AL Closing </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > PL-EL-AL Opening </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > CL Monthly Credit</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > CL Closing Balance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > CL Opening Balance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > ML Closing Balance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > ML Opening Balance</TableSortLabel></TableCell>                        
+                          <TableCell > <TableSortLabel active={activeSort === 'slMonthlyCredit'} direction={sortType} onClick={onClickSortSlCredit}> SL Monthly Credit</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > SL Opening Balance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel > SL Closing Balance</TableSortLabel></TableCell>
                           {/* <TableCell > Actions</TableCell> */}
                         </TableRow>
                       </TableHead>
@@ -1101,7 +1149,17 @@ const EmployeeLeaveCreditUpload = () => {
                             <TableCell >{each.year}</TableCell>
                             <TableCell >{each.wageMonth}</TableCell>
                             <TableCell >{each.pL_EL_AL_MonthlyCredit}</TableCell>
+                            <TableCell >{each.pL_EL_AL_ClosingBalance}</TableCell>
+                            <TableCell >{each.pL_EL_AL_OpeningBalance}</TableCell>
+                            <TableCell >{each.clMonthlyCredit}</TableCell>
+                            <TableCell >{each.clClosingBalance}</TableCell>
+                            <TableCell >{each.clOpeningBalance}</TableCell>
+                            <TableCell >{each.mlClosingBalance}</TableCell>
+                            <TableCell >{each.mlOpeningBalance}</TableCell>
                             <TableCell >{each.slMonthlyCredit}</TableCell>
+                            <TableCell >{each.slOpeningBalance}</TableCell>
+                            <TableCell >{each.slClosingBalance}</TableCell>
+
                             {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>

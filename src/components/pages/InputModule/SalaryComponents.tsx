@@ -12,6 +12,8 @@ import { download, downloadFileContent, preventDefault } from '../../../utils/co
 import { FaUpload } from 'react-icons/fa';
 import Select from "react-select";
 import { callSalaryComponentsExcelHeaderToDbColumns, getSalaryComponentsDetails, getSalaryComponentsMappingDetails, resetSalaryComponentDetails, resetSalaryComponentMappingDetails, resetSalaryConfigUploadDetails, resetSalaryExcelToDBColumnsDetails, resetSalaryUploadDetails, salaryComponentConfigUpload, salaryComponentUpload } from '../../../redux/features/salaryComponents.slice';
+import { hasUserAccess } from '../../../backend/auth';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
 
 const styleUploadModal = {
   position: 'absolute' as 'absolute',
@@ -960,7 +962,12 @@ const SalaryComponents = () => {
                       <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Salary Components</h5>
                       <Box sx={{marginRight:'12px', display:'flex', alignItems:'center', width:'260px', justifyContent: 'space-between'}}>
                         <Button onClick={onClickPreview} disabled={!company} variant='contained'> Preview</Button>
+
+                        {
+                    hasUserAccess(USER_PRIVILEGES.ADD_SALARY_COMPONENTS) &&
                         <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
+                  }
+                        {/* <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button> */}
                       </Box>
                   </div>
                   <div style={{display:'flex', marginBottom:'10px'}}>

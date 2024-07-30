@@ -14,30 +14,8 @@ const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.OWNER_DASHBOARD },
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.MANAGER_DASHBOARD },
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.ESCALATION_DASHBOARD },
-    {
-        id: 'setupInput', url: '/setupInput', icon: 'upload', label: 'Setup Input',
-        children: [
-            { id: 'setupInput/holidayList', url: '/setupInput/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'setupInput/leaveConfiguration', url: '/setupInput/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'setupInput/attendanceConfig', url: '/setupInput/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'setupInput/salaryComponents', url: '/setupInput/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'setupInput/inputModuleUploads', url: '/setupInput/inputModuleUploads', label: 'Input Module Uploads', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-        ]
-    },
-    {
-        id: 'inputUploads', url: '/inputUploads', icon: 'eye', label: 'Input Uploads',
-        children: [
-            { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'inputUploads/registerDownload', url: '/inputUploads/registerDownload', label: 'Register Download', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'inputUploads/employeeMasterUpload', url: '/inputUploads/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'inputUploads/employeeLeaveCreditUpload', url: '/inputUploads/employeeLeaveCreditUpload', label: 'Employee Leave Credit', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'inputUploads/employeeLeaveAvailedUpload', url: '/inputUploads/employeeLeaveAvailedUpload', label: 'Employee Leave Availed', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'inputUploads/employeeAttendanceUpload', url: '/inputUploads/employeeAttendanceUpload', label: 'Employee Attendance', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
-            { id: 'inputUploads/employeeWageUpload', url: '/inputUploads/employeeWageUpload', label: 'Employee Wage', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY }
-
-        ]
-    },
-    {
+    
+       {
         id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters',
         children: [
             { id: 'masters/law', url: '/masters/law', label: 'Law Category', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
@@ -113,6 +91,44 @@ const SideNavMenu = [
             // }
         ]
     },
+    {
+        id: 'setupInput', url: '/setupInput', icon: 'upload', label: 'Setup Input',
+        children: [
+            { id: 'setupInput/holidayList', url: '/setupInput/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_HOLIDAY_LIST },
+            { id: 'setupInput/leaveConfiguration', url: '/setupInput/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LEAVE_CONFIGURATION },
+            { id: 'setupInput/attendanceConfig', url: '/setupInput/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_ATTENDANCE_CONFIGURATION },
+            { id: 'setupInput/salaryComponents', url: '/setupInput/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_SALARY_COMPONENTS },
+            { id: 'setupInput/inputModuleUploads', url: '/setupInput/inputModuleUploads', label: 'Input Module Uploads', privilege: USER_PRIVILEGES.VIEW_INPUT_MODULE_UPLOAD },
+            // { id: 'setupInput/holidayList', url: '/setupInput/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'setupInput/leaveConfiguration', url: '/setupInput/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'setupInput/attendanceConfig', url: '/setupInput/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'setupInput/salaryComponents', url: '/setupInput/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'setupInput/inputModuleUploads', url: '/setupInput/inputModuleUploads', label: 'Input Module Uploads', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+        ]
+    },
+    {
+        id: 'inputUploads', url: '/inputUploads', icon: 'eye', label: 'Input Uploads',
+        children: [
+
+            { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_DASHBOARD },
+            { id: 'inputUploads/registerDownload', url: '/inputUploads/registerDownload', label: 'Register Download', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            { id: 'inputUploads/employeeMasterUpload', url: '/inputUploads/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_MASTER },
+            { id: 'inputUploads/employeeLeaveCreditUpload', url: '/inputUploads/employeeLeaveCreditUpload', label: 'Employee Leave Credit', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_LEAVE_CREDIT },
+            { id: 'inputUploads/employeeLeaveAvailedUpload', url: '/inputUploads/employeeLeaveAvailedUpload', label: 'Employee Leave Availed', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_LEAVE_AVAILED },
+            { id: 'inputUploads/employeeAttendanceUpload', url: '/inputUploads/employeeAttendanceUpload', label: 'Employee Attendance', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_ATTENDANCE },
+            { id: 'inputUploads/employeeWageUpload', url: '/inputUploads/employeeWageUpload', label: 'Employee Wage', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_WAGE }
+
+            // { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/registerDownload', url: '/inputUploads/registerDownload', label: 'Register Download', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeMasterUpload', url: '/inputUploads/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeLeaveCreditUpload', url: '/inputUploads/employeeLeaveCreditUpload', label: 'Employee Leave Credit', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeLeaveAvailedUpload', url: '/inputUploads/employeeLeaveAvailedUpload', label: 'Employee Leave Availed', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeAttendanceUpload', url: '/inputUploads/employeeAttendanceUpload', label: 'Employee Attendance', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeWageUpload', url: '/inputUploads/employeeWageUpload', label: 'Employee Wage', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY }
+
+        ]
+    },
+
     {
         id: 'userManagement', url: '/userManagement/roles', icon: 'users', label: 'User Management',
         children: [

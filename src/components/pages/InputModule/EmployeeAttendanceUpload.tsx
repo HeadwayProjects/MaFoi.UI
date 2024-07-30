@@ -16,6 +16,8 @@ import { Alert } from 'react-bootstrap';
 import { bulkDeleteEmployeeAttendance, getEmployees, getEmployeesAttendance } from '../../../redux/features/employeeMaster.slice';
 import { navigate, useQueryParams } from 'raviger';
 import { getBasePath } from '../../../App';
+import { hasUserAccess } from '../../../backend/auth';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -873,7 +875,11 @@ const EmployeeAttendanceUpload = () => {
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Attendance</h5>
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
                   <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
+
+                 {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_ATTENDANCE) &&
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAttendance && selectedAttendance.length === 0}> Bulk Delete</Button>
+                  }
                   <button onClick={onClickExport} disabled={!company} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !company ? '#707070' : '#ffffff', color: !company ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                 </div>
                 

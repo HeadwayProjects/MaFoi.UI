@@ -16,6 +16,8 @@ import { Alert } from 'react-bootstrap';
 import { bulkDeleteEmployees, getEmployees,resetBulkDeleteEmployees } from '../../../redux/features/employeeMaster.slice';
 import { navigate, useQueryParams } from 'raviger';
 import { getBasePath } from '../../../App';
+import { hasUserAccess } from '../../../backend/auth';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
 
 
 const style = {
@@ -1510,8 +1512,12 @@ const EmployeeMasterUpload = () => {
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Master</h5>
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'space-between' }}>
                   <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
+
+                  {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_MASTER) &&
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedEmployees && selectedEmployees.length === 0}> Bulk Delete</Button>
-                  <button onClick={onClickExport} disabled={!employees} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !employees ? '#707070' : '#ffffff', color: !employees ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
+                  }
+e                  <button onClick={onClickExport} disabled={!employees} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !employees ? '#707070' : '#ffffff', color: !employees ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
                 </div>
 
               </div>
@@ -1706,7 +1712,7 @@ const EmployeeMasterUpload = () => {
             </div>
           </Box>
 
-          <Box sx={{ paddingX: '20px' }}>
+          <Box sx={{ paddingX: '20px',  height:'40px' }}>
             {
               employees && employees.length <= 0 ?
 
@@ -1715,7 +1721,7 @@ const EmployeeMasterUpload = () => {
                 </Box>
                 :
                 <>
-                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '385px', overflowY: 'scroll' }}>
+                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '570px', overflowY: 'scroll' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
                       <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7',maxHeight: '10px' } }}>
                         <TableRow>

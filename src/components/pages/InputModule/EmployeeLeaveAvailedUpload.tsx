@@ -17,6 +17,8 @@ import { bulkDeleteLeaveAvailed, getEmployees, getEmployeesAttendance, getEmploy
 import { initial } from 'underscore';
 import { getBasePath } from '../../../App';
 import { navigate, useQueryParams } from 'raviger';
+import { hasUserAccess } from '../../../backend/auth';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -278,7 +280,7 @@ const EmployeeLeaveAvailedUpload = () => {
   useEffect(() => {
     if (query.company && query.associateCompany && query.location && query.stateName && query.year && query.month) {
       const payload = {
-        search: "",
+        search: searchInput,
         filters: [
           {
             columnName: 'companyId',
@@ -289,8 +291,10 @@ const EmployeeLeaveAvailedUpload = () => {
             value: query.associateCompany
           },
           {
+            // columnName: 'locationId',
+            // value: query.location
             columnName: 'locationId',
-            value: query.location
+          value: query.location.split('^')[0]
           },
           {
             columnName: 'year',
@@ -335,9 +339,43 @@ const EmployeeLeaveAvailedUpload = () => {
   ];
 
   const onClickSearch = () => {
+
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+          value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
+
+    
     const payload: any = {
       search: searchInput,
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
@@ -350,7 +388,7 @@ const EmployeeLeaveAvailedUpload = () => {
 
   const onClickClearSearch = () => {
     const payload: any = {
-      search: '',
+      search: searchInput,
       filters: [],
       pagination: {
         pageSize: rowsPerPage,
@@ -389,7 +427,7 @@ const EmployeeLeaveAvailedUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+          value: location.split('^')[0]
       })
     }
     if (year) {
@@ -444,7 +482,7 @@ const EmployeeLeaveAvailedUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -499,7 +537,7 @@ const EmployeeLeaveAvailedUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -555,7 +593,7 @@ const EmployeeLeaveAvailedUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+          value: location.split('^')[0]
       })
     }
     if (year) {
@@ -611,7 +649,7 @@ const EmployeeLeaveAvailedUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if (year) {
@@ -659,7 +697,7 @@ const EmployeeLeaveAvailedUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+          value: location.split('^')[0]
       })
     }
     if (year) {
@@ -676,7 +714,7 @@ const EmployeeLeaveAvailedUpload = () => {
     }
 
     const payload: any = {
-      search: '',
+      search: searchInput,
       filters: filters,
       pagination: {
         pageSize: rowsPerPage,
@@ -707,7 +745,7 @@ const EmployeeLeaveAvailedUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+          value: location.split('^')[0]
       })
     }
     if (year) {
@@ -724,7 +762,7 @@ const EmployeeLeaveAvailedUpload = () => {
     }
 
     const payload: any = {
-      search: '',
+      search: searchInput,
       filters: filters,
       pagination: {
         pageSize: parseInt(event.target.value, 10),
@@ -930,7 +968,11 @@ const EmployeeLeaveAvailedUpload = () => {
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Leave Availed</h5>
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
                   <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
+                  {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_LEAVE_CREDIT) &&
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAvailed && selectedAvailed.length === 0}> Bulk Delete</Button>
+                  }
+                  {/* <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAvailed && selectedAvailed.length === 0}> Bulk Delete</Button> */}
                   <button onClick={onclickExport} disabled={!company} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !company ? '#707070' : '#ffffff', color: !company ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                 </div>
               </div>
@@ -1134,7 +1176,7 @@ const EmployeeLeaveAvailedUpload = () => {
                 </Box>
                 :
                 <>
-                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '385px', overflowY: 'scroll' }}>
+                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '570px', overflowY: 'scroll' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
                       <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' } }}>
                         <TableRow>
@@ -1142,8 +1184,11 @@ const EmployeeLeaveAvailedUpload = () => {
                           <TableCell > <TableSortLabel active={activeSort === 'employeeCode'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'employeeName'} direction={sortType} onClick={onClickSortName}>Name</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'noOfDays'} direction={sortType} onClick={onClickSortNoOfDays}>Number Of Days</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'leaveStartDate'} direction={sortType} onClick={onClickSortStartDate}>Start Date</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortEndDate}>End Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel >Leave Type</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel >Start Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel >End Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel >Half Day TakenDate</TableSortLabel></TableCell>
+                      
                           {/* <TableCell > Actions</TableCell> */}
                         </TableRow>
                       </TableHead>
@@ -1159,9 +1204,11 @@ const EmployeeLeaveAvailedUpload = () => {
                             <TableCell >{each.employeeCode}</TableCell>
                             <TableCell >{each.employeeName}</TableCell>
                             <TableCell >{each.noOfDays}</TableCell>
+                            <TableCell >{each.leaveType}</TableCell>
                             <TableCell >{formatDate(each.leaveStartDate)}</TableCell>
                             {/* <TableCell >{each.leaveStartDate}</TableCell> */}
                             <TableCell >{formatDate(each.leaveEndDate)}</TableCell>
+                            <TableCell >{each.halfDayLeaveTakenDate}</TableCell>
                             {/* <TableCell >{each.leaveEndDate}</TableCell> */}
                             {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>

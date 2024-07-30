@@ -16,6 +16,8 @@ import { addAttendance, deleteAttendance, editAttendance, getAttendanceConfigura
 import  Select from "react-select";
 import { resetBulkDeleteLeaveDetails, bulkDeleteLeaves, addLeave, deleteLeave, editLeave, getLeaveConfiguration, resetAddLeaveDetails, resetDeleteLeaveDetails, resetEditLeaveDetails, resetGetLeaveDetailsStatus, resetUploadLeavesDetails, uploadLeaves } from '../../../redux/features/leaveConfiguration.slice';
 import { EMPLOYEMENT_TYPES, EZYCOMP_LEAVE_TYPES,Leave_Credit_Frequency } from '../../common/Constants';
+import { hasUserAccess } from '../../../backend/auth';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
 
 
 const style = {
@@ -1688,9 +1690,22 @@ console.log(locations);
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
                         <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Leave Configuration</h5>
                         <div style={{marginRight:'12px', display:'flex', alignItems:'center', width:'400px', justifyContent: 'space-between'}}>
+
+                        {
+                    hasUserAccess(USER_PRIVILEGES.ADD_LEAVE_CONFIGURATION) &&
+                    <>
                           <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
+                    </>
+                  }
+                  {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_LEAVE_CONFIGURATION) &&
                           <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedLeaves && selectedLeaves.length === 0}> Bulk Delete</Button>
+                  }
+
+                          {/* <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
+                          <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
+                          <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedLeaves && selectedLeaves.length === 0}> Bulk Delete</Button> */}
                           <button onClick={onClickExport} disabled={(leaves && leaves <=0) || !company || !associateCompany} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((leaves && leaves <=0) || !company || !associateCompany) ? '#707070': '#ffffff' , color: ((leaves && leaves <=0) || !company || !associateCompany) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
@@ -1887,9 +1902,17 @@ console.log(locations);
                                       <TableCell >{each.employeeType}</TableCell>
                                       <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
-                                          <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
+
+                                        {
+                                        hasUserAccess(USER_PRIVILEGES.EDIT_LEAVE_CONFIGURATION)  &&
+                                      <Icon action={() => onclickEdit(each)} style={{ color: '#039BE5' }} type="button" name={'pencil'} text={'Edit'} />
+                                      }
+                                      {
+                                        hasUserAccess(USER_PRIVILEGES.DELETE_LEAVE_CONFIGURATION) &&
                                           <Icon action={() => onclickDelete(each)} style={{color:'#EB1010'}} type="button" name={'trash'} text={'Delete'}/>
-                                          <Icon action={() => onclickView(each)}  style={{color:'#00C853'}} type="button" name={'eye'} text={'View'}/>
+                                      }
+
+s                                          <Icon action={() => onclickView(each)}  style={{color:'#00C853'}} type="button" name={'eye'} text={'View'}/>
                                         </Box>
                                       </TableCell>
                                   </TableRow>

@@ -16,8 +16,10 @@ import { IoMdClose } from 'react-icons/io';
 import { getBasePath } from '../../../App';
 import { navigate } from 'raviger';
 import axios from 'axios';
+import { hasUserAccess } from '../../../backend/auth';
+import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
 
-const Dashboard = () => {
+const InputsDashboard = () => {
 
   const dispatch = useAppDispatch();
 
@@ -1094,10 +1096,20 @@ console.log('formResonseUrl',formResponseUrl);
                     {/* <Typography padding={'8px'} color={'#0654AD'}> Process Registers</Typography> 
                     Process Registers
                   </Button>*/}
+
+{
+                      hasUserAccess(USER_PRIVILEGES.REGISTER_EMPLOYEE_DASHBOARD) &&
                   <Button sx={{mt:2, width:'90%'}} variant='outlined' onClick={handleProcessRegisters2}>
                     {/* <Typography padding={'8px'} color={'#0654AD'}> Process Registers</Typography> */}
                     Process Registers
                   </Button>
+                  }
+
+                  
+                  {/* <Button sx={{mt:2, width:'90%'}} variant='outlined' onClick={handleProcessRegisters2}>
+                     <Typography padding={'8px'} color={'#0654AD'}> Process Registers</Typography> 
+                    Process Registers
+                  </Button> */}
 
                 </Box>
 
@@ -1261,4 +1273,4 @@ console.log('formResonseUrl',formResponseUrl);
   )
 }
 
-export default Dashboard
+export default InputsDashboard
