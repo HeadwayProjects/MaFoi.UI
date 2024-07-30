@@ -2382,7 +2382,7 @@ useEffect(() => {
 
                                 {/** Font Size */}
                                 <TableCell >
-                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '190px', minWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '190px', minWidth: '70px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                                     <OutlinedInput
                                       sx={{
                                         '& input::placeholder': {
@@ -2400,7 +2400,7 @@ useEffect(() => {
 
                                 {/** Formula */}
                                 <TableCell >
-                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '190px', minWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '190px', minWidth: '160px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                                     <OutlinedInput
                                       sx={{
                                         '& input::placeholder': {
@@ -2927,7 +2927,7 @@ useEffect(() => {
 
                                       {/** Font Size */}
                                 <TableCell >
-                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '20px', minWidth: '79px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '20px', minWidth: '50px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                                     <OutlinedInput
                                       sx={{
                                         '& input::placeholder': {
@@ -2962,7 +2962,7 @@ useEffect(() => {
 
                                        {/** Value Merged */}
                                 <TableCell >
-                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '120px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                  <FormControl sx={{ m: 1, width: "100%", maxWidth: '80px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                                     <MSelect
                                       value={each.ValueMerged ? "Yes" : "No"}
                                       displayEmpty
@@ -2981,7 +2981,7 @@ useEffect(() => {
 
   {/** Value Merged Range*/}
                                 <TableCell>
-                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                                      <FormControl sx={{ m: 1, width: "100%", backgroundColor: '#ffffff',minWidth:'80px', borderRadius: '5px' }} size="small">
                                             <OutlinedInput
                                             placeholder='Value Merged Range'
                                             disabled={!each.ValueMerged}
@@ -3326,7 +3326,7 @@ useEffect(() => {
                 </Box>
                 :
                 <>
-                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '570px', overflowY: 'scroll' }}>
+                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '380px', overflowY: 'scroll' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
                       <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' } }}>
                         <TableRow>

@@ -112,6 +112,11 @@ export class InputModuleService {
         return await api.post(url, data)
     }
 
+    public async getErrorLogs(data: any) {
+        const url = `/api/Configuration/GetInputErrorFileTransactions`
+        return await api.post(url, data)
+    }
+
 
     // Holidays list
     public async fetchHolidaysList(data: any) {
@@ -209,6 +214,10 @@ export class InputModuleService {
     // State Register
     public async fetchStateRegister(data: any) {
         const url = `/api/StateRegisterConfiguration/GetAll`
+        return await api.post(url, data)
+    }
+    public async fetchStateRegisterDownload(data: any) {
+        const url = `/api/StateRegister/GetAll`
         return await api.post(url, data)
     }
 

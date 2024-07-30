@@ -7,6 +7,11 @@ interface StateConfigurationState {
         data: any,
         error: string | null
     },
+    stateRegisterDownloadDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
     stateConfigureDetails: {
         status: string,
         data: any,
@@ -46,6 +51,11 @@ const initialState: StateConfigurationState = {
         data: '',
         error: null
     },
+    stateRegisterDownloadDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
     stateConfigureDetails: {
         status: 'idle',
         data: '',
@@ -81,6 +91,10 @@ importStateRegisterMappingDetails: {
 export const getStateRegister = createAsyncThunk('stateRegister/getleaveConfiguration', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.fetchStateRegister(data);
+})
+export const getStateRegisterDownload = createAsyncThunk('stateRegisterdownload/getleaveConfiguration', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.fetchStateRegisterDownload(data);
 })
 
 export const getStateConfigurationDetails = createAsyncThunk('inputModule/getStateConfigurationDetails', async (data: any) => {
@@ -128,6 +142,13 @@ export const stateRegisterSlice = createSlice({
                 error: null
             }
        },
+       resetstateRegisterDownloadDetails: (state) => {
+        state.stateRegisterDownloadDetails = {
+            status: 'idle',
+            data: '',
+            error: null
+        }
+   },
        resetAddStateConfigDetails: (state) => {
         state.addStateRegisterDetails = {
             status: 'idle',
@@ -173,6 +194,40 @@ export const stateRegisterSlice = createSlice({
             state.stateRegisterDetails.status = 'failed'
             state.stateRegisterDetails.error = action.error.message
         })
+        
+
+
+
+
+        .addCase(getStateRegisterDownload.pending, (state) => {
+            state.stateRegisterDownloadDetails.status = 'loading'
+        })
+        .addCase(getStateRegisterDownload.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.stateRegisterDownloadDetails.status = 'succeeded'
+                state.stateRegisterDownloadDetails.data = action.payload.data
+            } else {
+                state.stateRegisterDownloadDetails.status = 'failed'
+                state.stateRegisterDownloadDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getStateRegisterDownload.rejected, (state, action: any) => {
+            state.stateRegisterDownloadDetails.status = 'failed'
+            state.stateRegisterDownloadDetails.error = action.error.message
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+        
         
         .addCase(getStateConfigurationDetails.pending, (state) => {
             state.stateConfigureDetails.status = 'loading'
@@ -268,6 +323,6 @@ export const stateRegisterSlice = createSlice({
         })
 })
   
-export const { resetStateConfigDetails, resetImportFileDetails ,  resetExportFileDetails,resetAddStateConfigDetails,resetDeleteStateregisterMappingConfigDetails} = stateRegisterSlice.actions
+export const {  resetstateRegisterDownloadDetails ,resetStateConfigDetails, resetImportFileDetails ,  resetExportFileDetails,resetAddStateConfigDetails,resetDeleteStateregisterMappingConfigDetails} = stateRegisterSlice.actions
 
 export default stateRegisterSlice.reducer

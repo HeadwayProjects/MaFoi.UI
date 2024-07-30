@@ -1871,7 +1871,7 @@ console.log(locations);
                 <>
                   <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
-                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7',fontWeight:'600'}}}>
                                   <TableRow>
                                   <TableCell><Checkbox checked={(selectedLeaves && selectedLeaves.length) === (leaves && leaves.length)} onClick={onClickAllCheckBox}/></TableCell>
                                   <TableCell > <TableSortLabel active={activeSort === 'company'} direction={sortType} onClick={onClickSortcompany}> Company</TableSortLabel></TableCell>

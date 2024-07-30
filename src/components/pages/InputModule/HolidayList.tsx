@@ -2455,7 +2455,7 @@ const HolidayList = () => {
                 <>
                   <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '385px', overflowY: 'scroll' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
-                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' } }}>
+                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7',fontWeight:'600' } }}>
                         <TableRow>
                           <TableCell><Checkbox checked={(selectedHolidays && selectedHolidays.length) === (holidays && holidays.length)} onClick={onClickAllCheckBox} /></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}> Year</TableSortLabel></TableCell>

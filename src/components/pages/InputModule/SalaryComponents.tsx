@@ -1014,7 +1014,7 @@ const SalaryComponents = () => {
                 <>
                   <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
-                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7',fontWeight:'600'}}}>
                         <TableRow>
                          
                           <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode} >Employee Code</TableSortLabel></TableCell>

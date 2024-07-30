@@ -40,11 +40,42 @@ const EmployeeLeaveCreditUpload = () => {
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
   const bulkDeleteEmployeeCreditDetails = useAppSelector((state) => state.employeeMaster.bulkDeleteLeaveBalance)
   const uploadLeaveDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
+
+  const [companyName, setCompanyName] = React.useState('');
+  const [associateCompanyName, setAssociateCompanyName] = React.useState('');
+  const [locationName, setLocationName] = React.useState('');
  
+  const getCompanyNameById = (id: string, companies: { id: string; name: string; }[]) => {
+    for (let i = 0; i < companies.length; i++) {
+      if (companies[i].id === id) {
+        return companies[i].name;
+      }
+    }
+    return '';
+  };
+
+  const getAssocCompanyNameById = (id: string, associateCompanies: { id: string; name: string; }[]) => {
+    for (let i = 0; i < associateCompanies.length; i++) {
+      if (associateCompanies[i].id === id) {
+        return associateCompanies[i].name;
+      }
+    }
+    return '';
+  };
+
+  const getLocationById = (id: string, locations: any[]) => {
+    for (let i = 0; i < locations.length; i++) {
+      if (locations[i].locationId === id) {
+        return locations[i].location.name;
+      }
+    }
+    return '';
+  };
 
   const { exportEmployeesLeaveCredit, exporting } = useExportEmployeesLeaveCredit((response: any) => {
+    let filename = associateCompanyName+'_'+locationName+'_'+'Employee-LeaveCredit'+'_'+ year+'_'+month+ '.xlsx';
     downloadFileContent({
-      name: 'Leave.xlsx',
+      name: filename,
       type: response.headers['content-type'],
       content: response.data
     });
@@ -90,6 +121,10 @@ const EmployeeLeaveCreditUpload = () => {
 
   const handleChangeCompany = (event: any) => {
     setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setCompany(event.target.value);
+    const selectedCompanyId = event.target.value as string;
+    const selectedCompanyName = getCompanyNameById(selectedCompanyId, companies);
+    setCompanyName(selectedCompanyName);
+  
     const payload: any = {
       search: searchInput,
       filters: [
@@ -109,6 +144,9 @@ const EmployeeLeaveCreditUpload = () => {
   };
 
   const handleChangeAssociateCompany = (event: any) => {
+    const selectedCompanyId = event.target.value as string;
+    const selectedCompanyName = getAssocCompanyNameById(selectedCompanyId, associateCompanies);
+    setAssociateCompanyName(selectedCompanyName);
     setLocation('')
     setYear('')
     setMonth('')
@@ -136,6 +174,10 @@ const EmployeeLeaveCreditUpload = () => {
   };
 
   const handleChangeLocation = (event: any) => {
+    const selectedCompanyId =  event.target.value.split('^')[0] as string;
+    // alert(event.target.value);
+     const selectedCompanyName = getLocationById(selectedCompanyId, locations);
+     setLocationName(selectedCompanyName);
     setYear('')
     setMonth('')
     setLocation(event.target.value);
@@ -904,8 +946,8 @@ const EmployeeLeaveCreditUpload = () => {
             <div style={{ backgroundColor: '#E2E3F8', padding: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', marginTop: '10px' }}>
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Leave Credit</h5>
-                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
-                  <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
+                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '200px', justifyContent: 'space-between' }}>
+                  {/* <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button> */}
                   {
                     hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_LEAVE_CREDIT) &&
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedCredit && selectedCredit.length === 0}> Bulk Delete</Button>
@@ -1115,9 +1157,9 @@ const EmployeeLeaveCreditUpload = () => {
                 </Box>
                 :
                 <>
-                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '570px', overflowY: 'scroll' }}>
+                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '380px', overflowY: 'scroll' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
-                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' } }}>
+                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7' ,fontWeight:'600'} }}>
                         <TableRow>
                           <TableCell><Checkbox checked={(selectedCredit && selectedCredit.length) === (employeesLeaveCredit && employeesLeaveCredit.length)} onClick={onClickAllCheckBox} /></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'employeeCode'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>

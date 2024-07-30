@@ -2187,7 +2187,7 @@ label="AM/PM"
                 <>
                   <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
-                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7',fontWeight:'600'}}}>
                                   <TableRow>
                                   <TableCell><Checkbox checked={(selectedAttendance && selectedAttendance.length) === (attendance && attendance.length)} onClick={onClickAllCheckBox}/></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'companyId'} direction={sortType} onClick={onClickSortcompany}> Company</TableSortLabel></TableCell>

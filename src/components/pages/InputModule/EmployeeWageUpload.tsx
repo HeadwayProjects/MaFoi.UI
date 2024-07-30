@@ -46,8 +46,10 @@ const EmployeeWageUpload = () => {
   const uploadHolidayDetails = useAppSelector((state) => state.holidayList.uploadHolidayDetails)
 
   const { exportEmployeesWage, exporting } = useExportEmployeesWage((response: any) => {
+    let filename = associateCompanyName+'_'+locationName+'_'+'Employee-Wage'+ '_'+year+'_'+month+ '.xlsx';
+
     downloadFileContent({
-      name: 'employeeWage.xlsx',
+      name: filename,
       type: response.headers['content-type'],
       content: response.data
     });
@@ -88,8 +90,44 @@ const EmployeeWageUpload = () => {
   const [uploadError, setUploadError] = React.useState(false);
   const [openUploadModal, setOpenUploadModal] = React.useState(false);
 
+
+  const [companyName, setCompanyName] = React.useState('');
+  const [associateCompanyName, setAssociateCompanyName] = React.useState('');
+  const [locationName, setLocationName] = React.useState('');
+ 
+  const getCompanyNameById = (id: string, companies: { id: string; name: string; }[]) => {
+    for (let i = 0; i < companies.length; i++) {
+      if (companies[i].id === id) {
+        return companies[i].name;
+      }
+    }
+    return '';
+  };
+
+  const getAssocCompanyNameById = (id: string, associateCompanies: { id: string; name: string; }[]) => {
+    for (let i = 0; i < associateCompanies.length; i++) {
+      if (associateCompanies[i].id === id) {
+        return associateCompanies[i].name;
+      }
+    }
+    return '';
+  };
+
+  const getLocationById = (id: string, locations: any[]) => {
+    for (let i = 0; i < locations.length; i++) {
+      if (locations[i].locationId === id) {
+        return locations[i].location.name;
+      }
+    }
+    return '';
+  };
+
+
   const handleChangeCompany = (event:any) => {
     setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setCompany(event.target.value);
+    const selectedCompanyId = event.target.value as string;
+    const selectedCompanyName = getCompanyNameById(selectedCompanyId, companies);
+    setCompanyName(selectedCompanyName);
     const payload: any =  { 
       search: searchInput, 
       filters: [
@@ -109,6 +147,9 @@ const EmployeeWageUpload = () => {
   };
 
   const handleChangeAssociateCompany = (event:any) => {
+    const selectedCompanyId = event.target.value as string;
+    const selectedCompanyName = getAssocCompanyNameById(selectedCompanyId, associateCompanies);
+    setAssociateCompanyName(selectedCompanyName);
     setLocation('')
     setYear('')
     setMonth('')
@@ -136,6 +177,10 @@ const EmployeeWageUpload = () => {
   };
 
   const handleChangeLocation = (event:any) => {
+    const selectedCompanyId =  event.target.value.split('^')[0] as string;
+    // alert(event.target.value);
+     const selectedCompanyName = getLocationById(selectedCompanyId, locations);
+     setLocationName(selectedCompanyName);
     setYear('')
     setMonth('')
     setLocation(event.target.value);
@@ -992,14 +1037,14 @@ const EmployeeWageUpload = () => {
                 <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                     <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Wage</h5>
-                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '350px', justifyContent: 'space-between' }}>
-                  <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
+                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '200px', justifyContent: 'space-between' }}>
+                  {/* <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button> */}
                   {
                     hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_WAGE) &&
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedWage && selectedWage.length === 0}> Bulk Delete</Button>
                   }
                   {/* <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedWage && selectedWage.length === 0}> Bulk Delete</Button> */}
-                        <button onClick={onClickExport} disabled={!company} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !company ? '#707070': '#ffffff' , color: !company ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                        <button onClick={onClickExport} disabled={!year} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !company ? '#707070': '#ffffff' , color: !company ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                 </div>
                     </div>
                     <div style={{display:'flex'}}>
@@ -1203,21 +1248,30 @@ const EmployeeWageUpload = () => {
                 </Box>
                 : 
                 <>
-                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'385px', overflowY:'scroll'}}>
+                  <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px',  maxHeight:'380px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
-                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7',fontWeight:'600'}}}>
                         <TableRow>
                           
                           <TableCell><Checkbox checked={(selectedWage && selectedWage.length) === (employeesWage && employeesWage.length)} onClick={onClickAllCheckBox} /></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'employeeCode'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'noOfDays'} direction={sortType} onClick={onClickSortNoOfDays}>Month</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'leaveStartDate'} direction={sortType} onClick={onClickSortStartDate}>Standard Days</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortEndDate}>WorkDays</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'leaveEndDate'} direction={sortType} onClick={onClickSortHouseRent} >House Rent Allowance</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel active={activeSort === 'leaveStartDate'} direction={sortType} onClick={onClickSortStartDate}>Present Days</TableSortLabel></TableCell>
+                                      <TableCell > <TableSortLabel  direction={sortType} onClick={onClickSortEndDate}>WorkDays</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Basic Wages</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel   >Basic Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel   >Fixed Gross</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Gross Deduction</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel   >Gross Ded Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Gross Earnings</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel   >Gross Earnings Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >HRA </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel   >HRA Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Insurance </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Income Tax </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Medical Allowance </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Net Patable </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Net Payable Arrear </TableSortLabel></TableCell>
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
@@ -1233,9 +1287,25 @@ const EmployeeWageUpload = () => {
                                       <TableCell >{each.employeeCode}</TableCell>
                                      
                                       <TableCell >{each.month}</TableCell>
-                                      <TableCell >{each.standardDays}</TableCell>
+                                      <TableCell >{each.presentDays}</TableCell>
                                       <TableCell >{each.workDays}</TableCell>
+                                      <TableCell >{each.basicWages}</TableCell>
+                                      <TableCell >{each.basicArrear}</TableCell>
+                                      <TableCell >{each.fixedGross
+                                      }</TableCell>
+                                      <TableCell >{each.grossDeduction}</TableCell>
+                                      <TableCell >{each.grossDeductionArrear}</TableCell>
+                                      <TableCell >{each.grossEarnings}</TableCell>
+                                      <TableCell >{each.grossEarningsArrear}</TableCell>
                                       <TableCell >{each.houseRentAllowance}</TableCell>
+                                      <TableCell >{each.houseRentArrear}</TableCell>
+                                      <TableCell >{each.insurance}</TableCell>
+                                      <TableCell >{each.incomeTax}</TableCell>
+                                      <TableCell >{each.medicalAllowance}</TableCell>
+                                      <TableCell >{each.netPayable}</TableCell>
+                                      <TableCell >{each.netPayableArrear
+                                      }</TableCell>
+
                                       {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>

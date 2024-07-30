@@ -16,6 +16,11 @@ interface DashboardState {
         status: string,
         data: any,
         error: string | null
+    },
+    errorLogsDetails: {
+        status: string,
+        data: any,
+        error: string | null
     }
 }
 
@@ -31,6 +36,11 @@ const initialState: DashboardState = {
         error: null
     },
     employeeBackendCountDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
+    errorLogsDetails: {
         status: 'idle',
         data: '',
         error: null
@@ -52,6 +62,11 @@ export const getEmployeeBackendCount = createAsyncThunk('inputDashboard/getEmplo
     return await inputModuleService.getEmployeeBackendCount(data);
 })
 
+export const getErrorLogs = createAsyncThunk('inputDashboard/getErrorLogs', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.getErrorLogs(data);
+})
+
 export const inputDashboardSlice = createSlice({
     name: 'inputDashboard',
     initialState,
@@ -64,6 +79,9 @@ export const inputDashboardSlice = createSlice({
         },
         resetEmployeeBackendCountDetailsStatus: (state) => {
             state.employeeBackendCountDetails.status = 'idle'
+        },
+        resetErrorLogsDetailsStatus: (state) => {
+            state.errorLogsDetails.status = 'idle'
         },
     },
     extraReducers: (builder) => builder
@@ -117,8 +135,26 @@ export const inputDashboardSlice = createSlice({
             state.employeeBackendCountDetails.status = 'failed'
             state.employeeBackendCountDetails.error = action.error.message
         })
+
+
+        .addCase(getErrorLogs.pending, (state) => {
+            state.errorLogsDetails.status = 'loading'
+        })
+        .addCase(getErrorLogs.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.errorLogsDetails.status = 'succeeded'
+                state.errorLogsDetails.data = action.payload.data
+            } else {
+                state.errorLogsDetails.status = 'failed'
+                state.errorLogsDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getErrorLogs.rejected, (state, action: any) => {
+            state.errorLogsDetails.status = 'failed'
+            state.errorLogsDetails.error = action.error.message
+        })
 })
   
-export const { resetEmployeeDashboardCountsDetailsStatus, resetEmployeeInputDashboardDetailsStatus, resetEmployeeBackendCountDetailsStatus } = inputDashboardSlice.actions
+export const { resetErrorLogsDetailsStatus ,resetEmployeeDashboardCountsDetailsStatus, resetEmployeeInputDashboardDetailsStatus, resetEmployeeBackendCountDetailsStatus } = inputDashboardSlice.actions
 
 export default inputDashboardSlice.reducer

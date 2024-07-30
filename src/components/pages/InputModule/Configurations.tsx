@@ -557,7 +557,7 @@ else if (configUploadDetails.status === 'failed'){
     {label: "December", value: "12"},
   ];
 
-  const configurationTypes = ["Employee", "Leave credit", 'Leave availed', 'Employee attendance', 'Employee Wage' ]
+  const configurationTypes = ["Employee", "Leave Credit", 'Leave Availed', 'Employee Attendance', 'Employee Wage' ]
 
   const onClickUpload = () => {
     if(!company || !associateCompany || !stateName || !location || !year || !month || !configType){
@@ -869,7 +869,7 @@ else if (configUploadDetails.status === 'failed'){
                 <>
                   <TableContainer sx={{border:'1px solid #e6e6e6', marginTop:'10px', maxHeight:'380px', overflowY:'scroll'}}>
                           <Table stickyHeader  sx={{ minWidth: 650 }} aria-label="sticky table">
-                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7'}}}>
+                              <TableHead sx={{'.MuiTableCell-root':{ backgroundColor:'#E7EEF7',fontWeight:'600'}}}>
                                   <TableRow>
                                       <TableCell > S.no</TableCell>
                                       <TableCell > Column Name</TableCell>

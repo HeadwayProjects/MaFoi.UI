@@ -8,7 +8,7 @@ import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolida
 
 import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
-import { getEmployeeBackendCount, getEmployeeDashboardCounts, getEmployeeInputDashboard, resetEmployeeBackendCountDetailsStatus, resetEmployeeDashboardCountsDetailsStatus, resetEmployeeInputDashboardDetailsStatus } from '../../../redux/features/dashboard.slice';
+import { getEmployeeBackendCount, getEmployeeDashboardCounts, getEmployeeInputDashboard, getErrorLogs, resetEmployeeBackendCountDetailsStatus, resetEmployeeDashboardCountsDetailsStatus, resetEmployeeInputDashboardDetailsStatus, resetErrorLogsDetailsStatus } from '../../../redux/features/dashboard.slice';
 import { FaCheck, FaCloudDownloadAlt, FaCloudUploadAlt, FaCode, FaRegEye, FaRegKeyboard } from 'react-icons/fa';
 import { FaRegCircleCheck } from 'react-icons/fa6'
 import { MdOutput } from "react-icons/md";
@@ -18,6 +18,10 @@ import { navigate } from 'raviger';
 import axios from 'axios';
 import { hasUserAccess } from '../../../backend/auth';
 import { USER_PRIVILEGES } from '../UserManagement/Roles/RoleConfiguration';
+import State from '../Masters/State';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+
 
 const InputsDashboard = () => {
 
@@ -26,6 +30,7 @@ const InputsDashboard = () => {
   const employeeDashboardCountsDetails = useAppSelector((state) => state.inputDashboard.employeeDashboardCountsDetails)
   const employeeInputDashboardDetails = useAppSelector((state) => state.inputDashboard.employeeInputDashboardDetails)
   const employeeBackendCountDetails = useAppSelector((state) => state.inputDashboard.employeeBackendCountDetails)
+  const getErrorLogDetails = useAppSelector((state) => state.inputDashboard.errorLogsDetails);
 
   const employeeCounts = employeeDashboardCountsDetails &&  employeeDashboardCountsDetails.data
   const inputDashboardList = employeeInputDashboardDetails.data.inputList ? employeeInputDashboardDetails.data.inputList : []
@@ -65,6 +70,7 @@ const InputsDashboard = () => {
   const [locationName, setLocationName] = React.useState('');
 
   const [showDashboardDetails, setShowDashboardDetails] = React.useState(true);
+  // const [errorLogs, setErrorLogs] = useState<FileDetails[]>([]);
 
   const handleChangeCompany = (event:any) => {
 
@@ -608,7 +614,141 @@ console.log('formResonseUrl',formResponseUrl);
 }
 
   }
+
+
+  const DownloadErrorLogs=()=>{
+    // alert(company);
+    // alert(associateCompany);
+    // alert(stateName);
+    // alert(location);
+    // alert(year);
+    // alert(month);
+    const formData = new FormData();
+    
+    formData.append('CompanyId',company );
+    formData.append('AssociateCompanyId', associateCompany)
+    formData.append('LocationId', location)
+    formData.append('StateId', stateName)
+    formData.append('Year', year)
+    formData.append('Month', month)
+
+    console.log(formData);
+
+    dispatch(getErrorLogs(formData))
+  }
+
+  interface FileDetails {
+    filePath: string;
+    configType: string;
+  }
   
+  interface ApiResponse {
+    status: string;
+    list: FileDetails[];
+    message: string | null;
+  }
+
+  const onclickDownload=(file:any)=>{
+    //alert(each.registerUrl);
+    const url = file.filePath;
+
+    alert(url);
+     
+  // Create a new anchor element
+  const link = document.createElement('a');
+  link.href = url;
+  
+  // Set the download attribute to suggest a file name (optional)
+  // This is the name the file will be downloaded as
+  link.download = url.split('/').pop(); // Use the file name from the URL
+
+  // Append the anchor to the body
+  document.body.appendChild(link);
+
+  // Programmatically click the anchor
+  link.click();
+
+  // Remove the anchor from the document
+  document.body.removeChild(link);
+  }
+
+  // Function to handle the download of all files
+const handleFileDownloads = async (files: FileDetails[]) => {
+  for (const file of files) {
+    alert(file.filePath);
+    await onclickDownload(file);
+  }
+};
+
+
+
+// Function to download a single file
+// const downloadFile = async (file: FileDetails) => {
+//   try {
+//     const response = await axios.get(file.filePath, { responseType: 'blob' });
+//     const [year, month] = file.filePath.split('/').slice(-4, -2); // Adjust according to your filePath structure
+//     const newFileName = `${file.configType}-${year}-${month}.xlsx`;
+
+//     // Create a blob URL and open it to initiate download
+//     const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+//     window.open(url);
+    
+//     // Optionally, you can clean up the URL object after a delay
+//     setTimeout(() => {
+//       window.URL.revokeObjectURL(url);
+//     }, 10000);
+
+//     toast.success(`${newFileName} downloaded successfully`);
+//   } catch (error) {
+//     if (axios.isAxiosError(error)) {
+//       console.error(`Error downloading file from ${file.filePath}:`, error.toJSON());
+//       if (error.response) {
+//         console.error('Response data:', error.response.data);
+//         console.error('Response status:', error.response.status);
+//         console.error('Response headers:', error.response.headers);
+//       } else if (error.request) {
+//         console.error('Request was made but no response was received:', error.request);
+//       } else {
+//         console.error('Error in setup or configuration:', error.message);
+//       }
+//     } else {
+//       console.error('Unexpected error:', error);
+//     }
+//     toast.error('An error occurred while downloading the file.');
+//   }
+// };
+
+// Function to handle the download of all files
+// const handleFileDownloads = async (files: FileDetails[]) => {
+//   for (const file of files) {
+//     await downloadFile(file);
+//   }
+// };
+
+  useEffect(() => {
+    if (getErrorLogDetails.status === 'succeeded') {
+      (async () => {
+        alert('429 configuploadstatus hitted');
+        alert(getErrorLogDetails.data.status);
+
+        if (getErrorLogDetails.data.status === 'Success') {
+          const files = getErrorLogDetails.data.list;
+          await handleFileDownloads(files);
+        }
+
+        if (getErrorLogDetails.data.status === 'Failure') {
+          toast.error('No files found');
+        }
+      })();
+    } else if (getErrorLogDetails.status === 'failed') {
+      toast.error('An error occurred while fetching data.');
+      dispatch(resetErrorLogsDetailsStatus());
+    }
+  }, [getErrorLogDetails.status, dispatch]);
+
+  
+  
+
 
   return (
     <div style={{ backgroundColor:'#ffffff', minHeight:'100vh'}}>
@@ -1174,7 +1314,7 @@ console.log('formResonseUrl',formResponseUrl);
 
                   </Box>
 
-                  <Box mt={2} sx={{width:'90%', display:'flex', justifyContent:'space-between', borderRadius:'8px', border:'1px solid #F25050'}}>
+                  <Box mt={2} sx={{width:'90%', display:'flex', justifyContent:'space-between', borderRadius:'8px', border:'1px solid #F25050'}} onClick={() => {DownloadErrorLogs()}}>
                     <Typography padding={'8px'} color={'#F11919'}> Download Error Logs</Typography>
                     <Box sx={{padding:'8px', background:'#F11919 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
                       <FaCloudDownloadAlt style={{fontSize:'20px'}}/>
@@ -1229,7 +1369,7 @@ console.log('formResonseUrl',formResponseUrl);
                         </Box>
                       </Box>
 
-                      <Box mt={1} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
+                      {/* <Box mt={1} sx={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#055FC64D 0% 0% no-repeat padding-box', borderRadius:'8px', border:'1px solid #055FC6'}}>
                         <Typography padding={'8px'}> Challans</Typography>
                         <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
                           <FaCloudDownloadAlt style={{fontSize:'20px'}}/>
@@ -1241,7 +1381,7 @@ console.log('formResonseUrl',formResponseUrl);
                         <Box sx={{padding:'8px', background:'#0654AD 0% 0% no-repeat padding-box', borderRadius:'8px'}}>
                           <FaCloudDownloadAlt style={{fontSize:'20px'}}/>
                         </Box>
-                      </Box>
+                      </Box> */}
 
                   </Box>
 
@@ -1274,3 +1414,8 @@ console.log('formResonseUrl',formResponseUrl);
 }
 
 export default InputsDashboard
+
+
+
+
+

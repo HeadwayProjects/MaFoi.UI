@@ -57,9 +57,38 @@ const EmployeeMasterUpload = () => {
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
   const bulkDeleteEmployeeDetails = useAppSelector((state) => state.employeeMaster.bulkDeleteEmployeeDetails)
 
+
+  const getCompanyNameById = (id: string, companies: { id: string; name: string; }[]) => {
+    for (let i = 0; i < companies.length; i++) {
+      if (companies[i].id === id) {
+        return companies[i].name;
+      }
+    }
+    return '';
+  };
+
+  const getAssocCompanyNameById = (id: string, associateCompanies: { id: string; name: string; }[]) => {
+    for (let i = 0; i < associateCompanies.length; i++) {
+      if (associateCompanies[i].id === id) {
+        return associateCompanies[i].name;
+      }
+    }
+    return '';
+  };
+
+  const getLocationById = (id: string, locations: any[]) => {
+    for (let i = 0; i < locations.length; i++) {
+      if (locations[i].locationId === id) {
+        return locations[i].location.name;
+      }
+    }
+    return '';
+  };
+
   const { exportEmployees, exporting } = useExportEmployees((response: any) => {
+    let filename = associateCompanyName+'_'+locationName+'_'+'Employee-Master'+'.xlsx';
     downloadFileContent({
-      name: 'Employees.xlsx',
+      name: filename,
       type: response.headers['content-type'],
       content: response.data
     });
@@ -112,8 +141,17 @@ const EmployeeMasterUpload = () => {
   const [selectedEmployees, setSelectedEmployees] = React.useState<any>([]);
   const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
 
+    
+  const [companyName, setCompanyName] = React.useState('');
+  const [associateCompanyName, setAssociateCompanyName] = React.useState('');
+  const [locationName, setLocationName] = React.useState('');
+
   const handleChangeCompany = (event: any) => {
     setAssociateCompany(''); setLocation(''); setYear(''); setMonth(''); setCompany(event.target.value);
+    const selectedCompanyId = event.target.value as string;
+    const selectedCompanyName = getCompanyNameById(selectedCompanyId, companies);
+  
+    setCompanyName(selectedCompanyName);
     const employeesPayload: any = {
       search: searchInput,
       filters: [
@@ -133,6 +171,9 @@ const EmployeeMasterUpload = () => {
   };
 
   const handleChangeAssociateCompany = (event: any) => {
+    const selectedCompanyId = event.target.value as string;
+    const selectedCompanyName = getAssocCompanyNameById(selectedCompanyId, associateCompanies);
+    setAssociateCompanyName(selectedCompanyName);
     setLocation('')
     setYear('')
     setMonth('')
@@ -160,6 +201,11 @@ const EmployeeMasterUpload = () => {
   };
 
   const handleChangeLocation = (event: any) => {
+
+    const selectedCompanyId =  event.target.value.split('^')[0] as string;
+    // alert(event.target.value);
+     const selectedCompanyName = getLocationById(selectedCompanyId, locations);
+     setLocationName(selectedCompanyName);
     setYear('')
     setMonth('')
     setLocation(event.target.value);
@@ -1510,14 +1556,14 @@ const EmployeeMasterUpload = () => {
             <div style={{ backgroundColor: '#E2E3F8', padding: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', marginTop: '10px' }}>
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Employee Master</h5>
-                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '400px', justifyContent: 'space-between' }}>
-                  <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button>
+                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '200px', justifyContent: 'space-between' }}>
+                  {/* <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button> */}
 
                   {
                     hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_MASTER) &&
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedEmployees && selectedEmployees.length === 0}> Bulk Delete</Button>
                   }
-e                  <button onClick={onClickExport} disabled={!employees} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !employees ? '#707070' : '#ffffff', color: !employees ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
+                 <button onClick={onClickExport} disabled={!employees} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !employees ? '#707070' : '#ffffff', color: !employees ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
                 </div>
 
               </div>
@@ -1721,9 +1767,9 @@ e                  <button onClick={onClickExport} disabled={!employees} style={
                 </Box>
                 :
                 <>
-                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '570px', overflowY: 'scroll' }}>
+                  <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '380px', overflowY: 'scroll' }}>
                     <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
-                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7',maxHeight: '10px' } }}>
+                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7',maxHeight: '10px',fontWeight:'600' } }}>
                         <TableRow>
                           <TableCell><Checkbox checked={(selectedEmployees && selectedEmployees.length) === (employees && employees.length)} onClick={onClickAllCheckBox} /></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
@@ -1734,31 +1780,31 @@ e                  <button onClick={onClickExport} disabled={!employees} style={
                           <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender}>Department</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'dateOfJoining'} direction={sortType} onClick={onClickSortDOJ}>DOJ</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'panNumber'} direction={sortType} onClick={onClickSortPan}>PAN no.</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Aadhar no.</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Date of Leave</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Reason of Exit</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Age</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>FatherName</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Bank Account no.</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>BankName</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>PF UAN no.</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>ESI no.</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Office In TIME</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Office Out Time</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Interval In Time</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}> Interval Out Time</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Date Of Payment</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Date Of Payment</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Date of Notice</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>ESi Time of Notice</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Cause</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Nature</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Date</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Time</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Esi Place</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Vendor Nature Of Work</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Branch</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'aadharNumber'} direction={sortType} onClick={onClickSortAdhar}>Establishment Type</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Aadhar no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Date of Leave</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Reason of Exit</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Age</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >FatherName</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Bank Account no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >BankName</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >PF UAN no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >ESI no.</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Office In TIME</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Office Out Time</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Interval In Time</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} > Interval Out Time</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Date Of Payment</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Esi Date Of Payment</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Esi Date of Notice</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >ESi Time of Notice</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Esi Cause</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Esi Nature</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Esi Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Esi Time</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Esi Place</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Vendor Nature Of Work</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Branch</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel  direction={sortType} >Establishment Type</TableSortLabel></TableCell>
                           {/* <TableCell > Actions</TableCell> */}
                         </TableRow>
                       </TableHead>
