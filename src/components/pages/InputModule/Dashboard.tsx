@@ -652,7 +652,7 @@ console.log('formResonseUrl',formResponseUrl);
     //alert(each.registerUrl);
     const url = file.filePath;
 
-    alert(url);
+   // alert(url);
      
   // Create a new anchor element
   const link = document.createElement('a');
@@ -675,7 +675,7 @@ console.log('formResonseUrl',formResponseUrl);
   // Function to handle the download of all files
 const handleFileDownloads = async (files: FileDetails[]) => {
   for (const file of files) {
-    alert(file.filePath);
+   // alert(file.filePath);
     await onclickDownload(file);
   }
 };
@@ -728,8 +728,8 @@ const handleFileDownloads = async (files: FileDetails[]) => {
   useEffect(() => {
     if (getErrorLogDetails.status === 'succeeded') {
       (async () => {
-        alert('429 configuploadstatus hitted');
-        alert(getErrorLogDetails.data.status);
+     //   alert('429 configuploadstatus hitted');
+       // alert(getErrorLogDetails.data.status);
 
         if (getErrorLogDetails.data.status === 'Success') {
           const files = getErrorLogDetails.data.list;
