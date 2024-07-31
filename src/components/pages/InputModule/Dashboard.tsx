@@ -1028,7 +1028,7 @@ const handleFileDownloads = async (files: FileDetails[]) => {
 
                   <Box sx={{ padding:'10px', display:'flex', justifyContent:'space-between'}}>
                     <Typography sx={{font: 'normal normal normal 22px/32px Calibri', color:'#0F105E'}}>Wage</Typography>
-                    <Typography sx={{font: 'normal normal bold 22px/32px Calibri', color:'#0F105E'}}>{employeeCounts.wageTotal ? employeeCounts.wageTotal : "NA"}</Typography> 
+                    {/* <Typography sx={{font: 'normal normal bold 22px/32px Calibri', color:'#0F105E'}}>{employeeCounts.wageTotal ? employeeCounts.wageTotal : "NA"}</Typography>  */}
                   </Box>
                   <Box sx={{borderBottom:'1px solid #707070', opacity:'0.1'}}></Box>
 
@@ -1045,10 +1045,10 @@ const handleFileDownloads = async (files: FileDetails[]) => {
                         </Box>
                         <Box sx={{borderRight:'1px solid #707070', opacity:'0.1'}}></Box>
 
-                        <Box sx={{padding:'10px'}}>
+                        {/* <Box sx={{padding:'10px'}}>
                           <Typography sx={{font: 'normal normal normal 22px/32px Calibri', color:'#6F6F6F'}}>F & F</Typography>
-                          <Typography sx={{font: 'normal normal bold 22px/32px Calibri', color:'#0F105E'}}>{employeeCounts.wageFandFCount ? employeeCounts.wageFandFCount : "NA"}</Typography> 
-                        </Box>
+                           <Typography sx={{font: 'normal normal bold 22px/32px Calibri', color:'#0F105E'}}>{employeeCounts.wageFandFCount ? employeeCounts.wageFandFCount : "NA"}</Typography>  
+                        </Box> */}
                         <Box sx={{borderRight:'1px solid #707070', opacity:'0.1'}}></Box>
 
                   </Box>

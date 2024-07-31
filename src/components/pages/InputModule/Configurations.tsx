@@ -449,7 +449,7 @@ const Configurations = () => {
 
 
 
-
+  
   useEffect(() => {
     if(configUploadDetails.status === 'succeeded'){
    //alert("429 configuploadstatus hitted");
@@ -458,11 +458,11 @@ const Configurations = () => {
       resetUploadDetails()
       if(configType === 'Employee'){
         dispatch(getColumns('Employee'))
-      }else if(configType === 'Employee attendance'){
+      }else if(configType === 'Employee Attendance'){
         dispatch(getColumns('employeeattendance'))
-      }else if(configType === 'Leave credit'){
+      }else if(configType === 'Leave Credit'){
         dispatch(getColumns('employeeleavecredit'))
-      }else if(configType === 'Leave availed'){
+      }else if(configType === 'Leave Availed'){
         dispatch(getColumns('employeeleaveavailed'))
       }else if(configType === 'Employee Wage'){
         dispatch(getColumns('employeewage'))
@@ -583,16 +583,17 @@ else if (configUploadDetails.status === 'failed'){
     console.log(formData);
     if(configType === 'Employee'){
       dispatch(employeeUpload(formData))
-    }else if(configType === 'Employee attendance'){
+    }else if(configType === 'Employee Attendance'){
       dispatch(employeeAttendanceUpload(formData))
-    }else if(configType === 'Leave credit'){
+    }else if(configType === 'Leave Credit'){
       dispatch(employeeLeaveCreditUpload(formData))
-    }else if(configType === 'Leave availed'){
+    }else if(configType === 'Leave Availed'){
       dispatch(employeeLeaveAvailedUpload(formData))
     }else if(configType === 'Employee Wage'){
       dispatch(employeeWageUpload(formData))
     }
   }
+//  const configurationTypes = ["Employee", "Leave Credit", 'Leave Availed', 'Employee Attendance', 'Employee Wage' ]
 
   const onClickSave = () => {
     console.log('ttabbel', tableData)
