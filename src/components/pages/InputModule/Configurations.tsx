@@ -257,14 +257,16 @@ const Configurations = () => {
       }
       else if (employeeUploadDetails.data.status === 'FAILURE'){
      // alert("employeeUploadDetails.status === 'FAILURE' hitted");
-        toast.error(ERROR_MESSAGES.DEFAULT);
+        //toast.error(ERROR_MESSAGES.DEFAULT);
+        toast.error(employeeUploadDetails.data.statusMessage);
         dispatch(resetEmployeeUploadDetails());
         dispatch(resetConfigUploadDetails());
       }
       else if(employeeUploadDetails.data.status === 'SUCCESS'){
        // alert("employee sccess hitted")
         resetStateValues()
-        toast.success(`Employee Data Upload Successfull`)
+        //toast.success(`Employee Data Upload Successfull`)
+        toast.success(employeeUploadDetails.data.statusMessage);
       }
      
     }
@@ -308,18 +310,21 @@ const Configurations = () => {
       }
       else if (employeeAttendanceUploadDetails.data.status === 'FAILURE'){
        // alert("employeeUploadDetails.status === 'FAILURE' hitted");
-        toast.error(ERROR_MESSAGES.DEFAULT);
+        //toast.error(ERROR_MESSAGES.DEFAULT);
+        toast.error(employeeAttendanceUploadDetails.data.statusMessage);
         dispatch(resetEmployeeAttendanceUploadDetails());
         dispatch(resetConfigUploadDetails());
       }
       else if(employeeAttendanceUploadDetails.data.status === 'SUCCESS'){
          // alert("employee sccess hitted")
          resetStateValues()
-         toast.success(`Upload Successfull`)
+         //toast.success(`Upload Successfull`)
+         toast.success(employeeAttendanceUploadDetails.data.statusMessage);
        }
     }else if (employeeAttendanceUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
       dispatch(resetEmployeeAttendanceUploadDetails());
+
       dispatch(resetConfigUploadDetails());
     }
   }, [employeeAttendanceUploadDetails.status])
@@ -430,14 +435,16 @@ const Configurations = () => {
         }
         else if (employeeWageUploadDetails.data.status === 'FAILURE'){
           // alert("employeeUploadDetails.status === 'FAILURE' hitted");
-             toast.error(ERROR_MESSAGES.DEFAULT);
+            // toast.error(ERROR_MESSAGES.DEFAULT);
+            toast.error(employeeWageUploadDetails.data.statusMessage);
              dispatch(resetEmployeeWageUploadDetails());
              dispatch(resetConfigUploadDetails());
            }
            else if(employeeWageUploadDetails.data.status === 'SUCCESS'){
             // alert("employee sccess hitted")
              resetStateValues()
-             toast.success(`Wage Data Upload Successfull`)
+             //toast.success(`Wage Data Upload Successfull`)
+             toast.success(employeeWageUploadDetails.data.statusMessage)
            }
         
     }else if (employeeWageUploadDetails.status === 'failed'){

@@ -392,9 +392,40 @@ const EmployeeWageUpload = () => {
   ];
 
   const onClickSearch = () => {
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+       value: location.split('^')[0]
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
     const payload: any =  { 
       search: searchInput, 
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
@@ -406,9 +437,40 @@ const EmployeeWageUpload = () => {
   }
 
   const onClickClearSearch = () => {
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+       value: location.split('^')[0]
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
     const payload: any =  { 
       search: '', 
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
@@ -446,7 +508,7 @@ const EmployeeWageUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+       value: location.split('^')[0]
       })
     }
     if(year){
@@ -501,7 +563,7 @@ const EmployeeWageUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+       value: location.split('^')[0]
       })
     }
     if(year){
@@ -556,7 +618,7 @@ const EmployeeWageUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+       value: location.split('^')[0]
       })
     }
     if(year){
@@ -612,7 +674,7 @@ const EmployeeWageUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+       value: location.split('^')[0]
       })
     }
     if(year){
@@ -668,7 +730,7 @@ const EmployeeWageUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+       value: location.split('^')[0]
       })
     }
     if(year){
@@ -724,7 +786,7 @@ const EmployeeWageUpload = () => {
     if (location) {
       filters.push({
         columnName: 'locationId',
-        value: location
+       value: location.split('^')[0]
       })
     }
     if (year) {
@@ -773,7 +835,7 @@ const EmployeeWageUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+       value: location.split('^')[0]
       })
     }
     if(year){
@@ -822,7 +884,7 @@ const EmployeeWageUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+       value: location.split('^')[0]
       })
     }
     if(year){
@@ -892,9 +954,41 @@ const EmployeeWageUpload = () => {
     setYear('')
     setMonth('')
 
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+       value: location.split('^')[0]
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
+
     const EmployeePayload: any = {
       search: searchInput,
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
@@ -911,10 +1005,41 @@ const EmployeeWageUpload = () => {
       toast.success(`EmployeeWage deleted successfully.`)
       SetSelectedWage([])
       dispatch(resetBulkDeleteHolidaysDetails())
-      setOpenBulkDeleteModal(false)
+      setOpenBulkDeleteModal(false);
+      const filters = []
+      if(company){
+        filters.push({
+          columnName:'companyId',
+          value: company
+        })
+      }
+      if(associateCompany){
+        filters.push({
+          columnName:'associateCompanyId',
+          value: associateCompany
+        })
+      }
+      if(location){
+        filters.push({
+          columnName:'locationId',
+         value: location.split('^')[0]
+        })
+      }
+      if(year){
+        filters.push({
+          columnName:'year',
+          value: year
+        })
+      }
+      if(month){
+        filters.push({
+          columnName:'month',
+          value: month
+        })
+      }
       const EmployeeDefaultPayload: any = {
         search: "",
-        filters: [],
+        filters,
         pagination: {
           pageSize: 10,
           pageNumber: 1
@@ -939,9 +1064,40 @@ const EmployeeWageUpload = () => {
         dispatch(resetUploadHolidayDetails())
         setOpenUploadModal(false)
         setUploadError(false)
+        const filters = []
+        if(company){
+          filters.push({
+            columnName:'companyId',
+            value: company
+          })
+        }
+        if(associateCompany){
+          filters.push({
+            columnName:'associateCompanyId',
+            value: associateCompany
+          })
+        }
+        if(location){
+          filters.push({
+            columnName:'locationId',
+           value: location.split('^')[0]
+          })
+        }
+        if(year){
+          filters.push({
+            columnName:'year',
+            value: year
+          })
+        }
+        if(month){
+          filters.push({
+            columnName:'month',
+            value: month
+          })
+        }
         const HolidayListDefaultPayload: any = {
           search: "",
-          filters: [],
+          filters,
           pagination: {
             pageSize: 10,
             pageNumber: 1
@@ -1263,8 +1419,12 @@ const EmployeeWageUpload = () => {
                           <TableCell > <TableSortLabel   >Fixed Gross</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Gross Deduction</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel   >Gross Ded Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >DA </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel   >DA Arreadr</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Gross Earnings</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel   >Gross Earnings Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Conveyance Allo. </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel   >Conveyance Arrear</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >HRA </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel   >HRA Arrear</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Insurance </TableSortLabel></TableCell>
@@ -1295,8 +1455,12 @@ const EmployeeWageUpload = () => {
                                       }</TableCell>
                                       <TableCell >{each.grossDeduction}</TableCell>
                                       <TableCell >{each.grossDeductionArrear}</TableCell>
+                                      <TableCell >{each.dearnessAllowance}</TableCell>
+                                      <TableCell >{each.dearnessArrear}</TableCell>
                                       <TableCell >{each.grossEarnings}</TableCell>
                                       <TableCell >{each.grossEarningsArrear}</TableCell>
+                                      <TableCell >{each.conveyanceAllowance}</TableCell>
+                                      <TableCell >{each.conveyanceArreat}</TableCell>
                                       <TableCell >{each.houseRentAllowance}</TableCell>
                                       <TableCell >{each.houseRentArrear}</TableCell>
                                       <TableCell >{each.insurance}</TableCell>

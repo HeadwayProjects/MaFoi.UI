@@ -437,7 +437,7 @@ const EmployeeAttendanceUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if(year){
@@ -492,7 +492,7 @@ const EmployeeAttendanceUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if(year){
@@ -548,7 +548,7 @@ const EmployeeAttendanceUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if(year){
@@ -604,7 +604,7 @@ const EmployeeAttendanceUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if(year){
@@ -652,7 +652,7 @@ const EmployeeAttendanceUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if(year){
@@ -702,7 +702,7 @@ const EmployeeAttendanceUpload = () => {
     if(location){
       filters.push({
         columnName:'locationId',
-        value: location
+        value: location.split('^')[0]
       })
     }
     if(year){
