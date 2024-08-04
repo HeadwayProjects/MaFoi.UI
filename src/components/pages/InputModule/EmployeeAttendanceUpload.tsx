@@ -1082,7 +1082,7 @@ const EmployeeAttendanceUpload = () => {
                       </Box>
 
                       <Box sx={{width:'100%', mr:1}}>
-                        <Typography mb={1}>Search</Typography>
+                        <Typography mb={1}>Search (Emp Code)</Typography>
                         <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                           <OutlinedInput

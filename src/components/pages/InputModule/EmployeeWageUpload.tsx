@@ -1358,7 +1358,7 @@ const EmployeeWageUpload = () => {
                       </Box>
 
                       <Box sx={{width:'100%', mr:1}}>
-                        <Typography mb={1}>Search (Emp Name)</Typography>
+                        <Typography mb={1}>Search (Emp Code)</Typography>
                         <FormControl sx={{ width:'100%', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                           <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                           <OutlinedInput
@@ -1423,15 +1423,35 @@ const EmployeeWageUpload = () => {
                           <TableCell > <TableSortLabel   >DA Arreadr</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Gross Earnings</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel   >Gross Earnings Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >ESi </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel   >ESi Arrear</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Conveyance Allo. </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel   >Conveyance Arrear</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >HRA </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel   >HRA Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Spl Allow </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel   >Spl Allow Arrear</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Insurance </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Income Tax </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Fines </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Bonus </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >OverTime </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >OverTime Hrs</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >ProvidentFund </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Pf Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Professional Tax </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Prof Tax Arrear</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Salary Advance</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Medical Allowance </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Net Patable </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Net Payable Arrear </TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >OverTime TakenDate</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >AdvancePaid Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Maternity Leave From Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >DOB Of Child</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Maternity Paid Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Maternity Advance Paid</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Maternity Bonus</TableSortLabel></TableCell>
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
@@ -1459,16 +1479,35 @@ const EmployeeWageUpload = () => {
                                       <TableCell >{each.dearnessArrear}</TableCell>
                                       <TableCell >{each.grossEarnings}</TableCell>
                                       <TableCell >{each.grossEarningsArrear}</TableCell>
+                                      <TableCell >{each.esi}</TableCell>
+                                      <TableCell >{each.esiArrear}</TableCell>
                                       <TableCell >{each.conveyanceAllowance}</TableCell>
                                       <TableCell >{each.conveyanceArreat}</TableCell>
                                       <TableCell >{each.houseRentAllowance}</TableCell>
                                       <TableCell >{each.houseRentArrear}</TableCell>
+                                      <TableCell >{each.specialAllowance}</TableCell>
+                                      <TableCell >{each.specialArrear}</TableCell>
                                       <TableCell >{each.insurance}</TableCell>
                                       <TableCell >{each.incomeTax}</TableCell>
+                                      <TableCell >{each.fines}</TableCell>
+                                      <TableCell >{each.bonus}</TableCell>
+                                      <TableCell >{each.overtime}</TableCell>
+                                      <TableCell >{each.overtimeHours}</TableCell>
+                                      <TableCell >{each.providentFund}</TableCell>
+                                      <TableCell >{each.providentFundArrear}</TableCell>
+                                      <TableCell >{each.professionalTax}</TableCell>
+                                      <TableCell >{each.professionTaxArrear}</TableCell>
+                                      <TableCell >{each.salaryAdvance}</TableCell>
                                       <TableCell >{each.medicalAllowance}</TableCell>
                                       <TableCell >{each.netPayable}</TableCell>
-                                      <TableCell >{each.netPayableArrear
-                                      }</TableCell>
+                                      <TableCell >{each.netPayableArrear}</TableCell>
+                                      <TableCell >{each.overTimeTakenDate}</TableCell>
+                                      <TableCell >{each.advancePaidDate}</TableCell>
+                                      <TableCell >{each.maternityLeaveFromDate}</TableCell>
+                                      <TableCell >{each.dateOfBirthOfchild}</TableCell>
+                                      <TableCell >{each.maternitypaidDate}</TableCell>
+                                      <TableCell >{each.maternityAdvancePaid}</TableCell>
+                                      <TableCell >{each.maternityBonus}</TableCell>
 
                                       {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
