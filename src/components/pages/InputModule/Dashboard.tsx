@@ -488,8 +488,15 @@ console.log('formResonseUrl',formResponseUrl);
 
 
     setDownloading(true);
-    const fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/getAllKarnatakaForms';
-
+    let fileUrl = '';
+    if(stateName == '912da48d-630f-4cdb-9b24-d27cda14fc03'){
+      fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_TN_Reporting_Controller/getAllTamilNaduForms';
+    }
+    else if(stateName == '59b24896-1f55-4037-b631-c699dd9fd2bc')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/getAllKarnatakaForms';
+    }
+   
     try {
       // Step 1: Get the access token
       const params = new URLSearchParams();
@@ -1028,7 +1035,8 @@ const handleFileDownloads = async (files: FileDetails[]) => {
 
                   <Box sx={{ padding:'10px', display:'flex', justifyContent:'space-between'}}>
                     <Typography sx={{font: 'normal normal normal 22px/32px Calibri', color:'#0F105E'}}>Wage</Typography>
-                    {/* <Typography sx={{font: 'normal normal bold 22px/32px Calibri', color:'#0F105E'}}>{employeeCounts.wageTotal ? employeeCounts.wageTotal : "NA"}</Typography>  */}
+                     {/* <Typography sx={{font: 'normal normal bold 22px/32px Calibri', color:'#0F105E'}}>{employeeCounts.wageTotal ? employeeCounts.wageTotal : "NA"}</Typography>   */}
+                     <Typography sx={{font: 'normal normal bold 22px/32px Calibri', color:'#0F105E'}}>{(employeeCounts.employeeExistingCount+employeeCounts.wageNewCount+employeeCounts.wageResignedCount) ? (employeeCounts.employeeExistingCount+employeeCounts.wageNewCount+employeeCounts.wageResignedCount) : "NA"}</Typography>  
                   </Box>
                   <Box sx={{borderBottom:'1px solid #707070', opacity:'0.1'}}></Box>
 
@@ -1042,6 +1050,12 @@ const handleFileDownloads = async (files: FileDetails[]) => {
                         <Box sx={{padding:'10px'}}>
                           <Typography sx={{font: 'normal normal normal 22px/32px Calibri', color:'#6F6F6F'}}>Resigned</Typography>
                           <Typography sx={{font: 'normal normal bold 22px/32px Calibri', color:'#0F105E'}}>{employeeCounts.wageResignedCount ? employeeCounts.wageResignedCount : "NA"}</Typography> 
+                        </Box>
+                        <Box sx={{borderRight:'1px solid #707070', opacity:'0.1'}}></Box>
+
+                        <Box sx={{padding:'10px'}}>
+                          <Typography sx={{font: 'normal normal normal 22px/32px Calibri', color:'#6F6F6F'}}>Existing</Typography>
+                          <Typography sx={{font: 'normal normal bold 22px/32px Calibri', color:'#0F105E'}}>{employeeCounts.employeeExistingCount ? employeeCounts.employeeExistingCount : "NA"}</Typography> 
                         </Box>
                         <Box sx={{borderRight:'1px solid #707070', opacity:'0.1'}}></Box>
 

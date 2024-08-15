@@ -383,9 +383,40 @@ const EmployeeAttendanceUpload = () => {
   ];
 
   const onClickSearch = () => {
+    const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if(year){
+      filters.push({
+        columnName:'year',
+        value: year
+      })
+    }
+    if(month){
+      filters.push({
+        columnName:'month',
+        value: month
+      })
+    }
     const payload: any =  { 
       search: searchInput, 
-      filters: [],
+      filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1
@@ -1134,7 +1165,7 @@ const EmployeeAttendanceUpload = () => {
                         <TableRow>
                           <TableCell><Checkbox checked={(selectedAttendance && selectedAttendance.length) === (employeesAttendance && employeesAttendance.length)} onClick={onClickAllCheckBox} /></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'employeeCode'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'employeeName'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
+                                      {/* <TableCell > <TableSortLabel active={activeSort === 'employeeName'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell> */}
                                       <TableCell > <TableSortLabel active={activeSort === 'presentDays'} direction={sortType} onClick={onClickSortPresentDays}> Present Days</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'wageMonth'} direction={sortType} onClick={onClickSortWageMonth}> Wage Month</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel > Day 1</TableSortLabel></TableCell>
@@ -1181,7 +1212,7 @@ const EmployeeAttendanceUpload = () => {
                                 >   
                                   <TableCell><Checkbox checked={selectedAttendance.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)} /></TableCell>
                                       <TableCell >{each.employeeCode}</TableCell>
-                                      <TableCell >{each.employeeName}</TableCell>
+                                      {/* <TableCell >{each.employeeName}</TableCell> */}
                                       <TableCell >{each.presentDays}</TableCell>
                                       <TableCell >{each.wageMonth}</TableCell>
                                       <TableCell >{each.day1}</TableCell>

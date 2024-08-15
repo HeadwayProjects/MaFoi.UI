@@ -1833,11 +1833,19 @@ const EmployeeMasterUpload = () => {
                             <TableCell >{each.bankName}</TableCell>
                             <TableCell >{each.pfuanNumber}</TableCell>
                             <TableCell >{each.esiNumber}</TableCell>
-                            <TableCell >{new Date(each.officeInTime).toLocaleTimeString()}</TableCell>
+                            {/* <TableCell >{new Date(each.officeInTime).toLocaleTimeString()}</TableCell> */}
+
                             {/* <TableCell >{formatTime(each.officeInTime)}</TableCell> */}
-                            <TableCell >{new Date(each.officeOutTime).toLocaleTimeString()}</TableCell>
+                            {/* <TableCell >{new Date(each.officeOutTime).toLocaleTimeString()}</TableCell>
                             <TableCell >{new Date(each.intervalInTime).toLocaleTimeString()}</TableCell>
-                            <TableCell >{new Date(each.intervalOutTime).toLocaleTimeString()}</TableCell>
+                            <TableCell >{new Date(each.intervalOutTime).toLocaleTimeString()}</TableCell> */}
+
+<TableCell >{(each.officeInTime)}</TableCell>
+ <TableCell >{(each.officeOutTime)}</TableCell>
+                            <TableCell >{(each.intervalInTime)}</TableCell>
+                            <TableCell >{(each.intervalOutTime)}</TableCell> 
+
+
                             <TableCell >{formatDate(each.dateOfPayment)}</TableCell>
                             <TableCell >{formatDate(each.esiDateOfPayment)}</TableCell>
                             <TableCell >{formatDate(each.esiDateOfNotice)}</TableCell>

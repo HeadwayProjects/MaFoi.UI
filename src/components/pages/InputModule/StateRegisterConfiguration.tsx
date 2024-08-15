@@ -475,7 +475,7 @@ const StateRegisterConfiguration = () => {
   const handleChangeValueRow = (event: any, fieldData: any) => {
     const newTableData = tableData.map((each: any) => {
       if (each.id === fieldData.id) {
-        return { ...each, valueRowAddress: event.target.value }
+        return { ...each, valueRowAddress: event.target.value.trim()  }
       } else {
         return each
       }
@@ -751,7 +751,7 @@ const StateRegisterConfiguration = () => {
   const handleeditvalueRowaddresschange =(event : any, fieldData:any) => {
     const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
       if (each.Id === fieldData.Id) {
-        return { ...each, ValueRowAddress: event.target.value }
+        return { ...each, ValueRowAddress: event.target.value.trim()  }
       } else {
         return each
       }
@@ -2055,8 +2055,8 @@ useEffect(() => {
               </FormControl>
 
               <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                <Button variant='contained' onClick={onClickConfigure}>Configure-UI</Button>
-                <Button variant='contained' sx={ {marginLeft: 10}} onClick={onClickConfigure2}>Configure-Excel</Button>
+                <Button variant='contained' onClick={onClickConfigure}  disabled={(!registerType || !processType || !establishmentType || !stateName || !ruleName || !activityName ||!formName ||!formNameValue) }>Configure-UI</Button>
+                <Button variant='contained' sx={ {marginLeft: 10}} onClick={onClickConfigure2} disabled={(!registerType || !processType || !establishmentType || !stateName || !ruleName || !activityName ||!formName ||!formNameValue) }>Configure-Excel</Button>
               </Box>
             </Box>}
 
@@ -2546,7 +2546,7 @@ useEffect(() => {
         <Box sx={style}> 
           <Box sx={{ backgroundColor: '#E2E3F8', padding: '10px', px: '20px', borderRadius: '6px', boxShadow: '0px 6px 10px #CDD2D9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box sx={{display: "flex", flexDirection: "column"}}>
-            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}> {selectedStateConfig.formName } Mapping Details </Typography>
+            <Typography sx={{ font: 'normal normal normal 32px/40px Calibri' }}> {selectedStateConfig.Form }  </Typography>
            
         
           
@@ -3280,7 +3280,7 @@ useEffect(() => {
                 </Box>
 
                 <Box sx={{ mr: 1 }}>
-                  <Typography mb={1}>Search</Typography>
+                  <Typography mb={1}>Search (Form)</Typography>
                   <FormControl sx={{ width: "220px", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
                     <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
                     <OutlinedInput

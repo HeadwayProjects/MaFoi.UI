@@ -1441,17 +1441,28 @@ const EmployeeWageUpload = () => {
                           <TableCell > <TableSortLabel    >Pf Arrear</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Professional Tax </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Prof Tax Arrear</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel    >Salary Advance</TableSortLabel></TableCell>
+                         
                           <TableCell > <TableSortLabel    >Medical Allowance </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Net Patable </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Net Payable Arrear </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >OverTime TakenDate</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel    >AdvancePaid Date</TableSortLabel></TableCell>
+                         
                           <TableCell > <TableSortLabel    >Maternity Leave From Date</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >DOB Of Child</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Maternity Paid Date</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Maternity Advance Paid</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel    >Maternity Bonus</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Cause Of Damege or Loss Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Date Of Dedeuction Show Cause</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Damage Loss Amount</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >No.Of Ded Installments</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Date On which Ded Competed</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Salary Adv Paid Date</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >Salary Advance</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >No.Of Adv Installments to be recovered</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel    >date on Adv Recovery Completed</TableSortLabel></TableCell>
+                          
+                          
                                       {/* <TableCell > Actions</TableCell> */}
                                   </TableRow>
                               </TableHead>
@@ -1497,18 +1508,27 @@ const EmployeeWageUpload = () => {
                                       <TableCell >{each.providentFundArrear}</TableCell>
                                       <TableCell >{each.professionalTax}</TableCell>
                                       <TableCell >{each.professionTaxArrear}</TableCell>
-                                      <TableCell >{each.salaryAdvance}</TableCell>
+                                      
                                       <TableCell >{each.medicalAllowance}</TableCell>
                                       <TableCell >{each.netPayable}</TableCell>
                                       <TableCell >{each.netPayableArrear}</TableCell>
                                       <TableCell >{each.overTimeTakenDate}</TableCell>
-                                      <TableCell >{each.advancePaidDate}</TableCell>
+                                     
                                       <TableCell >{each.maternityLeaveFromDate}</TableCell>
                                       <TableCell >{each.dateOfBirthOfchild}</TableCell>
                                       <TableCell >{each.maternitypaidDate}</TableCell>
                                       <TableCell >{each.maternityAdvancePaid}</TableCell>
                                       <TableCell >{each.maternityBonus}</TableCell>
+                                      <TableCell >{each.causeOFDamageOrLossDate}</TableCell>
+                                      <TableCell >{each.dateOfDeductionShowCause}</TableCell>
+                                      <TableCell >{each.damageLossAmount}</TableCell>
+                                      <TableCell >{each.noofDeduction_Installmenttoberecovered}</TableCell>
+                                      <TableCell >{each.dateonWhichDeductionCompleted}</TableCell>
+                                      <TableCell >{each.advancePaidDate}</TableCell>
+                                      <TableCell >{each.salaryAdvance}</TableCell>
+                                      <TableCell >{each.noOFAdvInstallmentsToBeRecovered}</TableCell>
 
+                                      <TableCell >{each.dateOnAdvRecoveryCompleted}</TableCell>
                                       {/* <TableCell >
                                         <Box sx={{display:'flex', justifyContent:'space-between', width:'100px'}}>
                                           <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/>
