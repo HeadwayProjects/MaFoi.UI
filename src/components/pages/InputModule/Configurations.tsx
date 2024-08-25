@@ -565,6 +565,13 @@ else if (configUploadDetails.status === 'failed'){
   ];
 
   const configurationTypes = ["Employee", "Leave Credit", 'Leave Availed', 'Employee Attendance', 'Employee Wage' ]
+//   const configurationTypes = [
+//   { display: "Employee Master", value: "Employee" },
+//   { display: "Leave Credit", value: "Leave Credit" },
+//   { display: "Leave Availed", value: "Leave Availed" },
+//   { display: "Employee Attendance", value: "Employee Attendance" },
+//   { display: "Employee Wage", value: "Employee Wage" }
+// ];
 
   const onClickUpload = () => {
     if(!company || !associateCompany || !stateName || !location || !year || !month || !configType){

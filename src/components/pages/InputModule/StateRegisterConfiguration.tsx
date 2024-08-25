@@ -473,6 +473,8 @@ const StateRegisterConfiguration = () => {
   }
 
   const handleChangeValueRow = (event: any, fieldData: any) => {
+    // alert("handleChangeValueRow")
+    // alert(event.target.value);
     const newTableData = tableData.map((each: any) => {
       if (each.id === fieldData.id) {
         return { ...each, valueRowAddress: event.target.value.trim()  }
@@ -749,6 +751,8 @@ const StateRegisterConfiguration = () => {
   }
 
   const handleeditvalueRowaddresschange =(event : any, fieldData:any) => {
+    // alert("handleeditvalueRowaddresschange");
+    // alert(event.target.value);
     const newTableData = selectedStateConfig.StateRegisterMappingDetails.map((each: any) => {
       if (each.Id === fieldData.Id) {
         return { ...each, ValueRowAddress: event.target.value.trim()  }
@@ -798,8 +802,21 @@ const StateRegisterConfiguration = () => {
 
 
   const handleSaveEditMappingForm = () => {
+  // Update selectedStateConfig.StateRegisterMappingDetails with ValueRowAddress set to '0' if it's null or empty
+  const updatedStateRegisterMappingDetails = selectedStateConfig.StateRegisterMappingDetails.map((detail: any) => {
+    const valueRowAddress = detail.ValueRowAddress;
+
+    // Ensure valueRowAddress is a string and handle null/empty values
+    const newValueRowAddress = valueRowAddress === null || String(valueRowAddress).trim() === "" ? "0" : String(valueRowAddress);
+
+    return {
+      ...detail,
+      ValueRowAddress: newValueRowAddress
+    };
+  });
+
     setTableData(selectedStateConfig.StateRegisterMappingDetails);
-    const StateRegisterMappingDetails = selectedStateConfig.StateRegisterMappingDetails.map((detail : any) => ({
+    const StateRegisterMappingDetails = updatedStateRegisterMappingDetails.map((detail : any) => ({
       ezycompField: detail.EzycompField,
       columnType: detail.ColumnType,
       style: detail.Style,
@@ -1234,6 +1251,13 @@ const StateRegisterConfiguration = () => {
   }
 
   const onClickSave = () => {
+    const updatedTableData = tableData.map((each: any) => {
+      return {
+        ...each,
+        valueRowAddress: each.valueRowAddress === "" ? "0" : each.valueRowAddress
+      };
+    });
+
     const check = tableData.find((each: any) => each.columnType === '' || each.ezycompField === '' || each.style === '' || each.fontName === '' || each.fontSize === '' || each.formula === '')
     if (check || !registerType || !stateName || !actName || !ruleName || !activityName || !formNameValue || !formName || !headerStartRow || !headerEndRow )
       if (!registerType) {
@@ -1256,7 +1280,7 @@ const StateRegisterConfiguration = () => {
           totalRowsPerPage,
           pageSize,
           pageOrientation,
-          stateRegisterMappings: tableData
+          stateRegisterMappings: updatedTableData
         }
         // console.log('payloda', payload)
         dispatch(addStateRegister(payload))
