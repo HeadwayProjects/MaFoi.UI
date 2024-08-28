@@ -64,7 +64,7 @@ const AttendanceConfig = () => {
 
   const companiesDetails = useAppSelector((state: RootState) => state.inputModule.companiesDetails);
 const associateCompaniesDetails = useAppSelector((state: RootState) => state.inputModule.associateCompaniesDetails);
-const locationsDetails = useAppSelector((state: RootState) => state.inputModule.locationsDetails);
+const locationsDetails = useAppSelector((state: RootState) => state.inputModule .locationsDetails);
 
   const bulkDeleteAttendanceDetails = useAppSelector((state: { attendanceConfiguration: { bulkDeleteAttendanceDetails: any; }; }) => state.attendanceConfiguration.bulkDeleteAttendanceDetails)
 

@@ -1629,36 +1629,61 @@ const EmployeeMasterUpload = () => {
                 </Box>
 
                 <Box sx={{ mr: 1 }}>
-                  <Typography mb={1}>Location</Typography>
-                  <FormControl sx={{ width: '100%', maxWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
-                    <Select
-                      sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
-                      displayEmpty
-                      value={location}
-                      disabled={!associateCompany}
-                      onChange={handleChangeLocation}
-                      MenuProps={{
-                        PaperProps: {
-                          sx: {
-                            maxHeight: 200,
-                            width: 230,
-                            marginLeft: "27px",
-                            marginTop: "3px"
-                          }
-                        }
-                      }}
-                    >
-                      <MenuItem disabled sx={{ display: 'none' }} value="">
-                        Select Location
-                      </MenuItem>
-                      {locations && locations.map((each: any) => {
-                        const { id, name, code, cities }: any = each.location || {};
-                        const { state } = cities || {};
-                        return <MenuItem sx={{ whiteSpace: "initial" }} value={each.locationId + '^' + state.id}>{`${name} (${state.code}-${cities.code}-${code})`}</MenuItem>
-                      })}
-                    </Select>
-                  </FormControl>
-                </Box>
+  <Typography mb={1}>Location</Typography>
+  <FormControl
+    sx={{ width: '100%', maxWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }}
+    size="small"
+  >
+    <Select
+      sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+      displayEmpty
+      value={location}
+      disabled={!associateCompany}
+      onChange={handleChangeLocation}
+      MenuProps={{
+        PaperProps: {
+          sx: {
+            maxHeight: 200,
+            width: 230,
+            marginLeft: '27px',
+            marginTop: '3px',
+          },
+        },
+      }}
+    >
+      <MenuItem disabled sx={{ display: 'none' }} value="">
+        Select Location
+      </MenuItem>
+      {locations && locations.length > 0 ? (
+        locations.map((each: any) => {
+          const { id, name, code, cities }: any = each.location || {};
+          const { state } = cities || {};
+
+          // Check if necessary data is missing
+          // if (!each.locationId || !state) {
+          //   return (
+          //     <MenuItem disabled value="">
+          //       No Options Available
+          //     </MenuItem>
+          //   );
+          // }
+
+          return (
+            <MenuItem sx={{ whiteSpace: 'initial' }} value={each.locationId + '^' + state.id}>
+              {`${name} (${state.code}-${cities.code}-${code})`}
+            </MenuItem>
+          );
+        })
+      ) : (
+        // Display "No Options Available" if no locations are found
+        <MenuItem disabled value="">
+          No Options 
+        </MenuItem>
+      )}
+    </Select>
+  </FormControl>
+</Box>
+
 
                 {/* <Box sx={{width:'100%', mr:1}}>
                         <Typography mb={1}>Year</Typography>
