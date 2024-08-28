@@ -496,6 +496,10 @@ console.log('formResonseUrl',formResponseUrl);
       {
         fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/getAllKarnatakaForms';
     }
+    else if(stateName == '827e4dd8-079e-4c4f-a7ef-783c52926226')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/BWS_AP_Controller/getAllAndraPradeshForms';
+    }
    
     try {
       // Step 1: Get the access token

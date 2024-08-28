@@ -90,11 +90,23 @@ const locationsDetails = useAppSelector((state: RootState) => state.inputModule.
 
 
   const { exportAttendanceConfig, exporting } = useExportAttendanceConfig((response: any) => {
-    const companyDetails = companies.find((each:any) => each.id === company)
-    const assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
-    const locationdetailsextracting = locations.find((each:any) => each.location && each.location.id === location);
-const locationdetails = locationdetailsextracting ? locationdetailsextracting.location.name : null;
-console.log(locationdetails);
+    
+     let companyDetails: CompanyDetails | null = null;
+     let assCompNameDetails: AssCompNameDetails | null = null;
+     let locationdetails: string | null = null;
+     
+
+    if(company){
+       companyDetails = companies.find((each:any) => each.id === company)
+    }
+    if(associateCompany){
+       assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
+    }
+    if(location){
+      const locationdetailsextracting = locations.find((each:any) => each.location && each.location.id === location);
+       locationdetails = locationdetailsextracting ? locationdetailsextracting.location.name : null;
+    }
+    
   
 interface CompanyDetails {
   name?: string;
@@ -106,13 +118,12 @@ interface AssCompNameDetails {
 
 console.log('locaname',locationdetails);
   function constructFileName(
-      companyDetails: CompanyDetails, 
-      assCompNameDetails: AssCompNameDetails, 
-      locationdetails: string, 
+    companyDetails: CompanyDetails | null, 
+    assCompNameDetails: AssCompNameDetails | null, 
+    locationdetails: string | null
     
   ): string {
       const parts = [
-        'AttendanceConfig',
         companyDetails && companyDetails.name ? companyDetails.name : null,
         assCompNameDetails && assCompNameDetails.name ? assCompNameDetails.name : null,
         locationdetails,
@@ -2042,7 +2053,7 @@ label="AM/PM"
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
                           <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAttendance && selectedAttendance.length === 0}> Bulk Delete</Button> */}
                           
-                          <button onClick={onClickExport} disabled={(attendance && attendance.length <=0) || !company || !associateCompany || !location}  style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((attendance && attendance.length <=0) || !company || !associateCompany ||!location) ? '#707070': '#ffffff' , color: ((attendance && attendance.length <=0) || !company || !associateCompany ||!location) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} disabled={(attendance && attendance.length <=0) || !company}  style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((attendance && attendance.length <=0) || !company || !associateCompany ||!location) ? '#707070': '#ffffff' , color: ((attendance && attendance.length <=0) || !company || !associateCompany ||!location) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
@@ -2193,9 +2204,9 @@ label="AM/PM"
                                       <TableCell > <TableSortLabel active={activeSort === 'companyId'} direction={sortType} onClick={onClickSortcompany}> Company</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'associateCompanyId'} direction={sortType} onClick={onClickSortAssociateCompany}> Associate Company</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'locationId'} direction={sortType} onClick={onClickSortlocation}> Location</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'shiftName'} direction={sortType} onClick={onClickSortShiftName}> Shift Name</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'session1StartTime'} direction={sortType} onClick={onClickSortSession}> Session-1</TableSortLabel></TableCell>
-                                      <TableCell > <TableSortLabel active={activeSort === 'session2StartTime'} direction={sortType} onClick={onClickSortSession2}> Session-2</TableSortLabel></TableCell>
+                                      <TableCell >  Shift Name</TableCell>
+                                      <TableCell >  Session-1</TableCell>
+                                      <TableCell >  Session-2</TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'workDaysPerWeek'} direction={sortType} onClick={onClickSortWorkDays}> Workdays Per Week</TableSortLabel></TableCell>
                                       <TableCell > Actions</TableCell>
                                   </TableRow>

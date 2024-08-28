@@ -99,9 +99,25 @@ const LeaveConfiguration = () => {
   const [openBulkDeleteModal, setOpenBulkDeleteModal] = React.useState(false);
 
   const { exportLeaveConfig, exporting } = useExportLeaveConfig((response: any) => {
-    const companyDetails = companies.find((each:any) => each.id === company)
-    const assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
-    const locationDetails = locations.find((each:any)=> each.id === location)
+
+    let companyDetails: CompanyDetails | null = null;
+    let assCompNameDetails: AssCompNameDetails | null = null;
+    let locationdetails: string | null = null;
+
+    if(company){
+      companyDetails = companies.find((each:any) => each.id === company)
+   }
+   if(associateCompany){
+      assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
+   }
+   if(location){
+     const locationdetailsextracting = locations.find((each:any) => each.location && each.location.id === location);
+      locationdetails = locationdetailsextracting ? locationdetailsextracting.location.name : null;
+   }
+
+    // const companyDetails = companies.find((each:any) => each.id === company)
+    // const assCompNameDetails = associateCompanies.find((each:any) => each.id === associateCompany)
+    // const locationDetails = locations.find((each:any)=> each.id === location)
     interface CompanyDetails {
       name?: string;
   }
@@ -116,9 +132,9 @@ const LeaveConfiguration = () => {
 }
 
   function constructFileName(
-    companyDetails: CompanyDetails, 
-    assCompNameDetails: AssCompNameDetails, 
-    locationDetails : LocationDetails
+    companyDetails: CompanyDetails | null, 
+    assCompNameDetails: AssCompNameDetails | null, 
+    locationdetails: string | null
 
 
     
@@ -127,8 +143,7 @@ const LeaveConfiguration = () => {
       'LeaveConfig',
       companyDetails && companyDetails.name ? companyDetails.name : null,
       assCompNameDetails && assCompNameDetails.name ? assCompNameDetails.name : null,
-      locationDetails && locationDetails.name ? locationDetails.name : null,
-     
+      locationdetails ,
       'LeaveConfig.xlsx'
     ];
 
@@ -137,7 +152,7 @@ const LeaveConfiguration = () => {
     return validParts.join(' - ');
 }
 
-const fileName = constructFileName(companyDetails, assCompNameDetails,locationDetails);
+const fileName = constructFileName(companyDetails, assCompNameDetails,locationdetails);
 
     downloadFileContent({
         //name: `Leave Configuration - ${companyDetails.name} - ${assCompNameDetails.name} - ${employmentType} - Leaves.xlsx`,
@@ -332,18 +347,21 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
       }
       const filters = []
       if (company) {
+        setCompany(company);
         filters.push({
           columnName: 'companyId',
           value: company
         })
       }
       if (associateCompany) {
+        setAssociateCompany(associateCompany);
         filters.push({
           columnName: 'associateCompanyId',
           value: associateCompany
         })
       }
       if (location) {
+        setLocation(location);
         filters.push({
           columnName: 'locationId',
           value: location
@@ -379,9 +397,28 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
       toast.success(`Leave Added successfully.`)
       dispatch(resetAddLeaveDetails())
       setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)
+      const filters = []
+      if(company){
+        filters.push({
+          columnName:'companyId',
+          value: company
+        })
+      }
+      if(associateCompany){
+        filters.push({
+          columnName:'associateCompanyId',
+          value: associateCompany
+        })
+      }
+      if(employmentType){
+        filters.push({
+          columnName:'employeeType',
+          value: employmentType
+        })
+      }
       const leavesPayload: any =  { 
         search: "",
-        filters: [],
+        filters,
         pagination: {
           pageSize: 10,
           pageNumber: 1
@@ -407,9 +444,28 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
         setCompany('')
         setAssociateCompany('')
         setEmploymentType('')
+        const filters = []
+      if(company){
+        filters.push({
+          columnName:'companyId',
+          value: company
+        })
+      }
+      if(associateCompany){
+        filters.push({
+          columnName:'associateCompanyId',
+          value: associateCompany
+        })
+      }
+      if(employmentType){
+        filters.push({
+          columnName:'employeeType',
+          value: employmentType
+        })
+      }
         const leavesPayload: any =  { 
           search: "",
-          filters: [],
+          filters,
           pagination: {
             pageSize: 10,
             pageNumber: 1
@@ -431,9 +487,32 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
       toast.success(`Attendance Updated successfully.`)
       dispatch(resetEditLeaveDetails())
       setOpenModal(false); setModalType(''); setLeaveDetails({}); setCompany(''); setAssociateCompany(''); setEmploymentType(''); setEzycompLeave(''); setLeaveType(''); setFrequency(''); setTotalLeaves(''); setCarryForward(true)
+      const filters = []
+      if(company){
+        setCompany(company);
+        filters.push({
+   
+          columnName:'companyId',
+          value: company
+        })
+      }
+      if(associateCompany){
+        setAssociateCompany(associateCompany);
+        filters.push({
+          columnName:'associateCompanyId',
+          value: associateCompany
+        })
+      }
+      if(employmentType){
+        setLocation(location);
+        filters.push({
+          columnName:'employeeType',
+          value: employmentType
+        })
+      }
       const leavesPayload: any =  { 
         search: "",
-        filters: [],
+        filters,
         pagination: {
           pageSize: 10,
           pageNumber: 1
@@ -454,9 +533,28 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
       setSelectedLeaves([])
       dispatch(resetBulkDeleteLeaveDetails())
       setOpenBulkDeleteModal(false)
+      const filters = []
+      if(company){
+        filters.push({
+          columnName:'companyId',
+          value: company
+        })
+      }
+      if(associateCompany){
+        filters.push({
+          columnName:'associateCompanyId',
+          value: associateCompany
+        })
+      }
+      if(employmentType){
+        filters.push({
+          columnName:'employeeType',
+          value: employmentType
+        })
+      }
       const LeaveDetailsDefaultPayload: any =  { 
         search: "",
-        filters: [],
+        filters,
         pagination: {
           pageSize: 10,
           pageNumber: 1
@@ -656,6 +754,56 @@ const fileName = constructFileName(companyDetails, assCompNameDetails,locationDe
         pageNumber: page+1
       },
       sort: { columnName: 'associatecompany.name', order: type },
+      "includeCentral": true
+    }
+    dispatch(getLeaveConfiguration(leavesPayload))
+
+    }
+
+
+    const onClickSortLocation = () => {
+      let type = 'asc'
+      setActiveSort('location'); 
+      if(sortType === 'asc'){
+        setSortType('desc')
+        type = 'desc'
+      }else{
+        setSortType('asc')
+      }
+      const filters = []
+    if(company){
+      filters.push({
+        columnName:'companyId',
+        value: company
+      })
+    }
+    if(associateCompany){
+      filters.push({
+        columnName:'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if(employmentType){
+      filters.push({
+        columnName:'employeeType',
+        value: employmentType
+      })
+    }
+    if(location){
+      filters.push({
+        columnName:'location',
+        value: location
+      })
+    }
+
+    const leavesPayload: any =  { 
+      search: searchInput, 
+      filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page+1
+      },
+      sort: { columnName: 'location.name', order: type },
       "includeCentral": true
     }
     dispatch(getLeaveConfiguration(leavesPayload))
@@ -1452,6 +1600,7 @@ console.log(locations);
                       id="demo-select-small"
                       value={company}
                       label="Company"
+                      disabled
                       onChange={(e) => {setCompany(e.target.value), setAssociateCompany(''), setEmploymentType('')}}
                     >
                       {companies && companies.map((each:any) => {
@@ -1467,7 +1616,7 @@ console.log(locations);
                       id="demo-select-small"
                       value={associateCompany}
                       label="Associate Company"
-                      disabled={!company}
+                      disabled
                       onChange={(e) => setAssociateCompany(e.target.value)}
                     >
                       {associateCompanies && associateCompanies.map((each:any) => {
@@ -1483,7 +1632,7 @@ console.log(locations);
                       id="demo-select-small"
                       value={location}
                       label="Location"
-                      disabled={!associateCompany}
+                      disabled
                       onChange={(e) => setLocation(e.target.value)}
                     >
                       {locations && locations.map((each:any) => {
@@ -1706,7 +1855,7 @@ console.log(locations);
                           {/* <Button onClick={onClickUpload} variant='contained' style={{backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
                           <Button onClick={onClickAdd} variant='contained' style={{backgroundColor:'#0654AD', display:'flex', alignItems:'center'}}> <IoMdAdd /> &nbsp; Add</Button>
                           <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedLeaves && selectedLeaves.length === 0}> Bulk Delete</Button> */}
-                          <button onClick={onClickExport} disabled={(leaves && leaves <=0) || !company || !associateCompany} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((leaves && leaves <=0) || !company || !associateCompany) ? '#707070': '#ffffff' , color: ((leaves && leaves <=0) || !company || !associateCompany) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
+                          <button onClick={onClickExport} disabled={(leaves && leaves <=0) || !company } style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: ((leaves && leaves <=0) || !company || !associateCompany) ? '#707070': '#ffffff' , color: ((leaves && leaves <=0) || !company || !associateCompany) ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                         </div>
                     </div>
                     <div style={{display:'flex'}}>
@@ -1791,7 +1940,7 @@ console.log(locations);
                       onChange={handleChangeLocation}
                     >
                       <MenuItem disabled sx={{ display: 'none' }} value="">
-                        Location
+                       Select Location
                       </MenuItem>
                     {locations && locations.map((each: any) => {
                       const { id, name, code, cities }: any = each.location || {};
@@ -1876,6 +2025,7 @@ console.log(locations);
                                   <TableCell><Checkbox checked={(selectedLeaves && selectedLeaves.length) === (leaves && leaves.length)} onClick={onClickAllCheckBox}/></TableCell>
                                   <TableCell > <TableSortLabel active={activeSort === 'company'} direction={sortType} onClick={onClickSortcompany}> Company</TableSortLabel></TableCell>
                                   <TableCell > <TableSortLabel active={activeSort === 'associateCompany'} direction={sortType} onClick={onClickSortassociatecompany}>Associate Company</TableSortLabel></TableCell>
+                                  <TableCell > <TableSortLabel active={activeSort === 'location'} direction={sortType} onClick={onClickSortLocation}>Location</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'ezycompLeave'} direction={sortType} onClick={onClickSortEzycompLeave}> Ezycomp Leave Type</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'leaveType'} direction={sortType} onClick={onClickSortLeaveType}>Company Leave Type</TableSortLabel></TableCell>
                                       <TableCell > <TableSortLabel active={activeSort === 'creditFrequency'} direction={sortType} onClick={onClickSortCreditFrequency}>Leave credit Frequency</TableSortLabel></TableCell>
@@ -1895,6 +2045,7 @@ console.log(locations);
                                      <TableCell><Checkbox checked={selectedLeaves.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)}/></TableCell>
                                      <TableCell >{each.company.name}</TableCell>
                                      <TableCell >{each.associateCompany.name}</TableCell>
+                                     <TableCell >{each.location.name}</TableCell>
                                       <TableCell >{each.ezycompLeave}</TableCell>
                                       <TableCell >{each.leaveType}</TableCell>
                                       <TableCell >{each.creditFrequency}</TableCell>
@@ -1912,7 +2063,7 @@ console.log(locations);
                                           <Icon action={() => onclickDelete(each)} style={{color:'#EB1010'}} type="button" name={'trash'} text={'Delete'}/>
                                       }
 
-s                                          <Icon action={() => onclickView(each)}  style={{color:'#00C853'}} type="button" name={'eye'} text={'View'}/>
+                                          <Icon action={() => onclickView(each)}  style={{color:'#00C853'}} type="button" name={'eye'} text={'View'}/>
                                         </Box>
                                       </TableCell>
                                   </TableRow>
