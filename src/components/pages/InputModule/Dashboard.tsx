@@ -485,9 +485,6 @@ console.log('formResonseUrl',formResponseUrl);
 
 
   const handleProcessRegisters2=async ()=>{
-
-
-    setDownloading(true);
     let fileUrl = '';
     if(stateName == '912da48d-630f-4cdb-9b24-d27cda14fc03'){
       fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_TN_Reporting_Controller/getAllTamilNaduForms';
@@ -500,7 +497,15 @@ console.log('formResonseUrl',formResponseUrl);
       {
         fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/BWS_AP_Controller/getAllAndraPradeshForms';
     }
-   
+    else if(stateName == '75144ed9-1a78-4a0d-8d69-6519a9908dc3')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/BWS_Telangana_Controller/getAllTelanganaForms';
+    }
+    else{
+      toast.error("State was Not Configured");
+      return 
+    }
+    setDownloading(true);
     try {
       // Step 1: Get the access token
       const params = new URLSearchParams();
@@ -602,7 +607,7 @@ console.log('formResonseUrl',formResponseUrl);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast.success(`ZipFile downloaded successfully`); 
+      toast.success(`Registers Generated successfully`); 
     setDownloading(false);
   } catch (error) {
     console.error('Error processing registers:', error);

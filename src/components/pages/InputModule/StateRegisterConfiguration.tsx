@@ -1491,7 +1491,7 @@ const StateRegisterConfiguration = () => {
       dispatch(resetStateConfigDetails())
       setOpenEditModal(false)
     
-      setStateValue('');
+      setStateValue(stateValue);
       const filters = []
     if (stateValue) {
       filters.push({
