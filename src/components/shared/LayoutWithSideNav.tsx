@@ -13,7 +13,7 @@ function AuthProtector(props: any) {
     const [authToken] = useState(auth.getAuthToken());
 
     function logout() {
-        auth.clearAuthToken();
+        auth.clearUserSession();
         navigate(`${getBasePath()}/`, { replace: true });
         window.location.reload();
     }

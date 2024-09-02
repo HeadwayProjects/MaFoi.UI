@@ -125,6 +125,11 @@ input.form-check-input {
     grid-column-end: 4;
 }
 
+.horizontal-form .grid-col-66 {
+    grid-column-start: 1;
+    grid-column-end: 3;
+}
+
 .horizontal-form .form-check {
     min-height: 42px;
 }
@@ -149,10 +154,19 @@ input.form-check-input {
 .date-picker [class*="-container"] input,
 .month-picker [class*="-container"] input {
     height: 100% !important;
+    margin: 0;
 }
 
 .date-picker [class*="-container"] {
     width: 100%;
+}
+
+.date-picker [class*="-arrow-container"] {
+    width: 38px;
+}
+
+.date-picker [class*="-wrapper"] {
+    padding-bottom: 0.5rem;
 }
 
 .date-picker [class*="-container"] input {

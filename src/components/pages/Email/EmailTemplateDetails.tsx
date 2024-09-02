@@ -10,7 +10,7 @@ import { useCreateEmailTemplate, useGetAllEmailTemplateTypes, useUpdateEmailTemp
 import { API_DELIMITER, API_RESULT, ERROR_MESSAGES, UI_DELIMITER } from "../../../utils/constants";
 import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
-import { useGetCompanies } from "../../../backend/masters";
+import { useGetCompanies, useGetSmtpDetails } from "../../../backend/masters";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../common/Table";
 import { sortBy } from "underscore";
 
@@ -39,6 +39,7 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }: any) {
     const { updateEmailTemplate, updating } = useUpdateEmailTemplate(successCallback, errorCallback);
     const { companies } = useGetCompanies({ ...DEFAULT_OPTIONS_PAYLOAD, filters: [{ columnName: 'isParent', value: 'true' }] });
     const [validKeys, setValidKeys] = useState([]);
+    const { smtp } = useGetSmtpDetails((templateDetails.company || {}).value, null, Boolean(templateDetails.company));
 
     function successCallback({ key, value }: any) {
         if (key === API_RESULT.SUCCESS) {
@@ -100,20 +101,10 @@ function EmailTemplateDetails({ changeView, emailTemplate, view }: any) {
                 content: view === VIEWS.VIEW ? getValue(emailTemplate, 'subject') : ''
             },
             {
-                component: view === VIEWS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
+                component: componentTypes.PLAIN_TEXT,
                 name: 'emailFrom',
                 label: 'Email From',
-                description: 'Add semi-colon seperated email addresses. Ex: test@test.com;test1@test.com',
-                initialValue: (emailTemplate || {}).emailFrom || undefined,
-                content: view === VIEWS.VIEW ? getValue(emailTemplate, 'emailFrom') : ''
-            },
-            {
-                component: view === VIEWS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
-                name: 'emailTo',
-                label: 'Email To',
-                description: 'Add semi-colon seperated email addresses. Ex: test@test.com;test1@test.com',
-                initialValue: (emailTemplate || {}).emailTo || undefined,
-                content: view === VIEWS.VIEW ? getValue(emailTemplate, 'emailTo') : ''
+                content: getValue(smtp, 'emailAddress') || 'alert@ezycomp.com'
             },
             {
                 component: view === VIEWS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,

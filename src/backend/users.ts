@@ -19,7 +19,7 @@ export function useGetUsers(payload: any, enabled = true) {
 export function useGetUserRoles(payload: any, enabled = true) {
     const { data, isFetching, refetch } = useQuery(
         ['userRoles', payload],
-        async () => await api.get(`${USERS}/GetAllRoles`, payload),
+        async () => await api.post(`${USERS}/GetAllRoles`, payload),
         {
             refetchOnMount: false,
             refetchOnWindowFocus: false,
@@ -72,4 +72,61 @@ export function useDeleteUser(onSuccess?: any, onError?: any) {
         }
     );
     return { deleteUser, error, deleting };
+}
+
+export function useGetCompanyUsers(companyId: any) {
+    const { data, isFetching, refetch } = useQuery(
+        ['companyUsers', companyId],
+        async () => await api.get(`/api/Mappings/GetUsersByCompany`, { companyId }),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: Boolean(companyId)
+        }
+    );
+    return { companyUsers: (data || {}).data || [], isFetching, refetch };
+}
+export function useCreateRole(onSuccess?: any, onError?: any) {
+    const { mutate: createRole, error, isLoading: creating } = useMutation(
+        ['createRole'],
+        async (payload) => await api.post(`${USERS}/CreateRole`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createRole, error, creating };
+}
+
+export function useUpdateRole(onSuccess?: any, onError?: any) {
+    const { mutate: updateRole, error, isLoading: updating } = useMutation(
+        ['updateRole'],
+        async (payload) => await api.put(`${USERS}/EditRole`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateRole, error, updating };
+}
+
+export function useDeleteRole(onSuccess?: any, onError?: any) {
+    const { mutate: deleteRole, error, isLoading: deleting } = useMutation(
+        ['deleteRole'],
+        async (id) => await api.del(`${USERS}/DeleteRole?id=${id}`),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteRole, error, deleting };
 }

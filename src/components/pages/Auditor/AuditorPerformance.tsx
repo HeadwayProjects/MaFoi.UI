@@ -37,7 +37,11 @@ function AuditorPerformance() {
                     </div>
                 </div>
             </div>
-            <div className="col-1"></div>
+            <div className="col-1">
+                <div className="d-flex flex-row h-100 justify-content-center">
+                    <div style={{width: '1px', backgroundColor: 'var(--gray)'}}></div>
+                </div>
+            </div>
             <div className="col-7">
                 <div className="col-12">
                     <Performance />

@@ -17,7 +17,7 @@ import FormRenderer, { ComponentMapper, FormTemplate } from "../../common/FormRe
 import PageLoader from "../../shared/PageLoader";
 import { LOGIN_FIELDS } from "./Authenticate.constants";
 import VerifyOTP from "./VerifyOTP";
-import { clearAuthToken, getAuthToken, setAuthToken, useGenerateOTP, useUserLogin } from "../../../backend/auth";
+import { clearUserSession, getAuthToken, parseToken, setUserSession, useGenerateOTP, useUserLogin } from "../../../backend/auth";
 import { API_RESULT, ERROR_MESSAGES } from "../../../utils/constants";
 import { getBasePath } from "../../../App";
 
@@ -29,13 +29,12 @@ function Login() {
     const [schema, setSchema] = useState<any>({ fields: [LOGIN_FIELDS.USERNAME, LOGIN_FIELDS.PASSWORD] });
     const [form, setForm] = useState<any>({});
     const [payload, setPayload] = useState<any>({});
-    const { userLogin, isLoading: logging } = useUserLogin((token: string) => {
-        if ((token || '').includes('Exceeded Incorrect Logins')) {
-            toast.error('Too many attempts with incorrect credentials. Your account is temporarily blocked. Try login back after 30 mins.');
-        } else if (token) {
-            loginCallback(token);
+    const { userLogin, isLoading: logging } = useUserLogin((response: any) => {
+        const { result, token, privileges, message } = response || {};
+        if (result === API_RESULT.SUCCESS) {
+            loginCallback({ token });
         } else {
-            toast.error('Email/Phone No. or password is incorrect.');
+            toast.error(message || 'Something went wrong. Please try again.');
         }
     }, errorCallback);
     const { generateOTP, isLoading: generatingOTP } = useGenerateOTP(({ result, message }: any) => {
@@ -55,8 +54,11 @@ function Login() {
         userLogin({ username, password });
     }
 
-    function loginCallback(token: string) {
-        setAuthToken(token);
+    function loginCallback({ token }: any) {
+        const { pages, role, ...others } = parseToken(token);
+        const page = typeof pages === 'string' ? pages : pages[0];
+        const _role = typeof role === 'string' ? role : role[0];
+        setUserSession(token, page, _role);
         navigate(`${getBasePath()}/`);
         window.location.reload();
     }
@@ -100,7 +102,7 @@ function Login() {
 
     useEffect(() => {
         if (token) {
-            clearAuthToken();
+            clearUserSession();
         }
     }, [token]);
 

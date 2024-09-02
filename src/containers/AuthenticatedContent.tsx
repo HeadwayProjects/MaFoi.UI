@@ -16,7 +16,6 @@ import State from "../components/pages/Masters/State";
 import ChangePassword from "../components/pages/Authenticate/ChangePassword";
 import Login from "../components/pages/Authenticate/Login";
 import Navbar from "../components/shared/Navbar";
-import RuleCompliance from "../components/pages/Masters/RuleCompliance/RuleCompliance";
 import RuleStateCompanyMapping from "../components/pages/Masters/Mappings/RuleStateCompanyMapping";
 import MangeUsers from "../components/pages/UserManagement/ManageUsers";
 import AssociateCompanies from "../components/pages/Masters/Companies/AssociateCompanies";
@@ -28,21 +27,46 @@ import AuditScheduleDetails from "../components/pages/Masters/Companies/AuditSch
 import LockUnLock from "../components/pages/Masters/Companies/LockUnLock";
 import EmailTemplates from "../components/pages/Email/EmailTemplates";
 import Home from "../components/pages/home";
+import Roles from "../components/pages/UserManagement/Roles/Roles";
+import ManageVerticals from "../components/pages/Masters/Companies/Verticals/ManageVerticals";
+import ManageDepartments from "../components/pages/Masters/Companies/Departments/ManageDepartments";
+import ComplianceSchedule from "../components/pages/ComplianceMasters/ComplianceSchedule";
+import ComplianceScheduleDetails from "../components/pages/ComplianceMasters/ComplianceScheduleDetails";
+import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
+import ComplianceOwnerDashboard from "../components/pages/ComplianceOwner/Dashboard/ComplianceOwnerDashboard";
+import MangeDepartmentUsers from "../components/pages/UserManagement/DepartmentUsers.tsx/ManageDepartmentUsers";
+import ComplianceOwnerActivities from "../components/pages/ComplianceOwner/TaskManagement/ComplianceOwnerActivities";
+import NotificationsCenter from "../components/pages/Notifications/NotificationsCenter";
+import ManageEscalationMatrix from "../components/pages/Masters/Companies/EscalationMatrix/ManageEscalationMatrix";
+import NotificationTemplates from "../components/pages/Notifications/NotificationTemplates";
+import ManageNotices from "../components/pages/Notices/ManageNotices";
+import EmployeeMasterUpload from "../components/pages/InputModule/EmployeeMasterUpload";
+import HolidayList from "../components/pages/InputModule/HolidayList";
+import LeaveConfiguration from "../components/pages/InputModule/LeaveConfiguration";
+import LeaveMapping from "../components/pages/InputModule/Dashboard";
+import AttendanceConfig from "../components/pages/InputModule/AttendanceConfig";
+import StateRegisterConfiguration from "../components/pages/InputModule/StateRegisterConfiguration";
+import EmployeeLeaveCreditUpload from "../components/pages/InputModule/EmployeeLeaveCreditUpload";
+import EmployeeLeaveAvailedUpload from "../components/pages/InputModule/EmployeeLeaveAvailedUpload";
+import EmployeeAttendanceUpload from "../components/pages/InputModule/EmployeeAttendanceUpload";
+import SalaryComponents from "../components/pages/InputModule/SalaryComponents";
+import Dashboard from "../components/pages/InputModule/Dashboard";
+import Configurations from "../components/pages/InputModule/Configurations";
+import EmployeeWageUpload from "../components/pages/InputModule/EmployeeWageUpload";
+import RegisterDownload from "../components/pages/InputModule/RegisterDownload";
+import InputsDashboard from "../components/pages/InputModule/Dashboard";
 
 export const ROLE_MAPPING: any = {
     AuditorAdmin: ['dashboard', 'activities'],
     AuditorUser: ['dashboard', 'activities'],
     VendorAdmin: ['dashboard', 'activities'],
     VendorUser: ['dashboard', 'activities'],
-    SuperAdmin: ['masters', 'companies', 'userManagement', 'email']
+    SuperAdmin: ['masters', 'companies', 'auditSchedule', 'userManagement', 'email']
 }
 
 function AuthenticatedContent() {
     const [query] = useQueryParams();
-    const user = auth.getUserDetails() || {};
     const hasToken = !!auth.getAuthToken();
-    const isVendor = ['VendorAdmin', 'VendorUser'].includes(user.role);
-    const pages = ROLE_MAPPING[user.role] || [];
 
     function layout(children: any, layoutWithSidenav = true) {
         if (layoutWithSidenav) {
@@ -55,25 +79,60 @@ function AuthenticatedContent() {
         if (!hasToken) {
             return <Login />
         } else {
-            const page = pages[0] || 'dashboard';
-            if (page.includes('dashboard')) {
-                return layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
-            } else {
+            if (auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_DASHBOARD)) {
+                return layout(<VendorDashboard />);
+            } else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_DASHBOARD)) {
+                return layout(<AuditorDashboard />);
+            } else if (
+                auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD) ||
+                auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD) ||
+                auth.hasUserAccess(USER_PRIVILEGES.ESCALATION_DASHBOARD)
+            ) {
+                return layout(<ComplianceOwnerDashboard />);
+            }
+            // else if (auth.hasUserAccess(USER_PRIVILEGES.INPUT_DASHBOARD)) {
+            //     return layout(<InputsDashboard />);
+            // }
+             else {
                 return layout(<Home />)
             }
         }
     }
 
+    function getActivitiesByRole() {
+        if (auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES)) {
+            return layout(<ActivitiesManagement />);
+        } else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES)) {
+            return layout(<TaskManagement />);
+        } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
+            return layout(<ComplianceOwnerActivities />);
+        } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
+            return layout(<VendorDashboard />);
+        } else {
+            return layout(<></>)
+        }
+    }
+
     const routes = {
-        '/dashboard': () => (
-            layout(isVendor ? <VendorDashboard /> : <AuditorDashboard />)
-        ),
+        '/dashboard': () => getHomePage(),
         '/dashboard/activities': () => (
             layout(<ActivitiesManagement />)
         ),
-        '/activities': () => (
-            layout(isVendor ? < ActivitiesManagement /> : <TaskManagement />)
-        ),
+        '/activities': () => getActivitiesByRole(),
+        '/inputUploads/dashboard': () => (layout(<Dashboard />)),
+        '/setupInput/inputModuleUploads': () => (layout(<Configurations />)),
+        '/setupInput/holidayList': () => (layout(<HolidayList />)),
+        '/setupInput/leaveConfiguration': () => (layout(<LeaveConfiguration />)),
+        '/setupInput/attendanceConfig': () => (layout(<AttendanceConfig />)),
+        '/setupInput/salaryComponents': () => (layout(<SalaryComponents />)),
+        '/setupInput/stateRegisterConfiguration': () => (layout(<StateRegisterConfiguration />)),
+        '/inputUploads/employeeMasterUpload': () => (layout(<EmployeeMasterUpload />)),
+        '/inputUploads/registerDownload' : () => (layout(<RegisterDownload/>)),
+        '/inputUploads/employeeLeaveCreditUpload': () => (layout(<EmployeeLeaveCreditUpload />)),
+        '/inputUploads/employeeLeaveAvailedUpload': () => (layout(<EmployeeLeaveAvailedUpload />)),
+        '/inputUploads/employeeAttendanceUpload': () => (layout(<EmployeeAttendanceUpload />)),
+        '/inputUploads/employeeWageUpload': () => (layout(<EmployeeWageUpload />)),
+
         '/masters/law': () => (
             layout(<Law />)
         ),
@@ -95,9 +154,6 @@ function AuthenticatedContent() {
         '/masters/location': () => (
             layout(<Location />)
         ),
-        '/masters/compliance': () => (
-            layout(<RuleCompliance />)
-        ),
         '/masters/mapping': () => (
             layout(<RuleStateCompanyMapping />)
         ),
@@ -107,17 +163,44 @@ function AuthenticatedContent() {
         '/companies/associateCompanies': () => (
             layout(<AssociateCompanies />)
         ),
+        '/companies/verticals': () => (
+            layout(<ManageVerticals />)
+        ),
+        '/companies/departments': () => (
+            layout(<ManageDepartments />)
+        ),
+        '/companies/escalationMatrix': () => (
+            layout(<ManageEscalationMatrix />)
+        ),
         '/companies/locationMapping': () => (
             layout(<CompanyLocationMappings />)
         ),
         '/companies/auditSchedule': () => (
             layout(<AuditSchedule />)
         ),
-        '/companies/audit-schedule-details': () => (
+        '/auditSchedule/importExport': () => (
+            layout(<AuditSchedule />)
+        ),
+        '/auditSchedule/details': () => (
             layout(<AuditScheduleDetails />)
         ),
-        '/companies/blockUnblock': () => (
+        '/auditSchedule/blockUnblock': () => (
             layout(<LockUnLock />)
+        ),
+        '/userManagement/roles': () => (
+            layout(<Roles />)
+        ),
+        '/complianceManagement/complianceSchedule': () => (
+            layout(<ComplianceSchedule />)
+        ),
+        '/complianceManagement/compliance-schedule-details': () => (
+            layout(<ComplianceScheduleDetails />)
+        ),
+        // '/complianceManagement/blockUnblock': () => (
+        //     layout(<LockUnLockCompliance />)
+        // ),
+        '/complianceManagement/dashboard': () => (
+            layout(<ComplianceOwnerDashboard />)
         ),
         '/userManagement/users': () => (
             layout(<MangeUsers />)
@@ -125,8 +208,20 @@ function AuthenticatedContent() {
         '/userManagement/mapping': () => (
             layout(<UserCompanies />)
         ),
-        '/email/templates': () => (
+        '/userManagement/userDepartment': () => (
+            layout(<MangeDepartmentUsers />)
+        ),
+        '/templates/email': () => (
             layout(<EmailTemplates />)
+        ),
+        '/templates/notification': () => (
+            layout(<NotificationTemplates />)
+        ),
+        '/notifications': () => (
+            layout(<NotificationsCenter />)
+        ),
+        '/notices': () => (
+            layout(<ManageNotices />)
         ),
         '/changePassword/:token': ({ token }: any) => (
             <>
@@ -145,7 +240,7 @@ function AuthenticatedContent() {
         ),
         '/login': () => (
             <Login />
-        ),
+        )
     }
 
     useEffect(() => {
