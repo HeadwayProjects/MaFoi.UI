@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import SubmitToAuditorModal from "./SubmitToAuditorModal";
 import * as api from "../../../../backend/request";
-import { hasUserAccess, getUserDetails } from "../../../../backend/auth";
+import { hasUserAccess, getUserDetails, getUserRole } from "../../../../backend/auth";
 import EditActivityModal from "./EditActivityModal";
 import { toast } from 'react-toastify';
 import PageLoader from "../../../shared/PageLoader";
@@ -29,6 +29,7 @@ import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 import styles from "./TaskManagement.module.css";
 import TableActions, { ActionButton } from "../../../common/TableActions";
 import SendEmailModal from "../../Auditor/SendEmailModal";
+import VendorBulkUploadModal from "./VendorBulkModal";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -72,6 +73,7 @@ function ActivitiesManagement() {
     const [checkedStatuses, setCheckedStatuses] = useState<any>((state || {}).status ? { [state.status]: true } : {});
     const [activity, setActivity] = useState<any>(null);
     const [bulkUpload, setBulkUpload] = useState(false);
+    const [vendorUpload, setVendorUpload] = useState<boolean>(false);
     const [submitToAuditor, setSubmitToAuditor] = useState(false);
     const path: any = usePath();
     const [fromDashboard] = useState(path.includes('/dashboard/activities'));
@@ -280,6 +282,10 @@ function ActivitiesManagement() {
                 </div>
                 <div className="dropdown-menu">
                     <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
+                    {
+                    selectedRows.length !== 0 && 
+                    <a className="dropdown-item" onClick={(e) => {e.preventDefault();setVendorUpload(true)}}>Bulk Upload</a>
+                    }
                 </div>
             </div>
         )
@@ -423,7 +429,7 @@ function ActivitiesManagement() {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
-        selectable: false,
+        selectable: getUserRole() === 'Vendor User' ? true : false,
         paginate: true,
         initialSort: [{ column: 'month', dir: 'desc' }],
         rowFormatter
@@ -498,6 +504,12 @@ function ActivitiesManagement() {
         return _payload;
     }
 
+    function handleVendorBulkUploadClose(refresh = false) {
+        if (refresh) {
+            refetch();
+        }
+        setVendorUpload(false);
+    }
     function handleBulkUploadClose(refresh = false) {
         if (refresh) {
             refetch();
@@ -670,6 +682,10 @@ function ActivitiesManagement() {
             </div>
 
             {
+                vendorUpload &&
+                <VendorBulkUploadModal onClose={handleVendorBulkUploadClose} selectedItems={selectedRows} />
+            }
+            {
                 bulkUpload &&
                 <BulkUploadModal onClose={handleBulkUploadClose} onSubmit={refetch} />
             }
@@ -681,8 +697,8 @@ function ActivitiesManagement() {
                     selectedRows={selectedRows} />
             }
             {
-                !!activity &&
-                <EditActivityModal activity={activity} onClose={() => setActivity(null)} onSubmit={refetch} />
+                !!activity && selectedRows.length >= 0 &&
+                <EditActivityModal activity={activity} onClose={() => setActivity(null)} onSubmit={refetch} selectedItems={selectedRows} />
             }
             {
                 !!alertMessage &&
@@ -697,7 +713,7 @@ function ActivitiesManagement() {
             }
             {(submitting || exporting || exportingTodos) && <PageLoader />}
         </>
-    );
+    ); 
 }
 
 export default ActivitiesManagement;

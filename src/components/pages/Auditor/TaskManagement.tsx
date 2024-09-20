@@ -551,7 +551,7 @@ function TaskManagement(props:any) {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
-        selectable: true,
+        selectable: false,
         paginate: true,
         initialSort: [{ column: 'month', dir: 'desc' }],
         rowFormatter
