@@ -24,6 +24,7 @@ import { useExportTodos, useGetAllActivities } from "../../../backend/query";
 import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
 import TableActions, { ActionButton } from "../../common/TableActions";
 import SendEmailModal from "./SendEmailModal";
+import { saveAs } from 'file-saver';
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -43,7 +44,7 @@ const SortFields: any = {
     'location.name': 'locationname'
 };
 
-function TaskManagement() {
+function TaskManagement(props:any) {
     const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
     const [checkedStatuses, setCheckedStatuses] = useState<any>({});
@@ -58,6 +59,7 @@ function TaskManagement() {
     const afRef: any = useRef();
     afRef.current = advaceSearchFilters;
     const [statusFilters, setStatusFilters] = useState<any>([{ columnName: 'status', value: STATUS_BTNS.map(x => x.name).join(API_DELIMITER) }]);
+    console.log(statusFilters,'Statusfilters')
     const sfRef: any = useRef();
     sfRef.current = statusFilters;
     const [payload, setPayload] = useState<any>();
@@ -290,9 +292,98 @@ function TaskManagement() {
                 </div>
                 <div className="dropdown-menu">
                     <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
+                    <a className="dropdown-item" href="/" onClick={bulkFileUpload}>All Files Download</a>
                 </div>
             </div>
         )
+    }
+
+    function bulkFileUpload(event:any){
+        const _request = { ...reduceArraytoObj(lfRef.current), ...reduceArraytoObj(afRef.current) };
+        console.log(_request);
+        console.log(checkedStatuses);
+
+        const selectedStatuses = Object.keys(checkedStatuses)
+        .filter((status) => checkedStatuses[status] === true) // Filter only the true values
+        .join('-'); // Join them with a hyphen
+
+    // Handle the case when no statuses are true (optional)
+    const finalStatuses = selectedStatuses || null;
+
+        const _payload = {
+            company: _request.companyId,
+            associateCompany: _request.associateCompanyId,
+            location: _request.locationId,
+            month: _request.month,
+            year: _request.year,
+            statuses: finalStatuses // Assign the concatenated true statuses
+        };
+
+        console.log(_payload);
+        const _idData=[];
+        event.preventDefault();
+        const arrayOfData=data.data;
+        let filtered = arrayOfData.filter((t: { id: string; })=>t.id);
+        for(let i of filtered){
+            _idData.push(i.id)
+        }
+        if(_idData.length>0){
+            const fullPayload = {
+                toDoIds: _idData, // Array of GUIDs
+                searchParamsforToDo: {
+                    company: _request.companyId,
+                    associateCompany: _request.associateCompanyId,
+                    location: _request.locationId,
+                    month: _request.month ? _request.month : "", // Ensure month has a value or set a default string
+                    year: _request.year ? _request.year : 0,           // Ensure year has a value or set 0 as default
+                    statuses: finalStatuses ? finalStatuses : " "// The concatenated string of statuses
+                }
+            };
+            console.log(fullPayload)
+            // Make the API call to get the ZIP file
+            api.post('/api/ToDoDetails/GetByToDowithZipWithOnlyFileforMultipleIds', fullPayload, {
+                responseType: 'arraybuffer' // Set response type to 'blob' to handle binary data
+            }).then(response => {
+                // Create a new Blob object using the response data
+                const blob = new Blob([response.data], { type: 'application/zip' });
+                // Extract the content-disposition header to get the filename
+                const contentDisposition = response.headers['content-disposition'];
+                let filename = 'download.zip'; // Default filename
+                if (contentDisposition) {
+                    // Check for UTF-8 encoded filenames
+                    const utf8FilenameMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/);
+                    if (utf8FilenameMatch) {
+                        filename = decodeURIComponent(utf8FilenameMatch[1].replace(/\+/g, ' '));
+                    } else {
+                        // Fall back to the regular 'filename' if UTF-8 is not present
+                        const regularFilenameMatch = contentDisposition.match(/filename="([^"]+)"/);
+                        if (regularFilenameMatch) {
+                            filename = regularFilenameMatch[1];
+                        }
+                    }
+                }
+                // Clean up the filename by removing problematic characters
+                filename = filename.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+                console.log(filename);
+                return { blob, filename };
+            }).then(({ blob, filename }) => {
+                // Use the FileSaver.js library to save the file
+                saveAs(blob, filename);
+                // Alternatively, create a download link
+                const link = document.createElement('a');
+                const url = window.URL.createObjectURL(blob);
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }).catch(error => {
+                console.error('Error downloading the file:', error);
+            }); }
+        else{
+                return toast.warning("No files found");        }
+        
     }
 
     function FormStatusTmpl({ cell }: any) {
@@ -460,7 +551,7 @@ function TaskManagement() {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
-        selectable: false,
+        selectable: true,
         paginate: true,
         initialSort: [{ column: 'month', dir: 'desc' }],
         rowFormatter
@@ -598,7 +689,21 @@ function TaskManagement() {
         }
     }, [statusFilters]);
 
+    useEffect(()=>{
+        const urlPath:string=window.location.pathname.split('/')[2];
+        if(urlPath!=null){
+            setCheckedStatuses({
+            
+            
+                ...(checkedStatuses || {}),
+                'Rejected': true
+            });
+        }
+    },[]);
+
     useEffect(() => {
+        
+        
         if (checkedStatuses) {
             const keys = Object.keys(checkedStatuses);
             const result = keys.filter(key => !!checkedStatuses[key]);

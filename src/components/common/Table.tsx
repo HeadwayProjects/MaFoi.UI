@@ -169,6 +169,7 @@ function Table(props: any) {
         rowFormatter
     } = props.options;
 
+
     const [table, setTable] = useState<any>();
     const [tableColumns, setTableColumns] = useState<any[]>([]);
     const [pageCounter, setPageCounter] = useState('No records');
@@ -260,6 +261,7 @@ function Table(props: any) {
                 selectableCheck,
                 placeholder: 'No Data Available',
                 ajaxResponse: (url, params, response) => {
+                    console.log(response,'Response')
                     return response;
                 },
                 initialSort,
@@ -268,10 +270,9 @@ function Table(props: any) {
                 // resizableColumnFit,
                 rowHeight,
                 rowFormatter,
-                dataLoader: false
+                dataLoader: false,
             });
             setTable(_table);
-
             _table.on('tableBuilt', () => {
                 // _table.element.querySelector('.tablulator-footer').style.display = 'none';
             });
@@ -290,6 +291,7 @@ function Table(props: any) {
 
         return () => {
             const _div: any = divEle.current;
+            console.log(_div,'looped')
             if (!!_div) {
                 while (_div.firstChild) {
                     _div.removeChild(_div.firstChild);

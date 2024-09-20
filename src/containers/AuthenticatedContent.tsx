@@ -99,11 +99,11 @@ function AuthenticatedContent() {
         }
     }
 
-    function getActivitiesByRole() {
+    function getActivitiesByRole(url:string) {
         if (auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES)) {
             return layout(<ActivitiesManagement />);
         } else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES)) {
-            return layout(<TaskManagement />);
+            return layout(<TaskManagement urlPath={url}/>);
         } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
             return layout(<ComplianceOwnerActivities />);
         } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
@@ -112,13 +112,12 @@ function AuthenticatedContent() {
             return layout(<></>)
         }
     }
-
     const routes = {
         '/dashboard': () => getHomePage(),
         '/dashboard/activities': () => (
             layout(<ActivitiesManagement />)
         ),
-        '/activities': () => getActivitiesByRole(),
+        '/activities': () => getActivitiesByRole('empty'),
         '/inputUploads/dashboard': () => (layout(<Dashboard />)),
         '/setupInput/inputModuleUploads': () => (layout(<Configurations />)),
         '/setupInput/holidayList': () => (layout(<HolidayList />)),

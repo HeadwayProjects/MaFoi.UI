@@ -197,8 +197,11 @@ const StateRegisterConfiguration = () => {
   const [openViewModal, setOpenViewModal] = React.useState(false);
   const [selectedStateConfig, setSelectedStateConfig] = React.useState<any>({})
 
+  
   const fromsList = formsDetails.data.list ? formsDetails.data.list : []
   const filteredFormsList = fromsList.filter((each: any) => each.filePath !== '' && each.formName !== '')
+  console.log(fromsList);
+console.log(filteredFormsList);
 
   const [isHovered, setIsHovered] = React.useState(false);
   const [hoveredRow, setHoveredRow] = useState(null);

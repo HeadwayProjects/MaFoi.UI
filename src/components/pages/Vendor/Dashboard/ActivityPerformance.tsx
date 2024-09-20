@@ -7,6 +7,8 @@ import Chart from "./Chart";
 import { DEFAULT_PAYLOAD } from "../../../common/Table";
 import { ACTIVITY_TYPE, API_DELIMITER } from "../../../../utils/constants";
 import { ACTIVITY_STATUS, ActivityColorMappings } from "../../../common/Constants";
+import { getBasePath } from "../../../../App";
+import {  navigate } from 'raviger';
 dayjs.extend(utc as any);
 
 const PerformanceTabs = [
@@ -104,6 +106,11 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
         }
     }, [frequency]);
 
+    const routingFunction=(data:any)=>{
+        console.log(data);
+        navigate(`${getBasePath()}${'/activities/'+data.value}`, { replace: true, state: null });
+    }
+
     return (
         <div className="card shadow">
             <div className="card-header bg-white border-0 underline text-appprimary fw-semibold fs-5 d-flex align-items-center">
@@ -148,7 +155,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                             {
                                 Statuses.map(status => {
                                     return (
-                                        <div className="w-33 mb-3 me-3" key={status.key} style={{ width: "calc(33% - 1rem)" }}>
+                                        <div className="w-33 mb-3 me-3"  key={status.key} style={{ width: "calc(33% - 1rem)" }} onClick={()=>routingFunction(status)}>
                                             <div className={`card cardCount border-0 p-2 bg-status-${status.value} `}  >
                                                 <div className="card-body py-0">
                                                     <div className="row d-flex align-items-center fw-bold performance-status h-100">
@@ -158,7 +165,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                                                         <div className="col-3 px-1 py-1">
                                                             {
                                                                 typeof performanceStatus[status.key] !== 'undefined' &&
-                                                                <div className="p-0 m-0 text-lg">({performanceStatus[status.key]})</div>
+                                                                <div   className="p-0 m-0 text-lg">({performanceStatus[status.key]})</div>
                                                             }
                                                         </div>
                                                     </div>
