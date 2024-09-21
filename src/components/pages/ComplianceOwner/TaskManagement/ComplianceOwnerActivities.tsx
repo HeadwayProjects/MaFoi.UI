@@ -21,6 +21,7 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import PageLoader from "../../../shared/PageLoader";
 import * as api from "../../../../backend/request";
 
+
 const SortFields: any = {
     'month': 'startDate',
     'act.name': 'actname',
@@ -101,7 +102,7 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
         )
     }
 
-    function FormIndicationTmpl({ cell }: any) {
+    function FormIndicationTmpl({ cell, row }: any) {
         const status = cell.getValue();
         return (
             <div className="d-flex align-items-center">
@@ -137,114 +138,67 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
                     <FontAwesomeIcon icon={faEllipsisV} />
                 </div>
                 <div className="dropdown-menu">
-                    <a className="dropdown-item" href="/" onClick={handleExport}>Export-m</a>
-                    <a className="dropdown-item" href="/" onClick={bulkFileDownload}>All Files Download</a>
+                    <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
+                    <a className="dropdown-item" href="/" onClick={bulkFileDownloadthroughZip}>All Files Download</a>
                     {/* <a className="dropdown-item" href="/" onClick={handleAddNotice}>Add Notice</a> */}
                 </div>
             </div>
         )
     }
 
-    function bulkFileDownload(event:any){
-        //const _request = { ...reduceArraytoObj(lfRef.current), ...reduceArraytoObj(afRef.current) };
-       // console.log(_request);
-       // console.log(checkedStatuses);
 
-        //const selectedStatuses = Object.keys(checkedStatuses)
-        //.filter((status) => checkedStatuses[status] === true) // Filter only the true values
-        //.join('-'); // Join them with a hyphen
+    function bulkFileDownloadthroughZip(event: any) {
+    event.preventDefault();
 
-    // Handle the case when no statuses are true (optional)
-    //const finalStatuses = selectedStatuses || null;
+    const _idData = data.data
+        .filter((item: { id: string }) => item.id)
+        .map((item: { id: string }) => item.id);
 
-        // const _payload = {
-        //     company: _request.companyId,
-        //     associateCompany: _request.associateCompanyId,
-        //     location: _request.locationId,
-        //     month: _request.month,
-        //     year: _request.year,
-        //     statuses: finalStatuses // Assign the concatenated true statuses
-        // };
-
-        const _payload = {
-            company: '',
-            associateCompany: '',
-            location: '',
-            month: '',
-            year: '',
-            statuses: '' // Assign the concatenated true statuses
+    if (_idData.length > 0) {
+        const fullPayload = {
+            toDoIds: _idData,
+            searchParamsforToDo: {
+                company: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+                associateCompany: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+                location: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+                month: 'string',
+                year: 0,
+                statuses: 'string'
+            }
         };
 
-        console.log(_payload);
-        const _idData=[];
-        event.preventDefault();
-        const arrayOfData=data.data;
-        let filtered = arrayOfData.filter((t: { id: string; })=>t.id);
-        for(let i of filtered){
-            _idData.push(i.id)
+        // API call to get the response with the x-uploaded-url header
+        api.post('/api/ComplianceDetails/GetByToDoWithZipFiles', fullPayload, {
+            responseType: 'arraybuffer',
+            headers: { 'Content-Type': 'application/zip' }
+        }).then((response: any) => {
+
+             console.log(response.headers);
+
+        const contentDisposition = response.headers['content-disposition'];
+        console.log(contentDisposition);
+        // Use a regular expression to extract the URL from the filename parameter
+        const urlMatch = contentDisposition.match(/filename="(.+?)"/);
+ console.log(urlMatch);
+        if (urlMatch && urlMatch[1]) {
+            const uploadedUrl1 = decodeURIComponent(urlMatch[1]);
+            //alert(uploadedUrl1);
+            console.log('Downloading from:', uploadedUrl1);
+
+            // Directly trigger download from the extracted URL
+            window.location.href = uploadedUrl1;
+            //alert(uploadedUrl1);
         }
-        console.log(_idData);
-        if(_idData.length>0){
-            // const fullPayload = {
-            //     toDoIds: _idData, // Array of GUIDs
-            //     searchParamsforToDo: {
-            //         company: _request.companyId,
-            //         associateCompany: _request.associateCompanyId,
-            //         location: _request.locationId,
-            //         month: _request.month ? _request.month : "", // Ensure month has a value or set a default string
-            //         year: _request.year ? _request.year : 0,           // Ensure year has a value or set 0 as default
-            //         statuses: finalStatuses ? finalStatuses : " "// The concatenated string of statuses
-            //     }
-            // };
-            const fullPayload = {
-                toDoIds: _idData, // Array of GUIDs
-                searchParamsforToDo: {
-                    company: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-                    associateCompany: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-                    location: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-                    month: 'string', // Ensure month has a value or set a default string
-                    year: 0,           // Ensure year has a value or set 0 as default
-                    statuses: 'string'// The concatenated string of statuses
-                }
-            };
-            console.log(fullPayload)
-            api.post('/api/ComplianceDetails/GetByToDoWithZipFiles', fullPayload, {
-                responseType: 'blob' // Set response type to 'blob' to handle binary data
-            }).then(response => {
-                // Since the filename is predefined on the server, use it directly
-                const filename = 'Compliance-UploadedFiles.zip'; // Static filename
-            
-                // Create a new Blob object using the response data
-                const blob = new Blob([response.data], { type: 'application/zip' });
-            
-                // Create a link element
-                const link = document.createElement('a');
-            
-                // Create a URL for the Blob and set it as the href attribute
-                const url = window.URL.createObjectURL(blob);
-                link.href = url;
-            
-                // Set the download attribute to the filename
-                link.download = filename;
-            
-                // Append the link to the document body and simulate a click to trigger the download
-                document.body.appendChild(link);
-                link.click();
-            
-                // Remove the link after the download is triggered
-                document.body.removeChild(link);
-            
-                // Clean up the object URL after the download is complete
-                window.URL.revokeObjectURL(url);
-            }).catch(error => {
-                console.error("Error downloading the file:", error);
-                toast.error("Failed to download the ZIP file.");
-            });
-        }
-        else{
-                return toast.warning("No files found");        }
-        
+             }).catch(error => {
+            console.error("Error downloading the file:", error);
+            toast.error("Failed to download the ZIP file.");
+        });
+    } else {
+        toast.warning("No files found.");
     }
+}
+
+
 
     function ActivityTypeTmpl({ cell }: any) {
         const value = cell.getValue() || ACTIVITY_TYPE.AUDIT;
@@ -257,21 +211,17 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
 
     const columns = [
         {
-            title: "Actions", hozAlign: "right", width: 120,
+            title: "",
+            width: 30,
             headerSort: false,
             formatter: reactFormatter(<ActionColumnElements />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "", width: 40,
+            title: "Actions", width: 80, field: "status",
             headerSort: false,
-            formatter: reactFormatter(<ActionColumnElements />),
-            // titleFormatter: reactFormatter(<ActionHeaderTmpl />)
-        },
-        {
-            title: "", width: 30, field: "status",
-            headerSort: false,
-            formatter: reactFormatter(<FormIndicationTmpl />)
+            formatter: reactFormatter(
+                <FormIndicationTmpl />
+            )
         },
         {
             title: "", width: 30, field: "download",

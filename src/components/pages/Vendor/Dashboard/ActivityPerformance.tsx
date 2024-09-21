@@ -106,10 +106,10 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
         }
     }, [frequency]);
 
-    const routingFunction=(data:any)=>{
-        console.log(data);
-        navigate(`${getBasePath()}${'/activities/'+data.value}`, { replace: true, state: null });
-    }
+    //const routingFunction=(data:any)=>{
+      //  console.log(data);
+        //navigate(`${getBasePath()}${'/activities/'+data.value}`, { replace: true, state: null });
+   // }
 
     return (
         <div className="card shadow">
@@ -155,7 +155,7 @@ function ActivityPerformance({ current, selectedCompany, selectedAssociateCompan
                             {
                                 Statuses.map(status => {
                                     return (
-                                        <div className="w-33 mb-3 me-3"  key={status.key} style={{ width: "calc(33% - 1rem)" }} onClick={()=>routingFunction(status)}>
+                                        <div className="w-33 mb-3 me-3"  key={status.key} style={{ width: "calc(33% - 1rem)" }}>
                                             <div className={`card cardCount border-0 p-2 bg-status-${status.value} `}  >
                                                 <div className="card-body py-0">
                                                     <div className="row d-flex align-items-center fw-bold performance-status h-100">
