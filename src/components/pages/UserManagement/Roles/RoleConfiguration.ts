@@ -149,7 +149,8 @@ export enum USER_PRIVILEGES {
     VIEW_EMPLOYEE_ATTENDANCE = 'VIEW_EMPLOYEE_ATTENDANCE',
     DELETE_EMPLOYEE_ATTENDANCE = 'DELETE_EMPLOYEE_ATTENDANCE',
     VIEW_EMPLOYEE_WAGE = 'VIEW_EMPLOYEE_WAGE',
-    DELETE_EMPLOYEE_WAGE = 'DELETE_EMPLOYEE_WAGE'
+    DELETE_EMPLOYEE_WAGE = 'DELETE_EMPLOYEE_WAGE',
+    VIEW_REGISTER_DOWNLOAD = 'VIEW_REGISTER_DOWNLOAD'
 }
 
 export const PAGES_CONFIGURATION = [
@@ -277,6 +278,10 @@ export const PAGES_CONFIGURATION = [
             {
                 id: USER_PRIVILEGES.DELETE_EMPLOYEE_WAGE,
                 name: 'Delete Employee WAGE'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_REGISTER_DOWNLOAD,
+                name: 'View Register Download'
             },
     ]
     },

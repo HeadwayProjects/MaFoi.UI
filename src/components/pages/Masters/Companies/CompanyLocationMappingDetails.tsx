@@ -37,6 +37,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
 
 
     const { createCompanyLocation, creating } = useCreateCompanyLocation(({ key, value }: ResponseModel) => {
+        //alert(value);
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Location created successfully.`);
             if (file) {
@@ -53,7 +54,9 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
         if (key === API_RESULT.SUCCESS) {
             toast.success(`Location ${locationDetails.locationName} updated successfully.`);
             if (file && value) {
-                uploadDigitalSignature(value)
+                //alert("57"+data.locationId);
+                //console.log("58data"+data);
+                uploadDigitalSignature(data.id)
             } else {
                 onSubmit();
             }
@@ -288,6 +291,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
             console.log(payload, file);
 
             if (action === ACTIONS.EDIT) {
+                //alert("data.locatioid"+data.locationId);
                 payload['locationId'] = data.locationId;
                 updateCompanyLocation(payload)
             } else if (action === ACTIONS.ADD) {
