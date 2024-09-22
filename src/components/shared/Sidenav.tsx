@@ -26,7 +26,7 @@ const SideNavMenu = [
             { id: 'masters/city', url: '/masters/city', label: 'City', privilege: USER_PRIVILEGES.VIEW_CITIES },
             // { id: 'masters/compliance', url: '/masters/compliance', label: 'Rule Compliance', privilege: USER_PRIVILEGES.VIEW_RULE_COMPLIANCE },
             { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings', privilege: USER_PRIVILEGES.VIEW_MAPPINGS },
-            { id: 'setupInput/stateRegisterConfiguration', url: '/setupInput/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY }
+            { id: 'setupInput/stateRegisterConfiguration', url: '/setupInput/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_STATEREGISTER_CONFIGURATION }
         ]
     },
     {

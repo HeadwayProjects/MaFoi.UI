@@ -150,6 +150,7 @@ export enum USER_PRIVILEGES {
     DELETE_EMPLOYEE_ATTENDANCE = 'DELETE_EMPLOYEE_ATTENDANCE',
     VIEW_EMPLOYEE_WAGE = 'VIEW_EMPLOYEE_WAGE',
     DELETE_EMPLOYEE_WAGE = 'DELETE_EMPLOYEE_WAGE',
+       VIEW_STATEREGISTER_CONFIGURATION = 'VIEW_STATEREGISTER_CONFIGURATION',
     VIEW_REGISTER_DOWNLOAD = 'VIEW_REGISTER_DOWNLOAD'
 }
 
@@ -429,6 +430,11 @@ export const PAGES_CONFIGURATION = [
             {
                 id: USER_PRIVILEGES.EXPORT_MAPPING,
                 name: 'Export Mappings'
+            }
+            ,
+            {
+                id: USER_PRIVILEGES.VIEW_STATEREGISTER_CONFIGURATION,
+                name: 'View State Register Configuration'
             }
         ]
     },
