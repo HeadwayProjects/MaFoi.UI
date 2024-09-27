@@ -501,6 +501,10 @@ console.log('formResonseUrl',formResponseUrl);
       {
         fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/BWS_Telangana_Controller/getAllTelanganaForms';
     }
+    else if(stateName == '6ece4005-dff4-471b-aade-8139bba6b5e2')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Kerala_Controller/getAllKeralaForms';
+    }
     else{
       toast.error("State was Not Configured");
       return 

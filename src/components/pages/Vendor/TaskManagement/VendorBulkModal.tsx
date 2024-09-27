@@ -89,7 +89,7 @@ function VendorBulkUploadModal({ onClose, selectedItems }: any) {
         api.post('/api/FileUpload/UploadMultipleFileForMultipleToDos', formData).then(response => {
             if(response.status === 200) {
             onClose(true);
-            toast.success('Files saved successfully.');
+            toast.success('Files Uploaded Successfully to Pending Activities');
             }
         }, error => {
             console.error(error);
@@ -125,7 +125,7 @@ function VendorBulkUploadModal({ onClose, selectedItems }: any) {
                                     <th style={{ width: '5%' }}></th>
                                     <th style={{ width: '50%' }}>File Name</th>
                                     <th style={{ width: '5%' }}></th>
-                                </tr>
+                                </tr>    
                             </thead>
                             <tbody style={{ height: '300px' }}>
                                 {
@@ -159,6 +159,7 @@ function VendorBulkUploadModal({ onClose, selectedItems }: any) {
                                 }
                             </tbody>
                         </table>
+                        <label className="filter-label" color="Red">Activities which are in Activity Saved , Pending Mode only will get Uploaded</label>
                     </div>
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">

@@ -364,6 +364,7 @@ const finalStatuses = selectedStatuses || null;
 
             // Directly trigger download from the extracted URL
             window.location.href = uploadedUrl1;
+            toast.success("Zip FIle Downloaded");
         }
 
         }).catch(error => {

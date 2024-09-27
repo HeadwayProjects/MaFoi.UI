@@ -187,6 +187,7 @@ function ComplianceOwnerActivities({ filters, handleCounts }: any) {
 
             // Directly trigger download from the extracted URL
             window.location.href = uploadedUrl1;
+            toast.success("Zip File Downloaded");
             //alert(uploadedUrl1);
         }
              }).catch(error => {

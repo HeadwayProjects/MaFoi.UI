@@ -116,14 +116,14 @@ function ActivitiesManagement() {
     });
 
     const buttons: ActionButton[] = [
-        {
-            label: 'Bulk Upload',
-            name: 'bulkUpload',
-            privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD,
-            action: () => {
-                setBulkUpload(true)
-            }
-        },
+        // {
+        //     label: 'Bulk Upload',
+        //     name: 'bulkUpload',
+        //     privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD,
+        //     action: () => {
+        //         setBulkUpload(true)
+        //     }
+        // },
         {
             label: 'Submit to Auditor',
             name: 'submitToAuditor',
