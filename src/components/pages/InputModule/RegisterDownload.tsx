@@ -296,7 +296,7 @@ const RegisterDownload = () => {
   };
 
   const handleChangeMonth = (event:any) => {
-    alert(event.target.value);
+    //alert(event.target.value);
     setMonth(event.target.value);
     //const monthKey = (monthList.findIndex((each) => each === event.target.value) + 1).toString()
     const payload: any =  { 

@@ -505,6 +505,14 @@ console.log('formResonseUrl',formResponseUrl);
       {
         fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Kerala_Controller/getAllKeralaForms';
     }
+    else if(stateName == 'bcc02dfd-dc75-46f0-9097-9645be70c457')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Maharastra_Controller/getAllMaharastraForms';
+    }
+    else if(stateName == '334b472a-fbc6-40a5-a7a6-0960fd89fab8')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Rajastan_Controller/getAllRajastanForms';
+    }
     else{
       toast.error("State was Not Configured");
       return 
