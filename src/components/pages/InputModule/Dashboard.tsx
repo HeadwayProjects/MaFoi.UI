@@ -513,6 +513,14 @@ console.log('formResonseUrl',formResponseUrl);
       {
         fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Rajastan_Controller/getAllRajastanForms';
     }
+    else if(stateName == '958d51e8-9dda-47cf-a537-1b471026b0c6')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Gujarath_Controller/getAllGujarathForms';
+    }
+    else if(stateName == '3995e3f5-718c-420b-8fc3-636362b0f592')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Punjab_Controller/getAllPunjabForms';
+    }
     else{
       toast.error("State was Not Configured");
       return 
