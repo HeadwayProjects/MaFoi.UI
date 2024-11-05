@@ -521,6 +521,30 @@ console.log('formResonseUrl',formResponseUrl);
       {
         fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Punjab_Controller/getAllPunjabForms';
     }
+    else if(stateName == '2bce7366-0e00-4f25-889c-46e583920dc4')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_MadhyaPradesh_Controller/getAllMadhyaPradeshForms';
+    }
+    else if(stateName == 'f1ebf4e0-4060-493c-b632-af8895082ac5')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Chattisgarh_Controller/getAllChattisgarhForms';
+    }
+    else if(stateName == 'e74e0987-b17a-4ea8-a90c-c83545a84083')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Chandigarh_Controller/getAllChandigarhForms';
+    }
+    else if(stateName == '635d88d7-b89e-4a40-9e4c-569c6ea2a5c0')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Haryana_Controller/getAllHaryanaForms';
+    }
+    else if(stateName == 'b4d010ce-1b8c-4547-bfee-e9fddde05ce4')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Delhi_Controller/getAllDelhiForms';
+    }
+    else if(stateName == '7d710181-1a02-4d56-923c-0ba4b5b9f59f')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_UttarPradesh_Controller/getAllUttarPradeshForms';
+    }
     else{
       toast.error("State was Not Configured");
       return 
