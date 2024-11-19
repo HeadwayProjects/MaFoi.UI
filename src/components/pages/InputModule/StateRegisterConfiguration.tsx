@@ -1428,6 +1428,7 @@ console.log(filteredFormsList);
   };
 
   const handleMouseLeave = () => {
+    setHoveredRow(null);
     setIsHovered(false);
   };
 
@@ -2327,10 +2328,10 @@ useEffect(() => {
                                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
 
                                     <Tooltip
-                                       key={each.id}
+                                       key={each.Id}
                                       title={each.ezycompField} // Tooltip content is set to the ezycompField value
                                       //open={isHovered}
-                                      open={hoveredRow === each.id}
+                                      open={hoveredRow === each.Id}
                                       disableFocusListener
                                       disableTouchListener
                                       placement="top"
@@ -2351,7 +2352,7 @@ useEffect(() => {
                                       <TextField
                                         size="small"
                                         value={each.ezycompField}
-                                        id={`textfield-${each.id}`}
+                                        id={`textfield-${each.Id}`}
                                         sx={{
                                           // width: '100%', // Adjust width as needed
                                           width: '250px',
@@ -2362,7 +2363,7 @@ useEffect(() => {
                                           },
                                           
                                         }}
-                                        onMouseEnter={() => handleEditMouseEnter(each.id)}
+                                        onMouseEnter={() => handleEditMouseEnter(each.Id)}
                                         onMouseLeave={handleMouseLeave}
                                       />
                                     </Tooltip>

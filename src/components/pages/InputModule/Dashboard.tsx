@@ -545,6 +545,18 @@ console.log('formResonseUrl',formResponseUrl);
       {
         fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_UttarPradesh_Controller/getAllUttarPradeshForms';
     }
+    else if(stateName == '0d8f1621-29d5-4141-9c7e-3e93084d05b5')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Goa_Controller/getAllGoaForms';
+    }
+    else if(stateName == '3e163775-c0b8-48f0-9097-f32eb50b0f55')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_PondiCherry_Controller/getAllPondiCherryForms';
+    }
+    else if(stateName == '12d45b68-0ed1-40ff-b268-bd30a814d484')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Bihar_Controller/getAllBiharForms';
+    }
     else{
       toast.error("State was Not Configured");
       return 
