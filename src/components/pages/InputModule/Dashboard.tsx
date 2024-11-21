@@ -557,6 +557,10 @@ console.log('formResonseUrl',formResponseUrl);
       {
         fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Bihar_Controller/getAllBiharForms';
     }
+    else if(stateName == '97c92fbd-40b0-4d11-8557-8ded6d0a06ab')
+      {
+        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Assam_Controller/getAllAssamForms';
+    }
     else{
       toast.error("State was Not Configured");
       return 
