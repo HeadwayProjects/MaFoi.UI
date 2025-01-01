@@ -871,11 +871,11 @@ const RegisterDownload = () => {
 
   const link = document.createElement('a');
   link.href = url;
-  
+ 
   // Set the download attribute to suggest a file name (optional)
   // This is the name the file will be downloaded as
+  if(url!= null){
   link.download = url.split('/').pop(); // Use the file name from the URL
-
   // Append the anchor to the body
   document.body.appendChild(link);
 
@@ -884,7 +884,14 @@ const RegisterDownload = () => {
 
   // Remove the anchor from the document
   document.body.removeChild(link);
+}
+else{
+  toast.info("file was null");
+}
+
   }
+
+ 
 
 
 

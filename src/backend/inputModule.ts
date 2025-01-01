@@ -52,7 +52,8 @@ export class InputModuleService {
 
     //Employee Master uploads
     public async configUpload(data: any) {
-        const url = `/api/Configuration/upload`
+        // const url = `/api/Configuration/upload`
+            const url = `/api/Configuration/BulkUpload`
         return await api.post(url, data, null, true)
     }
 
@@ -62,32 +63,39 @@ export class InputModuleService {
     }
 
     public async callExcelHeaderToDbColumns(data: any) {
-        const url = `/api/Configuration/ExcelHeaderToDBColumns`
+        // const url = `/api/Configuration/ExcelHeaderToDBColumns`
+         const url = `/api/Configuration/BulkExcelHeaderToDBColumns`
         return await api.post(url, data)
     }
     
     public async employeeUpload(data: any) {
-        const url = `/api/Configuration/UploadEmployeeMaster`
+        //const url = `/api/Configuration/UploadEmployeeMaster`
+            const url = `/api/Configuration/BulkUploadEmployeeMaster`
         return await api.post(url, data, null, true)
     }
-
+    
     public async employeeAttendanceUpload(data: any) {
-        const url = `/api/Configuration/UploadEmployeeAttendance`
+            const url = `/api/Configuration/BulkUploadEmployeeAttendance`
+        //const url = `/api/Configuration/UploadEmployeeAttendance`
         return await api.post(url, data, null, true)
     }
 
     public async employeeLeaveBalanceUpload(data: any) {
-        const url = `/api/Configuration/UploadEmployeeLeaveBalance`
+        //const url = `/api/Configuration/UploadEmployeeLeaveBalance`
+         const url = `/api/Configuration/BulkUploadEmployeeLeaveBalance`
         return await api.post(url, data, null, true)
     }
-
+    
     public async employeeLeaveAvailedUpload(data: any) {
-        const url = `/api/Configuration/UploadEmployeeLeaveAvailed`
+         const url = `/api/Configuration/BulkUploadEmployeeLeaveAvailed`
+        //const url = `/api/Configuration/UploadEmployeeLeaveAvailed`
         return await api.post(url, data, null, true)
     }
 
     public async employeeWageUpload(data: any) {
-        const url = `/api/Configuration/UploadEmployeeWage`
+        
+        const url = `/api/Configuration/BulkUploadEmployeeWage`
+        //const url = `/api/Configuration/UploadEmployeeWage`
         return await api.post(url, data, null, true)
     }
 

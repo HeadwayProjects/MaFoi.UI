@@ -236,14 +236,14 @@ const Configurations = () => {
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
         formData.append('Remarks', 'NA')
-        formData.append('Year', year)
-        formData.append('Month', month)
+        formData.append('Year', year || "2024" )
+        formData.append('Month', month || "November" )
         formData.append('Mapped', 'false')
         formData.append('ConfigurationType', configType)
         formData.append('CompanyId', company)
         formData.append('AssociateCompanyId', associateCompany)
-        formData.append('LocationId', location)
-        formData.append('StateId', stateName)
+        formData.append('LocationId', location || "00000000-0000-0000-0000-000000000000")
+        formData.append('StateId', stateName || "00000000-0000-0000-0000-000000000000")
         dispatch(configUpload(formData))
       }
       else if(employeeUploadDetails.data.filePath!= null )
@@ -289,14 +289,14 @@ const Configurations = () => {
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
         formData.append('Remarks', 'NA')
-        formData.append('Year', year)
-        formData.append('Month', month)
+        formData.append('Year', year || "2024")
+        formData.append('Month', month || "November")
         formData.append('Mapped', 'false')
         formData.append('ConfigurationType', configType)
         formData.append('CompanyId', company)
         formData.append('AssociateCompanyId', associateCompany)
-        formData.append('LocationId', location)
-        formData.append('StateId', stateName)
+        formData.append('LocationId', location || "00000000-0000-0000-0000-000000000000")
+        formData.append('StateId', stateName || "00000000-0000-0000-0000-000000000000")
         dispatch(configUpload(formData))
       }
       else if(employeeAttendanceUploadDetails.data.filePath!= null )
@@ -330,6 +330,10 @@ const Configurations = () => {
   }, [employeeAttendanceUploadDetails.status])
 
 
+
+  
+
+
   // useEffect(() => {
   //   if(employeeAttendanceUploadDetails.status === 'succeeded'){
   //     if(employeeAttendanceUploadDetails.data.key === 'FAILURE'){
@@ -355,55 +359,159 @@ const Configurations = () => {
   //   }
   // }, [employeeAttendanceUploadDetails.status])
 
+  // useEffect(() => {
+  //   if(employeeLeaveCreditUploadDetails.status === 'succeeded'){
+  //     if(employeeLeaveCreditUploadDetails.data.status === 'NOTSETUP'){
+  //       const formData = new FormData();
+  //       const data = uploadData ? uploadData[0] : []
+  //       formData.append('file', data);
+  //       formData.append('Remarks', 'NA')
+  //       formData.append('Year', year)
+  //       formData.append('Month', month)
+  //       formData.append('Mapped', 'false')
+  //       formData.append('ConfigurationType', configType)
+  //       formData.append('CompanyId', company)
+  //       formData.append('AssociateCompanyId', associateCompany)
+  //       formData.append('LocationId', location)
+  //       formData.append('StateId', stateName)
+  //       dispatch(configUpload(formData))
+  //     }else{
+  //       resetStateValues()
+  //       toast.success(`Upload Successfull`)
+  //     }
+  //   }else if (employeeLeaveCreditUploadDetails.status === 'failed'){
+  //     toast.error(ERROR_MESSAGES.DEFAULT);
+  //   }
+  // }, [employeeLeaveCreditUploadDetails.status])
+
   useEffect(() => {
     if(employeeLeaveCreditUploadDetails.status === 'succeeded'){
-      if(employeeLeaveCreditUploadDetails.data.key === 'FAILURE'){
+      //alert("employeeUploadDetails hitted");
+        console.log(employeeLeaveCreditUploadDetails.data);
+      if(employeeLeaveCreditUploadDetails.data.status === 'NOTSETUP'){
+     // alert("not set up hitted");
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
         formData.append('Remarks', 'NA')
-        formData.append('Year', year)
-        formData.append('Month', month)
+        formData.append('Year', year || "2024")
+        formData.append('Month', month || "November")
         formData.append('Mapped', 'false')
         formData.append('ConfigurationType', configType)
         formData.append('CompanyId', company)
         formData.append('AssociateCompanyId', associateCompany)
-        formData.append('LocationId', location)
-        formData.append('StateId', stateName)
+        formData.append('LocationId', location || "00000000-0000-0000-0000-000000000000")
+        formData.append('StateId', stateName || "00000000-0000-0000-0000-000000000000")
         dispatch(configUpload(formData))
-      }else{
-        resetStateValues()
-        toast.success(`Upload Successfull`)
       }
+      else if(employeeLeaveCreditUploadDetails.data.filePath!= null )
+        {
+         // alert("failpeath not null hitted");
+  setUploadError(true);
+  setErrorFilePath(employeeLeaveCreditUploadDetails.data.filePath);
+  //alert("employeeUploadDetails.data.filePath!= null hitted");
+ // dispatch(resetEmployeeAttendanceUploadDetails());
+      
+      }
+      else if (employeeLeaveCreditUploadDetails.data.status === 'FAILURE'){
+       // alert("employeeUploadDetails.status === 'FAILURE' hitted");
+        //toast.error(ERROR_MESSAGES.DEFAULT);
+        toast.error(employeeLeaveCreditUploadDetails.data.statusMessage);
+        dispatch(resetEmployeeLeaveCreditUploadDetails());
+        //dispatch(resetEmployeeAttendanceUploadDetails());
+        dispatch(resetConfigUploadDetails());
+      }
+      else if(employeeLeaveCreditUploadDetails.data.status === 'SUCCESS'){
+         // alert("employee sccess hitted")
+         resetStateValues()
+         //toast.success(`Upload Successfull`)
+         toast.success(employeeLeaveCreditUploadDetails.data.statusMessage);
+       }
     }else if (employeeLeaveCreditUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
+      dispatch(resetEmployeeLeaveCreditUploadDetails());
+
+      dispatch(resetConfigUploadDetails());
     }
   }, [employeeLeaveCreditUploadDetails.status])
 
   useEffect(() => {
     if(employeeLeaveAvailedUploadDetails.status === 'succeeded'){
-      if(employeeLeaveAvailedUploadDetails.data.key === 'FAILURE'){
+      //alert("employeeUploadDetails hitted");
+        console.log(employeeLeaveAvailedUploadDetails.data);
+      if(employeeLeaveAvailedUploadDetails.data.status === 'NOTSETUP'){
+     // alert("not set up hitted");
         const formData = new FormData();
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
         formData.append('Remarks', 'NA')
-        formData.append('Year', year)
-        formData.append('Month', month)
+        formData.append('Year', year || "2024")
+        formData.append('Month', month || "November")
         formData.append('Mapped', 'false')
         formData.append('ConfigurationType', configType)
         formData.append('CompanyId', company)
         formData.append('AssociateCompanyId', associateCompany)
-        formData.append('LocationId', location)
-        formData.append('StateId', stateName)
+        formData.append('LocationId', location || "00000000-0000-0000-0000-000000000000")
+        formData.append('StateId', stateName || "00000000-0000-0000-0000-000000000000")
         dispatch(configUpload(formData))
-      }else{
-        resetStateValues()
-        toast.success(`Upload Successfull`)
       }
+      else if(employeeLeaveAvailedUploadDetails.data.filePath!= null )
+        {
+         // alert("failpeath not null hitted");
+  setUploadError(true);
+  setErrorFilePath(employeeLeaveAvailedUploadDetails.data.filePath);
+  //alert("employeeUploadDetails.data.filePath!= null hitted");
+ // dispatch(resetEmployeeAttendanceUploadDetails());
+      
+      }
+      else if (employeeLeaveAvailedUploadDetails.data.status === 'FAILURE'){
+       // alert("employeeUploadDetails.status === 'FAILURE' hitted");
+        //toast.error(ERROR_MESSAGES.DEFAULT);
+        toast.error(employeeLeaveAvailedUploadDetails.data.statusMessage);
+        dispatch(resetEmployeeLeaveCreditUploadDetails());
+        //dispatch(resetEmployeeAttendanceUploadDetails());
+        dispatch(resetConfigUploadDetails());
+      }
+      else if(employeeLeaveAvailedUploadDetails.data.status === 'SUCCESS'){
+         // alert("employee sccess hitted")
+         resetStateValues()
+         //toast.success(`Upload Successfull`)
+         toast.success(employeeLeaveAvailedUploadDetails.data.statusMessage);
+       }
     }else if (employeeLeaveAvailedUploadDetails.status === 'failed'){
       toast.error(ERROR_MESSAGES.DEFAULT);
+      dispatch(resetEmployeeLeaveCreditUploadDetails());
+
+      dispatch(resetConfigUploadDetails());
     }
   }, [employeeLeaveAvailedUploadDetails.status])
+
+
+
+  // useEffect(() => {
+  //   if(employeeLeaveAvailedUploadDetails.status === 'succeeded'){
+  //     if(employeeLeaveAvailedUploadDetails.data.key === 'FAILURE'){
+  //       const formData = new FormData();
+  //       const data = uploadData ? uploadData[0] : []
+  //       formData.append('file', data);
+  //       formData.append('Remarks', 'NA')
+  //       formData.append('Year', year || "2024")
+  //       formData.append('Month', month || "November")
+  //       formData.append('Mapped', 'false')
+  //       formData.append('ConfigurationType', configType)
+  //       formData.append('CompanyId', company)
+  //       formData.append('AssociateCompanyId', associateCompany)
+  //       formData.append('LocationId', location || "00000000-0000-0000-0000-000000000000")
+  //       formData.append('StateId', stateName || "00000000-0000-0000-0000-000000000000")
+  //       dispatch(configUpload(formData))
+  //     }else{
+  //       resetStateValues()
+  //       toast.success(`Upload Successfull`)
+  //     }
+  //   }else if (employeeLeaveAvailedUploadDetails.status === 'failed'){
+  //     toast.error(ERROR_MESSAGES.DEFAULT);
+  //   }
+  // }, [employeeLeaveAvailedUploadDetails.status])
 
   useEffect(() => {
     if(employeeWageUploadDetails.status === 'succeeded'){
@@ -415,14 +523,14 @@ const Configurations = () => {
         const data = uploadData ? uploadData[0] : []
         formData.append('file', data);
         formData.append('Remarks', 'NA')
-        formData.append('Year', year)
-        formData.append('Month', month)
+        formData.append('Year', year || "2024")
+        formData.append('Month', month || "November")
         formData.append('Mapped', 'false')
         formData.append('ConfigurationType', configType)
         formData.append('CompanyId', company)
         formData.append('AssociateCompanyId', associateCompany)
-        formData.append('LocationId', location)
-        formData.append('StateId', stateName)
+        formData.append('LocationId', location || "00000000-0000-0000-0000-000000000000")
+        formData.append('StateId', stateName || "00000000-0000-0000-0000-000000000000")
         dispatch(configUpload(formData))
       }
       else if(employeeWageUploadDetails.data.filePath!= null )
@@ -533,7 +641,7 @@ else if (configUploadDetails.status === 'failed'){
   useEffect(() => {
     if(configMappingDetails.status === 'succeeded'){
      //alert("495 config mapp details hitted")
-      if(configMappingDetails.data.status !== 'FAILURE'){        
+      if(configMappingDetails.data.status !== 'FAILURE'){   
         setTableData(configMappingList)
       }
     }else if(configMappingDetails.status === 'failed'){
@@ -574,7 +682,7 @@ else if (configUploadDetails.status === 'failed'){
 // ];
 
   const onClickUpload = () => {
-    if(!company || !associateCompany || !stateName || !location || !year || !month || !configType){
+    if(!company || !associateCompany || !configType){
       return toast.error(ERROR_MESSAGES.FILL_ALL);
     } else{
       setOpenUploadModal(true)
@@ -586,15 +694,15 @@ else if (configUploadDetails.status === 'failed'){
     const data = uploadData ? uploadData[0] : []
     formData.append('file', data);
     formData.append('Remarks', 'NA')
-    formData.append('Year', year)
-    formData.append('Month', month)
+    formData.append('Year', year || "2024" )
+    formData.append('Month', month || "November")
     formData.append('Mapped', 'false')
     formData.append('ConfigurationType', configType)
     formData.append('CompanyId', company)
     formData.append('AssociateCompanyId', associateCompany)
-    formData.append('LocationId', location)
-    formData.append('StateId', stateName)
-    console.log(formData);
+    formData.append('LocationId', location || "00000000-0000-0000-0000-000000000000")
+    formData.append('StateId', stateName || "00000000-0000-0000-0000-000000000000")
+    console.log(formData.values);
     if(configType === 'Employee'){
       dispatch(employeeUpload(formData))
     }else if(configType === 'Employee Attendance'){
@@ -622,7 +730,7 @@ else if (configUploadDetails.status === 'failed'){
   }
 
   const onClickPreview = () => {  
-    if(!company || !associateCompany || !location || !configType){
+    if(!company || !associateCompany || !configType){
       return toast.error(ERROR_MESSAGES.FILL_ALL);
     }else{
       const payload = {
@@ -642,7 +750,7 @@ else if (configUploadDetails.status === 'failed'){
           },
           {
             columnName:'LocationId',
-            value: location
+            value: location || "00000000-0000-0000-0000-000000000000"
           }
         ],
         pagination: {
@@ -936,7 +1044,7 @@ else if (configUploadDetails.status === 'failed'){
                       {showmappinglne ? <p style={{ color: 'white', backgroundColor: 'rgb(6, 84, 173)', fontWeight: 'bold' }}>Do the Mappings , needed for first time uploading</p> : ""}
                       <Box sx={{marginRight:'12px', display:'flex', alignItems:'center', width:'260px', justifyContent: 'space-between'}}>
                        
-                        <Button onClick={onClickPreview} disabled={!configType || !company || !associateCompany || !location} variant='contained' > Preview </Button>
+                        <Button onClick={onClickPreview} disabled={!configType || !company || !associateCompany } variant='contained' > Preview </Button>
                         {
                     hasUserAccess(USER_PRIVILEGES.ADD_INPUT_MODULE_UPLOAD) &&
                         <Button onClick={onClickUpload} variant='contained' style={{marginRight:'10px', backgroundColor:'#E9704B', display:'flex', alignItems:'center'}}> <FaUpload /> &nbsp; Upload</Button>
@@ -1032,7 +1140,7 @@ else if (configUploadDetails.status === 'failed'){
                         </MSelect>
                       </FormControl>
                     </Box>
-
+{/* 
                     <Box sx={{width:'100%', mr:1}}>
                       <Typography mb={1}>States</Typography>
                       <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
@@ -1084,9 +1192,9 @@ else if (configUploadDetails.status === 'failed'){
                           })}
                         </MSelect>
                       </FormControl>
-                    </Box>
+                    </Box> */}
 
-                    <Box sx={{width:'100%', mr:1}}>
+                   {/* <Box sx={{width:'100%', mr:1}}>
                       <Typography mb={1}>Year</Typography>
                       <FormControl sx={{ width:'100%', maxWidth:'190px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
                         <MSelect
@@ -1142,7 +1250,7 @@ else if (configUploadDetails.status === 'failed'){
                           )}
                         </MSelect>
                       </FormControl>
-                    </Box>
+                    </Box> */}
 
                   </div>
               </Box>

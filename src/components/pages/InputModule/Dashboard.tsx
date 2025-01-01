@@ -236,7 +236,7 @@ const getLocationById = (id: string, locations: any[]) => {
   const monthList = [
     "January",
     "February",
-    "March",
+    "March",  
     "April",
     "May",
     "June",
@@ -331,7 +331,7 @@ const getLocationById = (id: string, locations: any[]) => {
       params.append('username', 'admin');
       params.append('password', 'admin');
 
-      const tokenResponse = await axios.post('https://ezycomp.buoyantworx.com/oauth/token', params.toString(), {
+      const tokenResponse = await axios.post('https://ezycomp1.buoyantworx.com/app/oauth/token', params.toString(), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Basic ' + btoa('client:secret'),
@@ -351,50 +351,50 @@ const getLocationById = (id: string, locations: any[]) => {
       let fileUrl="";
         if(filename == 'FormBRegofWages'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
+          formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
         }
         else if(filename=='FormARegofWages'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/b21fb1d8-a634-4420-adc5-14361cd94790/Form A - reg of wages.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormARegofWages';
+          formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormARegofWages';
         }
         else if(filename=='FormTPart1Regoffines'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx'
-formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormTPart1Regoffines';
+formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormTPart1Regoffines';
         }
         else if(filename=='FormTPart2RegofFines'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'
-        formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormTPart2RegofFines';
+        formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormTPart2RegofFines';
         }
         else if(filename=='ESIForm11RegofAccident'){
             fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/919ccacd-e50d-4906-ad74-28aeb8fca1a7/ESI_Form 11_Reg of Accident.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileESIForm11RegofAccident';
+          formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileESIForm11RegofAccident';
         }
         else if(filename=='POW_Part2RegofDeduction'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/96d650d7-d1e1-476d-8728-385c9ed5a2cc/POW Form 2 for Deduction.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/filePOW_Part2RegofDeduction';
+          formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/filePOW_Part2RegofDeduction';
         }
         else if(filename=='POW_Part3RegofAdvance'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/f8c6ebf9-9f57-413d-a22b-c6b76e3c62a2/POW Form III Reg of Advance  .xlsx'
-        formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/filePOW_Part3RegofAdvance';
+        formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/filePOW_Part3RegofAdvance';
         }
         else if(filename=='Form_1_RegisterForSuspendedEmployees'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/e5484c2d-884b-47b3-9e42-6392377f490a/Form 1.xlsx'
-        formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileForm_1_RegisterForSuspendedEmployees';
+        formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileForm_1_RegisterForSuspendedEmployees';
         }
         else if(filename=='Form_Q'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/5eb524bb-04c4-4f39-b15d-fe462eb67b50/Form Q.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileForm_Q';
+          formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileForm_Q';
         }
         else if(filename=='MaintainCombinedRegisterofMusterRollFormTPart2'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'
-        formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart2';
+        formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart2';
         }
         else if(filename=='MaintainCombinedRegisterofMusterRollFormTPart1'){
             fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart1';
+          formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart1';
           }
         else{
-          formResponseUrl='https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
+          formResponseUrl='https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
         }
           
 console.log('filrUrl',fileUrl);        
@@ -435,7 +435,7 @@ console.log('formResonseUrl',formResponseUrl);
       // alert(fileRef);
 
        // Step 3: Use the file reference to download the file
-       const fileDownloadResponse = await axios.get('https://ezycomp.buoyantworx.com/rest/files', {
+       const fileDownloadResponse = await axios.get('https://ezycomp1.buoyantworx.com/app/rest/files', {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         },
@@ -487,79 +487,87 @@ console.log('formResonseUrl',formResponseUrl);
   const handleProcessRegisters2=async ()=>{
     let fileUrl = '';
     if(stateName == '912da48d-630f-4cdb-9b24-d27cda14fc03'){
-      fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_TN_Reporting_Controller/getAllTamilNaduForms';
+      fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_TN_Reporting_Controller/getAllTamilNaduForms';
     }
     else if(stateName == '59b24896-1f55-4037-b631-c699dd9fd2bc')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Reporting_Controller/getAllKarnatakaForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Reporting_Controller/getAllKarnatakaForms';
     }
     else if(stateName == '827e4dd8-079e-4c4f-a7ef-783c52926226')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/BWS_AP_Controller/getAllAndraPradeshForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/BWS_AP_Controller/getAllAndraPradeshForms';
     }
     else if(stateName == '75144ed9-1a78-4a0d-8d69-6519a9908dc3')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/BWS_Telangana_Controller/getAllTelanganaForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/BWS_Telangana_Controller/getAllTelanganaForms';
     }
     else if(stateName == '6ece4005-dff4-471b-aade-8139bba6b5e2')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Kerala_Controller/getAllKeralaForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Kerala_Controller/getAllKeralaForms';
     }
     else if(stateName == 'bcc02dfd-dc75-46f0-9097-9645be70c457')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Maharastra_Controller/getAllMaharastraForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Maharastra_Controller/getAllMaharastraForms';
     }
     else if(stateName == '334b472a-fbc6-40a5-a7a6-0960fd89fab8')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Rajastan_Controller/getAllRajastanForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Rajastan_Controller/getAllRajastanForms';
     }
     else if(stateName == '958d51e8-9dda-47cf-a537-1b471026b0c6')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Gujarath_Controller/getAllGujarathForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Gujarath_Controller/getAllGujarathForms';
     }
     else if(stateName == '3995e3f5-718c-420b-8fc3-636362b0f592')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Punjab_Controller/getAllPunjabForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Punjab_Controller/getAllPunjabForms';
     }
     else if(stateName == '2bce7366-0e00-4f25-889c-46e583920dc4')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_MadhyaPradesh_Controller/getAllMadhyaPradeshForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_MadhyaPradesh_Controller/getAllMadhyaPradeshForms';
     }
     else if(stateName == 'f1ebf4e0-4060-493c-b632-af8895082ac5')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Chattisgarh_Controller/getAllChattisgarhForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Chattisgarh_Controller/getAllChattisgarhForms';
     }
     else if(stateName == 'e74e0987-b17a-4ea8-a90c-c83545a84083')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Chandigarh_Controller/getAllChandigarhForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Chandigarh_Controller/getAllChandigarhForms';
     }
     else if(stateName == '635d88d7-b89e-4a40-9e4c-569c6ea2a5c0')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Haryana_Controller/getAllHaryanaForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Haryana_Controller/getAllHaryanaForms';
     }
     else if(stateName == 'b4d010ce-1b8c-4547-bfee-e9fddde05ce4')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Delhi_Controller/getAllDelhiForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Delhi_Controller/getAllDelhiForms';
     }
     else if(stateName == '7d710181-1a02-4d56-923c-0ba4b5b9f59f')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_UttarPradesh_Controller/getAllUttarPradeshForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_UttarPradesh_Controller/getAllUttarPradeshForms';
     }
     else if(stateName == '0d8f1621-29d5-4141-9c7e-3e93084d05b5')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Goa_Controller/getAllGoaForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Goa_Controller/getAllGoaForms';
     }
     else if(stateName == '3e163775-c0b8-48f0-9097-f32eb50b0f55')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_PondiCherry_Controller/getAllPondiCherryForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_PondiCherry_Controller/getAllPondiCherryForms';
     }
     else if(stateName == '12d45b68-0ed1-40ff-b268-bd30a814d484')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Bihar_Controller/getAllBiharForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Bihar_Controller/getAllBiharForms';
     }
     else if(stateName == '97c92fbd-40b0-4d11-8557-8ded6d0a06ab')
       {
-        fileUrl = 'https://ezycomp.buoyantworx.com/rest/services/bws_Assam_Controller/getAllAssamForms';
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Assam_Controller/getAllAssamForms';
+    }
+    else if(stateName == '5bcd6f97-3065-4f62-9a02-17236ad9abe5')
+      {
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_Odisha_Controller/getAllOdishaForms';
+    }
+    else if(stateName == 'aff2d7e5-8619-4887-9865-df2164606b0f')
+      {
+        fileUrl = 'https://ezycomp1.buoyantworx.com/app/rest/services/bws_WestBengal_Controller/getAllWestBengalForms';
     }
     else{
       toast.error("State was Not Configured");
@@ -573,7 +581,7 @@ console.log('formResonseUrl',formResponseUrl);
       params.append('username', 'admin');
       params.append('password', 'admin');
 
-      const tokenResponse = await axios.post('https://ezycomp.buoyantworx.com/oauth/token', params.toString(), {
+      const tokenResponse = await axios.post('https://ezycomp1.buoyantworx.com/app/oauth/token', params.toString(), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Basic ' + btoa('client:secret'),
@@ -631,7 +639,16 @@ console.log('formResonseUrl',formResponseUrl);
 
       console.log(formResponse.data.body);
 
-      const filedownloadresponseURL= formResponse.data.body;
+      //const filedownloadresponseURL= formResponse.data.body;
+
+      let filedownloadresponseURL = formResponse.data.body; // The original URL
+const oldBaseURL = "https://ezycomp.buoyantworx.com/rest/";
+const newBaseURL = "https://ezycomp1.buoyantworx.com/app/rest/";
+filedownloadresponseURL = filedownloadresponseURL.replace(oldBaseURL, newBaseURL);
+
+// Log the modified URL to debug
+console.log("Modified URL:", filedownloadresponseURL);
+
   //   alert('filedownloadresponseURL : ' +filedownloadresponseURL);
 
        // Extract the fileRef from the URL in the formResponse
