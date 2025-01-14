@@ -14,7 +14,8 @@ function getBaseURL() {
     //const api_url = hostname.includes('uat') ? `apiprouat.ezycomp.com`: 'apipro.ezycomp.com';
 
     //for apiuat
-   // const api_url = hostname.includes('uat') ? `apiprouat.ezycomp.com`: 'apiprouat.ezycomp.com';
+    
+    //const api_url = hostname.includes('uat') ? `apiprouat.ezycomp.com`: 'apiprouat.ezycomp.com';
 
     //const api_url = "https://localhost:7221/";
     // const api_url = 'apiprouat.ezycomp.com'
@@ -25,16 +26,16 @@ export function getChartsBaseUrl() {
     const { protocol, hostname } = window.location;
 
     //for apiproduat
-        const api_url = hostname.includes('uat') ? `apichartproduat.ezycomp.com`: 'apichartproduat.ezycomp.com';
+       // const api_url = hostname.includes('uat') ? `apichartproduat.ezycomp.com`: 'apichartproduat.ezycomp.com';
 
     //for apiprod
-     //const api_url = hostname.includes('uat') ? `apichartprod.ezycomp.com`: 'apichartprod.ezycomp.com';
+     const api_url = hostname.includes('uat') ? `apichartprod.ezycomp.com`: 'apichartprod.ezycomp.com';
 
      //forapi
      //const api_url = hostname.includes('uat') ? `apichart.ezycomp.com`: 'apichart.ezycomp.com';
 
      //for apiuat
-    // const api_url = hostname.includes('uat') ? `apichartuat.ezycomp.com`: 'apichartuat.ezycomp.com';
+     //const api_url = hostname.includes('uat') ? `apichartuat.ezycomp.com`: 'apichartuat.ezycomp.com';
 
     // const api_url = 'apichartuat.ezycomp.com'
     //const api_url = "https://localhost:7221/";
