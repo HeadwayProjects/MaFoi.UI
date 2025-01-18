@@ -238,6 +238,26 @@ export class InputModuleService {
         const url = `/api/StateRegisterConfiguration/Update`
         return await api.post(url, data)
     }
+
+       // State RegisterQue
+       public async fetchStateRegisterQue(data: any) {
+        const url = `/api/StateRegisterQue/GetAll`
+        return await api.post(url, data)
+    }
+    public async fetchStateRegisterQueDownload(data: any) {
+        const url = `/api/StateRegisterQue/GetAll`
+        return await api.post(url, data)
+    }
+
+    public async addStateRegisterQue(data: any) {
+        const url = `/api/StateRegisterConfiguration/Add`
+        return await api.post(url, data)
+    }
+
+    public async updateStateRegisterQue(data: any) {
+        const url = `/api/StateRegisterConfiguration/Update`
+        return await api.post(url, data)
+    }
     
     //Employee Master
     public async getEmployees(data: any) {

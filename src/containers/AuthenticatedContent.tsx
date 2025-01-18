@@ -55,7 +55,7 @@
     import EmployeeWageUpload from "../components/pages/InputModule/EmployeeWageUpload";
     import RegisterDownload from "../components/pages/InputModule/RegisterDownload";
     import InputsDashboard from "../components/pages/InputModule/Dashboard";
-    //import RegistersQue from "../components/pages/InputModule/RegistersQue";
+    import RegistersQue from "../components/pages/InputModule/RegistersQue";
     //import QueRegisterDownload from "../components/pages/InputModule/QueRegisterDownload";
 
     export const ROLE_MAPPING: any = {
@@ -121,7 +121,7 @@
             ),
             '/activities': () => getActivitiesByRole('empty'),
             '/inputUploads/dashboard': () => (layout(<Dashboard />)),
-            //'/inputUploads/registersQue': () => (layout(<RegistersQue />)),
+            '/inputUploads/registersQue': () => (layout(<RegistersQue />)),
             '/setupInput/inputModuleUploads': () => (layout(<Configurations />)),
             '/setupInput/holidayList': () => (layout(<HolidayList />)),
             '/setupInput/leaveConfiguration': () => (layout(<LeaveConfiguration />)),

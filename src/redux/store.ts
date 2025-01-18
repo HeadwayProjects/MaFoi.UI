@@ -4,6 +4,7 @@ import holidayListSlice from './features/holidayList.slice'
 import leaveConfigurationSlice from './features/leaveConfiguration.slice'
 import attendanceConfigurationSlice from './features/attendanceConfiguration.slice'
 import stateRegisterSlice from './features/stateRegister.slice'
+import stateRegisterQueSlice from './features/stateRegisterQue.slice'
 import inputDashboardSlice from './features/dashboard.slice'
 import employeeMasterSlice from './features/employeeMaster.slice'
 import salaryComponentSlice from './features/salaryComponents.slice'
@@ -16,6 +17,7 @@ export const store = configureStore({
     leaveConfiguration: leaveConfigurationSlice,
     attendanceConfiguration: attendanceConfigurationSlice,
     stateRegister: stateRegisterSlice,
+    stateRegisterQue: stateRegisterQueSlice,
     inputDashboard: inputDashboardSlice,
     employeeMaster: employeeMasterSlice,
     salaryComponent: salaryComponentSlice,
