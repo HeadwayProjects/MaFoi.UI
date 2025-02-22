@@ -216,7 +216,7 @@ function ComplianceScheduleDetails(this: any) {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Forms Status", field: "status", width: 160,
+            title: "Evidence Status", field: "status", width: 160,
             formatter: reactFormatter(<FormStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },

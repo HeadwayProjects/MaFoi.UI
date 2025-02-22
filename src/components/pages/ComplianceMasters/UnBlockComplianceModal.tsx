@@ -81,7 +81,7 @@ function UnBlockComplianceModal({ activity = {}, onClose, onSubmit }: any) {
                                     <div className="col">{activity.month} ({activity.year})</div>
                                 </div>
                                 <div className="row mb-2">
-                                    <div className="col-4 filter-label">Forms Status</div>
+                                    <div className="col-4 filter-label">Evidence Status</div>
                                     <div className="col">{activity.status && <StatusTmp status={activity.status} />}</div>
                                 </div>
                                 <div className="row mb-2">

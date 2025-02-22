@@ -132,13 +132,13 @@ function ActivitiesManagement() {
                 onSubmitToAuditor();
             }
         },
-        {
-            label: 'Send Report',
-            name: 'sendReport',
-            action: () => {
-                setAction(ACTIONS.SEND_REPORT);
-            }
-        }
+        // {
+        //     label: 'Send Report',
+        //     name: 'sendReport',
+        //     action: () => {
+        //         setAction(ACTIONS.SEND_REPORT);
+        //     }
+        // }
     ]
 
     function onLocationChange(event: any) {
@@ -407,12 +407,12 @@ function ActivitiesManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Audit Status", field: "auditStatus", maxWidth: 160,
+            title: "Compliance Status", field: "auditStatus", maxWidth: 160,
             formatter: reactFormatter(<AuditStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Forms Status", field: "status", maxWidth: 160,
+            title: "Evidence Status", field: "status", maxWidth: 160,
             formatter: reactFormatter(<FormStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },

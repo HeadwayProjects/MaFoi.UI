@@ -1,4 +1,30 @@
 export enum USER_PRIVILEGES {
+    VIEW_VENDOR_CATEGORY = 'VIEW_VENDOR_CATEGORY',
+    ADD_VENDOR_CATEGORY = 'ADD_VENDOR_CATEGORY',
+    EDIT_VENDOR_CATEGORY = 'EDIT_VENDOR_CATEGORY',
+    DELETE_VENDOR_CATEGORY = 'DELETE_VENDOR_CATEGORY',
+    EXPORT_VENDOR_CATEGORIES = 'EXPORT_VENDOR_CATEGORIES',
+
+    VIEW_VENDOR_DETAIL = 'VIEW_VENDOR_DETAIL',
+    ADD_VENDOR_DETAIL = 'ADD_VENDOR_DETAIL',
+    EDIT_VENDOR_DETAIL = 'EDIT_VENDOR_DETAIL',
+    DELETE_VENDOR_DETAIL = 'DELETE_VENDOR_DETAIL',
+    EXPORT_VENDOR_DETAILS = 'EXPORT_VENDOR_DETAILS',
+
+    VIEW_VENDOR_LOCATION_MAPPING = 'VIEW_VENDOR_LOCATION_MAPPING',
+    ADD_VENDOR_LOCATION_MAPPING = 'ADD_VENDOR_LOCATION_MAPPING',
+    EDIT_VENDOR_LOCATION_MAPPING = 'EDIT_VENDOR_LOCATION_MAPPING',
+    DELETE_VENDOR_LOCATION_MAPPING = 'DELETE_VENDOR_LOCATION_MAPPING',
+    EXPORT_VENDOR_LOCATION_MAPPINGS = 'EXPORT_VENDOR_LOCATION_MAPPINGS',
+
+    VIEW_VENDOR_USER_LOCATION_MAPPING = 'VIEW_VENDOR_USER_LOCATION_MAPPING',
+    ADD_VENDOR_USER_LOCATION_MAPPING = 'ADD_VENDOR_USER_LOCATION_MAPPING',
+    EDIT_VENDOR_USER_LOCATION_MAPPING = 'EDIT_VENDOR_USER_LOCATION_MAPPING',
+    DELETE_VENDOR_USER_LOCATION_MAPPING = 'DELETE_VENDOR_USER_LOCATION_MAPPING',
+    EXPORT_VENDOR_USER_LOCATION_MAPPINGS = 'EXPORT_VENDOR_USER_LOCATION_MAPPINGS',
+
+
+
     VIEW_LAW_CATEGORY = 'VIEW_LAW_CATEGORY',
     ADD_LAW_CATEGORY = 'ADD_LAW_CATEGORY',
     EDIT_LAW_CATEGORY = 'EDIT_LAW_CATEGORY',
@@ -35,6 +61,7 @@ export enum USER_PRIVILEGES {
     DELETE_MAPPING = 'DELETE_MAPPING',
     EXPORT_MAPPING = 'EXPORT_MAPPING',
     VIEW_COMPANIES = 'VIEW_COMPANIES',
+    VIEW_VENDORS = 'VIEW_VENDORS',
     ADD_COMPANY = 'ADD_COMPANY',
     EDIT_COMPANY = 'EDIT_COMPANY',
     DELETE_COMPANY = 'DELETE_COMPANY',
@@ -69,6 +96,7 @@ export enum USER_PRIVILEGES {
     DELETE_USER = 'DELETE_USER',
     EXPORT_USERS = 'EXPORT_USERS',
     VIEW_COMPANY_MAPPINGS = 'VIEW_COMPANY_MAPPINGS',
+    VIEW_VENDOR_MAPPINGS = 'VIEW_VENDOR_MAPPINGS',
     UPDATE_COMPANY_MAPPINGS = 'UPDATE_COMPANY_MAPPINGS',
     VIEW_DEPARTMENT_USER_MAPPING = 'VIEW_DEPARTMENT_USER_MAPPING',
     ADD_DEPARTMENT_USER_MAPPING = 'ADD_DEPARTMENT_USER_MAPPING',
@@ -79,10 +107,15 @@ export enum USER_PRIVILEGES {
     EDIT_COMPANY_ESCALTION_MATIX = 'EDIT_COMPANY_ESCALTION_MATIX',
     DELETE_COMPANY_ESCALTION_MATIX = 'DELETE_COMPANY_ESCALTION_MATIX',
     AUDIT_SCHEDULE = 'AUDIT_SCHEDULE',
+    AUDIT_VENDOR_SCHEDULE = 'AUDIT_VENDOR_CHEDULE',
     VIEW_AUDIT_SCHEDULE_DETAILS = 'VIEW_AUDIT_SCHEDULE_DETAILS',
+    VIEW_AUDIT_VENDOR_SCHEDULE_DETAILS = 'VIEW_AUDIT_VENDOR_SCHEDULE_DETAILS',
     DELETE_AUDIT_SCHEDULE_DETAILS = 'DELETE_AUDIT_SCHEDULE_DETAILS',
+    DELETE_AUDIT_VENDOR_SCHEDULE_DETAILS = 'DELETE_AUDIT_VENDOR_SCHEDULE_DETAILS',
     VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK = 'VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK',
+    VIEW_AUDIT_VENDOR_SCHEDULE_BLOCK_UNBLOCK = 'VIEW_AUDIT_VENDOR_SCHEDULE_BLOCK_UNBLOCK',
     AUDIT_SCHEDULE_UNBLOCK_BLOCKED = 'AUDIT_SCHEDULE_UNBLOCK_BLOCKED',
+    AUDIT_SCHEDULE_VENDOR_UNBLOCK_BLOCKED = 'AUDIT_SCHEDULE_VENDOR_UNBLOCK_BLOCKED',
     COMPLIANCE_SCHEDULE = 'COMPLIANCE_SCHEDULE',
     VIEW_COMPLIANCE_SCHEDULE_DETAILS = 'VIEW_COMPLIANCE_SCHEDULE_DETAILS',
     ASSIGN_COMPLIANCE_SCHEDULE_DETAILS = 'ASSIGN_COMPLIANCE_SCHEDULE_DETAILS',
@@ -102,19 +135,52 @@ export enum USER_PRIVILEGES {
     OWNER_DASHBOARD = 'OWNER_DASHBOARD',
     MANAGER_DASHBOARD = 'MANAGER_DASHBOARD',
     ESCALATION_DASHBOARD = 'ESCALATION_DASHBOARD',
+
+//START - OLD PRIVILGES
+// REVIEWER
     REVIEWER_ACTIVITIES = 'REVIEWER_ACTIVITIES',
     REVIEWER_ACTIVITIES_AUDIT = 'REVIEWER_ACTIVITIES_AUDIT',
     REVIEWER_ACTIVITIES_PUBLISH = 'REVIEWER_ACTIVITIES_PUBLISH',
     REVIEWER_ACTIVITIES_DOWNLOAD_REPORT = 'REVIEWER_ACTIVITIES_DOWNLOAD_REPORT',
+
+
     // OWNER_ACTIVITIES = 'OWNER_ACTIVITIES',
     OWNER_ACTIVITIES_SUBMIT = 'OWNER_ACTIVITIES_SUBMIT',
     OWNER_ACTIVITIES_DOCUMENT_UPLOAD = 'OWNER_ACTIVITIES_DOCUMENT_UPLOAD',
+
     // MANAGER_ACTIVITIES = 'MANAGER_ACTIVITIES',
     MANAGER_ACTIVITIES_REVIEW = 'MANAGER_ACTIVITIES_REVIEW',
+
+//SUBMITTER
     SUBMITTER_ACTIVITIES = 'SUBMITTER_ACTIVITIES',
     SUBMITTER_ACTIVITIES_SUBMIT = 'SUBMITTER_ACTIVITIES_SUBMIT',
     SUBMITTER_ACTIVITIES_UPLOAD = 'SUBMITTER_ACTIVITIES_UPLOAD',
     SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT = 'SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT',
+//  END OF OLD PRIVILIGES
+
+// ---------------------
+
+// START NEW PRIVILIGES
+REVIEWER_VENDOR_ACTIVITIES = 'REVIEWER_ACTIVITIES',
+REVIEWER_VENDOR_ACTIVITIES_AUDIT = 'REVIEWER_ACTIVITIES_AUDIT',
+REVIEWER_VENDOR_ACTIVITIES_PUBLISH = 'REVIEWER_ACTIVITIES_PUBLISH',
+REVIEWER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT = 'REVIEWER_ACTIVITIES_DOWNLOAD_REPORT',
+
+    // OWNER_ACTIVITIES = 'OWNER_ACTIVITIES',
+    OWNER_VENDOR_ACTIVITIES_SUBMIT = 'OWNER_ACTIVITIES_SUBMIT',
+    OWNER_VENDOR_ACTIVITIES_DOCUMENT_UPLOAD = 'OWNER_ACTIVITIES_DOCUMENT_UPLOAD',
+
+ // MANAGER_ACTIVITIES = 'MANAGER_ACTIVITIES',
+ MANAGER_VENDOR_ACTIVITIES_REVIEW = 'MANAGER_ACTIVITIES_REVIEW',
+
+ //SUBMITTER
+ SUBMITTER_VENDOR_ACTIVITIES = 'SUBMITTER_ACTIVITIES',
+ SUBMITTER_VENDOR_ACTIVITIES_SUBMIT = 'SUBMITTER_ACTIVITIES_SUBMIT',
+ SUBMITTER_VENDOR_ACTIVITIES_UPLOAD = 'SUBMITTER_ACTIVITIES_UPLOAD',
+ SUBMITTER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT = 'SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT',
+
+// END OF NEW PRIVILIGES 
+
     VIEW_USER_NOTIFICATIONS = 'VIEW_USER_NOTIFICATIONS',
     VIEW_NOTICES = 'VIEW_NOTICES',
     ADD_NOTICE = 'ADD_NOTICE',
@@ -301,6 +367,26 @@ export const PAGES_CONFIGURATION = [
         name: 'Masters',
         isMulti: true,
         privileges: [
+            {
+                id: USER_PRIVILEGES.VIEW_VENDOR_CATEGORY,
+                name: 'View Vendor Categories'
+            },
+            {
+                id: USER_PRIVILEGES.ADD_VENDOR_CATEGORY,
+                name: 'Add Vendor Category'
+            },
+            {
+                id: USER_PRIVILEGES.EDIT_VENDOR_CATEGORY,
+                name: 'Edit Vendor Category'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_VENDOR_CATEGORY,
+                name: 'Delete Vendor Category'
+            },
+            {
+                id: USER_PRIVILEGES.EXPORT_VENDOR_CATEGORIES,
+                name: 'Export Vendor Category'
+            },
             {
                 id: USER_PRIVILEGES.VIEW_LAW_CATEGORY,
                 name: 'View Law Categories'
@@ -568,7 +654,51 @@ export const PAGES_CONFIGURATION = [
             {
                 id: USER_PRIVILEGES.DELETE_COMPANY_ESCALTION_MATIX,
                 name: 'Delete Escalation Matrix'
-            }
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_VENDOR_LOCATION_MAPPING,
+                name: 'View Vendor Location Mapping'
+            },
+            {
+                id: USER_PRIVILEGES.ADD_VENDOR_LOCATION_MAPPING,
+                name: 'Add Vendor Location Mapping'
+            },
+            {
+                id: USER_PRIVILEGES.EDIT_VENDOR_LOCATION_MAPPING,
+                name: 'Edit Vendor Location Mapping'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_VENDOR_LOCATION_MAPPING,
+                name: 'Delete Vendor Location Mapping'
+            },
+            {
+                id: USER_PRIVILEGES.EXPORT_VENDOR_LOCATION_MAPPINGS,
+                name: 'Export Vendor Location Mappings'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_VENDORS,
+                name: 'View Vendors'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_VENDOR_DETAIL,
+                name: 'View Vendor Detail'
+            },
+            {
+                id: USER_PRIVILEGES.ADD_VENDOR_DETAIL,
+                name: 'Add Vendor Detail'
+            },
+            {
+                id: USER_PRIVILEGES.EDIT_VENDOR_DETAIL,
+                name: 'Edit Vendor Detail'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_VENDOR_DETAIL,
+                name: 'Delete Vendor Detail'
+            },
+            {
+                id: USER_PRIVILEGES.EXPORT_VENDOR_DETAILS,
+                name: 'Export Vendor Details'
+            },
         ]
     },
     {
@@ -594,6 +724,33 @@ export const PAGES_CONFIGURATION = [
             },
             {
                 id: USER_PRIVILEGES.AUDIT_SCHEDULE_UNBLOCK_BLOCKED,
+                name: 'Un-Block Blocked'
+            }
+        ]
+    },
+    {
+        id: 'AUDIT_VENDOR_MANAGEMENT',
+        name: 'Vendor Audit Management',
+        isMulti: true,
+        privileges: [
+            {
+                id: USER_PRIVILEGES.AUDIT_VENDOR_SCHEDULE,
+                name: 'Audit Schedule'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_AUDIT_VENDOR_SCHEDULE_DETAILS,
+                name: 'View Audit Schedule Details'
+            },
+            {
+                id: USER_PRIVILEGES.DELETE_AUDIT_VENDOR_SCHEDULE_DETAILS,
+                name: 'Delete Audit Schedule Details'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_AUDIT_VENDOR_SCHEDULE_BLOCK_UNBLOCK,
+                name: 'View Un-Block Activities'
+            },
+            {
+                id: USER_PRIVILEGES.AUDIT_SCHEDULE_VENDOR_UNBLOCK_BLOCKED,
                 name: 'Un-Block Blocked'
             }
         ]
@@ -665,6 +822,10 @@ export const PAGES_CONFIGURATION = [
             {
                 id: USER_PRIVILEGES.VIEW_COMPANY_MAPPINGS,
                 name: 'View Company Mapping'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_VENDOR_MAPPINGS,
+                name: 'View Vendor User Mapping'
             },
             {
                 id: USER_PRIVILEGES.UPDATE_COMPANY_MAPPINGS,
@@ -779,7 +940,50 @@ export const PAGES_CONFIGURATION = [
         ]
     },
     {
-        id: 'ACTIVITIES',
+        id: 'VEDNOR_ACTIVITIES',
+        name: 'Vendor Activities',
+        isMulti: false,
+        privileges: [
+            {
+                id: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES,
+                name: 'Submitter',
+                actions: [
+                    {
+                        id: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES_SUBMIT,
+                        name: 'Submit for Approval'
+                    },
+                    {
+                        id: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES_UPLOAD,
+                        name: 'Upload Documents'
+                    },
+                    {
+                        id: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT,
+                        name: 'Download Report'
+                    }
+                ]
+            },
+            {
+                id: USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES,
+                name: 'Vendor Audit Reviewer',
+                actions: [
+                    {
+                        id: USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES_AUDIT,
+                        name: 'Approve/Reject'
+                    },
+                    {
+                        id: USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES_PUBLISH,
+                        name: 'Publish Activities'
+                    },
+                    {
+                        id: USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT,
+                        name: 'Download Report'
+                    }
+                ]
+            },
+        ]
+    },
+    {
+        id: 'LOCATION_ACTIVITIES',
         name: 'Location Activities',
         isMulti: false,
         privileges: [

@@ -14,6 +14,14 @@ export function GetAuditScheduleBreadcrumb(page: string) {
     ]
 }
 
+export function GetVendorAuditScheduleBreadcrumb(page: string) {
+    return [
+        { id: 'home', label: 'Home', path: '/' },
+        { id: 'vendorAuditSchedule', label: 'Vendor Audit Schedule', path: '/auditSchedule/importExport' },
+        { id: page, label: page }
+    ]
+}
+
 export const COMPANY_REQUEST = {
     code: '',
     datePosted: '0001-01-01T00:00:00',

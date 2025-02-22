@@ -57,6 +57,15 @@
     import InputsDashboard from "../components/pages/InputModule/Dashboard";
     import RegistersQue from "../components/pages/InputModule/RegistersQue";
     //import QueRegisterDownload from "../components/pages/InputModule/QueRegisterDownload";
+    import VendorCategories from "../components/pages/Masters/VendorCategories";
+import Vendors from "../components/pages/Masters/Companies/Vendors";
+import VendorLocationActivitiesManagement from "../components/pages/Vendor/TaskManagement/VendorLocationActivitesManagement";
+//import VendorAuditSchedule from "../components/pages/Masters/Companies/VendorAuditSchedule";
+import VendorAuditSchedule from "../components/pages/Masters/Companies/VendorAuditSchedule";
+import VendorAuditScheduleDetails from "../components/pages/Masters/Companies/VendorAuditScheduleDetials";
+import VendorLockUnLock from "../components/pages/Masters/Companies/VendorLockNUnlock";
+import UserVendors from "../components/pages/UserManagement/UserVendors";
+import CompanyVendorLocationMappings from "../components/pages/Masters/Companies/CompanyVendorLocationMappings";
 
     export const ROLE_MAPPING: any = {
         AuditorAdmin: ['dashboard', 'activities'],
@@ -100,11 +109,18 @@
                 }
             }
         }
-
+//newly added
         function getActivitiesByRole(url:string) {
             if (auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES)) {
                 return layout(<ActivitiesManagement />);
-            } else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES)) {
+            } 
+            else if (auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES)) {
+                return layout(<VendorLocationActivitiesManagement/>);
+            } 
+            else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES)) {
+                return layout(<TaskManagement urlPath={url}/>);
+            }
+            else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES)) {
                 return layout(<TaskManagement urlPath={url}/>);
             } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
                 return layout(<ComplianceOwnerActivities />);
@@ -114,11 +130,29 @@
                 return layout(<></>)
             }
         }
+
+        //old method
+        // function getActivitiesByRole(url:string) {
+        //     if (auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES)) {
+        //         return layout(<ActivitiesManagement />);
+        //     } 
+        //     else if (auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES)) {
+        //         return layout(<TaskManagement urlPath={url}/>);
+        //     } else if (auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)) {
+        //         return layout(<ComplianceOwnerActivities />);
+        //     } else if (auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)) {
+        //         return layout(<VendorDashboard />);
+        //     } else {
+        //         return layout(<></>)
+        //     }
+        // }
         const routes = {
             '/dashboard': () => getHomePage(),
             '/dashboard/activities': () => (
                 layout(<ActivitiesManagement />)
             ),
+            "/vendor-location-activities": () =>
+                layout(<VendorLocationActivitiesManagement />),
             '/activities': () => getActivitiesByRole('empty'),
             '/inputUploads/dashboard': () => (layout(<Dashboard />)),
             '/inputUploads/registersQue': () => (layout(<RegistersQue />)),
@@ -139,6 +173,7 @@
             '/masters/law': () => (
                 layout(<Law />)
             ),
+            "/masters/vendor-categories": () => layout(<VendorCategories />),
             '/masters/act': () => (
                 layout(<Act />)
             ),
@@ -166,6 +201,7 @@
             '/companies/associateCompanies': () => (
                 layout(<AssociateCompanies />)
             ),
+            "/companies/manageVendors": () => layout(<Vendors />),
             '/companies/verticals': () => (
                 layout(<ManageVerticals />)
             ),
@@ -178,6 +214,8 @@
             '/companies/locationMapping': () => (
                 layout(<CompanyLocationMappings />)
             ),
+            "/companies/vendor-location-mapping": () =>
+                layout(<CompanyVendorLocationMappings />),
             '/companies/auditSchedule': () => (
                 layout(<AuditSchedule />)
             ),
@@ -190,6 +228,11 @@
             '/auditSchedule/blockUnblock': () => (
                 layout(<LockUnLock />)
             ),
+            "/vendor-audit-schedule/import-export": () =>
+      layout(<VendorAuditSchedule />),
+    "/vendor-audit-schedule/details": () =>
+      layout(<VendorAuditScheduleDetails />),
+    "/vendor-audit-schedule/block-unblock": () => layout(<VendorLockUnLock />),
             '/userManagement/roles': () => (
                 layout(<Roles />)
             ),
@@ -211,6 +254,7 @@
             '/userManagement/mapping': () => (
                 layout(<UserCompanies />)
             ),
+            "/userManagement/location-vendor-mapping": () => layout(<UserVendors />),
             '/userManagement/userDepartment': () => (
                 layout(<MangeDepartmentUsers />)
             ),

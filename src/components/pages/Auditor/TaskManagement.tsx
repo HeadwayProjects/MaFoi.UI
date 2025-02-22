@@ -59,7 +59,7 @@ function TaskManagement(props:any) {
     const afRef: any = useRef();
     afRef.current = advaceSearchFilters;
     const [statusFilters, setStatusFilters] = useState<any>([{ columnName: 'status', value: STATUS_BTNS.map(x => x.name).join(API_DELIMITER) }]);
-    console.log(statusFilters,'Statusfilters')
+    //console.log(statusFilters,'Statusfilters')
     const sfRef: any = useRef();
     sfRef.current = statusFilters;
     const [payload, setPayload] = useState<any>();
@@ -96,11 +96,13 @@ function TaskManagement(props:any) {
         name: 'publish',
         privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES_PUBLISH,
         action: () => publishActivity(null)
-    }, {
-        label: 'Send Report',
-        name: 'email',
-        action: () => setAction(ACTIONS.SEND_REPORT)
-    }];
+    },
+    // {
+    //     label: 'Send Report',
+    //     name: 'email',
+    //     action: () => setAction(ACTIONS.SEND_REPORT)
+    // }
+     ];
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
@@ -510,12 +512,12 @@ const finalStatuses = selectedStatuses || null;
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Audit Status", field: "auditStatus", maxWidth: 160,
+            title: "Compliance Status", field: "auditStatus", maxWidth: 160,
             formatter: reactFormatter(<AuditStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Forms Status", field: "status", width: 160,
+            title: "Evidence Status", field: "status", width: 160,
             formatter: reactFormatter(<FormStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },

@@ -21,6 +21,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
     const [submitting, setSubmitting] = useState(false);
     const [formStatus] = useState(checkVendorActivityStatus(activity))
     const [file, setFile] = useState<any>(null);
+    const [auditeeRemarks, setAuditeeRemarks] = useState<any>("");
     const [invalidFile, setInvalidFile] = useState(false);
     const { documents, invalidate } = useGetActivityDocuments(activity.id);
 
@@ -61,14 +62,31 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
         }).finally(() => setSubmitting(false));
     }
 
-    function submit() {
+    //new method for sending the auditee remarks
+    async function submit() {
         setSubmitting(true);
-        api.get(`/api/ToDo/SaveActivity?toDo=${activity.id}`).then(() => {
-            toast.success('Activity saved successfully.');
-            onClose();
-            onSubmit();
-        }).finally(() => setSubmitting(false));
+    
+       var res = await api.get(`/api/ToDo/SaveActivityWithAuditeeRemark?toDo=${activity.id}&auditeeRemark=${auditeeRemarks}`).
+            then(() => {
+                toast.success('Activity saved successfully.');
+                onClose();
+                onSubmit();
+            }).finally(() => setSubmitting(false));
+    
+    
+            // console.log(res,"resultttttttttttt");
+            
     }
+
+    //old method 
+    // function submit() {
+    //     setSubmitting(true);
+    //     api.get(`/api/ToDo/SaveActivity?toDo=${activity.id}`).then(() => {
+    //         toast.success('Activity saved successfully.');
+    //         onClose();
+    //         onSubmit();
+    //     }).finally(() => setSubmitting(false));
+    // }
 
     return (
         <>
@@ -93,7 +111,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                     <div className="col">{(activity.rule || {}).name}</div>
                                 </div>
                                 <div className="row mb-2">
-                                    <div className="col-4 filter-label">Forms/Registers & Returns</div>
+                                    <div className="col-4 filter-label">Forms/Registers & Returns4</div>
                                     <div className="col">{(activity.activity || {}).name}</div>
                                 </div>
                                 <div className="row mb-2">
@@ -105,10 +123,77 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                     <div className="col">{activity.month} ({activity.year})</div>
                                 </div>
                                 <div className="row mb-4">
-                                    <div className="col-4 filter-label">Forms Status</div>
+                                    <div className="col-4 filter-label">Evidence Status</div>
                                     <div className="col">{activity.status && <StatusTmp status={activity.status} />}</div>
                                 </div>
-                                {
+                                <div className="col-4 filter-label">Compliance Status</div>
+                  <div className="col">
+                    {activity.auditStatus}
+                  
+                  </div>
+                  <div className="col-4 filter-label">Observations</div>
+                  <div className="col">
+                    {activity.formsStatusRemarks}
+                  
+                  </div>
+                  <div className="col-4 filter-label">Recommendations</div>
+                  <div className="col">
+                    {activity.auditRemarks}
+                  
+                  </div>
+
+                  {formStatus.editable && (
+                  <>
+                    <div className="row mb-4">
+                      <div className="col w-100">
+                        <input
+                          type="file"
+                          className="form-control"
+                          onChange={onFileChange}
+                        />
+                        {invalidFile && (
+                          <div className="text-danger">
+                            {" "}
+                            <small>Invalid file format.</small>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <div className="row justify-content-center">
+                        <div className="col-2">
+                          <Button
+                            variant="outline-primary"
+                            disabled={!file || invalidFile}
+                            onClick={uploadFile}
+                          >
+                            <div className="d-flex align-items-center justify-content-center w-100">
+                              <FontAwesomeIcon icon={faUpload} />
+                              <span className="ms-2">Upload</span>
+                            </div>
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Added mt-3 for spacing */}
+                      <div className="d-flex align-items-center mt-3">
+                        <label className="me-3 fw-bold">Auditee Remarks:</label>
+                        <textarea
+                          className="form-control"
+                          rows={2}
+                          value={auditeeRemarks}
+                          onChange={(e) => setAuditeeRemarks(e.target.value)}
+                          placeholder="Enter auditee remarks here..."
+                          style={{ width: "100%" }}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+
+                  {/* //old code */}
+                                {/* {
                                     formStatus.editable &&
                                     <>
                                         <div className="row mb-4">
@@ -133,7 +218,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                             </div>
                                         </div>
                                     </>
-                                }
+                                } */}
                             </div>
                         </div>
                         <div className="d-flex justify-content-center">
