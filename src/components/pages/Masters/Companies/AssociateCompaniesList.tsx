@@ -97,15 +97,15 @@ function AssociateCompaniesList({ changeView, parent }: any) {
                     }} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_ASSOCIATE_COMPANY) &&
-                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
-                        if (row.isCopied === 'YES') {
-                            toast.warn('This company is copied from the parent company. Hence cannot be deleted.')
-                        } else {
-                            setAssociateCompany(row);
-                            setAction(ACTIONS.DELETE);
-                        }
-                    }} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_ASSOCIATE_COMPANY) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                    //     if (row.isCopied === 'YES') {
+                    //         toast.warn('This company is copied from the parent company. Hence cannot be deleted.')
+                    //     } else {
+                    //         setAssociateCompany(row);
+                    //         setAction(ACTIONS.DELETE);
+                    //     }
+                    // }} />
                 }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event: any) => {
                     setAssociateCompany(row);

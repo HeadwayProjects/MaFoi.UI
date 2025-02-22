@@ -54,11 +54,11 @@ function CompaniesList({ changeView }: any) {
                     }} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_COMPANY) &&
-                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
-                        setCompany(row);
-                        setAction(ACTIONS.DELETE);
-                    }} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_COMPANY) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                    //     setCompany(row);
+                    //     setAction(ACTIONS.DELETE);
+                    // }} />
                 }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event: any) => {
                     setCompany(row);

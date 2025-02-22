@@ -952,9 +952,9 @@ const EmployeeAttendanceUpload = () => {
                   {/* <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button> */}
 
                  {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_ATTENDANCE) &&
-                  <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAttendance && selectedAttendance.length === 0}> Bulk Delete</Button>
-                  }
+                  //   hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_ATTENDANCE) &&
+                  // <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedAttendance && selectedAttendance.length === 0}> Bulk Delete</Button>
+                   }
                   <button onClick={onClickExport} disabled={!company} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !company ? '#707070' : '#ffffff', color: !company ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button>
                 </div>
                 

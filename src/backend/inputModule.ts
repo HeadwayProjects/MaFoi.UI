@@ -228,6 +228,10 @@ export class InputModuleService {
         const url = `/api/StateRegister/GetAll`
         return await api.post(url, data)
     }
+    public async fetchStateRegisterZipFileDownload(data: any) {
+        const url = `/api/StateRegister/GetZipFileDownload`
+        return await api.post(url, data)
+    }
 
     public async addStateRegister(data: any) {
         const url = `/api/StateRegisterConfiguration/Add`
@@ -246,6 +250,10 @@ export class InputModuleService {
     }
     public async fetchStateRegisterQueDownload(data: any) {
         const url = `/api/StateRegisterQue/GetAll`
+        return await api.post(url, data)
+    }
+    public async fetchStateRegisterQueExcelandPdfDownload(data: any) {
+        const url = `/api/StateRegister/GetExcelandPdfZipFileDownload`
         return await api.post(url, data)
     }
 

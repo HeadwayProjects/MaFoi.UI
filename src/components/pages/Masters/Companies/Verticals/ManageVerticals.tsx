@@ -105,11 +105,11 @@ function ManageVerticals() {
                     }} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_VERTICAL) &&
-                    <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                        setVertical(row);
-                        setAction(ACTIONS.DELETE)
-                    }} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_VERTICAL) &&
+                    // <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     setVertical(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} />
                 }
                 <Icon type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setVertical(row);

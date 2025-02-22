@@ -144,10 +144,10 @@ function CompanyLocationMappings() {
                     setCompanyLocation(row);
                     setAction(ACTIONS.EDIT);
                 }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                {/* <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
                     setCompanyLocation(row);
                     setAction(ACTIONS.DELETE);
-                }} />
+                }} /> */}
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event: any) => {
                     setCompanyLocation(row);
                     setAction(ACTIONS.VIEW);

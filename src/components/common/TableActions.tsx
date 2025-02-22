@@ -33,6 +33,16 @@ export default function TableActions({ buttons, btnLabel = 'Actions', buttonsInR
         }
     }, [buttons]);
 
+    useEffect(() => {
+        if (buttons) {
+          setButtons(
+            buttons.filter(({ privilege }: ActionButton) => {
+              return !privilege || hasUserAccess(privilege);
+            })
+          );
+        }
+      }, [buttons]);
+      
     return (
         <div className="d-flex flex-row align-items-center ms-auto gap-3">
             {

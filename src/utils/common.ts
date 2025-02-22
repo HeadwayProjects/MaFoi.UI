@@ -93,13 +93,20 @@ export function getMinMonthYear() {
   return date;
 }
 
+// export function getMaxMonthYear() {
+//   const date = new Date();
+//   const month = date.getMonth();
+//   if (month > 2) {
+//     date.setFullYear(date.getFullYear() + 10);
+//   }
+//   date.setMonth(11);
+//   date.setDate(31);
+//   return date;
+// }
 export function getMaxMonthYear() {
   const date = new Date();
-  const month = date.getMonth();
-  if (month > 2) {
-    date.setFullYear(date.getFullYear() + 1);
-  }
-  date.setMonth(2);
+  date.setFullYear(date.getFullYear() + 5); // Allows selection up to 5 years in the future
+  date.setMonth(11); // December
   date.setDate(31);
   return date;
 }

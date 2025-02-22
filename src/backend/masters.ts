@@ -1,5 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "./request";
+import { log } from "node:console";
+import { IVendor } from "../models/vendor";
 
 export function useGetLaws(payload: any) {
     const { data, isFetching, refetch } = useQuery(
@@ -459,6 +461,23 @@ export function useImportLocations(onSuccess?: any, onError?: any) {
     return { importLocations, error, uploading };
 }
 
+
+export function useImporvendortLocations(onSuccess?: any, onError?: any) {
+    const { mutate: importvendorLocations, error, isLoading: uploading } = useMutation(
+        ['importvendorLocations'],
+        async ({ CID, ACID, locationId, formData }: any) => await api.post(`/api/Mappings/BulkImportVendorLocationsMappings?companyId=${CID}&associateCompanyId=${ACID}&locationId=${locationId}`, formData, null, true, { responseType: 'blob' }),
+
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importvendorLocations, error, uploading };
+}
+
 export function useGetCompanies(payload: any, enabled = true) {
     const queryClient = useQueryClient();
     function invalidate() {
@@ -476,6 +495,127 @@ export function useGetCompanies(payload: any, enabled = true) {
 
     return { companies: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch, invalidate };
 }
+
+
+
+export function useGetVendorCompanies(payload: any, enabled = true) {
+    const queryClient = useQueryClient();
+    function invalidate() {
+        queryClient.invalidateQueries(['Vendorcompanies', payload])
+    }
+    const { data, isFetching, refetch } = useQuery(
+        ['Vendorcompanies', payload],
+        async () => await api.post(`/api/Company/GetUserVendorCompanies`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { Vendorcompanies: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch, invalidate };
+}
+
+
+export function useGetUserVendorsCompanies(enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['userVendorsCompanies'],
+        async () => await api.get('/api/Company/GetUserVendorCompanies'),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { userVendorsCompanies: (data || {}).data || [], isFetching, refetch };
+}
+
+
+export function useGetVendorAssociateCompanies(id: any) {
+    const { data, isFetching, refetch } = useQuery(
+        ['userVendorsAsscoiateCompanies', id],
+        async () => {
+            const response = await api.get(`/api/Company/GetUserVendorAssociateCompanies?companyId=${id}`);
+            console.log(response, "Response from API");
+            return response.data;
+        },
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+        }
+    );
+
+    return {
+        userVendorsAsscoiateCompanies: (data || {}) || [],
+        isFetching,
+        refetch,
+    };
+}
+
+
+
+export function useGetVendorLocations(cid: any, asid: any) {
+    const { data, isFetching, refetch } = useQuery(
+        ['VendorLocations', cid, asid],
+        async () => {
+            const response = await api.get(`/api/Company/GetUserVendorLocations?companyId=${cid}&associateCompanyId=${asid}`);
+            return response.data;
+        },
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: !!cid && !!asid
+        }
+    );
+
+    return {
+        VendorLocations: (data || {}) || [],
+        isFetching,
+        refetch
+    };
+}
+
+
+export function useGetVendorCategoriresCompanies(cid: any, asid: any, lid: string) {
+    // console.log(cid,"dcid",asid,"asid",lid,"lid");
+
+
+    const { data, isFetching, refetch } = useQuery(
+        ['VendorCategories', cid, asid, lid],
+        async () => await api.get(`/api/Company/GetUserVendorCategories?companyId=${cid}&associateCompanyId=${asid}&locationId=${lid}`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: !!cid && !!asid && !!lid
+        }
+    );
+
+    return {
+        VendorCategories: (data || {}).data || [],
+        isFetching,
+        refetch
+    };
+}
+
+export function useGetVendor(cid: any, asid: any, lid: any, vid: any) {
+    const { data, isFetching, refetch } = useQuery(
+        ['Getvendors', cid, asid, lid, vid],
+        async () => await api.get(`/api/Company/GetUserVendorsByCategoryId?companyId=${cid}&associateCompanyId=${asid}&locationId=${lid}&vendorCategoryId=${vid}`),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled: !!cid && !!asid && !!lid && !!vid
+        }
+    );
+
+    return {
+        Getvendors: (data || {}).data || [],
+        isFetching,
+        refetch
+    };
+}
+
 
 export function useCreateCompany(onSuccess?: any, onError?: any) {
     const { mutate: createCompany, error, isLoading: creating } = useMutation(
@@ -1153,3 +1293,248 @@ export function useUpdateNotificationStatus(payload: any, enabled = false) {
     );
     return { data: (data || {}).data, isFetching };
 }
+
+
+export function useGetVendorCategories(payload: any) {
+    const { data, isFetching, refetch } = useQuery(
+        ['vendorCategories', payload],
+        async () => await api.post(`/api/VendorCategories/GetAll`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false
+        }
+    );
+    return { vendorCategories: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
+}
+
+export function useCreateVendorCategory(onSuccess?: any, onError?: any) {
+    const { mutate: createVendorCategory, error, isLoading: creating } = useMutation(
+        ['createVendorCategory'],
+        async (payload) => await api.post('/api/VendorCategories/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createVendorCategory, error, creating };
+}
+
+export function useUpdateVendorCategory(onSuccess?: any, onError?: any) {
+    const { mutate: updateVendorCategory, error, isLoading: updating } = useMutation(
+        ['updateVendorCategory'],
+        async (payload) => await api.put('/api/VendorCategories/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateVendorCategory, error, updating };
+}
+
+export function useGetVendors(payload: any, enabled = true) {
+    const queryClient = useQueryClient();
+    function invalidate() {
+        queryClient.invalidateQueries(['vendors', payload])
+    }
+    const { data, isFetching, refetch } = useQuery(
+        ['vendors', payload],
+        async () => await api.post(`/api/VendorDetails/GetAll`, payload),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { vendors: ((data || {}).data || {}).list || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch, invalidate };
+}
+export function useCreateVendor(onSuccess?: any, onError?: any) {
+    const { mutate: createVendor, error, isLoading: creating } = useMutation(
+        ['createVendor'],
+        async (payload) => await api.post('/api/VendorDetails/Add', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createVendor, error, creating };
+}
+
+export function useUpdateVendor(onSuccess?: any, onError?: any) {
+    const { mutate: updateVendor, error, isLoading: updating } = useMutation(
+        ['updateVendor'],
+        async (payload: any) => await api.put('/api/VendorDetails/Update', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateVendor, error, updating };
+}
+
+
+export function useGetCompanyVendorLocations(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['vendorLocations', payload],
+
+        async () => await api.post(`/api/Mappings/GetAllVedorLocationMapping`, payload || {}),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+    return { vendorLocations: ((data || {}).data || {}).mappingList || [], total: ((data || {}).data || {}).count || 0, isFetching, refetch };
+}
+
+export function useCreateVendorLocation(onSuccess?: any, onError?: any) {
+    const { mutate: createVendorLocationMapping, error, isLoading: creating } = useMutation(
+        ['createVendorLocationMapping'],
+        async (payload) => await api.post('/api/Mappings/AddVendorMappings', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+
+    return { createVendorLocationMapping, error, creating };
+}
+
+export function useUpdateVendorLocation(onSuccess?: any, onError?: any) {
+    const { mutate: updateVendorLocationMapping, error, isLoading: updating } = useMutation(
+        ['updateVendorLocationMapping'],
+        async (payload) => await api.post('/api/Mappings/UpdateVendorLocationMapping', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    console.log('updateeeeeeeeee', updating);
+
+    return { updateVendorLocationMapping, error, updating };
+}
+
+export function useGetUserVendorLocation(payload: any, enabled = true) {
+    const { data, isFetching, refetch } = useQuery(
+        ['userCompanies', payload],
+        async () => await api.get(`/api/Company/GetUserVendorsById`, payload || {}),
+        {
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
+            enabled
+        }
+    );
+
+    return { userCompanies: (data || {}).data || [], isFetching, refetch };
+}
+
+export function useCreateUserVendorLocationMapping(onSuccess?: any, onError?: any) {
+    const { mutate: createUserVendorLocationMapping, error, isLoading: creating } = useMutation(
+        ['createUserVendorLocationMapping'],
+        async (payload) => await api.post('/api/Mappings/AddUserVendorLocation', payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { createUserVendorLocationMapping, error, creating };
+}
+/**
+ * Vendor Audit Schedule
+ */
+export function useExportVendorAuditSchedule(onSuccess?: any, onError?: any) {
+    const { mutate: exportVendorAuditSchedule, error, isLoading: exporting } = useMutation(
+        ['exportVendorAuditSchedule'],
+        async (payload: any) => await api.post('/api/VendorDetails/ExportAuditScheduleVendor', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportVendorAuditSchedule, error, exporting };
+}
+
+export function useImportVendorAuditSchedule(onSuccess?: any, onError?: any) {
+    const { mutate: importVendorAuditSchedule, error, isLoading: uploading } = useMutation(
+        ['importVendorAuditSchedule'],
+        async (formData: any) => await api.post(`/api/VendorDetails/ImportAuditScheduleVendor`, formData, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { importVendorAuditSchedule, error, uploading };
+}
+
+export function useDeleteVendorAuditSchedule(onSuccess?: any, onError?: any) {
+    const { mutate: deleteAuditSchedule, error, isLoading: deleting } = useMutation(
+        ['deleteAuditSchedule'],
+        async (payload: any) => await api.put(`/api/ToDoVendor/Delete`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { deleteAuditSchedule, error, deleting };
+}
+
+export function useUpdateVendorAuditSchedule(onSuccess?: any, onError?: any) {
+    const { mutate: updateAuditSchedule, error, isLoading: updating } = useMutation(
+        ['updateAuditSchedule'],
+        async (payload: any) => await api.put(`/api/ToDoVendor/Update`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateAuditSchedule, error, updating };
+}
+
+export function useBulkUpdateVendorAuditSchedule(onSuccess?: any, onError?: any) {
+    const { mutate: updateBulkAuditSchedule, error, isLoading: updating } = useMutation(
+        ['updateBulkAuditSchedule'],
+        async (payload) => await api.put(`/api/ToDoVendor/BulkUpdate`, payload),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {}).data || {};
+                onSuccess(data);
+            }
+        }
+    );
+    return { updateBulkAuditSchedule, error, updating };
+}
+

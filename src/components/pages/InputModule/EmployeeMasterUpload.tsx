@@ -1523,7 +1523,7 @@ const EmployeeMasterUpload = () => {
   return (
     <div style={{ height: '100vh', backgroundColor: '#ffffff' }}>
 
-      <Modal
+      {/* <Modal
         open={openBulkDeleteModal}
         onClose={() => setOpenBulkDeleteModal(false)}
       >
@@ -1547,7 +1547,7 @@ const EmployeeMasterUpload = () => {
             </Box>
           </Box>
         </Box>
-      </Modal>
+      </Modal> */}
 
       {loading ? <PageLoader>Loading...</PageLoader> :
 
@@ -1559,10 +1559,10 @@ const EmployeeMasterUpload = () => {
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '200px', justifyContent: 'space-between' }}>
                   {/* <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button> */}
 
-                  {
+                  {/* {
                     hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_MASTER) &&
                   <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedEmployees && selectedEmployees.length === 0}> Bulk Delete</Button>
-                  }
+                  } */}
                  <button onClick={onClickExport} disabled={!employees} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !employees ? '#707070' : '#ffffff', color: !employees ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
                 </div>
 

@@ -12,6 +12,11 @@ interface StateConfigurationState {
         data: any,
         error: string | null
     },
+    stateRegisterQueExcelandPdfDownloadDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
     stateConfigureQueDetails: {
         status: string,
         data: any,
@@ -56,6 +61,11 @@ const initialState: StateConfigurationState = {
         data: '',
         error: null
     },
+    stateRegisterQueExcelandPdfDownloadDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
     stateConfigureQueDetails: {
         status: 'idle',
         data: '',
@@ -95,6 +105,10 @@ export const getStateRegisterQue = createAsyncThunk('stateRegisterQue/getstateRe
 export const getStateRegisterQueDownload = createAsyncThunk('stateRegisterQuedownload/getstateRegisterQueDownload', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.fetchStateRegisterQueDownload(data);
+})
+export const getstateRegisterQueExcelandPdfDownloadDetails = createAsyncThunk('stateRegisterQuedownload/GetExcelandPdfZipFileDownload', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.fetchStateRegisterQueExcelandPdfDownload(data);
 })
 
 export const getStateConfigurationDetails = createAsyncThunk('inputModule/getStateConfigurationDetails', async (data: any) => {
@@ -149,6 +163,13 @@ export const stateRegisterQueSlice = createSlice({
             error: null
         }
    },
+   resetstateRegisterQueExcelandPdfDownloadDetails: (state) => {
+    state.stateRegisterQueExcelandPdfDownloadDetails = {
+        status: 'idle',
+        data: '',
+        error: null
+    }
+},
    resetstateRegisterQueDetails: (state) => {
     state.stateRegisterQueDetails = {
         status: 'idle',
@@ -221,6 +242,24 @@ export const stateRegisterQueSlice = createSlice({
         .addCase(getStateRegisterQueDownload.rejected, (state, action: any) => {
             state.stateRegisterQueDownloadDetails.status = 'failed'
             state.stateRegisterQueDownloadDetails.error = action.error.message
+        })
+
+
+        .addCase(getstateRegisterQueExcelandPdfDownloadDetails.pending, (state) => {
+            state.stateRegisterQueExcelandPdfDownloadDetails.status = 'loading'
+        })
+        .addCase(getstateRegisterQueExcelandPdfDownloadDetails.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.stateRegisterQueExcelandPdfDownloadDetails.status = 'succeeded'
+                state.stateRegisterQueExcelandPdfDownloadDetails.data = action.payload.data
+            } else {
+                state.stateRegisterQueExcelandPdfDownloadDetails.status = 'failed'
+                state.stateRegisterQueExcelandPdfDownloadDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getstateRegisterQueExcelandPdfDownloadDetails.rejected, (state, action: any) => {
+            state.stateRegisterQueExcelandPdfDownloadDetails.status = 'failed'
+            state.stateRegisterQueExcelandPdfDownloadDetails.error = action.error.message
         })
 
 
@@ -330,6 +369,6 @@ export const stateRegisterQueSlice = createSlice({
         // })
 })
   
-export const {  resetstateRegisterQueDetails ,resetStateConfigQueDetails,resetstateRegisterQueDownloadDetails, resetImportFileDetails ,  resetExportFileDetails,resetAddStateConfigDetails,resetDeleteStateregisterMappingConfigDetails} = stateRegisterQueSlice.actions
+export const {  resetstateRegisterQueDetails,resetstateRegisterQueExcelandPdfDownloadDetails ,resetStateConfigQueDetails,resetstateRegisterQueDownloadDetails, resetImportFileDetails ,  resetExportFileDetails,resetAddStateConfigDetails,resetDeleteStateregisterMappingConfigDetails} = stateRegisterQueSlice.actions
 
 export default stateRegisterQueSlice.reducer

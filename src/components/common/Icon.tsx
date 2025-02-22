@@ -2,11 +2,22 @@ import React from "react";
 import { preventDefault } from "../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faInfoCircle, faSearch, faExternalLink,
-    faAngleDoubleLeft, faAngleDoubleRight,
-    faAngleRight, faAngleLeft, faPlus,
-    faAngleDown, faAngleUp, faLockOpen, faUsers, faExclamationTriangle, faExclamationCircle, faCheckSquare
-} from "@fortawesome/free-solid-svg-icons";
+    faInfoCircle,
+    faSearch,
+    faExternalLink,
+    faAngleDoubleLeft,
+    faAngleDoubleRight,
+    faAngleRight,
+    faAngleLeft,
+    faPlus,
+    faAngleDown,
+    faAngleUp,
+    faLockOpen,
+    faUsers,
+    faExclamationTriangle,
+    faExclamationCircle,
+    faCheckSquare,
+  } from "@fortawesome/free-solid-svg-icons";
 import "./Icon.css";
 import { faCheckCircle, faClock, faEyeSlash, faTimesCircle } from "@fortawesome/free-regular-svg-icons";
 

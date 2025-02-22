@@ -5,7 +5,7 @@ function getBaseURL() {
     const { protocol, hostname } = window.location;
 
     //for apiprod
-    // const api_url = hostname.includes('uat') ? `apiprod.ezycomp.com`: 'apiprod.ezycomp.com';
+//const api_url = hostname.includes('uat') ? `apiprod.ezycomp.com`: 'apiprod.ezycomp.com';
 
      //for apiproduat
      const api_url = hostname.includes('uat') ? `apiproduat.ezycomp.com`: 'apiproduat.ezycomp.com';
@@ -26,7 +26,7 @@ export function getChartsBaseUrl() {
     const { protocol, hostname } = window.location;
 
     //for apiproduat
-       const api_url = hostname.includes('uat') ? `apichartproduat.ezycomp.com`: 'apichartproduat.ezycomp.com';
+      const api_url = hostname.includes('uat') ? `apichartproduat.ezycomp.com`: 'apichartproduat.ezycomp.com';
 
     //for apiprod
      //const api_url = hostname.includes('uat') ? `apichartprod.ezycomp.com`: 'apichartprod.ezycomp.com';

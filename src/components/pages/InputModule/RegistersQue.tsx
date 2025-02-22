@@ -6,7 +6,7 @@ import { Box, Button, Drawer, FormControl, FormControlLabel, FormLabel, IconButt
 import { addHoliday, deleteHoliday, editHoliday, getHolidaysList, resetAddHolidayDetails, resetDeleteHolidayDetails, resetEditHolidayDetails, resetGetHolidayDetailsStatus, resetUploadHolidayDetails, uploadHoliday } from '../../../redux/features/holidayList.slice';
 
 import { getEmployeeBackendCount, getEmployeeDashboardCounts, getEmployeeInputDashboard, getErrorLogs, resetEmployeeBackendCountDetailsStatus, resetEmployeeDashboardCountsDetailsStatus, resetEmployeeInputDashboardDetailsStatus, resetErrorLogsDetailsStatus } from '../../../redux/features/dashboard.slice';
-import { FaCheck, FaCloudDownloadAlt, FaCloudUploadAlt, FaCode, FaRegEye, FaRegKeyboard } from 'react-icons/fa';
+import { FaCheck, FaCloudDownloadAlt, FaCloudUploadAlt, FaCode, FaRegEye, FaRegKeyboard, FaSortAmountDown } from 'react-icons/fa';
 import { FaRegCircleCheck } from 'react-icons/fa6'
 import { MdOutput } from "react-icons/md";
 import { getBasePath } from '../../../App';
@@ -27,7 +27,7 @@ import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import { getLeaveConfiguration } from '../../../redux/features/leaveConfiguration.slice';
-import { getStateRegisterQue,getStateConfigurationDetails,getStateRegisterQueDownload,resetstateRegisterQueDetails} from '../../../redux/features/stateRegisterQue.slice'
+import { getStateRegisterQue,getstateRegisterQueExcelandPdfDownloadDetails,getStateConfigurationDetails,getStateRegisterQueDownload,resetstateRegisterQueDetails} from '../../../redux/features/stateRegisterQue.slice'
 
 import { EstablishmentTypes } from '../Masters/Master.constants';
 import { RxCross2 } from "react-icons/rx";
@@ -49,7 +49,10 @@ const InputsDashboard = () => {
  const dispatch: any = useAppDispatch();
  
    const stateRegisterQueDetails = useAppSelector((state) => state.stateRegisterQue.stateRegisterQueDetails)
-    console.log('stateRegisterQueDetails', stateRegisterQueDetails)
+   const stateRegisterQueExcelandPdfDetails = useAppSelector((state) => state.stateRegisterQue.stateRegisterQueExcelandPdfDownloadDetails)
+
+    console.log('stateRegisterQueDetails', stateRegisterQueDetails);
+    console.log('stateRegisterQueExcelandPdfDetails', stateRegisterQueExcelandPdfDetails);
   // const formsDetails = useAppSelector((state) => state.inputModule.formsDetails)
    //const statesDetails = useAppSelector((state) => state.inputModule.statesDetails)
    //const stateConfigureDetails = useAppSelector((state) => state.stateRegister.stateConfigureDetails)
@@ -94,6 +97,16 @@ const InputsDashboard = () => {
   })
   
   const [downloading,setDownloading]= useState(false);
+  const [openDownloadModal, setOpenDownloadModal] = React.useState(false);
+  const styleUploadModal = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 800,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+  };
 
   const [company, setCompany] = React.useState('');
   const [associateCompany, setAssociateCompany] = React.useState('');
@@ -136,9 +149,15 @@ const InputsDashboard = () => {
     // console.log(formsDetails, "formsDetails")
     const stateRegisterQue = stateRegisterQueDetails.data.list
     const stateRegisterQueCount = stateRegisterQueDetails.data.count
-  
+
+    const stateRegisterQueExcelandPdf = stateRegisterQueExcelandPdfDetails.data.zipObject 
+
     console.log("stateRegisterQue",stateRegisterQue);
     console.log(stateRegisterQueCount);
+
+    console.log("stateRegisterQuePdfandExcel",stateRegisterQueExcelandPdf);
+
+
 
   
     const companies2 = companiesDetails.data.list
@@ -282,7 +301,7 @@ const InputsDashboard = () => {
         setMonth1('')
         setAssociateCompany1(event.target.value);
         const payload: any =  { 
-          search: searchInput, 
+          search: '', 
           filters: [
             {
               columnName:'companyId',
@@ -329,7 +348,7 @@ const InputsDashboard = () => {
     setType('')
         setStateName1(event.target.value)
         const stateRegisterPayload: any = {
-          search: searchInput,
+          search: '',
           filters: [
             {
               columnName:'companyId',
@@ -359,7 +378,8 @@ const InputsDashboard = () => {
   console.log("selstatename",selectedStateName)
 
   const handleChangeLocation1 = (event: any) => {
-    alert(event.target.value);
+
+    //alert(event.target.value);
     const selectedLocations = event.target.value;
     console.log(event.target.value);
     setLocations1(selectedLocations); // Store selected locations as an array
@@ -371,7 +391,7 @@ const InputsDashboard = () => {
         setLocation1(event.target.value);
         const locval = event.target.value;
         const payload: any =  { 
-          search: searchInput, 
+          search: '', 
           filters: [
             {
               columnName:'companyId',
@@ -444,7 +464,7 @@ const getStateNameById = (id: string, totalstates: { id: string; name: string; }
     setMonth1('')
         setYear1(event.target.value.toString());
         const payload: any =  { 
-          search: searchInput, 
+          search: '', 
           filters: [
             {
               columnName:'companyId',
@@ -475,7 +495,7 @@ const getStateNameById = (id: string, totalstates: { id: string; name: string; }
   
   const handleChangeMonth = (event:any) => {
   //  setShowDashboardDetails(false)
-  alert("hitted month");
+  //alert("hitted month");
     setMonth(event.target.value);
 
 
@@ -483,7 +503,7 @@ const getStateNameById = (id: string, totalstates: { id: string; name: string; }
      setMonth1(event.target.value);
         //const monthKey = (monthList.findIndex((each) => each === event.target.value) + 1).toString()
         const payload: any =  { 
-          search: searchInput, 
+          search: '', 
           filters: [
             {
               columnName:'companyId',
@@ -519,7 +539,7 @@ const getStateNameById = (id: string, totalstates: { id: string; name: string; }
   };
 
   const handleChangeEstablishmentType = (event:any)=>{
-    alert(event.target.value);
+    //alert(event.target.value);
 setestablishmentType(event.target.value);
 
 //for tabledate 
@@ -649,6 +669,7 @@ setestablishmentType(event.target.value);
 
             const handleChangePage = (event: unknown, newPage: number) => {
               const filters = []
+              //alert(location1);
               if (company1) {
                 filters.push({
                   columnName: 'companyId',
@@ -664,7 +685,7 @@ setestablishmentType(event.target.value);
               if (location1) {
                 filters.push({
                   columnName:'locationId',
-                  value: location1.split('^')[0]
+                  value: location1
                 })
               }
               if (year) {
@@ -696,6 +717,7 @@ setestablishmentType(event.target.value);
 
               const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
                 const filters = []
+                //alert(location1);
                 if (company1) {
                   filters.push({
                     columnName: 'companyId',
@@ -708,10 +730,10 @@ setestablishmentType(event.target.value);
                     value: associateCompany1
                   })
                 }
-                if (location) {
+                if (location1) {
                   filters.push({
                     columnName:'locationId',
-                    value: location1.split('^')[0]
+                    value: location1
                   })
                 }
                 if (year) {
@@ -742,9 +764,9 @@ setestablishmentType(event.target.value);
                 setPage(0);
               };
 
-               const onClickSortState = () => {
+               const onClickSortCompany = () => {
                   let sType = 'asc'
-                  setActiveSort('stateId');
+                  setActiveSort('companyId');
                   if (sortType === 'asc') {
                     setSortType('desc')
                     sType = 'desc'
@@ -753,27 +775,238 @@ setestablishmentType(event.target.value);
                   }
               
                   const filters = []
-                  if (stateValue) {
+                  if (company1) {
                     filters.push({
-                      columnName: 'stateId',
-                      value: stateValue
+                      columnName: 'companyId',
+                      value: company1
                     })
                   }
-                  if (type) {
+                  if (associateCompany1) {
                     filters.push({
-                      columnName: 'registerType',
-                      value: type
+                      columnName: 'associatecompanyId',
+                      value: associateCompany1
+                    })
+                  }
+                  if (location1) {
+                    filters.push({
+                      columnName:'locationId',
+                      value: location1
+                    })
+                  }
+                  if (year) {
+                    filters.push({
+                      columnName:'year',
+                      value: year1
+                    })
+                  }
+                  if (month) {
+                    filters.push({
+                      columnName:'month',
+                      value: month1
+                    })
+                  }
+                  if(establishmentType){
+                    filters.push({
+                      columnName:'establishmentType',
+                      value: establishmentType
                     })
                   }
               
                   const Payload: any = {
-                    search: searchInput,
+                    search: '',
                     filters,
                     pagination: {
                       pageSize: rowsPerPage,
                       pageNumber: page + 1
                     },
-                    sort: { columnName: 'stateId', order: sType },
+                    sort: { columnName: 'companyId', order: sType },
+                    "includeCentral": true
+                  }
+                  dispatch(getStateRegisterQue(Payload))
+              
+                }
+
+                const onClickSortAssociateCompany = () => {
+                  let sType = 'asc'
+                  setActiveSort('associatecompanyId');
+                  if (sortType === 'asc') {
+                    setSortType('desc')
+                    sType = 'desc'
+                  } else {
+                    setSortType('asc')
+                  }
+              
+                  const filters = []
+                  if (company1) {
+                    filters.push({
+                      columnName: 'companyId',
+                      value: company1
+                    })
+                  }
+                  if (associateCompany1) {
+                    filters.push({
+                      columnName: 'associatecompanyId',
+                      value: associateCompany1
+                    })
+                  }
+                  if (location1) {
+                    filters.push({
+                      columnName:'locationId',
+                      value: location1
+                    })
+                  }
+                  if (year) {
+                    filters.push({
+                      columnName:'year',
+                      value: year1
+                    })
+                  }
+                  if (month) {
+                    filters.push({
+                      columnName:'month',
+                      value: month1
+                    })
+                  }
+                  if(establishmentType){
+                    filters.push({
+                      columnName:'establishmentType',
+                      value: establishmentType
+                    })
+                  }
+              
+                  const Payload: any = {
+                    search: '',
+                    filters,
+                    pagination: {
+                      pageSize: rowsPerPage,
+                      pageNumber: page + 1
+                    },
+                    sort: { columnName: 'associatecompanyId', order: sType },
+                    "includeCentral": true
+                  }
+                  dispatch(getStateRegisterQue(Payload))
+              
+                }
+
+
+                const onClickSortLocation = () => {
+                  let sType = 'asc'
+                  setActiveSort('locationId');
+                  if (sortType === 'asc') {
+                    setSortType('desc')
+                    sType = 'desc'
+                  } else {
+                    setSortType('asc')
+                  }
+              
+                  const filters = []
+                  if (company1) {
+                    filters.push({
+                      columnName: 'companyId',
+                      value: company1
+                    })
+                  }
+                  if (associateCompany1) {
+                    filters.push({
+                      columnName: 'associatecompanyId',
+                      value: associateCompany1
+                    })
+                  }
+                  if (location1) {
+                    filters.push({
+                      columnName:'locationId',
+                      value: location1
+                    })
+                  }
+                  if (year) {
+                    filters.push({
+                      columnName:'year',
+                      value: year1
+                    })
+                  }
+                  if (month) {
+                    filters.push({
+                      columnName:'month',
+                      value: month1
+                    })
+                  }
+                  if(establishmentType){
+                    filters.push({
+                      columnName:'establishmentType',
+                      value: establishmentType
+                    })
+                  }
+              
+                  const Payload: any = {
+                    search: '',
+                    filters,
+                    pagination: {
+                      pageSize: rowsPerPage,
+                      pageNumber: page + 1
+                    },
+                    sort: { columnName: 'locationId', order: sType },
+                    "includeCentral": true
+                  }
+                  dispatch(getStateRegisterQue(Payload))
+              
+                }
+
+                const onClickSortYear = () => {
+                  let sType = 'asc'
+                  setActiveSort('');
+                  if (sortType === 'asc') {
+                    setSortType('desc')
+                    sType = 'desc'
+                  } else {
+                    setSortType('asc')
+                  }
+              
+                  const filters = []
+                  if (company1) {
+                    filters.push({
+                      columnName: 'companyId',
+                      value: company1
+                    })
+                  }
+                  if (associateCompany1) {
+                    filters.push({
+                      columnName: 'associatecompanyId',
+                      value: associateCompany1
+                    })
+                  }
+                  if (location1) {
+                    filters.push({
+                      columnName:'locationId',
+                      value: location1
+                    })
+                  }
+                  if (year) {
+                    filters.push({
+                      columnName:'year',
+                      value: year1
+                    })
+                  }
+                  if (month) {
+                    filters.push({
+                      columnName:'month',
+                      value: month1
+                    })
+                  }
+                  if(establishmentType){
+                    filters.push({
+                      columnName:'establishmentType',
+                      value: establishmentType
+                    })
+                  }
+              
+                  const Payload: any = {
+                    search: '',
+                    filters,
+                    pagination: {
+                      pageSize: rowsPerPage,
+                      pageNumber: page + 1
+                    },
+                    sort: { columnName: 'companyId', order: sType },
                     "includeCentral": true
                   }
                   dispatch(getStateRegisterQue(Payload))
@@ -838,13 +1071,77 @@ setestablishmentType(event.target.value);
     navigate(`${getBasePath()}/inputUploads/employeeAttendanceUpload`, { query: { company, associateCompany, location, stateName, year, month } });
   }
   
+  
+
+
+  const handleProcessRegisters3 = async () => {
+    setDownloading(true);
+    let newQueueNumbers: string[] = [];
+  //alert("1)");
+
+     // List of locations to check
+  const locationsToCheck = [
+   
+   "c09fe1c8-44ab-4cd2-8167-f1b5cb1d057f",
+    "360fa11c-9450-424c-834e-8fee10cb51d1"
+  ];
+
+  const found = locationsToCheck.some((location) =>
+    location1.includes(location)
+  );
+  //alert(found);
+
+
+  if (found) {
+    // Display a message and stop further processing
+    //alert("One or more restricted locations are selected. Process stopped.");
+    toast.info("One or more restricted locations are selected. Please De-Select or Contact Support");
+    setDownloading(false); // Stop the downloading state
+    return;
+  }
+  toast.success("genearte registers");
+}
 
 
 
   const handleProcessRegisters2 = async () => {
     setDownloading(true);
     let newQueueNumbers: string[] = [];
-    alert("1)");
+   // alert("1)");
+
+     // List of locations to check
+  const locationsToCheck = [
+    "f62c60e4-d5cf-4054-81ac-4c12448d5abb",
+    "447a0938-f4f4-4e3d-ae6e-14eba892c22e",
+    "73800391-7ffd-445d-be90-c7a9cb8d3ba1"
+  ];
+
+
+  const found = locationsToCheck.some((location) =>
+    location1.includes(location)
+  );
+  // if (found) {
+  //   // Display a message and stop further processing
+  //   toast.info("One or more restricted locations are selected. Please De -Select or Contact Support");
+  //   setDownloading(false); // Stop the downloading state
+  //   return;
+  // }
+
+  const StatesToCheck = [
+    "59b24896-1f55-4037-b631-c699dd9fd2bc",
+    "b4d010ce-1b8c-4547-bfee-e9fddde05ce4"
+  ];
+
+  const StateFound = StatesToCheck.includes(stateName);
+
+
+  // if (StateFound) {
+  //   // Display a message and stop further processing
+  //   toast.info("One or more restricted State are selected. Please De -Select or Contact Support");
+  //   setDownloading(false); // Stop the downloading state
+  //   return;
+  // }
+
     try {
       // Step 1: Get the access token
       const params = new URLSearchParams();
@@ -867,9 +1164,9 @@ setestablishmentType(event.target.value);
       );
   
       console.log("Access Token:", tokenResponse.data);
-      alert("1)");
+      //alert("1)");
       const accessToken = tokenResponse.data.access_token;
-  alert("accesstoek"+accessToken);
+  //alert("accesstoek"+accessToken);
   const storageObject = {
     company,
     associateCompany,
@@ -880,12 +1177,14 @@ setestablishmentType(event.target.value);
     selectedStateName,
     queue
   };
+
+
   
    
   
       // Step 2: Hit the API for each location
       for (const location of storageObject.locations1) {
-        alert("hitted que"+location)
+       // alert("hitted que"+location)
         const formResponse = await axios.post(
           "https://ezycomp1.buoyantworx.com/app/rest/services/bws_Queue_Process_Schedular/processRequestedQueueForms",
           {
@@ -929,9 +1228,46 @@ SetqueueNumbers((prevQueueNumbers) => [...prevQueueNumbers, ...newQueueNumbers])
 console.log(queueNumbers);
      // Step 3: Display the QueueNo list to the user in a popup
 if (newQueueNumbers.length > 0) {
-  alert(`Queue Numbers received:\n${newQueueNumbers.join(", ")}`);
+  alert(`Queue Numbers received : \n${newQueueNumbers.join(", ")}`);
+  const payload: any =  { 
+    search: '', 
+    filters: [
+      {
+        columnName:'companyId',
+        value: company1
+      },
+      {
+        columnName:'associateCompanyId',
+        value: associateCompany1
+      },
+      {
+        columnName:'locationId',
+        value: location1
+      },
+      {
+        columnName:'year',
+        value: year1
+      },
+      {
+        columnName:'month',
+        value: month1
+      },
+      {
+        columnName:'establishmenttype',
+        value: establishmentType
+      }
+    ],
+    pagination: {
+      pageSize: rowsPerPage,
+      pageNumber: page+1
+    },
+    sort: { columnName: 'stateId', order: 'asc' },
+    "includeCentral": true
+  }
+  dispatch(getStateRegisterQue(payload))
+
 } else {
-  alert('No Queue Numbers found.');
+  toast.error('No Queue Numbers found.');
 }
          setDownloading(false);
   
@@ -944,10 +1280,6 @@ if (newQueueNumbers.length > 0) {
 
   console.log(queueNumbers);
   
-
-
-
-
   interface FileDetails {
     filePath: string;
     configType: string;
@@ -959,9 +1291,23 @@ if (newQueueNumbers.length > 0) {
     message: string | null;
   }
 
-  const onclickDownload=(file:any)=>{
-    alert(file.registerUrl);
-    const url = file.registerUrl;
+  const onclickDownloadExcel=(file:any)=>{
+    console.log(file);
+   
+
+    if (file.stateregister && file.stateregister.registerUrl) {
+      //alert(file.stateregister.registerUrl);
+      const url = file.stateregister.registerUrl;
+      // Proceed with the download logic using the 'url'
+    } else {
+      toast.info("No URL found");
+      return "No URL found";
+    }
+    const url = file.stateregister.registerUrl;
+    if(url == null){
+      toast.info("no urk");
+      return "no url found ";
+    }
 
    // alert(url);
      
@@ -987,9 +1333,30 @@ if (newQueueNumbers.length > 0) {
 const handleFileDownloads = async (files: FileDetails[]) => {
   for (const file of files) {
    // alert(file.filePath);
-    await onclickDownload(file);
+    await onclickDownloadExcel(file);
   }
 };
+
+const onclickDownloadBoth=(each :any)=>{
+  setOpenDownloadModal(true);
+  console.log(each);
+  const Payload: any =  { 
+    companyId: each.companyId,
+    associateCompanyId:  each.associateCompanyId,
+    locationId: each.locationId,
+    stateId: each.stateId, 
+    year: each.year, 
+    month: each.month,
+    establishmentType : each.establishmentType,
+    zipType : "ExcelZip"
+  }
+  
+  dispatch(getstateRegisterQueExcelandPdfDownloadDetails(Payload))
+
+
+
+ 
+}
 
 
 
@@ -1036,6 +1403,94 @@ const handleFileDownloads = async (files: FileDetails[]) => {
 //   }
 // };
 
+function formatDate(timestamp : any) {
+  const date = new Date(timestamp);
+  
+  // Extract date components
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+  const year = date.getFullYear();
+
+  // Extract time components
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  // Combine date and time in the desired format
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
+const handleChangeSearchInput = (event: any) => {
+  setSearchInput(event.target.value)
+}
+
+  const onClickClearSearch = () => { 
+    const filters = []
+    if (company1) {
+      filters.push({
+        columnName: 'companyId',
+        value: company1
+      })
+    }
+    if (associateCompany1) {
+      filters.push({
+        columnName: 'associatecompanyId',
+        value: associateCompany1
+      })
+    }
+    if (location1) {
+      filters.push({
+        columnName:'locationId',
+        value: location1
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName:'year',
+        value: year1
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName:'month',
+        value: month1
+      })
+    }
+    if(establishmentType){
+      filters.push({
+        columnName:'establishmentType',
+        value: establishmentType
+      })
+    }
+
+    const employeesPayload: any = {
+      search: '',
+      filters: filters,
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'code', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getStateRegisterQue(employeesPayload))
+    setSearchInput('')
+  }
+
+   const onClickSearch = () => {
+      const employeesPayload: any = {
+        search: searchInput,
+        filters: [],
+        pagination: {
+          pageSize: rowsPerPage,
+          pageNumber: page + 1
+        },
+        sort: { columnName: 'code', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getStateRegisterQue(employeesPayload))
+    }
+
 
   
   
@@ -1043,6 +1498,83 @@ const handleFileDownloads = async (files: FileDetails[]) => {
 
   return (
     <div style={{ backgroundColor:'#ffffff', minHeight:'100vh'}}>
+
+            {/* Upload Modal */}
+            <Modal
+              open={openDownloadModal}
+              onClose={() => {setDownloading(false)}}
+            >
+              <Box sx={styleUploadModal}>
+                <Box sx={{backgroundColor:'#E2E3F8', padding:'10px', px:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                  <Typography sx={{font: 'normal normal normal 32px/40px Calibri'}}>Excel & Pdf Download</Typography>
+                  <IconButton
+                    onClick={() => {setOpenDownloadModal(false);}}
+                  >
+                    <IoMdClose />
+                  </IconButton>
+                </Box>
+
+                <TableContainer sx={{ border: '1px solid #e6e6e6', marginTop: '10px', maxHeight: '385px', overflowY: 'scroll' }}>
+                    <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table">
+                      <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7',fontWeight:'600' } }}>
+                        <TableRow>
+                          {/* <TableCell><Checkbox/></TableCell> */}
+                          <TableCell > <TableSortLabel active={activeSort === 'companyId'} direction={sortType} onClick={onClickSortCompany}>FormName</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'associateCompanyId'} direction={sortType} onClick={onClickSortAssociateCompany}>File Type</TableSortLabel></TableCell>
+
+                          <TableCell >Download</TableCell>
+                          <TableCell >First Generated Date</TableCell>
+                          <TableCell >Last Generated Date</TableCell>
+                          <TableCell >Total Generations</TableCell>
+                         
+
+                        </TableRow>
+                      </TableHead>
+
+                      <TableBody>
+
+                        {stateRegisterQueExcelandPdf && stateRegisterQueExcelandPdf.map((each: any, index: number) => (
+                          <TableRow
+                            key={index}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                          >
+                            {/* <TableCell><Checkbox/></TableCell> */}
+                            <TableCell >{each.stateregister && each.stateregister.formName ? each.stateregister.formName : 'NA'}</TableCell>
+                            <TableCell >{each.stateregister && each.stateregister.fileType ? each.stateregister.fileType : 'NA'}</TableCell>
+                            
+                            <TableCell >
+                              <Box sx={{ display: 'flex',justifyContent: "center" }}>
+                              <Icon 
+            style={{ color: '#0654AD' }} 
+            type="button" 
+            name={'download'} 
+            text={'download'}  
+            action={() => onclickDownloadExcel(each)}
+        />
+    
+                              </Box>
+                            </TableCell>
+                            <TableCell >{each.stateregister && formatDate(each.stateregister.createdDate) ? formatDate(each.stateregister.createdDate) : 'NA'}</TableCell>
+                            <TableCell >{each.stateregister && formatDate(each.stateregister.lastModified) ? formatDate(each.stateregister.lastModified) : 'NA'}</TableCell>
+                            <TableCell >{each.stateregister && (each.stateregister.count) }</TableCell>
+
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+      
+
+      
+      
+
+      
+                <Box sx={{display:'flex', padding:'20px', borderTop:'1px solid #6F6F6F',justifyContent:'flex-end', alignItems:'center', mt:4}}>
+                      <Button variant='contained' sx={{backgroundColor:'#707070'}} onClick={() => {setOpenDownloadModal(false)}}>Cancel</Button>
+                </Box>
+              </Box>
+            </Modal>
+
       {loading ? <PageLoader>Loading...</PageLoader> : 
       <div>
         {downloading ? <PageLoader>Processing Registers...</PageLoader> :
@@ -1054,7 +1586,39 @@ const handleFileDownloads = async (files: FileDetails[]) => {
               <div style={{backgroundColor:'#E2E3F8', padding:'20px', borderRadius:'6px', boxShadow: '0px 6px 10px #CDD2D9'}}>
                   <div style={{display:'flex', justifyContent:'space-between', marginBottom:'15px', marginTop:'10px'}}>
                       <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Que Registers</h5>
-                  </div>
+                                        <FormControl sx={{ width: '20%', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                      
+<InputLabel htmlFor="outlined-adornment-search">Search Que No</InputLabel>
+                    <OutlinedInput
+                      value={searchInput}
+                      onChange={handleChangeSearchInput}
+                      sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+                      id="outlined-adornment-search"
+                      type='text'
+
+                      endAdornment={
+                        <InputAdornment position="end">
+                          {searchInput &&
+                            <IconButton
+                              onClick={onClickClearSearch}
+                              edge="end"
+                            >
+                              <IoMdClose />
+                            </IconButton>
+                          }
+                          <IconButton
+                            onClick={onClickSearch}
+                            edge="end"
+                          >
+                            <IoMdSearch />
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      label="Search"
+                    />             
+                       </FormControl>
+                            </div>
+               
                   <div style={{display:'flex'}}>
 
                     <Box sx={{width:'100%', mr:1}}>
@@ -1290,8 +1854,8 @@ const handleFileDownloads = async (files: FileDetails[]) => {
            
 
 {
-                      hasUserAccess(USER_PRIVILEGES.REGISTER_EMPLOYEE_DASHBOARD) &&
-                  <Button sx={{mt:2, width:'90%'}} variant='outlined' onClick={handleProcessRegisters2}>
+                      hasUserAccess(USER_PRIVILEGES.REGISTER_GENERATION_QUE) &&
+                  <Button sx={{mt:2, width:'90%'}} variant='outlined' onClick={handleProcessRegisters2} disabled={ !company || !associateCompany || !stateName || !locations1 || !year || !month || !establishmentType   }>
                     {/* <Typography padding={'8px'} color={'#0654AD'}> Process Registers</Typography> */}
                     Generate Registers
                   </Button>
@@ -1317,17 +1881,19 @@ const handleFileDownloads = async (files: FileDetails[]) => {
                       <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7',fontWeight:'600' } }}>
                         <TableRow>
                           {/* <TableCell><Checkbox/></TableCell> */}
-                          <TableCell > <TableSortLabel active={activeSort === 'stateId'} direction={sortType} onClick={onClickSortState}>Company</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'actId'} direction={sortType} onClick={onClickSortState}>AssociateCompany</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'ruleId'} direction={sortType} onClick={onClickSortState}>State</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'activityId'} direction={sortType} onClick={onClickSortState}>Location</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'activityId'} direction={sortType} onClick={onClickSortState}>Year</TableSortLabel></TableCell>
-
-                          <TableCell > <TableSortLabel active={activeSort === 'activityId'} direction={sortType} onClick={onClickSortState}>Month</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'form'} direction={sortType} onClick={onClickSortState}>Que-Id</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'form'} direction={sortType} onClick={onClickSortState}>Que Status</TableSortLabel></TableCell>
-
+                          <TableCell > <TableSortLabel active={activeSort === 'companyId'} direction={sortType} onClick={onClickSortCompany}>Company</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'associateCompanyId'} direction={sortType} onClick={onClickSortAssociateCompany}>AssociateCompany</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'stateID'} direction={sortType} onClick={onClickSortLocation}>State</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'locationId'} direction={sortType} onClick={onClickSortLocation}>Location</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'locationId'} direction={sortType} onClick={onClickSortLocation}>Year</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'locationId'} direction={sortType} onClick={onClickSortLocation}>Month</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}>Que Id</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'year'} direction={sortType} onClick={onClickSortYear}>Que Status</TableSortLabel></TableCell>
                           <TableCell >Download</TableCell>
+                          <TableCell >Created Date</TableCell>
+                          <TableCell >Last Updated</TableCell>
+                          {/* <TableCell >Completed Date</TableCell> */}
+
                         </TableRow>
                       </TableHead>
 
@@ -1351,24 +1917,26 @@ const handleFileDownloads = async (files: FileDetails[]) => {
 
                             <TableCell >
                               <Box sx={{ display: 'flex',justifyContent: "center" }}>
-                              {each.registerUrl ? (
-        <Icon 
-            style={{ color: '#0654AD' }} 
-            type="button" 
-            name={'download'} 
-            text={'download'}  
-            action={() => onclickDownload(each)} 
-        />
+                              {each.queStatus === 'New' || each.queStatus === 'PROCESSING' ? (
+      <Icon
+        style={{ color: '#0654AD', opacity: 0.5, pointerEvents: 'none' }}
+        name={'download'}
+        text={'download'}
+      />
     ) : (
         <Icon 
-            style={{ color: '#0654AD', opacity: 0.5, pointerEvents: 'none' }} 
+            style={{ color: '#0654AD', opacity: 1, pointerEvents: 'auto' }} 
             type="button" 
             name={'download'} 
             text={'download'} 
+            action={() => onclickDownloadBoth(each)} 
         />
     )}
                               </Box>
                             </TableCell>
+                            <TableCell >{each.createdDate && formatDate(each.createdDate) ? formatDate(each.createdDate) : 'NA'}</TableCell>
+                            <TableCell >{each.lastUpdatedDate && formatDate(each.lastUpdatedDate) ? formatDate(each.lastUpdatedDate) : 'NA'}</TableCell>
+
                           </TableRow>
                         ))}
                       </TableBody>

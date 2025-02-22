@@ -76,11 +76,11 @@ function MangeUsers() {
                     }} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_USER) &&
-                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
-                        setUser(row);
-                        setAction(ACTIONS.DELETE)
-                    }} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_USER) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                    //     setUser(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} />
                 }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event: any) => {
                     setUser(row);

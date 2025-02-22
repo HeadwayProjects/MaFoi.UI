@@ -58,11 +58,11 @@ function Law() {
                     }} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_LAW_CATEGORY) &&
-                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                        setLaw(row);
-                        setAction(ACTIONS.DELETE)
-                    }} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_LAW_CATEGORY) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     setLaw(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} />
                 }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setLaw(row);

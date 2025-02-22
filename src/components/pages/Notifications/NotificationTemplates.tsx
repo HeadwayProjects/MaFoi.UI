@@ -137,12 +137,12 @@ export default function NotificationTemplates() {
                     }} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_NOTIFICATION_TEMPLATE) &&
-                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                        if (!row.companyId) return;
-                        setNotification(row);
-                        setAction(ACTIONS.DELETE);
-                    }} disabled={!row.companyId} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_NOTIFICATION_TEMPLATE) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     if (!row.companyId) return;
+                    //     setNotification(row);
+                    //     setAction(ACTIONS.DELETE);
+                    // }} disabled={!row.companyId} />
                 }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setNotification(row);

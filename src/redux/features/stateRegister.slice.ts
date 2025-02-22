@@ -12,6 +12,11 @@ interface StateConfigurationState {
         data: any,
         error: string | null
     },
+    stateRegisterZipFileDownloadDetails: {
+        status: string,
+        data: any,
+        error: string | null
+    },
     stateConfigureDetails: {
         status: string,
         data: any,
@@ -56,6 +61,11 @@ const initialState: StateConfigurationState = {
         data: '',
         error: null
     },
+    stateRegisterZipFileDownloadDetails: {
+        status: 'idle',
+        data: '',
+        error: null
+    },
     stateConfigureDetails: {
         status: 'idle',
         data: '',
@@ -95,6 +105,10 @@ export const getStateRegister = createAsyncThunk('stateRegister/getleaveConfigur
 export const getStateRegisterDownload = createAsyncThunk('stateRegisterdownload/getleaveConfiguration', async (data: any) => {
     const inputModuleService = new InputModuleService();
     return await inputModuleService.fetchStateRegisterDownload(data);
+})
+export const getstateRegisterZipFileDownload = createAsyncThunk('stateRegisterdownload/GetZipFileDownload', async (data: any) => {
+    const inputModuleService = new InputModuleService();
+    return await inputModuleService.fetchStateRegisterZipFileDownload(data);
 })
 
 export const getStateConfigurationDetails = createAsyncThunk('inputModule/getStateConfigurationDetails', async (data: any) => {
@@ -149,6 +163,13 @@ export const stateRegisterSlice = createSlice({
             error: null
         }
    },
+   resetstateRegisterZipFileDownloadDetails: (state) => {
+    state.stateRegisterDownloadDetails = {
+        status: 'idle',
+        data: '',
+        error: null
+    }
+},
        resetAddStateConfigDetails: (state) => {
         state.addStateRegisterDetails = {
             status: 'idle',
@@ -217,17 +238,23 @@ export const stateRegisterSlice = createSlice({
         })
 
 
+        .addCase(getstateRegisterZipFileDownload.pending, (state) => {
+            state.stateRegisterZipFileDownloadDetails.status = 'loading'
+        })
+        .addCase(getstateRegisterZipFileDownload.fulfilled, (state, action: any) => {
+            if(action.payload.data) {
+                state.stateRegisterZipFileDownloadDetails.status = 'succeeded'
+                state.stateRegisterZipFileDownloadDetails.data = action.payload.data
+            } else {
+                state.stateRegisterZipFileDownloadDetails.status = 'failed'
+                state.stateRegisterZipFileDownloadDetails.error = action.payload.message;
+            }
+        })
+        .addCase(getstateRegisterZipFileDownload.rejected, (state, action: any) => {
+            state.stateRegisterZipFileDownloadDetails.status = 'failed'
+            state.stateRegisterZipFileDownloadDetails.error = action.error.message
+        })
 
-
-
-
-
-
-
-
-
-
-        
         
         .addCase(getStateConfigurationDetails.pending, (state) => {
             state.stateConfigureDetails.status = 'loading'
@@ -323,6 +350,6 @@ export const stateRegisterSlice = createSlice({
         })
 })
   
-export const {  resetstateRegisterDownloadDetails ,resetStateConfigDetails, resetImportFileDetails ,  resetExportFileDetails,resetAddStateConfigDetails,resetDeleteStateregisterMappingConfigDetails} = stateRegisterSlice.actions
+export const {  resetstateRegisterZipFileDownloadDetails,resetstateRegisterDownloadDetails ,resetStateConfigDetails, resetImportFileDetails ,  resetExportFileDetails,resetAddStateConfigDetails,resetDeleteStateregisterMappingConfigDetails} = stateRegisterSlice.actions
 
 export default stateRegisterSlice.reducer

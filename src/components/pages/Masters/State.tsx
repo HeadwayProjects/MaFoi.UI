@@ -67,14 +67,14 @@ function State() {
                     }} disabled={row.id === CentralId} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_STATE) &&
-                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                        if (row.id === CentralId) {
-                            return;
-                        }
-                        setState(row);
-                        setAction(ACTIONS.DELETE)
-                    }} disabled={row.id === CentralId} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_STATE) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     if (row.id === CentralId) {
+                    //         return;
+                    //     }
+                    //     setState(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} disabled={row.id === CentralId} />
                 }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setState(row);

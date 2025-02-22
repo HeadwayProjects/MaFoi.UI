@@ -119,11 +119,11 @@ function ManageNotices() {
                     }} disabled={![ComplianceActivityStatus.DUE, ComplianceActivityStatus.NON_COMPLIANT].includes(row.status)} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_NOTICE) &&
-                    <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                        setNotice(row);
-                        setAction(ACTIONS.DELETE)
-                    }} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_NOTICE) &&
+                    // <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     setNotice(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} />
                 }
 
             </div>

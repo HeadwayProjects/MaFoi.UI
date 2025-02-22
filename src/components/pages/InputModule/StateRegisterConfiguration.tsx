@@ -153,6 +153,7 @@ const StateRegisterConfiguration = () => {
 
   const [stateValue, setStateValue] = React.useState('');
   const [type, setType] = React.useState('');
+  const [EstablishmenttypeFilter, setEstablishmenttypeFilter] = React.useState('');
 
   const [registerType, setRegisterType] = React.useState('');
   const [processType, setProcessType] = React.useState<any>('');
@@ -229,6 +230,7 @@ console.log(filteredFormsList);
 
   const handleChangeStateValue = (event: any) => {
     setType('')
+    setEstablishmenttypeFilter('');
     setStateValue(event.target.value)
     const stateRegisterPayload: any = {
       search: searchInput,
@@ -251,6 +253,7 @@ console.log(filteredFormsList);
 
   const handleChangeType = (event: any) => {
     setType(event.target.value);
+    setEstablishmenttypeFilter('');
     const stateRegisterPayload: any = {
       search: searchInput,
       filters: [
@@ -262,6 +265,31 @@ console.log(filteredFormsList);
           columnName: 'registerType',
           value: event.target.value
         }
+      ],
+      pagination: {
+        pageSize: rowsPerPage,
+        pageNumber: page + 1
+      },
+      sort: { columnName: 'StateId', order: 'asc' },
+      "includeCentral": true
+    }
+    dispatch(getStateRegister(stateRegisterPayload))
+  };
+
+  const handleChangeEstablishmentType = (event: any) => {
+    setEstablishmenttypeFilter(event.target.value);
+    const stateRegisterPayload: any = {
+      search: searchInput,
+      filters: [
+        {
+          columnName: 'stateId',
+          value: stateValue
+        },
+        {
+          columnName: 'establishmentType',
+          value: event.target.value
+        }
+       
       ],
       pagination: {
         pageSize: rowsPerPage,
@@ -966,6 +994,12 @@ console.log(filteredFormsList);
         value: registerType
       })
     }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
+      })
+    }
     const payload: any = {
       search: searchInput,
       filters: filters,
@@ -991,6 +1025,12 @@ console.log(filteredFormsList);
       filters.push({
         columnName: 'registerType',
         value: registerType
+      })
+    }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
       })
     }
     const payload: any = {
@@ -1028,6 +1068,12 @@ console.log(filteredFormsList);
       filters.push({
         columnName: 'registerType',
         value: type
+      })
+    }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
       })
     }
 
@@ -1068,6 +1114,12 @@ console.log(filteredFormsList);
         value: type
       })
     }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
+      })
+    }
 
     const Payload: any = {
       search: searchInput,
@@ -1104,6 +1156,12 @@ console.log(filteredFormsList);
       filters.push({
         columnName: 'registerType',
         value: type
+      })
+    }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
       })
     }
 
@@ -1144,6 +1202,12 @@ console.log(filteredFormsList);
         value: type
       })
     }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
+      })
+    }
 
     const Payload: any = {
       search: searchInput,
@@ -1182,6 +1246,12 @@ console.log(filteredFormsList);
         value: type
       })
     }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
+      })
+    }
 
     const Payload: any = {
       search: searchInput,
@@ -1218,6 +1288,12 @@ console.log(filteredFormsList);
       filters.push({
         columnName: 'registerType',
         value: type
+      })
+    }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
       })
     }
 
@@ -1348,6 +1424,12 @@ console.log(filteredFormsList);
         value: type
       })
     }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
+      })
+    }
     const payload: any = {
       search: '',
       filters: [],
@@ -1378,8 +1460,14 @@ console.log(filteredFormsList);
         value: type
       })
     }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
+      })
+    }
     const payload: any = {
-      search: '',
+      search: searchInput,
       filters,
       pagination: {
         pageSize: parseInt(event.target.value, 10),
@@ -1507,6 +1595,12 @@ console.log(filteredFormsList);
       filters.push({
         columnName: 'registerType',
         value: registerType
+      })
+    }
+    if (EstablishmenttypeFilter) {
+      filters.push({
+        columnName: 'establishmentType',
+        value: EstablishmenttypeFilter
       })
     }
     const payload: any = {
@@ -3307,6 +3401,27 @@ useEffect(() => {
                   </FormControl>
                 </Box>
 
+                
+                <Box sx={{ mr: 1 }}>
+                  <Typography mb={1}>Establishment Type</Typography>
+                  <FormControl sx={{ width: "220px", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
+                    <MSelect
+                      sx={{ '.MuiOutlinedInput-notchedOutline': { border: 0 } }}
+                      displayEmpty
+                      value={EstablishmenttypeFilter}
+                      disabled={!stateValue}
+                      onChange={handleChangeEstablishmentType}
+                    >
+                      <MenuItem disabled sx={{ display: 'none' }} value="">
+                        Select Type
+                      </MenuItem>
+                      {['BOCW','CLRA','Factory','ISM','SHOPS'].map((each: any) => {
+                        return <MenuItem value={each}>{each}</MenuItem>
+                      })}
+                    </MSelect>
+                  </FormControl>
+                </Box>
+
                 <Box sx={{ mr: 1 }}>
                   <Typography mb={1}>Search (Form)</Typography>
                   <FormControl sx={{ width: "220px", backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
@@ -3387,11 +3502,12 @@ useEffect(() => {
                             <TableCell >{each.FilePath && each.FilePath ? each.FilePath : 'NA'}</TableCell>
 
                             <TableCell >
-                              <Box sx={{  display: 'flex', justifyContent: 'space-between', width: '100px'  }}>
+                              <Box sx={{  display: 'flex', justifyContent: 'space-between', width: '50px'  }}>
                                 {/* <Icon action={() => onclickEdit(each)} style={{color:'#039BE5'}} type="button" name={'pencil'} text={'Edit'}/> */}
                                 <Icon action={() => onclickView(each)} style={{ color: '#00C853' }} type="button" name={'eye'} text={'View'} />
                                 <Icon action={() => onclickEditModelButton(each)} style={{ color: '#039BE5' }} type="button" name={'pencil'} text={'Edit'} />
-                                <Icon action={() => onclickDeleteButton(each)} style={{ color: '#EB1010' }} type="button" name={'trash'} text={'Delete'} />
+                                {/* <Icon action={() => onclickDeleteButton(each)} style={{ color: '#EB1010' }} type="button" name={'trash'} text={'Delete'} />
+                               */}
                               </Box>
                             </TableCell>
                           </TableRow>

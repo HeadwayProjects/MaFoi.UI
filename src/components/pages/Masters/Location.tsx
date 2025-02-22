@@ -41,10 +41,10 @@ function Location() {
                     setLocation(row);
                     setAction(ACTIONS.EDIT)
                 }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                {/* <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
                     setLocation(row);
                     setAction(ACTIONS.DELETE)
-                }} />
+                }} /> */}
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setLocation(row);
                     setAction(ACTIONS.VIEW)

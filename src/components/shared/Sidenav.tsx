@@ -112,7 +112,7 @@ const SideNavMenu = [
 
             { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_DASHBOARD },          
               { id: 'inputUploads/registerDownload', url: '/inputUploads/registerDownload', label: 'Register Download', privilege: USER_PRIVILEGES.VIEW_REGISTER_DOWNLOAD },
-              { id: 'inputUploads/RegistersQue', url: '/inputUploads/RegistersQue', label: 'RegistersQue ', privilege: USER_PRIVILEGES.VIEW_REGISTER_DOWNLOAD },
+              { id: 'inputUploads/RegistersQue', url: '/inputUploads/RegistersQue', label: 'RegistersQue ', privilege: USER_PRIVILEGES.VIEW_REGISTER_QUE },
 
             { id: 'inputUploads/employeeMasterUpload', url: '/inputUploads/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_MASTER },
             { id: 'inputUploads/employeeLeaveCreditUpload', url: '/inputUploads/employeeLeaveCreditUpload', label: 'Employee Leave Credit', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_LEAVE_CREDIT },

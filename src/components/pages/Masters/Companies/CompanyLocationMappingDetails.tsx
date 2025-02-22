@@ -198,7 +198,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
             {
                 component: action === ACTIONS.VIEW ? componentTypes.PLAIN_TEXT : componentTypes.TEXT_FIELD,
                 name: 'registrationCertificateNo',
-                label: 'Registartion Certificate No',
+                label: 'Registration Certificate No',
                 validate: [
                     { type: validatorTypes.REQUIRED }
                 ],
@@ -242,7 +242,7 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 content: action === ACTIONS.VIEW ? getValue(locationDetails, 'employerDesignation') : ''
             },
             {
-                component: componentTypes.FILE_UPLOAD,
+                component:  componentTypes.FILE_UPLOAD,
                 label: 'Upload Digtal Signature',
                 name: 'file',
                 type: 'file'

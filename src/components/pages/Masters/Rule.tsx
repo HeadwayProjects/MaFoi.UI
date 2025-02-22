@@ -87,11 +87,11 @@ function Rule() {
                     }} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_RULE) &&
-                    <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                        setRule(row);
-                        setAction(ACTIONS.DELETE)
-                    }} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_RULE) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     setRule(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} />
                 }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setRule(row);

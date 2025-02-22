@@ -13,13 +13,15 @@ import { ERROR_MESSAGES } from '../../../utils/constants';
 import { toast } from 'react-toastify';
 import { Alert } from 'react-bootstrap';
 import { getLeaveConfiguration } from '../../../redux/features/leaveConfiguration.slice';
-import { resetImportFileDetails, updateStateRegister, addStateRegister, getStateConfigurationDetails, resetAddStateConfigDetails, resetStateConfigDetails, deleteStateRegisterMapping, exportStateRegisterMapping, resetExportFileDetails, importStateRegisterMapping, getStateRegisterDownload ,resetstateRegisterDownloadDetails} from '../../../redux/features/stateRegister.slice';
+import { resetImportFileDetails, updateStateRegister, addStateRegister,  resetAddStateConfigDetails, resetStateConfigDetails, deleteStateRegisterMapping, exportStateRegisterMapping, resetExportFileDetails, importStateRegisterMapping, getStateRegisterDownload ,getstateRegisterZipFileDownload,resetstateRegisterDownloadDetails,resetstateRegisterZipFileDownloadDetails} from '../../../redux/features/stateRegister.slice';
 import Select from "react-select";
 import { EstablishmentTypes } from '../Masters/Master.constants';
 import { RxCross2 } from "react-icons/rx";
 import { each } from 'underscore';
 import { relative } from 'path';
 import { deleteActStateMappingForm } from '../../../redux/features/Stateactruleactivitymapping.slice';
+import { resetstateRegisterQueDetails, resetstateRegisterQueExcelandPdfDownloadDetails } from '../../../redux/features/stateRegisterQue.slice';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -46,6 +48,7 @@ const RegisterDownload = () => {
   const associateCompaniesDetails = useAppSelector((state) => state.inputModule.associateCompaniesDetails);
   const locationsDetails = useAppSelector((state) => state.inputModule.locationsDetails);
 
+  const [isDownloaded, setIsDownloaded] = useState(false);
   // console.log(formsDetails, "formsDetails")
 
   const stateRegisterDownload = stateRegisterDownloadDetails.data.List
@@ -128,6 +131,27 @@ const RegisterDownload = () => {
   const [hoveredRow, setHoveredRow] = useState(null);
 
 
+  let states = locations && locations.map((each:any) => {
+    const { id, name, code, cities }: any = each.location || {};
+    const { state } = cities || {};
+    return {name: state.name, id: state.id}
+  })
+
+  states = states && states.filter((each:any, index:any, self:any) => {
+    if(index === self.findIndex((t:any) => t.id === each.id)){
+      return each
+    }
+  })
+
+  console.log(statesDetails);
+
+     const stateRegisterZipDownloadDetails = useAppSelector((state) => state.stateRegister.stateRegisterZipFileDownloadDetails)
+     console.log('stateRegisterZipDownloadDetails', stateRegisterZipDownloadDetails);
+     const stateRegisterExcelZipDownload = stateRegisterZipDownloadDetails.data.stateregister 
+
+     console.log("stateRegisterQuePdfandExcel",stateRegisterExcelZipDownload);
+
+
   // useEffect(() => {
   //   const stateRegisterdownloadDefaultPayload: any = {
   //     search: "",
@@ -145,6 +169,10 @@ const RegisterDownload = () => {
   //   dispatch(getAllCompaniesDetails(companiesPayload))
   // }, [])
 
+ // Reset the `isDownloaded` flag when leaving the page or on unmount
+useEffect(() => {
+  return () => setIsDownloaded(false);
+}, []);
 
 
 
@@ -231,11 +259,44 @@ const RegisterDownload = () => {
     dispatch(getStateRegisterDownload(payload))
   };
 
+  const handleChangeStateName = (event:any) => {
+    //  setShowDashboardDetails(false)
+      setYear('')
+      setMonth('')
+      setLocation('')
+      setStateName(event.target.value);
+
+      const payload: any =  { 
+        search: searchInput, 
+        filters: [
+          {
+            columnName:'companyId',
+            value: company
+          },
+          {
+            columnName:'associateCompanyId',
+            value: associateCompany
+          },
+          {
+            columnName:'stateId',
+            value: event.target.value
+          }
+        ],
+        pagination: {
+          pageSize: rowsPerPage,
+          pageNumber: page+1
+        },
+        sort: { columnName: 'stateId', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getStateRegisterDownload(payload))
+    }
+
 
   const handleChangeLocation = (event:any) => {
-    setYear('')
-    setMonth('')
     setLocation(event.target.value);
+    setYear('');
+    setMonth('');
     const payload: any =  { 
       search: searchInput, 
       filters: [
@@ -332,6 +393,62 @@ const RegisterDownload = () => {
     }
     dispatch(getStateRegisterDownload(payload))
   };
+
+   const handleChangeEstablishmentType = (event:any)=>{
+      //alert(event.target.value);
+  setEstablishmentType(event.target.value);
+
+  
+  //for tabledate 
+  
+      //const monthKey = (monthList.findIndex((each) => each === event.target.value) + 1).toString()
+      const payload: any =  { 
+        search: searchInput, 
+        filters: [
+          {
+            columnName:'companyId',
+            value: company
+          },
+          {
+            columnName:'associateCompanyId',
+            value: associateCompany
+          },
+          {
+            columnName:'locationId',
+            value: location.split('^')[0]
+          },
+          {
+            columnName:'year',
+            value: year
+          },
+          {
+            columnName:'month',
+            value:month
+          },
+          {
+            columnName:'establishmenttype',
+            value: event.target.value
+          }
+        ],
+        pagination: {
+          pageSize: rowsPerPage,
+          pageNumber: page+1
+        },
+        sort: { columnName: 'stateId', order: 'asc' },
+        "includeCentral": true
+      }
+      dispatch(getStateRegisterDownload(payload))
+  
+    }
+
+  const EstablishmentTypesList = [
+    "BOCW",
+    "CLRA",
+    "Factory",  
+    "ISM",
+    "Shops"
+  ];
+
 
 
   useEffect(() => {
@@ -891,6 +1008,92 @@ else{
 
   }
 
+  useEffect(()=>{
+    //dispatch(resetstateRegisterZipFileDownloadDetails());
+    //dispatch(resetstateRegisterDownloadDetails());
+
+  },[])
+
+  
+
+
+
+  useEffect(() => {
+    if (stateRegisterZipDownloadDetails.status === 'succeeded') {
+      //dispatch(resetstateRegisterZipFileDownloadDetails());
+     
+
+      if(isDownloaded)
+      {
+      //alert("This success was hit");
+      if (stateRegisterExcelZipDownload && stateRegisterExcelZipDownload.registerUrl) {
+        console.log(stateRegisterExcelZipDownload.registerUrl);
+        const url = stateRegisterExcelZipDownload.registerUrl;
+        // Create a new anchor element
+          const link = document.createElement('a');
+          link.href = url;
+          // Set the download attribute to suggest a file name (optional)
+          // This is the name the file will be downloaded as
+          link.download = url.split('/').pop(); // Use the file name from the URL
+          // Append the anchor to the body
+          document.body.appendChild(link);
+          // Programmatically click the anchor
+          link.click();
+          // Remove the anchor from the document
+          document.body.removeChild(link);
+          toast.success("File was Downloading");
+
+          //dispatch(resetstateRegisterZipFileDownloadDetails());
+       
+           // Set the downloaded flag to true
+      setIsDownloaded(false);
+        
+      } else {
+        toast.error("No Zip Found");
+      }
+    }else{
+      return ;
+    }
+    }
+     else if (stateRegisterZipDownloadDetails.status === 'failed') {
+     
+      toast.error(ERROR_MESSAGES.DEFAULT);
+    }
+  }, [stateRegisterZipDownloadDetails])
+
+  const DownloadExcelZip=()=>{
+      setIsDownloaded(true);
+    const Payload: any =  { 
+      companyId: company,
+      associateCompanyId:  associateCompany,
+      locationId: location,
+      year: year, 
+      month:month,
+      establishmentType : establishmentType,
+      zipType : "ExcelZip"
+    }
+    
+    dispatch(getstateRegisterZipFileDownload(Payload))  
+  }
+  
+
+  const DownloadPdfZip=()=>{
+    setIsDownloaded(true);
+  const Payload: any =  { 
+    companyId: company,
+    associateCompanyId:  associateCompany,
+    locationId: location,
+    year: year, 
+    month:month,
+    establishmentType : establishmentType,
+    zipType : "PdfZip"
+  }
+  
+  dispatch(getstateRegisterZipFileDownload(Payload))
+}
+
+  
+
  
 
 
@@ -921,7 +1124,9 @@ else{
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', marginTop: '10px' }}>
                 <h5 style={{ font: 'normal normal normal 32px/40px Calibri' }}>Register Downloads</h5>
                 {/* <Button onClick={onClickAdd} variant='contained' style={{ backgroundColor: '#0654AD', display: 'flex', alignItems: 'center' }}> <IoMdAdd /> &nbsp; Add</Button> */}
-                <Button variant='contained' style={{ backgroundColor: '#0654AD', display: 'flex', alignItems: 'center' }}> <Icon name={'download'} text={'download'} /> &nbsp; Download</Button>
+                <Button variant='contained'  style={{ display: 'flex', alignItems: 'center' , marginLeft:'790px' }} onClick={DownloadPdfZip}  disabled={ !company || !associateCompany || !location || !year || !month || !establishmentType   }> <Icon name={'download'} text={'download'} /> &nbsp; Pdf Zip</Button>
+
+                <Button variant='contained' style={{  display: 'flex', alignItems: 'center' }} onClick={DownloadExcelZip} disabled={ !company || !associateCompany || !location || !year || !month || !establishmentType   }> <Icon name={'download'} text={'download'} /> &nbsp; Excel Zip</Button>
               </div>
 
               <div style={{ display: 'flex' }}>
@@ -1094,6 +1299,10 @@ else{
                   </FormControl>
                 </Box> */}
 
+                
+
+
+
                 <Box sx={{ width: '100%', mr: 1 }}>
                   <Typography mb={1}>Location</Typography>
                   <FormControl sx={{ width: '100%', maxWidth: '200px', backgroundColor: '#ffffff', borderRadius: '5px' }} size="small">
@@ -1185,6 +1394,35 @@ else{
                   </FormControl>
                 </Box>
 
+                       <Box sx={{width:'100%', mr:1}}>
+                                                    <Typography mb={1}>EstablishmentType</Typography>
+                                                    <FormControl sx={{ width:'100%', maxWidth:'200px', backgroundColor:'#ffffff', borderRadius:'5px'}} size="small">
+                                                      <MSelect
+                                                        sx={{'.MuiOutlinedInput-notchedOutline': { border: 0 }}}
+                                                        displayEmpty
+                                                        value={establishmentType}
+                                                        disabled={!month}
+                                                    onChange={handleChangeEstablishmentType}
+                                                    MenuProps={{
+                                                      PaperProps: {
+                                                        sx: {
+                                                          maxHeight: 200,
+                                                          width: 150,
+                                                          marginTop: "3px"
+                                                        }
+                                                      }
+                                                    }}
+                                                      >
+                                                        <MenuItem disabled sx={{display:'none'}} value="">
+                                                          Select Type
+                                                        </MenuItem>
+                                                        {EstablishmentTypesList && EstablishmentTypesList.map((each:any) => 
+                                                          <MenuItem sx={{ width: '240px', whiteSpace: 'initial' }} value={each}>{each}</MenuItem>
+                                                        )}
+                                                      </MSelect>
+                                                    </FormControl>
+                                                  </Box>
+
               </div>
             </div>
           </Box>
@@ -1203,11 +1441,11 @@ else{
                       <TableHead sx={{ '.MuiTableCell-root': { backgroundColor: '#E7EEF7',fontWeight:'600' } }}>
                         <TableRow>
                           <TableCell><Checkbox/></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'stateId'} direction={sortType} onClick={onClickSortState}>State</TableSortLabel></TableCell>
+                          {/* <TableCell > <TableSortLabel active={activeSort === 'locationId'} direction={sortType} onClick={onClickSortState}>Location</TableSortLabel></TableCell> */}
                           <TableCell > <TableSortLabel active={activeSort === 'actId'} direction={sortType} onClick={onClickSortAct}>Year</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'ruleId'} direction={sortType} onClick={onClickSortRule}>Month</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'activityId'} direction={sortType} onClick={onClickSortActivity}>Act</TableSortLabel></TableCell>
-                          <TableCell > <TableSortLabel active={activeSort === 'activityId'} direction={sortType} onClick={onClickSortActivity}>Rule</TableSortLabel></TableCell>
+                          {/* <TableCell > <TableSortLabel active={activeSort === 'activityId'} direction={sortType} onClick={onClickSortActivity}>Act</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'activityId'} direction={sortType} onClick={onClickSortActivity}>Rule</TableSortLabel></TableCell> */}
 
                           <TableCell > <TableSortLabel active={activeSort === 'activityId'} direction={sortType} onClick={onClickSortActivity}>Activity</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'form'} direction={sortType} onClick={onClickSortForm}>FormName</TableSortLabel></TableCell>
@@ -1224,14 +1462,14 @@ else{
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                           >
                             <TableCell><Checkbox/></TableCell>
-                            <TableCell >{each.State && each.State.Name ? each.State.Name : 'NA'}</TableCell>
+                            {/* <TableCell >{each.Location && each.Location.Name ? each.Location.Name : 'NA'}</TableCell> */}
                             <TableCell >{each.Year && each.Year ? each.Year : 'NA'}</TableCell>
                             <TableCell >{each.Month && each.Month ? each.Month : 'NA'}</TableCell>
-                            <TableCell >{each.Act && each.Act.Name ? each.Act.Name : 'NA'}</TableCell>
-                            <TableCell >{each.Rule && each.Rule.Name ? each.Rule.Name : 'NA'}</TableCell>
+                            {/* <TableCell >{each.Act && each.Act.Name ? each.Act.Name : 'NA'}</TableCell>
+                            <TableCell >{each.Rule && each.Rule.Name ? each.Rule.Name : 'NA'}</TableCell> */}
                             <TableCell >{each.Activity && each.Activity.Name ? each.Activity.Name : 'NA'}</TableCell>
                             <TableCell >{each.FormName && each.FormName ? each.FormName : 'NA'}</TableCell>
-                            <TableCell >{each.Type && each.Type ? each.Type : 'NA'}</TableCell>
+                            <TableCell >{each.Type && each.RegisterType ? each.RegisterType : 'NA'}</TableCell>
 
                             <TableCell >
                               <Box sx={{ display: 'flex',justifyContent: "center" }}>

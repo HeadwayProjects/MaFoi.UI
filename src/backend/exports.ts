@@ -16,6 +16,36 @@ export function useAuditReport(onSuccess?: any, onError?: any) {
     return { auditReport, error, exporting };
 }
 
+export function useAuditReportForVendor(onSuccess?: any, onError?: any) {
+    const { mutate: auditReportVendor, error, isLoading: exporting } = useMutation(
+        ['auditReportVendor'],
+        async (payload: any) => await post(`${getChartsBaseUrl()}/Audit/GetAuditReportForVendor`, payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response: any) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { auditReportVendor, error, exporting };
+}
+
+export function useExportVendorCategories(onSuccess?: any, onError?: any) {
+    const { mutate: exportLaws, error, isLoading: exporting } = useMutation(
+        ['exportLaws'],
+        async (payload: any) => await post('/api/VendorCategories/Export', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportLaws, error, exporting };
+}
+
 export function useExportLaws(onSuccess?: any, onError?: any) {
     const { mutate: exportLaws, error, isLoading: exporting } = useMutation(
         ['exportLaws'],
@@ -286,6 +316,24 @@ export function useExportCompanies(onSuccess?: any, onError?: any) {
     return { exportCompanies, error, exporting };
 }
 
+export function useExportVendors(onSuccess?: any, onError?: any) {
+    const { mutate: exportVendors, error, isLoading: exporting } = useMutation(
+        ['exportCompanies'],
+
+        async (payload: any) => await post('/api/VendorDetails/ExportVendors', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+
+        }
+
+    );
+    return { exportVendors, error, exporting };
+}
+
 export function useExportAssociateCompanies(onSuccess?: any, onError?: any) {
     const { mutate: exportAssociateCompanies, error, isLoading: exporting } = useMutation(
         ['exportAssociateCompanies'],
@@ -299,6 +347,21 @@ export function useExportAssociateCompanies(onSuccess?: any, onError?: any) {
         }
     );
     return { exportAssociateCompanies, error, exporting };
+}
+
+export function useExportVendorLocations(onSuccess?: any, onError?: any) {
+    const { mutate: exportVendorLocations, error, isLoading: exporting } = useMutation(
+        ['exportVendorLocations'],
+        async (payload: any) => await post('/api/Mappings/ExportVendorLocationMappings', payload, null, true, { responseType: 'blob' }),
+        {
+            onError,
+            onSuccess: (response) => {
+                const data = (response || {});
+                onSuccess(data);
+            }
+        }
+    );
+    return { exportVendorLocations, error, exporting };
 }
 
 export function useExportCompanyLocations(onSuccess?: any, onError?: any) {

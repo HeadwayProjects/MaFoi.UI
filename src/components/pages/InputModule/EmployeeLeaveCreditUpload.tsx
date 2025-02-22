@@ -949,12 +949,12 @@ const EmployeeLeaveCreditUpload = () => {
                 <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', width: '200px', justifyContent: 'space-between' }}>
                   {/* <Button onClick={onClickBackToDashboard} variant='contained'> Back To Dashboard</Button> */}
                   {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_LEAVE_CREDIT) &&
-                  <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedCredit && selectedCredit.length === 0}> Bulk Delete</Button>
+                  //   hasUserAccess(USER_PRIVILEGES.DELETE_EMPLOYEE_LEAVE_CREDIT) &&
+                  // <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedCredit && selectedCredit.length === 0}> Bulk Delete</Button>
                   }
                   {/* <Button onClick={onClickBulkDelete} variant='contained' color='error' disabled={selectedCredit && selectedCredit.length === 0}> Bulk Delete</Button> */}
                   <button onClick={onclickExport} disabled={!company} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: !company ? '#707070' : '#ffffff', color: !company ? '#ffffff' : '#000000', border: '1px solid #000000', width: '40px', height: '30px', borderRadius: '8px' }}> <FaDownload /> </button>
-                </div>
+                </div>w
                 {/* <button onClick={onClickExport} disabled={!employeesLeaveCredit} style={{display:'flex', justifyContent:'center', alignItems:'center', backgroundColor: !employeesLeaveCredit ? '#707070': '#ffffff' , color: !employeesLeaveCredit ? '#ffffff': '#000000', border:'1px solid #000000', width:'40px', height:'30px', borderRadius:'8px'}}> <FaDownload /> </button> */}
               </div>
               <div style={{ display: 'flex' }}>

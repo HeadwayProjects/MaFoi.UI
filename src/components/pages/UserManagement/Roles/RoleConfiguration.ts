@@ -139,7 +139,8 @@ export enum USER_PRIVILEGES {
     VIEW_INPUT_MODULE_UPLOAD = 'VIEW_INPUT_MODULE_UPLOAD',
     ADD_INPUT_MODULE_UPLOAD = 'ADD_INPUT_MODULE_UPLOAD',
     VIEW_EMPLOYEE_DASHBOARD = 'VIEW_EMPLOYEE_DASHBOARD',
-    REGISTER_EMPLOYEE_DASHBOARD = 'REGISTER_EMPLOYEE_DASHBOARD',
+    REGISTER_GENERATION_DASHBOARD = 'REGISTER_EMPLOYEE_DASHBOARD',
+    REGISTER_GENERATION_QUE = 'REGISTER_EMPLOYEE_QUE',
     VIEW_EMPLOYEE_MASTER = 'VIEW_EMPLOYEE_MASTER',
     DELETE_EMPLOYEE_MASTER = 'DELETE_EMPLOYEE_MASTER',
     VIEW_EMPLOYEE_LEAVE_CREDIT = 'VIEW_EMPLOYEE_LEAVE_CREDIT',
@@ -151,7 +152,8 @@ export enum USER_PRIVILEGES {
     VIEW_EMPLOYEE_WAGE = 'VIEW_EMPLOYEE_WAGE',
     DELETE_EMPLOYEE_WAGE = 'DELETE_EMPLOYEE_WAGE',
        VIEW_STATEREGISTER_CONFIGURATION = 'VIEW_STATEREGISTER_CONFIGURATION',
-    VIEW_REGISTER_DOWNLOAD = 'VIEW_REGISTER_DOWNLOAD'
+    VIEW_REGISTER_DOWNLOAD = 'VIEW_REGISTER_DOWNLOAD',
+     VIEW_REGISTER_QUE = 'VIEW_REGISTER_QUE'
 }
 
 export const PAGES_CONFIGURATION = [
@@ -237,8 +239,12 @@ export const PAGES_CONFIGURATION = [
                 name: 'View Employee Dashboard'
             },
             {
-                id: USER_PRIVILEGES.REGISTER_EMPLOYEE_DASHBOARD,
-                name: 'Register Employee Master'
+                id: USER_PRIVILEGES.REGISTER_GENERATION_DASHBOARD,
+                name: 'Register Generation DashBoard'
+            },
+            {
+                id: USER_PRIVILEGES.REGISTER_GENERATION_QUE,
+                name: 'Register Generation Que'
             },
             {
                 id: USER_PRIVILEGES.VIEW_EMPLOYEE_MASTER,
@@ -283,6 +289,10 @@ export const PAGES_CONFIGURATION = [
             {
                 id: USER_PRIVILEGES.VIEW_REGISTER_DOWNLOAD,
                 name: 'View Register Download'
+            },
+            {
+                id: USER_PRIVILEGES.VIEW_REGISTER_QUE,
+                name: 'View Register Que'
             },
     ]
     },
@@ -770,7 +780,7 @@ export const PAGES_CONFIGURATION = [
     },
     {
         id: 'ACTIVITIES',
-        name: 'Activities',
+        name: 'Location Activities',
         isMulti: false,
         privileges: [
             {

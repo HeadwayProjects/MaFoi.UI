@@ -90,11 +90,11 @@ function RuleStateCompanyMapping() {
                     }} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_MAPPING) &&
-                    <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                        setMapping(row);
-                        setAction(ACTIONS.DELETE)
-                    }} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_MAPPING) &&
+                    // <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     setMapping(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} />
                 }
                 <Icon type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setMapping(row);

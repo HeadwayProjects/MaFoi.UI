@@ -139,11 +139,11 @@ function ManageDepartments() {
                     }} />
                 }
                 {
-                    hasUserAccess(USER_PRIVILEGES.DELETE_DEPARTMENT) &&
-                    <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                        setDepartment(row);
-                        setAction(ACTIONS.DELETE)
-                    }} />
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_DEPARTMENT) &&
+                    // <Icon type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     setDepartment(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} />
                 }
                 <Icon type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setDepartment(row);
