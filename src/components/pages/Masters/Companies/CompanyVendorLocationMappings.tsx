@@ -16,6 +16,7 @@ import Table, {
 } from "../../../common/Table";
 import { useQueryParams } from "raviger";
 import { useRef } from "react";
+import Select from "react-select";
 import TableFilters from "../../../common/TableFilter";
 import { toast } from "react-toastify";
 import { ERROR_MESSAGES } from "../../../../utils/constants";
@@ -25,7 +26,8 @@ import { useExportVendorLocations } from "../../../../backend/exports";
 import { downloadFileContent } from "../../../../utils/common";
 import TableActions, { ActionButton } from "../../../common/TableActions";
 import CompanyVendorLocationDetails from "./CompanyVendorLocationMappingDetails";
-import CompanyVendorLocationsImportModal from "./CompanyLocationsImportModal";
+import CompanyVendorLocationsImportModal from "./CompanyVendorLocationsImportModel";
+import Location from "../../../common/Location";
 
 function CompanyVendorLocationMappings() {
   const [breadcrumb] = useState(GetMastersBreadcrumb("Vendor mapping"));
@@ -39,8 +41,8 @@ function CompanyVendorLocationMappings() {
   const [data, setData] = useState<any>();
   const [params, setParams] = useState<any>();
   const [filters, setFilters] = useState<any>();
-  const filterRef: any = useRef();
-  filterRef.current = filters;
+  const filterRefTest: any = useRef();
+  filterRefTest.current = filters;
   const [payload, setPayload] = useState<any>();
   const { companies: parentCompanies, isFetching: fetchingCompanies } =
     useGetCompanies({
@@ -137,7 +139,7 @@ function CompanyVendorLocationMappings() {
       label: "Export",
       name: "export",
       icon: "download",
-      disabled: !total,
+      //disabled: !total,
       // privilege: USER_PRIVILEGES.EXPORT_LOCATION_MAPPINGS,
       action: handleExport,
     },
@@ -161,6 +163,36 @@ function CompanyVendorLocationMappings() {
       hideAll: true,
       value: parentCompany,
     },
+    // {
+    //   label: "Associate Company",
+    //   name: "associateCompanyId",
+    //   options: (associateCompanies || []).map((x: any) => {
+    //     return { value: x.id, label: x.name };
+    //   }),
+    //   hideAll: true,
+    //   value: associateCompany,
+    // },
+    // {
+    //   label: "Location4",
+    //   name: "locationId",
+    //   options: (locations || []).map((x: any) => {
+    //     return { value: x.id, label: x.location.name };
+    //   }),
+    //   hideAll: true,
+    //   value: companyLocation,
+    // },
+    // {
+    //   label: "Vendor Category",
+    //   name: "vendorCategoriesId",
+    //   options: (vendorCategories || []).map((x: any) => {
+    //     return { value: x.id, label: x.vendorCategoryName };
+    //   }),
+    //   hideAll: true,
+    //   value: vendorCategory,
+    // },
+  ];
+
+  const filterAssocioConfig = [
     {
       label: "Associate Company",
       name: "associateCompanyId",
@@ -170,15 +202,9 @@ function CompanyVendorLocationMappings() {
       hideAll: true,
       value: associateCompany,
     },
-    {
-      label: "Location",
-      name: "locationId",
-      options: (locations || []).map((x: any) => {
-        return { value: x.id, label: x.location.name };
-      }),
-      hideAll: true,
-      value: companyLocation,
-    },
+  ];
+
+  const filterVendorConfig = [
     {
       label: "Vendor Category",
       name: "vendorCategoriesId",
@@ -187,6 +213,18 @@ function CompanyVendorLocationMappings() {
       }),
       hideAll: true,
       value: vendorCategory,
+    }
+  ];
+
+  const filterLocationConfig = [
+    {
+      label: "Location",
+      name: "locationId",
+      options: (locations || []).map((x: any) => {
+        return { value: x.id, label: x.location.name };
+      }),
+      hideAll: true,
+      value: companyLocation,
     },
   ];
 
@@ -307,12 +345,16 @@ function CompanyVendorLocationMappings() {
       },
     };
     setParams(_params);
-    setPayload({ ...DEFAULT_PAYLOAD, ...filterRef.current, ..._params });
+    setPayload({ ...DEFAULT_PAYLOAD, ...filterRefTest.current, ..._params });
     return Promise.resolve(formatApiResponse(params, vendorLocations, total));
   }
 
   function onFilterChange(e: any) {
     setFilters(e);
+    if(e.filters[0].columnName == "associateCompanyId"){
+      setCompanyLocation([]);
+      // setFilters(e);
+    }
   }
 
   function handlePageNav(_pagination: any) {
@@ -323,10 +365,44 @@ function CompanyVendorLocationMappings() {
   }
 
   function handleExport() {
-    if (total > 0) {
+    // if (total > 0) {
+    console.log(associateCompany)
+    console.log(companyLocation)
+    console.log(vendorCategory)
+      const filters = []
+      if (associateCompany) {
+              filters.push({
+                columnName: 'associatecompanyid',
+                value: associateCompany.value
+              })
+            }
+            // if (companyLocation) {
+            //   filters.push({
+            //     columnName: 'locationid',
+            //     value: companyLocation.value
+            //   })
+            // }
+            // if (vendorCategory) {
+            //   filters.push({
+            //     columnName: 'vendorcategoriesid',
+            //     value: vendorCategory.value
+            //   })
+            // }
+            const payload: any = {
+                    search: '',
+                    filters: filters,
+                    pagination: null,
+                    sort: { columnName: 'locationname', order: 'asc' },
+                    "includeCentral": true
+                  }
+
+                  console.log(payload);
+
       exportVendorLocations({ ...payload, pagination: null });
-    }
+    // }
   }
+
+ 
 
   useEffect(() => {
     if (
@@ -351,6 +427,7 @@ function CompanyVendorLocationMappings() {
 
   useEffect(() => {
     if (filters) {
+      // alert("hitted")     
       const { filters: _filters, search } = filters;
       setData(formatApiResponse(params, [], 0));
       const _associateCompanyId = (
@@ -359,7 +436,7 @@ function CompanyVendorLocationMappings() {
       const _parentCompanyId = (
         _filters.find((x: any) => x.columnName === "parentCompanyId") || {}
       ).value;
-      const _locationId = (
+      const TestLocationId = (
         _filters.find((x: any) => x.columnName === "locationId") || {}
       ).value;
       const _vendorCategoreisId = (
@@ -392,6 +469,7 @@ function CompanyVendorLocationMappings() {
             label: _associateCompany.name,
             code: _associateCompany.code,
           });
+          
           const _x = {
             filters: [
               { columnName: "assocaiteCompanyId", value: _associateCompanyId },
@@ -421,15 +499,17 @@ function CompanyVendorLocationMappings() {
           return;
         }
       }
-      if (_locationId) {
-        const _location = locations.find((x: any) => x.id === _locationId);
+      if (TestLocationId) {
+        //alert("hitted TestLocationId" )
+        const _location = locations.find((x: any) => x.id === TestLocationId);
         if (_location) {
           setCompanyLocation({
             value: _location.locationId,
             label: _location.location.name,
           });
+          //debugger
           const _x = {
-            filters: [{ columnName: "locationId", value: _locationId }],
+            filters: [{ columnName: "locationId", value: TestLocationId }],
             search,
           };
           setPayload({ ...DEFAULT_PAYLOAD, ...params, ..._x });
@@ -466,7 +546,7 @@ function CompanyVendorLocationMappings() {
           label: _associateCompany.name,
           code: _associateCompany.code,
         });
-        const { search } = filterRef.current || { search: "" };
+        const { search } = filterRefTest.current || { search: "" };
         setFilters({
           filters: [
             {
@@ -489,7 +569,7 @@ function CompanyVendorLocationMappings() {
           value: _vendorCategory.id,
           label: _vendorCategory.vendorCategoryName,
         });
-        const { search } = filterRef.current || { search: "" };
+        const { search } = filterRefTest.current || { search: "" };
         setFilters({
           filters: [
             {
@@ -516,7 +596,7 @@ function CompanyVendorLocationMappings() {
           label: _location.location.name,
           value: _location.locationId,
         });
-        const { search } = filterRef.current || { search: "" };
+        const { search } = filterRefTest.current || { search: "" };
         setFilters({
           filters: [
             {
@@ -545,6 +625,10 @@ function CompanyVendorLocationMappings() {
     locationRefetch();
   }, [associateCompany]);
 
+  useEffect(() => {
+    console.log("loca:", companyLocation);
+  }, [companyLocation]);
+
   return (
     <>
       <MastersLayout title="Vendor Location Mapping" breadcrumbs={breadcrumb}>
@@ -554,11 +638,40 @@ function CompanyVendorLocationMappings() {
               <div className="d-flex justify-content-between align-items-end">
                 <TableFilters
                   filterConfig={filterConfig}
-                  search={true}
+                  // search={true}
                   onFilterChange={onFilterChange}
-                  placeholder={"Search for Location Code/Name"}
+                // placeholder={"Search for Location Code/Name"}
                 />
+                <TableFilters
+                  filterConfig={filterAssocioConfig}
+                  // search={true}
+                  onFilterChange={onFilterChange}
+                // placeholder={"Search for Location Code/Name"}
+                />
+                <TableFilters
+                  filterConfig={filterLocationConfig}
+                  //search={true}
+                  onFilterChange={onFilterChange}
+                // placeholder={"Search for Location Code/Name"}
+                />
+                <TableFilters
+                  filterConfig={filterVendorConfig}
+                 // search={true}
+                  onFilterChange={onFilterChange}
+                  //placeholder={"Search for Location Code/Name"}
+                />
+
                 <TableActions buttons={buttons} />
+              </div>
+              <div className="d-flex justify-content-between align-items-end">
+
+                {/* <div className="d-flex flex-column me-3" key={filter.name}>
+                  <label className="filter-label"><small>{filter.label}</small></label>
+                  <Select options={filter.hideAll ? [...filter.options] : [DEFAULT_OPTION, ...filter.options]}
+                    defaultValue={filter.hideAll ? filter.defaultValue : DEFAULT_OPTION} value={filter.value}
+                    onChange={(e: any) => handleFilterChange(filter, e)} className="select-control"
+                  />
+                </div> */}
               </div>
             </div>
           </div>

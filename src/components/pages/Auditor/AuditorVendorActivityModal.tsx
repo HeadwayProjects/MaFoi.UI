@@ -64,7 +64,9 @@ function AuditorVendorActivityModal({ activity = {}, onClose, onSubmit }: any) {
   const [status, setStatus] = useState<any>(
     FORM_STATUSES.find((x: any) => x.value === activity.status)
   );
-  const [auditRemarks, setAuditRemarks] = useState<any>("");
+  const [auditRemarks, setAuditRemarks] = useState(
+    activity.auditRemarks
+  );
   const [formsStatusRemarks, setFormsStatusRemarks] = useState(
     activity.formsStatusRemarks
   );
@@ -263,7 +265,7 @@ function AuditorVendorActivityModal({ activity = {}, onClose, onSubmit }: any) {
                   </div>
                   <div className="row mb-2">
                     <div className="col-4 filter-label">
-                      Forms/Registers & Returns2
+                      Forms/Registers & Returns
                     </div>
                     <div className="col">{(activity.activity || {}).name}</div>
                   </div>
@@ -291,25 +293,37 @@ function AuditorVendorActivityModal({ activity = {}, onClose, onSubmit }: any) {
                       {activity.auditted || ACTIVITY_TYPE.AUDIT}
                     </div>
                   </div>
-                  {activity.formsStatusRemarks ? 
+                  <div className="row mb-2">
+                    <div className="col-4 filter-label">Auditee Remarks</div>
+                    <div className="col">
+                      {activity.auditeeRemarks}
+                    </div>
+                  </div>
+                  {/* {activity.auditStatus ?  */}
+                  <div className="row mb-2">
+                    <div className="col-4 filter-label">Compliance Status </div>
+                    <div className="col">
+                      {activity.auditStatus }
+                    </div>
+                  </div> 
+                  {/* {activity.formsStatusRemarks ?  */}
                   <div className="row mb-2">
                     <div className="col-4 filter-label">Observations</div>
                     <div className="col">
                       {activity.formsStatusRemarks }
                     </div>
-                  </div> : ""}
-                  {activity.auditRemarks ? 
+                  </div>
+                  {/* {activity.auditRemarks ?  */}
                   <div className="row mb-2">
                     <div className="col-4 filter-label">Reccomendations</div>
                     <div className="col">
                       {activity.auditRemarks }
                     </div>
-                  </div> : ""}
+                  </div> 
                 </div>
               </div>
 
-              {(formStatus || {}).editable &&
-                activity.status !== "Rejected" && (
+              {(formStatus || {}).editable && (
                   <div className="px-4">
                     <form>
                       <div className="row mt-3">
@@ -325,7 +339,7 @@ function AuditorVendorActivityModal({ activity = {}, onClose, onSubmit }: any) {
                               value={status}
                             />
                           </div>
-                          <div className="grid col-12 mb-4">
+                          <div className="col-12 mb-4">
                             <label className="filter-label">
                               Observations
                               {auditStatus &&
@@ -337,7 +351,8 @@ function AuditorVendorActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                   <span className="required">*</span>
                                 )}
                             </label>
-
+                            
+  
                             <textarea
                               className="form-control"
                               value={formsStatusRemarks}
@@ -346,7 +361,7 @@ function AuditorVendorActivityModal({ activity = {}, onClose, onSubmit }: any) {
                               }
                               disabled={false}
                             />
-
+  
                             {auditStatus &&
                               status.value === ACTIVITY_STATUS.APPROVE &&
                               auditStatus.value ===
@@ -364,12 +379,56 @@ function AuditorVendorActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                 </div>
                               )}
                           </div>
+  
+                        
+                        </div>
+  
+                        {(status || {}).value === ACTIVITY_STATUS.APPROVE && (
+                          <div className="col-5">
+                            <div className="col-12 mb-4">
+                              <label className="filter-label">
+                                Compliance Status
+                                <span className="required">*</span>
+                              </label>
+                              <Select
+                                placeholder="Compliance Status"
+                                options={
+                                  (status || {}).value === ACTIVITY_STATUS.APPROVE
+                                    ? AUDIT_STATUSES.filter((option) =>
+                                        [
+                                          AUDIT_STATUS.COMPLIANT,
+                                          AUDIT_STATUS.NOT_APPLICABLE,
+                                        ].includes(option.value)
+                                      )
+                                    : AUDIT_STATUSES
+                                }
+                                onChange={setAuditStatus}
+                                value={auditStatus}
+                              />
+                            </div>
+                            <div className="col-12 mb-4">
+                              <label className="filter-label">
+                                Recommendations
+                                {/* {[AUDIT_STATUS.NON_COMPLIANCE].includes((auditStatus || {}).value) && <span className="required">*</span>} */}
+                              </label>
+                              <textarea
+                                className="form-control"
+                                value={auditRemarks}
+                                required={auditRemarks}
+                                onChange={(e) => setAuditRemarks(e.target.value)}
+                              />
+                            </div>
+                          </div>
+                        )}
+
 
                           {(status || {}).value === ACTIVITY_STATUS.REJECT &&
                             activity.auditted !==
                               ACTIVITY_TYPE.PHYSICAL_AUDIT && (
-                              <div className="row-12">
-                                <div className="row-5 mb-4">
+                                <div className="col-5">
+                            <div className="col-12 mb-4">
+                              {/* <div className="row-12">
+                                <div className="row-5 mb-4"> */}
                                   <label className="filter-label">
                                     Compliance Status
                                     <span className="required">*</span>
@@ -391,7 +450,7 @@ function AuditorVendorActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                     value={auditStatus}
                                   />
                                 </div>
-
+  
                                 <div className="col-12 mb-4">
                                   <label className="filter-label">
                                     Recommendations
@@ -429,48 +488,6 @@ function AuditorVendorActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                 </div>
                               </div>
                             )}
-                        </div>
-
-                        {(status || {}).value === ACTIVITY_STATUS.APPROVE && (
-                          <div className="col-5">
-                            <div className="col-12 mb-4">
-                              <label className="filter-label">
-                                Compliance Status
-                                <span className="required">*</span>
-                              </label>
-                              <Select
-                                placeholder="Compliance Status"
-                                options={
-                                  (status || {}).value ===
-                                  ACTIVITY_STATUS.APPROVE
-                                    ? AUDIT_STATUSES.filter((option) =>
-                                        [
-                                          AUDIT_STATUS.COMPLIANT,
-                                          AUDIT_STATUS.NOT_APPLICABLE,
-                                        ].includes(option.value)
-                                      )
-                                    : AUDIT_STATUSES
-                                }
-                                onChange={setAuditStatus}
-                                value={auditStatus}
-                              />
-                            </div>
-                            <div className="col-12 mb-4">
-                              <label className="filter-label">
-                                Recommendations
-                                {/* {[AUDIT_STATUS.NON_COMPLIANCE].includes((auditStatus || {}).value) && <span className="required">*</span>} */}
-                              </label>
-                              <textarea
-                                className="form-control"
-                                value={auditRemarks}
-                                required={auditRemarks}
-                                onChange={(e) =>
-                                  setAuditRemarks(e.target.value)
-                                }
-                              />
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </form>
                   </div>

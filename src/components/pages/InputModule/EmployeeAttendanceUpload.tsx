@@ -428,9 +428,41 @@ const EmployeeAttendanceUpload = () => {
   }
 
   const onClickClearSearch = () => {
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
+
     const payload: any =  { 
       search: '', 
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page+1

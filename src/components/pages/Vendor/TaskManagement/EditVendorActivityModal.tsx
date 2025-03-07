@@ -134,20 +134,20 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
                       {activity.auditeeRemarks }
                     </div>
                   </div>
-                {activity.formsStatusRemarks ? 
+                {/* {activity.formsStatusRemarks ?  */}
                   <div className="row mb-2">
                     <div className="col-4 filter-label">Observations:</div>
                     <div className="col">
                       {activity.formsStatusRemarks }
                     </div>
-                  </div> : ""}
-                  {activity.auditRemarks ? 
+                  </div> 
+                  {/* {activity.auditRemarks ?  */}
                   <div className="row mb-2">
                     <div className="col-4 filter-label">Reccomendations:</div>
                     <div className="col">
                       {activity.auditRemarks }
                     </div>
-                  </div> : ""}
+                  </div> 
                 {formStatus.editable && (
                   <>
                     <div className="row mb-4">

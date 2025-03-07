@@ -134,8 +134,8 @@ function VendorList({ changeView }: any) {
       headerSort: false,
     },
     {
-      title: "PF Registration",
-      field: "pf_Registartion_No",
+      title: "RC no",
+      field: "registration_Certificate_No",
       maxWidth: 200,
       formatter: reactFormatter(<CellTmpl />),
       titleFormatter: reactFormatter(<TitleTmpl />),

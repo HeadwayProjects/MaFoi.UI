@@ -161,23 +161,23 @@ export enum USER_PRIVILEGES {
 // ---------------------
 
 // START NEW PRIVILIGES
-REVIEWER_VENDOR_ACTIVITIES = 'REVIEWER_ACTIVITIES',
-REVIEWER_VENDOR_ACTIVITIES_AUDIT = 'REVIEWER_ACTIVITIES_AUDIT',
-REVIEWER_VENDOR_ACTIVITIES_PUBLISH = 'REVIEWER_ACTIVITIES_PUBLISH',
-REVIEWER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT = 'REVIEWER_ACTIVITIES_DOWNLOAD_REPORT',
+REVIEWER_VENDOR_ACTIVITIES = 'REVIEWER_VENDOR_ACTIVITIES',
+REVIEWER_VENDOR_ACTIVITIES_AUDIT = 'REVIEWER_VENDOR_ACTIVITIES_AUDIT',
+REVIEWER_VENDOR_ACTIVITIES_PUBLISH = 'REVIEWER_VENDOR_ACTIVITIES_PUBLISH',
+REVIEWER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT = 'REVIEWER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT',
 
     // OWNER_ACTIVITIES = 'OWNER_ACTIVITIES',
-    OWNER_VENDOR_ACTIVITIES_SUBMIT = 'OWNER_ACTIVITIES_SUBMIT',
-    OWNER_VENDOR_ACTIVITIES_DOCUMENT_UPLOAD = 'OWNER_ACTIVITIES_DOCUMENT_UPLOAD',
+    OWNER_VENDOR_ACTIVITIES_SUBMIT = 'OWNER_VENDOR_ACTIVITIES_SUBMIT',
+    OWNER_VENDOR_ACTIVITIES_DOCUMENT_UPLOAD = 'OWNER_VENDOR_ACTIVITIES_DOCUMENT_UPLOAD',
 
  // MANAGER_ACTIVITIES = 'MANAGER_ACTIVITIES',
- MANAGER_VENDOR_ACTIVITIES_REVIEW = 'MANAGER_ACTIVITIES_REVIEW',
+ MANAGER_VENDOR_ACTIVITIES_REVIEW = 'MANAGER_VENDOR_ACTIVITIES_REVIEW',
 
  //SUBMITTER
- SUBMITTER_VENDOR_ACTIVITIES = 'SUBMITTER_ACTIVITIES',
- SUBMITTER_VENDOR_ACTIVITIES_SUBMIT = 'SUBMITTER_ACTIVITIES_SUBMIT',
- SUBMITTER_VENDOR_ACTIVITIES_UPLOAD = 'SUBMITTER_ACTIVITIES_UPLOAD',
- SUBMITTER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT = 'SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT',
+ SUBMITTER_VENDOR_ACTIVITIES = 'SUBMITTER_VENDOR_ACTIVITIES',
+ SUBMITTER_VENDOR_ACTIVITIES_SUBMIT = 'SUBMITTER_VENDOR_ACTIVITIES_SUBMIT',
+ SUBMITTER_VENDOR_ACTIVITIES_UPLOAD = 'SUBMITTER_VENDOR_ACTIVITIES_UPLOAD',
+ SUBMITTER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT = 'SUBMITTER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT',
 
 // END OF NEW PRIVILIGES 
 
@@ -940,25 +940,25 @@ export const PAGES_CONFIGURATION = [
         ]
     },
     {
-        id: 'VEDNOR_ACTIVITIES',
+        id: 'VENDOR_ACTIVITIES',
         name: 'Vendor Activities',
         isMulti: false,
         privileges: [
             {
                 id: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES,
-                name: 'Submitter',
+                name: 'Vendor Actvities Submitter vendo',
                 actions: [
                     {
                         id: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES_SUBMIT,
-                        name: 'Submit for Approval'
+                        name: 'Submit for Approval vendor'
                     },
                     {
                         id: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES_UPLOAD,
-                        name: 'Upload Documents'
+                        name: 'Upload Documents vendor'
                     },
                     {
                         id: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT,
-                        name: 'Download Report'
+                        name: 'Download Report vendor'
                     }
                 ]
             },
@@ -968,15 +968,15 @@ export const PAGES_CONFIGURATION = [
                 actions: [
                     {
                         id: USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES_AUDIT,
-                        name: 'Approve/Reject'
+                        name: 'Approve/Reject vendor'
                     },
                     {
                         id: USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES_PUBLISH,
-                        name: 'Publish Activities'
+                        name: 'Publish Activities vendor'
                     },
                     {
                         id: USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES_DOWNLOAD_REPORT,
-                        name: 'Download Report'
+                        name: 'Download Report vendor'
                     }
                 ]
             },

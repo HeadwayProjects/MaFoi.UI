@@ -21,7 +21,7 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
     const [submitting, setSubmitting] = useState(false);
     const [formStatus] = useState(checkVendorActivityStatus(activity))
     const [file, setFile] = useState<any>(null);
-    const [auditeeRemarks, setAuditeeRemarks] = useState<any>("");
+    const [auditeeRemarks, setAuditeeRemarks] =  useState<any>(activity.auditeeRemarks || "");
     const [invalidFile, setInvalidFile] = useState(false);
     const { documents, invalidate } = useGetActivityDocuments(activity.id);
 
@@ -126,23 +126,29 @@ function EditActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                     <div className="col-4 filter-label">Evidence Status</div>
                                     <div className="col">{activity.status && <StatusTmp status={activity.status} />}</div>
                                 </div>
-                                <div className="col-4 filter-label">Compliance Status</div>
-                  <div className="col">
-                    {activity.auditStatus}
-                  
-                  </div>
-                  <div className="col-4 filter-label">Observations</div>
-                  <div className="col">
-                    {activity.formsStatusRemarks}
-                  
-                  </div>
-                  <div className="col-4 filter-label">Recommendations</div>
-                  <div className="col">
-                    {activity.auditRemarks}
-                  
-                  </div>
-
-                  {formStatus.editable && (
+                                <div className="row mb-4">
+                                    <div className="col-4 filter-label">Auditee Remarks</div>
+                                    <div className="col">{activity.auditeeRemarks }</div>
+                                </div>
+                                
+                                {/* {activity.formsStatusRemarks ?  */}
+                                <div className="row mb-2">
+                                    <div className="col-4 filter-label">Compliance Status</div>
+                                    <div className="col">{activity.auditStatus}</div>
+                                </div> 
+                                 
+                                 {/* {activity.formsStatusRemarks ?  */}
+                                <div className="row mb-2">
+                                    <div className="col-4 filter-label">Observations </div>
+                                    <div className="col">{activity.formsStatusRemarks}</div>
+                                </div>  
+                                 
+                                {/* {activity.auditRemarks ?  */}
+                                <div className="row mb-2">
+                                    <div className="col-4 filter-label">Reccomendations</div>
+                                    <div className="col">{activity.auditRemarks}</div>
+                                </div> 
+                                                {formStatus.editable && (
                   <>
                     <div className="row mb-4">
                       <div className="col w-100">

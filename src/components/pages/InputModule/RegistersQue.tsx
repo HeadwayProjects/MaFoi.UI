@@ -1150,7 +1150,7 @@ setestablishmentType(event.target.value);
       params.append("password", "admin");
   
       const tokenResponse = await axios.post(
-        "https://ezycomp1.buoyantworx.com/app/oauth/token",
+        "https://ezycomp.buoyantworx.com/app/oauth/token",
         params.toString(),
         {
           headers: {
@@ -1186,7 +1186,7 @@ setestablishmentType(event.target.value);
       for (const location of storageObject.locations1) {
        // alert("hitted que"+location)
         const formResponse = await axios.post(
-          "https://ezycomp1.buoyantworx.com/app/rest/services/bws_Queue_Process_Schedular/processRequestedQueueForms",
+          "https://ezycomp.buoyantworx.com/app/rest/services/bws_Queue_Process_Schedular/processRequestedQueueForms",
           {
             companyID: storageObject.company,
             associatedCompanyID: storageObject.associateCompany,

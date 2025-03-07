@@ -13,6 +13,7 @@ import PageLoader from "../../../shared/PageLoader";
 import { DEFAULT_OPTIONS_PAYLOAD } from "../../../common/Table";
 import { ResponseModel } from "../../../../models/responseModel";
 import { Console } from "console";
+import { MdLabel } from "react-icons/md";
 
 function CompanyLocationDetails(this: any, { action, parentCompany, associateCompany, data, onClose, onSubmit }: any) {
     const [t] = useState(new Date().getTime());
@@ -241,9 +242,10 @@ function CompanyLocationDetails(this: any, { action, parentCompany, associateCom
                 ],
                 content: action === ACTIONS.VIEW ? getValue(locationDetails, 'employerDesignation') : ''
             },
+           
             {
-                component:  componentTypes.FILE_UPLOAD,
-                label: 'Upload Digtal Signature',
+                component: action === ACTIONS.VIEW ?  componentTypes.PLAIN_TEXT : componentTypes.FILE_UPLOAD,
+                label: action === ACTIONS.VIEW ?  '' : 'Upload Digtal Signature',
                 name: 'file',
                 type: 'file'
             }

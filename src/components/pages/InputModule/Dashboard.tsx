@@ -331,7 +331,7 @@ const getLocationById = (id: string, locations: any[]) => {
       params.append('username', 'admin');
       params.append('password', 'admin');
 
-      const tokenResponse = await axios.post('https://ezycomp.buoyantworx.com/app/oauth/token', params.toString(), {
+      const tokenResponse = await axios.post('https://ezycomp.antworx.com/app/oauth/token', params.toString(), {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': 'Basic ' + btoa('client:secret'),
@@ -351,50 +351,50 @@ const getLocationById = (id: string, locations: any[]) => {
       let fileUrl="";
         if(filename == 'FormBRegofWages'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/8fde1c23-1927-4c36-a6f1-ef7416e81b6d/Form B.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
+          formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
         }
         else if(filename=='FormARegofWages'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/b21fb1d8-a634-4420-adc5-14361cd94790/Form A - reg of wages.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormARegofWages';
+          formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileFormARegofWages';
         }
         else if(filename=='FormTPart1Regoffines'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx'
-formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormTPart1Regoffines';
+formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileFormTPart1Regoffines';
         }
         else if(filename=='FormTPart2RegofFines'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'
-        formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormTPart2RegofFines';
+        formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileFormTPart2RegofFines';
         }
         else if(filename=='ESIForm11RegofAccident'){
             fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/919ccacd-e50d-4906-ad74-28aeb8fca1a7/ESI_Form 11_Reg of Accident.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileESIForm11RegofAccident';
+          formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileESIForm11RegofAccident';
         }
         else if(filename=='POW_Part2RegofDeduction'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/96d650d7-d1e1-476d-8728-385c9ed5a2cc/POW Form 2 for Deduction.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/filePOW_Part2RegofDeduction';
+          formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/filePOW_Part2RegofDeduction';
         }
         else if(filename=='POW_Part3RegofAdvance'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/f8c6ebf9-9f57-413d-a22b-c6b76e3c62a2/POW Form III Reg of Advance  .xlsx'
-        formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/filePOW_Part3RegofAdvance';
+        formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/filePOW_Part3RegofAdvance';
         }
         else if(filename=='Form_1_RegisterForSuspendedEmployees'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/e5484c2d-884b-47b3-9e42-6392377f490a/Form 1.xlsx'
-        formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileForm_1_RegisterForSuspendedEmployees';
+        formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileForm_1_RegisterForSuspendedEmployees';
         }
         else if(filename=='Form_Q'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/5eb524bb-04c4-4f39-b15d-fe462eb67b50/Form Q.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileForm_Q';
+          formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileForm_Q';
         }
         else if(filename=='MaintainCombinedRegisterofMusterRollFormTPart2'){
           fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/ff9fb10f-14eb-402f-b094-1224267b0101/Form T-Part 2.xlsx'
-        formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart2';
+        formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart2';
         }
         else if(filename=='MaintainCombinedRegisterofMusterRollFormTPart1'){
             fileUrl='https://mafoi.s3.ap-south-1.amazonaws.com/templates/162c6d84-0e62-4cc7-8281-b8fac56e42d1/form T-Part-1.xlsx'
-          formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart1';
+          formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileMaintainCombinedRegisterofMusterRollFormTPart1';
           }
         else{
-          formResponseUrl='https://ezycomp.buoyantworx.com/app/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
+          formResponseUrl='https://ezycomp.antworx.com/app/rest/services/bws_Reporting_Controller/fileFormBRegofWages';
         }
           
 console.log('filrUrl',fileUrl);        

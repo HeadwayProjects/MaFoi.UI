@@ -47,7 +47,7 @@ function VendorDetails(this: any, { onPrevious, onSubmit, vendor, _t }: any) {
           {
             type: validatorTypes.PATTERN,
             pattern: "^[a-zA-Z0-9 &]{5,}$",
-            message: "Vendor Name must be alphanumeric, at least 5 characters, and can include '&'.",
+            message: "Name must be alphanumeric,Min 5 characters ,can include '&'.",
           }
         ],
       },
@@ -76,8 +76,8 @@ function VendorDetails(this: any, { onPrevious, onSubmit, vendor, _t }: any) {
           { type: validatorTypes.REQUIRED },
           {
             type: validatorTypes.PATTERN,
-            pattern: "^.{1,80}$",
-            message: "Address can contain any characters but  between 1 and 60 characters long.",
+            pattern: "^.{1,65}$",
+            message: "Address can contain only 1 to 65 characters long.",
           }
         ],
       },
@@ -123,8 +123,8 @@ function VendorDetails(this: any, { onPrevious, onSubmit, vendor, _t }: any) {
           { type: validatorTypes.REQUIRED },
           {
             type: validatorTypes.PATTERN,
-            pattern: /^[a-zA-Z0-9._%+-]+@gmail\.com$/,
-            message: "Enter a valid Gmail address (e.g., user@gmail.com)",
+            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            message: "Enter a valid email address (e.g., user@example.com)",
           },
         ],
       },
@@ -152,6 +152,7 @@ function VendorDetails(this: any, { onPrevious, onSubmit, vendor, _t }: any) {
       //   name: "signature",
       //   label: "Signature",
       // },
+
       {
         component: componentTypes.SELECT,
         name: "is_ACtive",
@@ -202,7 +203,16 @@ function VendorDetails(this: any, { onPrevious, onSubmit, vendor, _t }: any) {
     }
   }
 
+
+  //newly added for submit btn alignment
   useEffect(() => {
+    setVendorDetails({
+      hideButtons: true,
+      ...vendor,
+    });
+
+    // end
+
     if (vendor) {
       const { is_ACtive } = vendor || {};
       setVendorDetails({
@@ -212,7 +222,7 @@ function VendorDetails(this: any, { onPrevious, onSubmit, vendor, _t }: any) {
         stateId: { label: vendor.state.name, value: vendor.stateId },
         is_ACtive: is_ACtive
           ? { value: "Active", label: "Active" }
-          : { value: "Inactive", label: "Inactive"},
+          : { value: "Inactive", label: "Inactive" },
       });
     }
   }, [vendor]);
@@ -227,7 +237,7 @@ function VendorDetails(this: any, { onPrevious, onSubmit, vendor, _t }: any) {
             componentMapper={ComponentMapper}
             schema={schema}
             debug={debugForm}
-            onSubmit={handleSubmit}
+            //onSubmit={handleSubmit}
           />
           <div className="d-flex justify-content-between mt-4">
             <div>
@@ -240,7 +250,7 @@ function VendorDetails(this: any, { onPrevious, onSubmit, vendor, _t }: any) {
               </Button>
             </div>
             <div className="d-flex align-items-center">
-              {Boolean(vendor) && (
+              {Boolean(vendor) ? (
                 <Button
                   variant="primary"
                   onClick={() => handleSubmit()}
@@ -249,7 +259,14 @@ function VendorDetails(this: any, { onPrevious, onSubmit, vendor, _t }: any) {
                 >
                   {"Save"}
                 </Button>
-              )}
+              ) : <Button
+                variant="primary"
+                onClick={() => handleSubmit()}
+                className="px-4"
+                disabled={!form.valid}
+              >
+                {"Submit"}
+              </Button>}
             </div>
           </div>
         </div>

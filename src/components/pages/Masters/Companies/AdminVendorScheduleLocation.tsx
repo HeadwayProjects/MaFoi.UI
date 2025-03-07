@@ -102,12 +102,40 @@ function AdminVendorLocations({ onChange }: any) {
     if (company) {
       setAssociateCompany(undefined);
       setLocation(undefined);
+      setVendorCategoriesId(undefined);
+      setVendorRegistrationId(undefined);
     }
   }, [company]);
+
+
+  const handleChangeCompany = (selectedCompany: any) => {
+    setCompany(selectedCompany);
+    setVendorCategoriesId(null);
+    setVendorRegistrationId( null); 
+  };
+  const handleChangeAssocaiteCompany = (selectedCompany: any) => {
+    setAssociateCompany(selectedCompany);
+    setVendorCategoriesId(null);
+    setVendorRegistrationId( null);
+  };
+  const handleChangeLocation = (selectedCompany: any) => {
+    setLocation(selectedCompany);
+    setVendorCategoriesId(null);
+    setVendorRegistrationId( null);
+  };
+  const handleChangeVendorCategories = (selectedCategory: any) => {
+    
+   
+    setVendorCategoriesId(selectedCategory);
+    setVendorRegistrationId(undefined);
+  };
 
   useEffect(() => {
     if (associateCompany) {
       setLocation(undefined);
+      setVendorCategoriesId(undefined);
+      setVendorRegistrationId(undefined);
+      vendorMappingRefetch();
     }
   }, [associateCompany]);
 
@@ -130,11 +158,60 @@ function AdminVendorLocations({ onChange }: any) {
   }, [vendorRegistrationId]);
 
   useEffect(() => {
+    if (
+      company &&
+      associateCompany &&
+      location &&
+      vendorCategoriesId 
+    ) {
+      onChange({
+        company: company.value,
+        associateCompany: associateCompany.value,
+        locationId: location.value,
+        vendorCategoriesId: vendorCategoriesId.value,
+        vendorRegistrationId: null,
+      });
+    }
+  }, [vendorCategoriesId]);
+  
+  useEffect(() => {
+    if (
+      company &&
+      associateCompany &&
+      location 
+    ) {
+      onChange({
+        company: company.value,
+        associateCompany: associateCompany.value,
+        locationId: location.value,
+        vendorCategoriesId: null,
+        vendorRegistrationId: null,
+      });
+    }
+  }, [location]);
+  useEffect(() => {
+    if (
+      company &&
+      associateCompany 
+    ) {
+      onChange({
+        company: company.value,
+        associateCompany: associateCompany.value,
+        locationId: null,
+        vendorCategoriesId: null,
+        vendorRegistrationId: null,
+      });
+    }
+  }, [associateCompany]);
+
+  useEffect(() => {
     if (!fetchingCompanies && parentCompanies) {
       const _parentCompany = parentCompanies[0];
       if (_parentCompany) {
         setCompany({ value: _parentCompany.id, label: _parentCompany.name });
+        vendorMappingRefetch();
       }
+
     }
   }, [fetchingCompanies]);
 
@@ -146,6 +223,7 @@ function AdminVendorLocations({ onChange }: any) {
           value: _associateCompany.id,
           label: _associateCompany.name,
         });
+        vendorMappingRefetch();
       }
     }
   }, [fetchingAssociateCompanies]);
@@ -191,6 +269,7 @@ function AdminVendorLocations({ onChange }: any) {
       }
     }
   }, [fetchinglocation]);
+  
 
   return (
     <>
@@ -200,10 +279,10 @@ function AdminVendorLocations({ onChange }: any) {
         </label>
         <Select
           placeholder="Company"
-          options={(parentCompanies || []).map((x: any) => {
-            return { value: x.id, label: x.name };
-          })}
-          onChange={setCompany}
+          options={(parentCompanies || []).map((x: any) => ({
+             value: x.id, label: x.name 
+          }))}
+          onChange={handleChangeCompany}
           value={company}
           className="select-control"
         />
@@ -222,7 +301,7 @@ function AdminVendorLocations({ onChange }: any) {
                 }))
               : []
           }
-          onChange={setAssociateCompany}
+          onChange={handleChangeAssocaiteCompany}
           value={associateCompany}
           className="select-control"
         />
@@ -241,8 +320,8 @@ function AdminVendorLocations({ onChange }: any) {
                 }))
               : []
           }
-          onChange={setLocation}
-          value={location}
+          onChange={handleChangeLocation}
+          value={location || null}
           className="select-control"
         />
       </div>
@@ -252,13 +331,13 @@ function AdminVendorLocations({ onChange }: any) {
         </label>
         <Select
           placeholder="Category"
-          options={(vendorCategories || []).map((x: any) => {
-            return { value: x.id, label: x.vendorCategoryName };
-          })}
+          options={(vendorCategories || []).map((x: any) => ({
+             value: x.id, label: x.vendorCategoryName 
+          }))}
           onChange={(e) => {
-            setVendorCategoriesId(e);
+            handleChangeVendorCategories(e);
           }}
-          value={vendorCategoriesId}
+          value={vendorCategoriesId || null} 
           className="select-control"
         />
       </div>
@@ -277,7 +356,7 @@ function AdminVendorLocations({ onChange }: any) {
               : []
           }
           onChange={setVendorRegistrationId}
-          value={vendorRegistrationId}
+          value={vendorRegistrationId || null}
           className="select-control"
         />
       </div>

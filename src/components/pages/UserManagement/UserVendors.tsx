@@ -168,12 +168,12 @@ function UserVendors() {
       formatter: reactFormatter(<CellTmpl />),
       titleFormatter: reactFormatter(<TitleTmpl />),
     },
-    {
-      title: "CompanyID",
-      field: "id",
-      formatter: reactFormatter(<CellTmpl />),
-      titleFormatter: reactFormatter(<TitleTmpl />),
-    },
+    // {
+    //   title: "CompanyID",
+    //   field: "id",
+    //   formatter: reactFormatter(<CellTmpl />),
+    //   titleFormatter: reactFormatter(<TitleTmpl />),
+    // },
     {
       title: "Associate Company",
       field: "associateCompany.name",

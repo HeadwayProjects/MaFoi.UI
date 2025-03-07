@@ -588,9 +588,40 @@ const EmployeeMasterUpload = () => {
   }
 
   const onClickSearch = () => {
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
     const employeesPayload: any = {
       search: searchInput,
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
@@ -602,9 +633,40 @@ const EmployeeMasterUpload = () => {
   }
 
   const onClickClearSearch = () => {
+    const filters = []
+    if (company) {
+      filters.push({
+        columnName: 'companyId',
+        value: company
+      })
+    }
+    if (associateCompany) {
+      filters.push({
+        columnName: 'associateCompanyId',
+        value: associateCompany
+      })
+    }
+    if (location) {
+      filters.push({
+        columnName: 'locationId',
+        value: location.split('^')[0]
+      })
+    }
+    if (year) {
+      filters.push({
+        columnName: 'year',
+        value: year
+      })
+    }
+    if (month) {
+      filters.push({
+        columnName: 'month',
+        value: month
+      })
+    }
     const employeesPayload: any = {
       search: '',
-      filters: [],
+      filters: filters,
       pagination: {
         pageSize: rowsPerPage,
         pageNumber: page + 1
@@ -1799,6 +1861,7 @@ const EmployeeMasterUpload = () => {
                           <TableCell><Checkbox checked={(selectedEmployees && selectedEmployees.length) === (employees && employees.length)} onClick={onClickAllCheckBox} /></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'code'} direction={sortType} onClick={onClickSortCode}>Employee Code</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Name</TableSortLabel></TableCell>
+                          <TableCell > <TableSortLabel active={activeSort === 'name'} direction={sortType} onClick={onClickSortName}> Branch </TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'dateOfBirth'} direction={sortType} onClick={onClickSortDOB}>DOB</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'gender'} direction={sortType} onClick={onClickSortGender}>Gender</TableSortLabel></TableCell>
                           <TableCell > <TableSortLabel active={activeSort === 'designation'} direction={sortType} onClick={onClickSortDesignation}>Designation</TableSortLabel></TableCell>
@@ -1842,6 +1905,7 @@ const EmployeeMasterUpload = () => {
                             <TableCell><Checkbox checked={selectedEmployees.includes(each.id)} onClick={() => onClickIndividualCheckBox(each.id)} /></TableCell>
                             <TableCell >{each.code}</TableCell>
                             <TableCell >{each.name}</TableCell>
+                            <TableCell >{each.branch}</TableCell>
                             <TableCell >{formatDate(each.dateOfBirth)}</TableCell>
                             <TableCell >{each.gender}</TableCell>
                             <TableCell >{each.designation}</TableCell>

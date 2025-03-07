@@ -7,6 +7,8 @@ import Icon from '../common/Icon';
 import { getBasePath } from '../../App';
 import { ROLE_MAPPING } from '../../containers/AuthenticatedContent';
 import { USER_PRIVILEGES } from '../pages/UserManagement/Roles/RoleConfiguration';
+import { useLocation } from 'react-router-dom';
+
 
 const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.SUBMITTER_DASHBOARD },
@@ -14,17 +16,17 @@ const SideNavMenu = [
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.OWNER_DASHBOARD },
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.MANAGER_DASHBOARD },
     { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.ESCALATION_DASHBOARD },
-    
-       {
+
+    {
         id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters',
         children: [
             { id: 'masters/law', url: '/masters/law', label: 'Law Category', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
             {
-        id: "masters/vendor-categories",
-        url: "/masters/vendor-categories",
-        label: "Vendor Category",
-        privilege: USER_PRIVILEGES.VIEW_VENDOR_CATEGORY,
-      },
+                id: "masters/vendor-categories",
+                url: "/masters/vendor-categories",
+                label: "Vendor Category",
+                privilege: USER_PRIVILEGES.VIEW_VENDOR_CATEGORY,
+            },
             { id: 'masters/Act', url: '/masters/Act', label: 'Act', privilege: USER_PRIVILEGES.VIEW_ACTS },
             { id: 'masters/activity', url: '/masters/activity', label: 'Activity', privilege: USER_PRIVILEGES.VIEW_ACTIVITIES },
             { id: 'masters/rule', url: '/masters/rule', label: 'Rule', privilege: USER_PRIVILEGES.VIEW_RULES },
@@ -55,13 +57,13 @@ const SideNavMenu = [
                 url: "/companies/vendor-location-mapping",
                 label: "Vendor Mapping",
                 privilege: USER_PRIVILEGES.VIEW_VENDOR_LOCATION_MAPPING,
-              },
-              {
+            },
+            {
                 id: "companies/manageVendors",
                 url: "/companies/manageVendors",
                 label: "Manage Vendors",
                 privilege: USER_PRIVILEGES.VIEW_VENDORS,
-              },
+            },
             {
                 id: 'companies/verticals', url: '/companies/verticals',
                 label: 'Verticals', privilege: USER_PRIVILEGES.VIEW_VERTICALS
@@ -99,26 +101,26 @@ const SideNavMenu = [
         icon: "notes",
         label: "Vendor Audit Management",
         children: [
-          {
-            id: "/vendor-audit-schedule/import-export",
-            url: "/vendor-audit-schedule/import-export",
-            label: "Audit Schedule",
-            privilege: USER_PRIVILEGES.AUDIT_VENDOR_SCHEDULE,
-          },
-          {
-            id: "/vendor-audit-schedule/details",
-            url: "/vendor-audit-schedule/details",
-            label: "Audit Schedule Details",
-            privilege: USER_PRIVILEGES.VIEW_AUDIT_VENDOR_SCHEDULE_DETAILS,
-          },
-          {
-            id: "vendor-audit-schedule/block-unblock",
-            url: "/vendor-audit-schedule/block-unblock",
-            label: "Un-Block Activities",
-            privilege: USER_PRIVILEGES.VIEW_AUDIT_VENDOR_SCHEDULE_BLOCK_UNBLOCK,
-          },
+            {
+                id: "/vendor-audit-schedule/import-export",
+                url: "/vendor-audit-schedule/import-export",
+                label: "Audit Schedule",
+                privilege: USER_PRIVILEGES.AUDIT_VENDOR_SCHEDULE,
+            },
+            {
+                id: "/vendor-audit-schedule/details",
+                url: "/vendor-audit-schedule/details",
+                label: "Audit Schedule Details",
+                privilege: USER_PRIVILEGES.VIEW_AUDIT_VENDOR_SCHEDULE_DETAILS,
+            },
+            {
+                id: "vendor-audit-schedule/block-unblock",
+                url: "/vendor-audit-schedule/block-unblock",
+                label: "Un-Block Activities",
+                privilege: USER_PRIVILEGES.VIEW_AUDIT_VENDOR_SCHEDULE_BLOCK_UNBLOCK,
+            },
         ],
-      },
+    },
     {
         id: 'complianceManagement', url: '/complianceManagement/list', icon: 'notepad', label: 'Compliance Management', children: [
             {
@@ -154,9 +156,9 @@ const SideNavMenu = [
         id: 'inputUploads', url: '/inputUploads', icon: 'eye', label: 'Input Uploads',
         children: [
 
-            { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_DASHBOARD },          
-              { id: 'inputUploads/registerDownload', url: '/inputUploads/registerDownload', label: 'Register Download', privilege: USER_PRIVILEGES.VIEW_REGISTER_DOWNLOAD },
-              { id: 'inputUploads/RegistersQue', url: '/inputUploads/RegistersQue', label: 'RegistersQue ', privilege: USER_PRIVILEGES.VIEW_REGISTER_QUE },
+            { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_DASHBOARD },
+            { id: 'inputUploads/registerDownload', url: '/inputUploads/registerDownload', label: 'Register Download', privilege: USER_PRIVILEGES.VIEW_REGISTER_DOWNLOAD },
+            { id: 'inputUploads/RegistersQue', url: '/inputUploads/RegistersQue', label: 'RegistersQue ', privilege: USER_PRIVILEGES.VIEW_REGISTER_QUE },
 
             { id: 'inputUploads/employeeMasterUpload', url: '/inputUploads/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_MASTER },
             { id: 'inputUploads/employeeLeaveCreditUpload', url: '/inputUploads/employeeLeaveCreditUpload', label: 'Employee Leave Credit', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_LEAVE_CREDIT },
@@ -185,7 +187,7 @@ const SideNavMenu = [
                 url: "/userManagement/location-vendor-mapping",
                 label: "Location Vendor Mapping",
                 privilege: USER_PRIVILEGES.VIEW_VENDOR_MAPPINGS,
-              },
+            },
             { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Company Mapping', privilege: USER_PRIVILEGES.VIEW_COMPANY_MAPPINGS },
             {
                 id: 'userManagement/userDepartment', url: '/userManagement/userDepartment',
@@ -201,25 +203,32 @@ const SideNavMenu = [
         ]
     },
     // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.READ_ONLY_ACTIVITIES },
-    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES },
+    { id: 'activities2', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES },
     {
-        id: "location-vendor-activities",
+        id: "vendor-location-activities",
         url: "/vendor-location-activities",
         icon: "task",
         label: "Vendor Audits",
         privilege: USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES,
-      },
-      // {
+    },
+    // {
     // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.OWNER_ACTIVITIES },
     // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.MANAGER_ACTIVITIES },
-    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES },
     {
-        id: "location-vendor-activities",
+        id: 'activities1',
+        url: '/activities',
+        icon: 'task',
+        label: 'Activities',
+        privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES
+    },
+
+    {
+        id: "vendor-location-activities",
         url: "/vendor-location-activities",
         icon: "task",
         label: "Vendor Audits",
         privilege: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES,
-      },
+    },
     { id: 'notices', url: '/notices', icon: 'task', label: 'Noticies', privilege: USER_PRIVILEGES.VIEW_NOTICES },
     { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true },
     { id: 'notifications', url: '/notifications', icon: 'notification', label: 'Notifications', privilege: USER_PRIVILEGES.VIEW_USER_NOTIFICATIONS }
@@ -229,6 +238,19 @@ function Sidenav({ open, toggleSidenav }: any) {
     const [user] = useState(auth.getUserDetails());
     const [sideMenu, setSideMenu] = useState<any[] | null>([]);
     const [toggelStatus, setToggleStatus] = useState<any>({});
+
+    const location: any = window.location;
+    useEffect(() => {
+
+        if (location.pathname === '/activities') {
+            debugger;
+            setTimeout(() => {
+                const sideNavElement: any = document.querySelector('.sideNav a[href="/activities"]');
+                const sideNavElementClass: any = sideNavElement.classList;
+                sideNavElementClass.add('active');
+            }, 200)
+        }
+    }, [location.pathname]);
 
     useEffect(() => {
         if (user) {

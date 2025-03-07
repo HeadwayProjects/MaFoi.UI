@@ -337,7 +337,9 @@ function Table(props: any) {
                 } else {
                     try {
                         const _alert = table.element.querySelector('.tabulator-alert');
-                        table.element.removeChild(_alert);
+                        if(_alert){
+                            table.element.removeChild(_alert);
+                        }
                     } catch (e) {
                         console.error('Error removing alerts', e);
                     }

@@ -50,7 +50,9 @@ function ActivityModal({ activity = {}, onClose, onSubmit }: any) {
     const [submitting, setSubmitting] = useState(false);
     const [auditStatus, setAuditStatus] = useState<any>();
     const [status, setStatus] = useState<any>(FORM_STATUSES.find((x: any) => x.value === activity.status));
-    const [auditRemarks, setAuditRemarks] = useState<any>(FORM_STATUSES.find((x: any) => x.value === activity.auditRemarks));
+    //const [auditRemarks, setAuditRemarks] = useState<any>(FORM_STATUSES.find((x: any) => x.value === activity.auditRemarks));
+    const [auditRemarks, setAuditRemarks] = useState(activity.auditRemarks);
+
     const [formsStatusRemarks, setFormsStatusRemarks] = useState(activity.formsStatusRemarks);
     const [dueDate, setDueDate] = useState<any>(new Date(activity.dueDate));
     const { documents, invalidate } = useGetActivityDocuments(activity.id);
@@ -69,10 +71,36 @@ function ActivityModal({ activity = {}, onClose, onSubmit }: any) {
     }
 
     function isInvalid() {
-        return !status ||
-            (status.value === ACTIVITY_STATUS.APPROVE && !auditStatus) ||
-            (status.value === ACTIVITY_STATUS.REJECT && !(formsStatusRemarks || '').trim()) ||
-            ([AUDIT_STATUS.NON_COMPLIANCE, AUDIT_STATUS.NOT_APPLICABLE].includes((auditStatus || {}).value) && !(auditRemarks || '').trim());
+      if (!status || !status.value) return true;
+
+    if (status.value === ACTIVITY_STATUS.APPROVE) {
+        if (!auditStatus || !auditStatus.value) return true;
+        if (auditStatus.value === AUDIT_STATUS.NOT_APPLICABLE && !(auditRemarks && auditRemarks.trim())) return true;
+    }
+
+    if (status.value === ACTIVITY_STATUS.REJECT) {
+        if (auditStatus && auditStatus.value === AUDIT_STATUS.NON_COMPLIANCE) {
+            if (!(auditRemarks && auditRemarks.trim())) return true;
+            if (!(formsStatusRemarks && formsStatusRemarks.trim())) return true;
+            if (!dueDate) return true;
+        }
+        else if (auditStatus && auditStatus.value === AUDIT_STATUS.NOT_APPLICABLE) {
+          //alert("hitted");
+          if (!(formsStatusRemarks && formsStatusRemarks.trim())) return true;
+          
+      }
+    }
+
+    return false;
+        // return !status ||
+            // (status.value === ACTIVITY_STATUS.APPROVE && !auditStatus) ||
+            // (status.value === ACTIVITY_STATUS.REJECT && !(formsStatusRemarks || '').trim()) ||
+            // ([AUDIT_STATUS.NON_COMPLIANCE, AUDIT_STATUS.NOT_APPLICABLE].includes((auditStatus || {}).value) && !(auditRemarks || '').trim()) ||
+            // (status.value === ACTIVITY_STATUS.APPROVE && [AUDIT_STATUS.NOT_APPLICABLE].includes((auditStatus || {}).value) && !(auditRemarks || '').trim()) ||
+            // (status.value === ACTIVITY_STATUS.APPROVE && auditStatus?.value === AUDIT_STATUS.NOT_APPLICABLE && !(auditRemarks || '').trim()) ||
+            // (status.value === ACTIVITY_STATUS.REJECT && auditStatus?.value === AUDIT_STATUS.NON_COMPLIANCE && !(auditRemarks || '').trim()) ||
+            // (status.value === ACTIVITY_STATUS.REJECT && auditStatus?.value === AUDIT_STATUS.NON_COMPLIANCE && !(formsStatusRemarks || '').trim()) ||
+            // (status.value === ACTIVITY_STATUS.REJECT && auditStatus?.value === AUDIT_STATUS.NON_COMPLIANCE && !dueDate);
     }
 
 
@@ -270,7 +298,7 @@ function ActivityModal({ activity = {}, onClose, onSubmit }: any) {
                     </div>
                     <div className="row mb-2">
                       <div className="col-4 filter-label">
-                        Forms/Registers & Returns1
+                        Forms/Registers & Returns
                       </div>
                       <div className="col">{(activity.activity || {}).name}</div>
                     </div>
@@ -298,6 +326,33 @@ function ActivityModal({ activity = {}, onClose, onSubmit }: any) {
                         {activity.auditted || ACTIVITY_TYPE.AUDIT}
                       </div>
                     </div>
+                    <div className="row mb-2">
+                    <div className="col-4 filter-label">Auditee Remarks</div>
+                    <div className="col">
+                      {activity.auditeeRemarks}
+                    </div>
+                  </div>
+                  {/* {activity.auditStatus ?  */}
+                  <div className="row mb-2">
+                    <div className="col-4 filter-label">Compliance Status </div>
+                    <div className="col">
+                      {activity.auditStatus }
+                    </div>
+                  </div>
+                  {/* {activity.formsStatusRemarks ?  */}
+                  <div className="row mb-2">
+                    <div className="col-4 filter-label">Observations</div>
+                    <div className="col">
+                      {activity.formsStatusRemarks }
+                    </div>
+                  </div> 
+                  {/* {activity.auditRemarks ?  */}
+                  <div className="row mb-2">
+                    <div className="col-4 filter-label">Reccomendations</div>
+                    <div className="col">
+                      {activity.auditRemarks }
+                    </div>
+                  </div> 
                     
                   </div>
                 </div>
@@ -309,7 +364,7 @@ function ActivityModal({ activity = {}, onClose, onSubmit }: any) {
                         <div className="col-5">
                           <div className="col-12 mb-4">
                             <label className="filter-label">
-                              Evidence Status1<span className="required">*</span>
+                              Evidence Status<span className="required">*</span>
                             </label>
                             <Select
                               placeholder="Evidence Status"
@@ -359,11 +414,55 @@ function ActivityModal({ activity = {}, onClose, onSubmit }: any) {
                               )}
                           </div>
   
+                        
+                        </div>
+  
+                        {(status || {}).value === ACTIVITY_STATUS.APPROVE && (
+                          <div className="col-5">
+                            <div className="col-12 mb-4">
+                              <label className="filter-label">
+                                Compliance Status
+                                <span className="required">*</span>
+                              </label>
+                              <Select
+                                placeholder="Compliance Status"
+                                options={
+                                  (status || {}).value === ACTIVITY_STATUS.APPROVE
+                                    ? AUDIT_STATUSES.filter((option) =>
+                                        [
+                                          AUDIT_STATUS.COMPLIANT,
+                                          AUDIT_STATUS.NOT_APPLICABLE,
+                                        ].includes(option.value)
+                                      )
+                                    : AUDIT_STATUSES
+                                }
+                                onChange={setAuditStatus}
+                                value={auditStatus}
+                              />
+                            </div>
+                            <div className="col-12 mb-4">
+                              <label className="filter-label">
+                                Recommendations
+                                {/* {[AUDIT_STATUS.NON_COMPLIANCE].includes((auditStatus || {}).value) && <span className="required">*</span>} */}
+                              </label>
+                              <textarea
+                                className="form-control"
+                                value={auditRemarks}
+                                required={auditRemarks}
+                                onChange={(e) => setAuditRemarks(e.target.value)}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+
                           {(status || {}).value === ACTIVITY_STATUS.REJECT &&
                             activity.auditted !==
                               ACTIVITY_TYPE.PHYSICAL_AUDIT && (
-                              <div className="row-12">
-                                <div className="row-5 mb-4">
+                                <div className="col-5">
+                            <div className="col-12 mb-4">
+                              {/* <div className="row-12">
+                                <div className="row-5 mb-4"> */}
                                   <label className="filter-label">
                                     Compliance Status
                                     <span className="required">*</span>
@@ -423,45 +522,6 @@ function ActivityModal({ activity = {}, onClose, onSubmit }: any) {
                                 </div>
                               </div>
                             )}
-                        </div>
-  
-                        {(status || {}).value === ACTIVITY_STATUS.APPROVE && (
-                          <div className="col-5">
-                            <div className="col-12 mb-4">
-                              <label className="filter-label">
-                                Compliance Status
-                                <span className="required">*</span>
-                              </label>
-                              <Select
-                                placeholder="Compliance Status"
-                                options={
-                                  (status || {}).value === ACTIVITY_STATUS.APPROVE
-                                    ? AUDIT_STATUSES.filter((option) =>
-                                        [
-                                          AUDIT_STATUS.COMPLIANT,
-                                          AUDIT_STATUS.NOT_APPLICABLE,
-                                        ].includes(option.value)
-                                      )
-                                    : AUDIT_STATUSES
-                                }
-                                onChange={setAuditStatus}
-                                value={auditStatus}
-                              />
-                            </div>
-                            <div className="col-12 mb-4">
-                              <label className="filter-label">
-                                Recommendations
-                                {/* {[AUDIT_STATUS.NON_COMPLIANCE].includes((auditStatus || {}).value) && <span className="required">*</span>} */}
-                              </label>
-                              <textarea
-                                className="form-control"
-                                value={auditRemarks}
-                                required={auditRemarks}
-                                onChange={(e) => setAuditRemarks(e.target.value)}
-                              />
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </form>
                   </div>

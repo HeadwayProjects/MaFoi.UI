@@ -81,7 +81,7 @@ function UserVendorLocationMapping({ user, data, onClose, onSubmit }: any) {
 
 
 
-  
+
   const { createUserVendorLocationMapping, creating } =
     useCreateUserVendorLocationMapping((response: any) => {
       if (response.key === API_RESULT.SUCCESS) {
@@ -149,7 +149,7 @@ function UserVendorLocationMapping({ user, data, onClose, onSubmit }: any) {
 
   function handleSubmit(e: any) {
     preventDefault(e);
-    if (seletedVendorLocations.length > 0) {
+    // if (seletedVendorLocations.length > 0) {
       createUserVendorLocationMapping({
         userId: user.value,
         associateCompanyId: associateCompany.value,
@@ -157,7 +157,7 @@ function UserVendorLocationMapping({ user, data, onClose, onSubmit }: any) {
         locationId: selectedLocation.value,
         locationVendorMappingIds: [...seletedVendorLocations],
       } as any);
-    }
+    // }
   }
 
   useEffect(() => {
@@ -172,9 +172,9 @@ function UserVendorLocationMapping({ user, data, onClose, onSubmit }: any) {
         vendorRegistrations,
       } = data;
 
-  
-   
-      
+
+
+
       setParentCompany({ value: id, label: name });
       setAssociateCompany({
         value: associateCompany.id,
@@ -329,7 +329,7 @@ function UserVendorLocationMapping({ user, data, onClose, onSubmit }: any) {
             variant="primary"
             onClick={handleSubmit}
             className="px-4"
-            disabled={(seletedVendorLocations || []).length === 0}
+            //disabled={(seletedVendorLocations || []).length === 0}
           >
             {"Submit"}
           </Button>

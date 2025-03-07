@@ -21,6 +21,7 @@ import { useExportCompanyLocations } from "../../../../backend/exports";
 import { downloadFileContent } from "../../../../utils/common";
 import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 import TableActions, { ActionButton } from "../../../common/TableActions";
+import { download } from "../../../../utils/common";
 
 function mapLocation(x: any) {
     return {
@@ -29,6 +30,7 @@ function mapLocation(x: any) {
         companyLocationAddress: x.companyLocationAddress,
         locationCode: x.location.code,
         locationName: x.location.name,
+       // locationNameID : x.location.id,
         city: x.location.cities,
         state: x.location.cities.state,
         contactPersonName: x.contactPersonName,
@@ -152,6 +154,12 @@ function CompanyLocationMappings() {
                     setCompanyLocation(row);
                     setAction(ACTIONS.VIEW);
                 }} />
+                {
+                    row.digitalSignature &&
+                    <Icon type="button" name={'download'} text={'View'} data={row} action={() => {
+                        download("Signature", row.digitalSignature)
+                    }} />
+                }
             </div>
         )
     }
@@ -162,6 +170,11 @@ function CompanyLocationMappings() {
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
+        // {
+        //     title: "GUID", field: "locationNameID", widthGrow: 2,
+        //     formatter: reactFormatter(<CellTmpl />),
+        //     titleFormatter: reactFormatter(<TitleTmpl />)
+        // },
         {
             title: "Code", field: "locationCode", width: 120,
             formatter: reactFormatter(<CellTmpl />),

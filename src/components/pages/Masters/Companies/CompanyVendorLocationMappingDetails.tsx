@@ -70,7 +70,7 @@ function CompanyVendorLocationDetails(
     ({ key, value }: ResponseModel) => {
       if (key === API_RESULT.SUCCESS) {
         toast.success(
-          `Location ${locationDetails.locationName} updated successfully.`
+          `Location ${locationDetails.location.name} updated successfully.`
         );
         onSubmit();
       } else {
