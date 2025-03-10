@@ -24,7 +24,7 @@ function Location() {
     const [payload, setPayload] = useState<any>();
     const { locations, isFetching, refetch } = useGetLocations(null);
     const { deleteLocation } = useDeleteLocation(() => {
-        toast.success(`${location.name} deleted successsfully.`);
+        toast.success(`${location.name} deleted successfully.`);
         setAction(ACTIONS.NONE);
         setLocation(null);
         refetch();
@@ -41,10 +41,10 @@ function Location() {
                     setLocation(row);
                     setAction(ACTIONS.EDIT)
                 }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                {/* <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
                     setLocation(row);
                     setAction(ACTIONS.DELETE)
-                }} />
+                }} /> */}
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setLocation(row);
                     setAction(ACTIONS.VIEW)

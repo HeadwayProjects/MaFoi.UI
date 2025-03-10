@@ -2,15 +2,37 @@ import React from "react";
 import { preventDefault } from "../../utils/common";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faInfoCircle, faSearch, faExternalLink,
-    faAngleDoubleLeft, faAngleDoubleRight,
-    faAngleRight, faAngleLeft, faPlus,
-    faAngleDown, faAngleUp, faLockOpen
-} from "@fortawesome/free-solid-svg-icons";
+    faInfoCircle,
+    faSearch,
+    faExternalLink,
+    faAngleDoubleLeft,
+    faAngleDoubleRight,
+    faAngleRight,
+    faAngleLeft,
+    faPlus,
+    faAngleDown,
+    faAngleUp,
+    faLockOpen,
+    faUsers,
+    faExclamationTriangle,
+    faExclamationCircle,
+    faCheckSquare,
+  } from "@fortawesome/free-solid-svg-icons";
 import "./Icon.css";
-import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import { faCheckCircle, faClock, faEyeSlash, faTimesCircle } from "@fortawesome/free-regular-svg-icons";
 
-function Icon({ className, name, action, data, style, disabled, text, type }: any) {
+interface IconProps {
+    className?: string,
+    name: string,
+    action?: any,
+    data?: any,
+    style?: any,
+    disabled?: boolean,
+    text?: any,
+    type?: string
+}
+
+function Icon({ className, name, action, data, style, disabled, text, type }: IconProps) {
     function onClick(event: any) {
         preventDefault(event);
         if (action && !disabled) {
@@ -86,6 +108,16 @@ function Icon({ className, name, action, data, style, disabled, text, type }: an
                             <path d="M19.2919 17.3954C19.5438 17.6472 19.6853 17.9888 19.6853 18.345C19.6853 18.7012 19.5438 19.0428 19.2919 19.2946C19.0401 19.5465 18.6985 19.6879 18.3423 19.6879C17.9861 19.6879 17.6446 19.5465 17.3927 19.2946L10.2997 12.1993L3.20442 19.2924C2.95257 19.5442 2.61099 19.6857 2.25482 19.6857C1.89864 19.6857 1.55706 19.5442 1.30521 19.2924C1.05335 19.0405 0.911865 18.6989 0.911865 18.3428C0.911865 17.9866 1.05335 17.645 1.30521 17.3932L8.40046 10.3001L1.30744 3.20487C1.05559 2.95302 0.9141 2.61143 0.9141 2.25526C0.9141 1.89909 1.05559 1.5575 1.30744 1.30565C1.55929 1.0538 1.90088 0.912311 2.25705 0.912311C2.61322 0.912311 2.95481 1.0538 3.20666 1.30565L10.2997 8.40091L17.3949 1.30453C17.6468 1.05268 17.9884 0.911194 18.3445 0.911194C18.7007 0.911194 19.0423 1.05268 19.2942 1.30453C19.546 1.55639 19.6875 1.89797 19.6875 2.25414C19.6875 2.61032 19.546 2.9519 19.2942 3.20375L12.1989 10.3001L19.2919 17.3954Z" fillOpacity="0.8" />
                         </svg>
                     ),
+                    chart: (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 22 22" fill="none">
+                            <path d="M0.332947 21.6668V7.00016H5.66628V21.6668H0.332947ZM8.33295 21.6668V0.333496H13.6663V21.6668H8.33295ZM16.3329 21.6668V12.3335H21.6663V21.6668H16.3329Z" />
+                        </svg>
+                    ),
+                    calendar: (
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32" fill="none">
+                            <path d="M9.33333 18.6665V15.9998H22.6667V18.6665H9.33333ZM9.33333 23.9998V21.3332H18.6667V23.9998H9.33333ZM6.66667 29.3332C5.93333 29.3332 5.30556 29.0721 4.78333 28.5498C4.26111 28.0276 4 27.3998 4 26.6665V7.99984C4 7.2665 4.26111 6.63873 4.78333 6.1165C5.30556 5.59428 5.93333 5.33317 6.66667 5.33317H8V2.6665H10.6667V5.33317H21.3333V2.6665H24V5.33317H25.3333C26.0667 5.33317 26.6944 5.59428 27.2167 6.1165C27.7389 6.63873 28 7.2665 28 7.99984V26.6665C28 27.3998 27.7389 28.0276 27.2167 28.5498C26.6944 29.0721 26.0667 29.3332 25.3333 29.3332H6.66667ZM6.66667 26.6665H25.3333V13.3332H6.66667V26.6665Z" />
+                        </svg>
+                    ),
                     'check-circle-o': (
                         <svg width="85" height="85" viewBox="0 0 85 85" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g clipPath="url(#clip0_1_903)">
@@ -124,9 +156,30 @@ function Icon({ className, name, action, data, style, disabled, text, type }: an
                             </defs>
                         </svg>
                     ),
+                    notes: (
+                        <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <mask id="mask0_369_2945" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="24">
+                                <rect x="0.381592" width="24" height="24" />
+                            </mask>
+                            <g mask="url(#mask0_369_2945)">
+                                <path d="M8.38159 18H16.3816V16H8.38159V18ZM8.38159 14H16.3816V12H8.38159V14ZM6.38159 22C5.83159 22 5.36076 21.8042 4.96909 21.4125C4.57743 21.0208 4.38159 20.55 4.38159 20V4C4.38159 3.45 4.57743 2.97917 4.96909 2.5875C5.36076 2.19583 5.83159 2 6.38159 2H14.3816L20.3816 8V20C20.3816 20.55 20.1858 21.0208 19.7941 21.4125C19.4024 21.8042 18.9316 22 18.3816 22H6.38159ZM13.3816 9H18.3816L13.3816 4V9Z" />
+                            </g>
+                        </svg>
+                    ),
+                    notepad: (
+                        <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <mask id="mask0_369_2957" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="25">
+                                <rect x="0.618408" y="0.0874023" width="24" height="24" />
+                            </mask>
+                            <g mask="url(#mask0_369_2957)">
+                                <path d="M7.61841 17.0874H9.71841L15.7184 11.1374L13.5684 8.9874L7.61841 14.9374V17.0874ZM16.4184 10.4374L17.4684 9.3374C17.5684 9.2374 17.6184 9.12074 17.6184 8.9874C17.6184 8.85407 17.5684 8.7374 17.4684 8.6374L16.0684 7.2374C15.9684 7.1374 15.8517 7.0874 15.7184 7.0874C15.5851 7.0874 15.4684 7.1374 15.3684 7.2374L14.2684 8.2874L16.4184 10.4374ZM5.61841 21.0874C5.06841 21.0874 4.59757 20.8916 4.20591 20.4999C3.81424 20.1082 3.61841 19.6374 3.61841 19.0874V5.0874C3.61841 4.5374 3.81424 4.06657 4.20591 3.6749C4.59757 3.28324 5.06841 3.0874 5.61841 3.0874H9.81841C10.0351 2.4874 10.3976 2.00407 10.9059 1.6374C11.4142 1.27074 11.9851 1.0874 12.6184 1.0874C13.2517 1.0874 13.8226 1.27074 14.3309 1.6374C14.8392 2.00407 15.2017 2.4874 15.4184 3.0874H19.6184C20.1684 3.0874 20.6392 3.28324 21.0309 3.6749C21.4226 4.06657 21.6184 4.5374 21.6184 5.0874V19.0874C21.6184 19.6374 21.4226 20.1082 21.0309 20.4999C20.6392 20.8916 20.1684 21.0874 19.6184 21.0874H5.61841ZM12.6184 4.3374C12.8351 4.3374 13.0142 4.26657 13.1559 4.1249C13.2976 3.98324 13.3684 3.80407 13.3684 3.5874C13.3684 3.37074 13.2976 3.19157 13.1559 3.0499C13.0142 2.90824 12.8351 2.8374 12.6184 2.8374C12.4017 2.8374 12.2226 2.90824 12.0809 3.0499C11.9392 3.19157 11.8684 3.37074 11.8684 3.5874C11.8684 3.80407 11.9392 3.98324 12.0809 4.1249C12.2226 4.26657 12.4017 4.3374 12.6184 4.3374Z" />
+                            </g>
+                        </svg>
+
+                    ),
                     'notification': (
                         <svg width="36" height="29" viewBox="0 0 36 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10.8 24.7563C11.7554 25.4799 13.017 25.9199 14.4 25.9199C15.783 25.9199 17.0446 25.4799 18 24.7563M4.28528 21.0326C3.7161 21.0326 3.3982 20.1848 3.7425 19.7138C4.54141 18.6208 5.31252 17.0177 5.31252 15.0873L5.34548 12.29C5.34548 7.09295 9.39932 2.87988 14.4 2.87988C19.4743 2.87988 23.5879 7.15501 23.5879 12.4286L23.5549 15.0873C23.5549 17.031 24.2994 18.6428 25.0659 19.7362C25.3969 20.2084 25.0782 21.0326 24.516 21.0326H4.28528Z" stroke="#322C2D" strokeWidth="1.92" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M10.8 24.7563C11.7554 25.4799 13.017 25.9199 14.4 25.9199C15.783 25.9199 17.0446 25.4799 18 24.7563M4.28528 21.0326C3.7161 21.0326 3.3982 20.1848 3.7425 19.7138C4.54141 18.6208 5.31252 17.0177 5.31252 15.0873L5.34548 12.29C5.34548 7.09295 9.39932 2.87988 14.4 2.87988C19.4743 2.87988 23.5879 7.15501 23.5879 12.4286L23.5549 15.0873C23.5549 17.031 24.2994 18.6428 25.0659 19.7362C25.3969 20.2084 25.0782 21.0326 24.516 21.0326H4.28528Z" strokeWidth="1.92" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     ),
                     'angle-left': (
@@ -152,6 +205,29 @@ function Icon({ className, name, action, data, style, disabled, text, type }: an
                     ),
                     'lock-open': (
                         <FontAwesomeIcon icon={faLockOpen} />
+                    ),
+                    'people': (
+                        <FontAwesomeIcon icon={faUsers} />
+                    ),
+                    'exclamation-circle': (
+                        <FontAwesomeIcon icon={faExclamationCircle} />
+                    ),
+                    'check-square': (
+                        <FontAwesomeIcon icon={faCheckSquare} />
+                    ),
+                    'check-circle': (
+                        <FontAwesomeIcon icon={faCheckCircle} />
+                    ),
+                    'times-circle': (
+                        <FontAwesomeIcon icon={faTimesCircle} />
+                    ),
+                    circle: (
+                        <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse strokeWidth="0" ry="8" rx="8" cy="8" cx="8" />
+                        </svg>
+                    ),
+                    'clock': (
+                        <FontAwesomeIcon icon={faClock} />
                     ),
                     'update-flag': (
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

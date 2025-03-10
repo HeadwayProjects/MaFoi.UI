@@ -1,98 +1,77 @@
 import React, { useEffect, useState } from "react";
 import ReactECharts from "echarts-for-react";
+import { getCSSPropertyValue } from "../../../../utils/styles";
+import { ACTIVITY_STATUS, AUDIT_STATUS, ActivityColorMappings } from "../../../common/Constants";
 
 const CHART_MAPPING = [
-    { color: '#4EC343', label: 'Compliant', key: 'compliant' },
-    { color: '#FFC000', label: 'Non-Compliance', key: 'nonCompliant' },
-    { color: '#5B5657', label: 'Not Applicable', key: 'notApplicable' },
-    { color: '#FF2D2D', label: 'Rejected', key: 'rejected' },
-]
-const defaultConfig = {
-    tooltip: {
-        trigger: 'item',
-        formatter: "{b}"
-    },
-    series: [
-        {
-            data: [],
-            type: 'pie',
-            radius: [20, '80%'],
-            center: ['50%', '50%'],
-            smooth: true,
-            height: 200,
-            label: {
-                show: true,
-                position: 'inner'
-            },
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            }
-        },
-    ]
-};
+    { color: ActivityColorMappings[AUDIT_STATUS.COMPLIANT], label: 'Compliant', key: 'compliant' },
+    { color: ActivityColorMappings[AUDIT_STATUS.NON_COMPLIANCE], label: 'Non-Compliance', key: 'nonCompliant' },
+    { color: ActivityColorMappings[AUDIT_STATUS.NOT_APPLICABLE], label: 'Not Applicable', key: 'notApplicable' },
+    { color: ActivityColorMappings[ACTIVITY_STATUS.REJECTED], label: 'Rejected', key: 'rejected' },
+    { color: '--dark-green', label: 'Audit', key: 'audit' },
+    { color: '--orange', label: 'Physical Audit', key: 'physicalAudit' },
+    { color: '--gray', label: 'No Audit', key: 'noAudit' }
+];
 
 function Chart({ data, keys }: any) {
-    const [config, setConfig] = useState(null);
-    const [legends, setLegends] = useState([])
+    const [series, setSeries] = useState<any>([])
+
+    const config = {
+        tooltip: {
+            trigger: 'item',
+            formatter: "{b}"
+        },
+        legend: {
+            top: 32,
+            left: 20,
+            orient: 'vertical',
+            icon: 'circle'
+        },
+        series: [
+            {
+                data: series,
+                type: 'pie',
+                center: [275, '50%'],
+                smooth: true,
+                radius: ['30%', '70%'],
+                height: 250,
+                label: {
+                    show: true,
+                    position: 'inner',
+                    formatter: ({ percent }: any) => {
+                        return `${Math.round(percent)}%`
+                    }
+                },
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            },
+        ]
+    };
 
     useEffect(() => {
         if (data) {
-            const _config: any = { ...defaultConfig };
             const _data = keys.map((key: string) => {
                 const _chart: any = CHART_MAPPING.find(x => x.key === key) || {};
                 return {
                     value: data[key] || 0,
                     name: `${data[key] || 0} ${_chart.label}`,
                     itemStyle: {
-                        color: _chart.color
+                        color: getCSSPropertyValue(_chart.color) || _chart.color
                     }
                 }
             });
-            setLegends(keys.map((key: any) => {
-                const _chart: any = CHART_MAPPING.find(x => x.key === key) || {};
-                return {
-                    key,
-                    color: _chart.color,
-                    label: `${data[key] || 0} ${_chart.label}`
-                }
-            }));
-            const total = _data.reduce((n: any, { value }: any) => n + value, 0);
-            _config.series[0].label.formatter = ({ value }: any) => {
-                const _valueByTotal = value / total;
-                if (isNaN(_valueByTotal)) return '0 %';
-                const _percentageValue = _valueByTotal * 100;
-                return `${Math.round(_percentageValue)} %`;
-            };
-            _config.series[0].data = _data;
-            setConfig(_config);
+            setSeries(_data);
         }
     }, [data]);
 
     return (
-        <div className="d-flex flex-row align-items-center justify-content-start">
-            <div className="performance-chart col-6">
-                {
-                    config && <ReactECharts option={config} />
-                }
-            </div>
-            <div className="performance-chart col-6 d-flex flex-column justify-content-center">
-                {
-                    (legends || []).length > 0 &&
-                    legends.map((x: any) => {
-                        return (
-                            <div className="d-flex flex-row align-items-center mb-1" key={x.key}>
-                                <span className="legend-marker" style={{ background: x.color }}></span>
-                                <div className="ms-2 text-md">{x.label}</div>
-                            </div>
-                        )
-                    })
-                }
-            </div>
-
+        <div className="d-block">
+            <ReactECharts option={config} lazyUpdate={true} opts={{ renderer: 'canvas' }} />
         </div>
     )
 }

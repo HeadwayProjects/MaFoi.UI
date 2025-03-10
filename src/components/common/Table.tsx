@@ -11,14 +11,14 @@ import '../shared/PageLoader.css';
 import PageLoader from "../shared/PageLoader";
 import { humanReadableNumber } from "../../utils/common";
 
-const PageNav = {
+export const PageNav = {
     FIRST: 'first',
     PREVIOUS: 'previous',
     NEXT: 'next',
     LAST: 'last'
 }
 
-const DEFAULT_PAGE_SIZE = 50;
+export const DEFAULT_PAGE_SIZE = 50;
 const PAGE_OPTIONS = [
     { value: 10, label: 10 },
     { value: 25, label: 25 },
@@ -115,11 +115,40 @@ export function NameTmpl({ cell }: any) {
     )
 }
 
+export function Pagination({ pageCounter, pageSize, handlePageSizeChange, handlePageNav, page, lastPage, paginate = true, className }: any) {
+    return (
+        <div className={`custom-tabulator-footer d-flex justify-content-between align-items-center w-100 ${className}`}>
+            <span>{pageCounter}</span>
+            {
+                paginate &&
+                <div className="d-flex align-items-center">
+                    <Select options={PAGE_OPTIONS} value={pageSize} onChange={handlePageSizeChange}
+                        menuPlacement="top" menuPosition="fixed" className="me-3 page-changer"
+                        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999, color: "var(--black-600)" }) }} />
+                    <Icon name={'double-left'} className={'page-nav-btns'} type="button"
+                        action={() => handlePageNav(PageNav.FIRST)} text={'First'}
+                        disabled={page < 2} />
+                    <Icon name={'angle-left'} className={'page-nav-btns'} type="button"
+                        action={() => handlePageNav(PageNav.PREVIOUS)} text={'Previous'}
+                        disabled={page < 2} />
+                    <Icon name={'angle-right'} className={'page-nav-btns'} type="button"
+                        action={() => handlePageNav(PageNav.NEXT)} text={'Next'}
+                        disabled={page >= lastPage} />
+                    <Icon name={'double-right'} className={'page-nav-btns'} type="button"
+                        action={() => handlePageNav(PageNav.LAST)} text={'Last'}
+                        disabled={page >= lastPage} />
+                </div>
+            }
+        </div>
+    )
+}
+
 function Table(props: any) {
     const id = `table_${new Date().getTime()}`;
     const divEle = useRef(null);
     const {
         height = 500,
+        minHeight,
         paginationMode = 'remote',
         ajaxURL = '-',
         ajaxConfig,
@@ -139,6 +168,7 @@ function Table(props: any) {
         paginate = false,
         rowFormatter
     } = props.options;
+
 
     const [table, setTable] = useState<any>();
     const [tableColumns, setTableColumns] = useState<any[]>([]);
@@ -231,6 +261,7 @@ function Table(props: any) {
                 selectableCheck,
                 placeholder: 'No Data Available',
                 ajaxResponse: (url, params, response) => {
+                    console.log(response,'Response')
                     return response;
                 },
                 initialSort,
@@ -239,10 +270,9 @@ function Table(props: any) {
                 // resizableColumnFit,
                 rowHeight,
                 rowFormatter,
-                dataLoader: false
+                dataLoader: false,
             });
             setTable(_table);
-
             _table.on('tableBuilt', () => {
                 // _table.element.querySelector('.tablulator-footer').style.display = 'none';
             });
@@ -261,6 +291,7 @@ function Table(props: any) {
 
         return () => {
             const _div: any = divEle.current;
+            console.log(_div,'looped')
             if (!!_div) {
                 while (_div.firstChild) {
                     _div.removeChild(_div.firstChild);
@@ -284,6 +315,9 @@ function Table(props: any) {
                         table.rowManager._showPlaceholder();
                     }
                     updatePageCounter(_total || length);
+                    setTimeout(() => {
+                        handleResize();
+                    }, 1000);
                 } catch (e) {
                     console.error(e);
                 }
@@ -303,7 +337,9 @@ function Table(props: any) {
                 } else {
                     try {
                         const _alert = table.element.querySelector('.tabulator-alert');
-                        table.element.removeChild(_alert);
+                        if(_alert){
+                            table.element.removeChild(_alert);
+                        }
                     } catch (e) {
                         console.error('Error removing alerts', e);
                     }
@@ -315,35 +351,13 @@ function Table(props: any) {
 
     return (
         <>
-            <div style={{ position: 'relative' }}>
-                <div style={{ minHeight: '200px' }}
+            <div style={{ position: 'relative' }} className="h-100">
+                <div style={{ minHeight: minHeight || '200px' }}
                     id={id}
                     ref={divEle}
                     className="tabulator-sticky"></div>
-                {/* <Pagination /> */}
-                <div className="custom-tabulator-footer d-flex justify-content-between align-items-center w-100">
-                    <span>{pageCounter}</span>
-                    {
-                        paginate &&
-                        <div className="d-flex align-items-center">
-                            <Select options={PAGE_OPTIONS} value={pageSize} onChange={handlePageSizeChange}
-                                menuPlacement="top" menuPosition="fixed" className="me-3 page-changer"
-                                styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999, color: "var(--black-600)" }) }} />
-                            <Icon name={'double-left'} className={'page-nav-btns'} type="button"
-                                action={() => handlePageNav(PageNav.FIRST)} text={'First'}
-                                disabled={page < 2} />
-                            <Icon name={'angle-left'} className={'page-nav-btns'} type="button"
-                                action={() => handlePageNav(PageNav.PREVIOUS)} text={'Previous'}
-                                disabled={page < 2} />
-                            <Icon name={'angle-right'} className={'page-nav-btns'} type="button"
-                                action={() => handlePageNav(PageNav.NEXT)} text={'Next'}
-                                disabled={page >= lastPage} />
-                            <Icon name={'double-right'} className={'page-nav-btns'} type="button"
-                                action={() => handlePageNav(PageNav.LAST)} text={'Last'}
-                                disabled={page >= lastPage} />
-                        </div>
-                    }
-                </div>
+                <Pagination pageCounter={pageCounter} page={page} lastPage={lastPage} pageSize={pageSize}
+                    handlePageSizeChange={handlePageSizeChange} handlePageNav={handlePageNav} paginate={paginate} />
             </div>
             {
                 props.isLoading && <PageLoader message={'Loading...'} />

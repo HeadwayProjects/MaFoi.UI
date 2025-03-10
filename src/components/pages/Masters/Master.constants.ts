@@ -73,6 +73,7 @@ export const ActivityType = [
     'Internal Compliance',
     'Intimation',
     'Meeting',
+    // 'Notices',
     'Policy',
     'Registers',
     'Registration',
@@ -80,7 +81,13 @@ export const ActivityType = [
 ];
 
 export const Periodicity = [
-    'Annually', 'Emburance', 'Half Yearly', 'Monthly', 'One Time', 'Quarterly'
+    'One Time',
+    'Monthly',
+    'Quarterly',
+    'Half Yearly',
+    'Annually',
+    'Emburance',
+    'More than a year'
 ];
 
 export const CalendarType = [
@@ -102,6 +109,6 @@ export const EmployeesCount = ['1-100', '101 - 200', '201 - 500', '501 - 1000', 
 
 export const Salutation = ['Mr.', 'Miss.', 'Mrs.'];
 
-export const EstablishmentTypes = ['CLRA', 'Factory', 'Shops'];
+export const EstablishmentTypes = ['BOCW', 'CLRA', 'Factory', 'ISM', 'Shops'];
 
 export const CentralId = '3c31d2b2-afc6-4efa-8d12-635920524e5f';

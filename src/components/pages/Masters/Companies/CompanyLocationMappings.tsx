@@ -19,6 +19,9 @@ import CompanyLocationsImportModal from "./CompanyLocationsImportModal";
 import { ResponseModel } from "../../../../models/responseModel";
 import { useExportCompanyLocations } from "../../../../backend/exports";
 import { downloadFileContent } from "../../../../utils/common";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../../common/TableActions";
+import { download } from "../../../../utils/common";
 
 function mapLocation(x: any) {
     return {
@@ -27,12 +30,19 @@ function mapLocation(x: any) {
         companyLocationAddress: x.companyLocationAddress,
         locationCode: x.location.code,
         locationName: x.location.name,
+       // locationNameID : x.location.id,
         city: x.location.cities,
         state: x.location.cities.state,
         contactPersonName: x.contactPersonName,
         contactPersonMobile: x.contactPersonMobile,
         contactPersonEmail: x.contactPersonEmail,
-        address: x.address
+        address: x.address,
+        digitalSignature: x.digitalSignature,
+        employerDesignation: x.employerDesignation,
+        employerName :x.employerName,
+        pfCode : x.pfCode,
+        esicCode : x.esicCode,
+        registrationCertificateNo : x.registrationCertificateNo,
     }
 };
 
@@ -74,6 +84,32 @@ function CompanyLocationMappings() {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
 
+    const buttons: ActionButton[] = [
+        {
+            label: 'Add New',
+            name: 'addNew',
+            icon: 'plus',
+            disabled: !associateCompany,
+            privilege: USER_PRIVILEGES.ADD_LOCATION_MAPPING,
+            action: () => setAction(ACTIONS.ADD)
+        },
+        {
+            label: 'Export',
+            name: 'export',
+            icon: 'download',
+            disabled: !total,
+            privilege: USER_PRIVILEGES.EXPORT_LOCATION_MAPPINGS,
+            action: handleExport
+        },
+        {
+            label: 'Import',
+            name: 'import',
+            disabled: !associateCompany,
+            icon: 'upload',
+            privilege: USER_PRIVILEGES.ADD_LOCATION_MAPPING,
+            action: () => setAction(ACTIONS.IMPORT)
+        }
+    ];
 
     const filterConfig = [
         {
@@ -84,7 +120,6 @@ function CompanyLocationMappings() {
             }),
             hideAll: true,
             value: parentCompany
-
         },
         {
             label: 'Associate Company',
@@ -111,14 +146,20 @@ function CompanyLocationMappings() {
                     setCompanyLocation(row);
                     setAction(ACTIONS.EDIT);
                 }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                {/* <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
                     setCompanyLocation(row);
                     setAction(ACTIONS.DELETE);
-                }} />
+                }} /> */}
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event: any) => {
                     setCompanyLocation(row);
                     setAction(ACTIONS.VIEW);
                 }} />
+                {
+                    row.digitalSignature &&
+                    <Icon type="button" name={'download'} text={'View'} data={row} action={() => {
+                        download("Signature", row.digitalSignature)
+                    }} />
+                }
             </div>
         )
     }
@@ -129,6 +170,11 @@ function CompanyLocationMappings() {
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
+        // {
+        //     title: "GUID", field: "locationNameID", widthGrow: 2,
+        //     formatter: reactFormatter(<CellTmpl />),
+        //     titleFormatter: reactFormatter(<TitleTmpl />)
+        // },
         {
             title: "Code", field: "locationCode", width: 120,
             formatter: reactFormatter(<CellTmpl />),
@@ -146,6 +192,34 @@ function CompanyLocationMappings() {
         },
         {
             title: "Email Address", field: "contactPersonEmail", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        
+        {
+            title: "Employer Name", field: "employerName", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        
+        {
+            title: "Employer Designation", field: "employerDesignation", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "PF Code", field: "pfCode", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        
+        {
+            title: "ESIC Code", field: "esicCode", minWidth: 140,
+            formatter: reactFormatter(<CellTmpl />),
+            titleFormatter: reactFormatter(<TitleTmpl />)
+        },
+        {
+            title: "Reg.Certificate No", field: "registrationCertificateNo", minWidth: 140,
             formatter: reactFormatter(<CellTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
@@ -295,17 +369,7 @@ function CompanyLocationMappings() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                     placeholder={"Search for Location Code/Name/Contact"} />
-                                <div className="d-flex">
-                                    <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => setAction(ACTIONS.IMPORT)} disabled={!Boolean(associateCompany)}>
-                                        <Icon name={'upload'} className={`me-2 ${styles.importBtn}`}></Icon>Import
-                                    </Button>
-                                    <Button variant="primary" className="px-3 text-nowrap ms-3" onClick={handleExport} disabled={!total}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)} disabled={!Boolean(associateCompany)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
-                                </div>
+                                <TableActions buttons={buttons} />
                             </div>
                         </div>
                     </div>
@@ -317,7 +381,10 @@ function CompanyLocationMappings() {
                 [ACTIONS.ADD, ACTIONS.EDIT, ACTIONS.VIEW].includes(action) &&
                 <CompanyLocationDetails action={action} parentCompany={parentCompany} associateCompany={associateCompany}
                     data={companyLocation}
-                    onClose={() => setAction(ACTIONS.NONE)} onSubmit={submitCallback} />
+                    onClose={() => {
+                        setAction(ACTIONS.NONE);
+                        setCompanyLocation(null);
+                    }} onSubmit={submitCallback} />
             }
             {
                 action === ACTIONS.DELETE &&

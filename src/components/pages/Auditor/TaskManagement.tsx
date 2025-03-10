@@ -1,26 +1,30 @@
 import React, { useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisV, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
 import Tooltip from 'react-bootstrap/Tooltip';
 import Location from "../../common/Location";
 import PageLoader from "../../shared/PageLoader";
 import * as api from "../../../backend/request";
 import { toast } from 'react-toastify';
-import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../common/Constants";
+import { ACTIONS, ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../common/Constants";
 import Icon from "../../common/Icon";
 import Table, { reactFormatter, CellTmpl, TitleTmpl, DEFAULT_PAYLOAD } from "../../common/Table";
 import { faSave } from "@fortawesome/free-regular-svg-icons";
 import AdvanceSearch from "../../common/AdvanceSearch";
 import AlertModal from "../../common/AlertModal";
-import { download, preventDefault, reduceArraytoObj } from "../../../utils/common";
+import { download, downloadFileContent, preventDefault, reduceArraytoObj } from "../../../utils/common";
 import PublishModal from "./PublishModal";
 import ActivityModal from "./ActivityModal";
-import { getUserDetails } from "../../../backend/auth";
-import { useAuditReport } from "../../../backend/exports";
+import { getUserDetails, hasUserAccess } from "../../../backend/auth";
+import { getAuditReportFileName, useAuditReport } from "../../../backend/exports";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../utils/constants";
-import { useGetAllActivities } from "../../../backend/query";
+import { useExportTodos, useGetAllActivities } from "../../../backend/query";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../common/TableActions";
+import SendEmailModal from "./SendEmailModal";
+import { saveAs } from 'file-saver';
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -31,11 +35,6 @@ const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.AUDITED, label: STATUS_MAPPING[ACTIVITY_STATUS.AUDITED], style: 'danger' }
 ];
 
-const ACTIONS = {
-    EDIT: 1,
-    VIEW: 2
-};
-
 const SortFields: any = {
     'act.name': 'actname',
     'rule.name': 'rulename',
@@ -45,7 +44,7 @@ const SortFields: any = {
     'location.name': 'locationname'
 };
 
-function TaskManagement() {
+function TaskManagement(props:any) {
     const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
     const [checkedStatuses, setCheckedStatuses] = useState<any>({});
@@ -60,6 +59,7 @@ function TaskManagement() {
     const afRef: any = useRef();
     afRef.current = advaceSearchFilters;
     const [statusFilters, setStatusFilters] = useState<any>([{ columnName: 'status', value: STATUS_BTNS.map(x => x.name).join(API_DELIMITER) }]);
+    //console.log(statusFilters,'Statusfilters')
     const sfRef: any = useRef();
     sfRef.current = statusFilters;
     const [payload, setPayload] = useState<any>();
@@ -70,18 +70,39 @@ function TaskManagement() {
     const [alertMessage, setAlertMessage] = useState<any>(null);
     const [publish, setPublish] = useState(false);
     const { auditReport, exporting } = useAuditReport((response: any) => {
-        const blob = new Blob([response.data], { type: response.headers['content-type'] })
-        const URL = window.URL || window.webkitURL;
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = downloadUrl;
-        a.download = 'AuditReport.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        if (response) {
+            downloadFileContent({
+                name: getAuditReportFileName(data.data[0], response.headers['content-type']),
+                type: response.headers['content-type'],
+                content: response.data
+            });
+        }
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT)
     });
+
+    const { exportTodos, exporting: exportingTodos } = useExportTodos((response: any) => {
+        downloadFileContent({
+            name: 'Audit Activities.xlsx',
+            type: response.headers['content-type'],
+            content: response.data
+        });
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT);
+    });
+
+    const buttons: ActionButton[] = [{
+        label: 'Publish',
+        name: 'publish',
+        privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES_PUBLISH,
+        action: () => publishActivity(null)
+    },
+    // {
+    //     label: 'Send Report',
+    //     name: 'email',
+    //     action: () => setAction(ACTIONS.SEND_REPORT)
+    // }
+     ];
 
     function hasFilters(ref: any, field = 'companyId') {
         const _filters = (ref ? ref.current : { ...(payloadRef.current || {}) }.filters) || [];
@@ -258,11 +279,106 @@ function TaskManagement() {
             <>
                 {
                     auditted !== ACTIVITY_TYPE.NO_AUDIT && value !== '0001-01-01T00:00:00' &&
-                    <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+                    <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
                 }
             </>
         )
     }
+
+
+    function ActionHeaderTmpl() {
+        return (
+            <div className={`nav-item dropdown todoTableActions`}>
+                <div className="nav-link text-white" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <FontAwesomeIcon icon={faEllipsisV} />
+                </div>
+                <div className="dropdown-menu">
+                    <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
+                    <a className="dropdown-item" href="/" onClick={bulkFileDownloadthroughZip}>All Files Download</a>
+                </div>
+            </div>
+        )
+    
+    }
+
+
+        function bulkFileDownloadthroughZip(event: any) {
+    event.preventDefault();
+
+    const _request = { ...reduceArraytoObj(lfRef.current), ...reduceArraytoObj(afRef.current) };
+    console.log(_request);
+    console.log(checkedStatuses);
+
+    const selectedStatuses = Object.keys(checkedStatuses)
+    .filter((status) => checkedStatuses[status] === true) // Filter only the true values
+    .join('-'); // Join them with a hyphen
+
+// Handle the case when no statuses are true (optional)
+const finalStatuses = selectedStatuses || null;
+
+    const _payload = {
+        company: _request.companyId,
+        associateCompany: _request.associateCompanyId,
+        location: _request.locationId,
+        month: _request.month,
+        year: _request.year,
+        statuses: finalStatuses // Assign the concatenated true statuses
+    };
+
+    console.log(_payload);
+    const _idData=[];
+    event.preventDefault();
+    const arrayOfData=data.data;
+    let filtered = arrayOfData.filter((t: { id: string; })=>t.id);
+    for(let i of filtered){
+        _idData.push(i.id)
+    }
+    if(_idData.length>0){
+        const fullPayload = {
+            toDoIds: _idData, // Array of GUIDs
+            searchParamsforToDo: {
+                company: _request.companyId,
+                associateCompany: _request.associateCompanyId,
+                location: _request.locationId,
+                month: _request.month ? _request.month : "", // Ensure month has a value or set a default string
+                year: _request.year ? _request.year : 0,           // Ensure year has a value or set 0 as default
+                statuses: finalStatuses ? finalStatuses : " "// The concatenated string of statuses
+            }
+        };
+        console.log(fullPayload)
+        // API call to get the response with the x-uploaded-url header
+         api.post('/api/ToDoDetails/GetByToDowithZipWithOnlyFileforMultipleIds', fullPayload, {
+            responseType: 'arraybuffer',
+            headers: { 'Content-Type': 'application/zip' }
+        }).then((response: any) => {
+        console.log(response.headers);
+
+        const contentDisposition = response.headers['content-disposition'];
+        console.log(contentDisposition);
+        // Use a regular expression to extract the URL from the filename parameter
+        const urlMatch = contentDisposition.match(/filename="(.+?)"/);
+ console.log(urlMatch);
+        if (urlMatch && urlMatch[1]) {
+            const uploadedUrl1 = decodeURIComponent(urlMatch[1]);
+
+            //alert(uploadedUrl1);
+            console.log('Downloading from:', uploadedUrl1);
+
+            // Directly trigger download from the extracted URL
+            window.location.href = uploadedUrl1;
+            toast.success("Zip FIle Downloaded");
+        }
+
+        }).catch(error => {
+            console.error("Error downloading the file:", error);
+            toast.error("Failed to download the ZIP file.");
+        });
+    } else {
+        toast.warning("No files found.");
+    }
+}
+
+    
 
     function FormStatusTmpl({ cell }: any) {
         const status = cell.getValue();
@@ -322,7 +438,8 @@ function TaskManagement() {
                             ((row.auditted === ACTIVITY_TYPE.AUDIT
                                 && [ACTIVITY_STATUS.SUBMITTED, ACTIVITY_STATUS.AUDITED, ACTIVITY_STATUS.REJECTED].includes(row.status))
                                 || row.auditted === ACTIVITY_TYPE.PHYSICAL_AUDIT) &&
-                            <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={editActivity} />
+                            <Icon className="mx-2" type="button" name={hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_AUDIT) ? 'pencil' : 'eye'}
+                                text={hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_AUDIT) ? 'Edit' : 'View'} data={row} action={editActivity} />
                         }
                     </div>
                 }
@@ -395,12 +512,12 @@ function TaskManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Audit Status", field: "auditStatus", maxWidth: 160,
+            title: "Compliance Status", field: "auditStatus", maxWidth: 160,
             formatter: reactFormatter(<AuditStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Forms Status", field: "status", width: 160,
+            title: "Evidence Status", field: "status", width: 160,
             formatter: reactFormatter(<FormStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
@@ -443,18 +560,6 @@ function TaskManagement() {
             last_page: Math.ceil(totalRecords / (pageSize || 1)) || 1,
             page: pageNumber || 1
         };
-        // list.forEach(x => {
-        //     const { id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-        //         submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId, auditted } = x;
-        //     if (auditted !== ACTIVITY_TYPE.NO_AUDIT) {
-        //         console.log(JSON.stringify({
-        //             id, auditStatus, auditRemarks, day, month, year, status, startDate, dueDate, savedDate,
-        //             submittedDate, auditedDate, actId, ruleId, companyId, associateCompanyId, locationId, activityId,
-        //             status: ACTIVITY_STATUS.OVERDUE
-        //         }));
-        //     }
-        // });
-        // list.forEach(x => console.log(x.id))
         setData(tdata);
         return tdata;
     }
@@ -498,6 +603,30 @@ function TaskManagement() {
             _payload[x.columnName] = x.value;
         });
         return _payload;
+    }
+
+
+    function handleExport(event: any) {
+        event.preventDefault();
+        if (total < 1) {
+            toast.warn('There are no records available for this filter criteria.');
+            return;
+        }
+        const _payload = {
+            ...DEFAULT_PAYLOAD,
+            sort: {
+                columnName: 'month',
+                order: 'desc'
+            },
+            ...params,
+            filters: [
+                ...locationFilters,
+                ...(afRef.current || []),
+                ...(sfRef.current || [])
+            ],
+            pagination: null
+        };
+        exportTodos(_payload);
     }
 
     useEffect(() => {
@@ -554,7 +683,21 @@ function TaskManagement() {
         }
     }, [statusFilters]);
 
+    useEffect(()=>{
+        const urlPath:string=window.location.pathname.split('/')[2];
+        if(urlPath!=null){
+            setCheckedStatuses({
+            
+            
+                ...(checkedStatuses || {}),
+                'Rejected': true
+            });
+        }
+    },[]);
+
     useEffect(() => {
+        
+        
         if (checkedStatuses) {
             const keys = Object.keys(checkedStatuses);
             const result = keys.filter(key => !!checkedStatuses[key]);
@@ -602,7 +745,7 @@ function TaskManagement() {
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search}
-                                    downloadReport={downloadReport} />
+                                    downloadReport={hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_DOWNLOAD_REPORT) ? downloadReport : undefined} />
                             </div>
                         </div>
                     </div>
@@ -618,26 +761,21 @@ function TaskManagement() {
                                                 <input name={btn.name} type="checkbox" className="btn-check" id={btn.name} autoComplete="off"
                                                     onChange={onFormStatusChangeHandler}
                                                     checked={checkedStatuses[btn.name]} />
-                                                <label className={`btn`} htmlFor={btn.name}>{btn.label}</label>
+                                                <label className={`btn bg-status-${btn.name}`} htmlFor={btn.name}>{btn.label}</label>
                                             </div>
                                         )
                                     })
                                 }
                             </div>
-                            <div className="d-flex">
-                                <button className="btn btn-success" onClick={publishActivity}
-                                >
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon={faSave} />
-                                        <span className="ms-2">Publish</span>
-                                    </div>
-                                </button>
-                            </div>
+                            <TableActions buttons={buttons} />
                         </div>
                     </div>
                 </form>
-
-                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                <div className="position-relative">
+                    <ActionHeaderTmpl />
+                    <Table data={data} options={tableConfig} isLoading={isFetching}
+                        onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                </div>
             </div>
 
             {
@@ -657,6 +795,10 @@ function TaskManagement() {
                     onClose={() => setPublish(false)}
                     onSubmit={onPublish}
                     selectedRows={selectedRows} />
+            }
+            {
+                action === ACTIONS.SEND_REPORT &&
+                <SendEmailModal onCancel={() => setAction(ACTIONS.NONE)} />
             }
             {(submitting || exporting) && <PageLoader />}
         </>

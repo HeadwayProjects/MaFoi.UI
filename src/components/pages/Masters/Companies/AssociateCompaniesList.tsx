@@ -16,6 +16,9 @@ import { useRef } from "react";
 import TableFilters from "../../../common/TableFilter";
 import { useExportAssociateCompanies } from "../../../../backend/exports";
 import { downloadFileContent } from "../../../../utils/common";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import TableActions, { ActionButton } from "../../../common/TableActions";
 
 function AssociateCompaniesList({ changeView, parent }: any) {
     const [t] = useState(new Date().getTime());
@@ -46,6 +49,20 @@ function AssociateCompaniesList({ changeView, parent }: any) {
         toast.error(ERROR_MESSAGES.DEFAULT);
     });
 
+    const buttons: ActionButton[] = [{
+        label: 'Add New',
+        name: 'addNew',
+        icon: 'plus',
+        privilege: USER_PRIVILEGES.ADD_ASSOCIATE_COMPANY,
+        action: () => changeView(VIEWS.ADD, { parentCompany, _t: t })
+    }, {
+        label: 'Export',
+        name: 'export',
+        icon: 'download',
+        privilege: USER_PRIVILEGES.EXPORT_ASSOCIATE_COMPANIES,
+        action: handleExport
+    }]
+
     const filterConfig = [
         {
             label: 'Company',
@@ -68,22 +85,28 @@ function AssociateCompaniesList({ changeView, parent }: any) {
         const row = cell.getData();
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
-                    if (row.isCopied === 'YES') {
-                        setAssociateCompany(row);
-                        setAction(ACTIONS.EDIT);
-                    } else {
-                        changeView(VIEWS.EDIT, { company: row, parentCompany: row.parentCompany });
-                    }
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
-                    if (row.isCopied === 'YES') {
-                        toast.warn('This company is copied from the parent company. Hence cannot be deleted.')
-                    } else {
-                        setAssociateCompany(row);
-                        setAction(ACTIONS.DELETE);
-                    }
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_ASSOCIATE_COMPANY) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
+                        if (row.isCopied === 'YES') {
+                            setAssociateCompany(row);
+                            setAction(ACTIONS.EDIT);
+                        } else {
+                            changeView(VIEWS.EDIT, { company: row, parentCompany: row.parentCompany });
+                        }
+                    }} />
+                }
+                {
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_ASSOCIATE_COMPANY) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                    //     if (row.isCopied === 'YES') {
+                    //         toast.warn('This company is copied from the parent company. Hence cannot be deleted.')
+                    //     } else {
+                    //         setAssociateCompany(row);
+                    //         setAction(ACTIONS.DELETE);
+                    //     }
+                    // }} />
+                }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event: any) => {
                     setAssociateCompany(row);
                     setAction(ACTIONS.VIEW);
@@ -270,6 +293,9 @@ function AssociateCompaniesList({ changeView, parent }: any) {
                 const _parentCompany = (parentCompanies || [])[0];
                 if (_parentCompany) {
                     setParentCompany({ value: _parentCompany.id, label: _parentCompany.name });
+                    if (!parentCompanyId) {
+                        setParentCompanyId(_parentCompany.id)
+                    }
                     const { search } = filterRef.current || { search: '' };
                     setFilters({ filters: [{ columnName: 'isParent', value: 'false' }, { columnName: 'parentCompanyId', value: _parentCompany.id }], search });
                 }
@@ -302,14 +328,7 @@ function AssociateCompaniesList({ changeView, parent }: any) {
                         <div className="d-flex justify-content-between align-items-end">
                             <TableFilters filterConfig={filterConfig} search={true} onFilterChange={onFilterChange}
                                 placeholder={"Search for Company Code/Name/Contact No./Email"} />
-                            <div className="d-flex">
-                                <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
-                                    <Icon name={'download'} className="me-2"></Icon>Export
-                                </Button>
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD, { parentCompany, _t: t })}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
-                            </div>
+                            <TableActions buttons={buttons} />
                         </div>
                     </div>
                 </div>

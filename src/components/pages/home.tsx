@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import {
     useGetActivities, useGetActs, useGetCities,
-    useGetLaws, useGetRuleCompliances, useGetRules,
-    useGetStates, useStateRuleCompanyMappings
+    useGetLaws, useGetRules,
+    useGetStates, useGetRuleMappings
 } from "../../backend/masters";
 import { DEFAULT_DASHBOARD_PAYLOAD } from "../common/Table";
 import styles from "./home.module.css";
@@ -20,7 +20,6 @@ const EZYCOMP_HIGHLIGHTS = [
     { label: 'Total Acts', key: 'acts', url: 'masters/Act' },
     { label: 'Total Rules', key: 'rules', url: 'masters/rule' },
     { label: 'Total Activities', key: 'activities', url: 'masters/activity' },
-    { label: 'Rule Compliance Mappings', key: 'complianceMapped', url: 'masters/compliance' },
     { label: 'Rule-Activies Mapped', key: 'activitiesMapped', url: 'masters/mapping' }
 ]
 
@@ -33,8 +32,7 @@ function Home() {
     const { total: acts } = useGetActs({ ...DEFAULT_DASHBOARD_PAYLOAD, t });
     const { total: rules } = useGetRules({ ...DEFAULT_DASHBOARD_PAYLOAD, t });
     const { total: activities } = useGetActivities({ ...DEFAULT_DASHBOARD_PAYLOAD, t });
-    const { total: complianceMapped } = useGetRuleCompliances({ ...DEFAULT_DASHBOARD_PAYLOAD, sort: { columnName: 'complianceName', order: 'asc' }, t });
-    const { total: activitiesMapped } = useStateRuleCompanyMappings({ ...DEFAULT_DASHBOARD_PAYLOAD, t });
+    const { total: activitiesMapped } = useGetRuleMappings({ ...DEFAULT_DASHBOARD_PAYLOAD, t });
 
     function navigateToPage(path: string) {
         navigate(`${getBasePath()}/${path}`);
@@ -43,7 +41,7 @@ function Home() {
     useEffect(() => {
         if (!isUndefined(laws) && !isUndefined(states) && !isUndefined(cities)
             && !isUndefined(acts) && !isUndefined(rules) && !isUndefined(activities)
-            && !isUndefined(complianceMapped) && !isUndefined(activitiesMapped)) {
+            && !isUndefined(activitiesMapped)) {
             setEzycompHighlights({
                 ...ezycompHighlights,
                 laws,
@@ -52,12 +50,11 @@ function Home() {
                 acts,
                 rules,
                 activities,
-                complianceMapped,
                 activitiesMapped
             })
         }
 
-    }, [laws, states, cities, acts, rules, activities, complianceMapped, activitiesMapped])
+    }, [laws, states, cities, acts, rules, activities, activitiesMapped])
 
     return (
         <>

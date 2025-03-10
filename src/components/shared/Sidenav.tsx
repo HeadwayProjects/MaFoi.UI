@@ -6,55 +6,273 @@ import { preventDefault } from '../../utils/common';
 import Icon from '../common/Icon';
 import { getBasePath } from '../../App';
 import { ROLE_MAPPING } from '../../containers/AuthenticatedContent';
+import { USER_PRIVILEGES } from '../pages/UserManagement/Roles/RoleConfiguration';
+import { useLocation } from 'react-router-dom';
+
 
 const SideNavMenu = [
-    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard' },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.SUBMITTER_DASHBOARD },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.REVIEWER_DASHBOARD },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.OWNER_DASHBOARD },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.MANAGER_DASHBOARD },
+    { id: 'dashboard', url: '/dashboard', icon: 'th', label: 'Dashboard', privilege: USER_PRIVILEGES.ESCALATION_DASHBOARD },
+
     {
-        id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters', children: [
-            { id: 'masters/law', url: '/masters/law', label: 'Law Category' },
-            { id: 'masters/Act', url: '/masters/Act', label: 'Act' },
-            { id: 'masters/activity', url: '/masters/activity', label: 'Activity' },
-            { id: 'masters/rule', url: '/masters/rule', label: 'Rule' },
-            { id: 'masters/state', url: '/masters/state', label: 'State' },
-            { id: 'masters/city', url: '/masters/city', label: 'City' },
-            { id: 'masters/compliance', url: '/masters/compliance', label: 'Rule Compliance' },
-            { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings' }
+        id: 'masters', url: '/masters/act', icon: 'crown', label: 'Masters',
+        children: [
+            { id: 'masters/law', url: '/masters/law', label: 'Law Category', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            {
+                id: "masters/vendor-categories",
+                url: "/masters/vendor-categories",
+                label: "Vendor Category",
+                privilege: USER_PRIVILEGES.VIEW_VENDOR_CATEGORY,
+            },
+            { id: 'masters/Act', url: '/masters/Act', label: 'Act', privilege: USER_PRIVILEGES.VIEW_ACTS },
+            { id: 'masters/activity', url: '/masters/activity', label: 'Activity', privilege: USER_PRIVILEGES.VIEW_ACTIVITIES },
+            { id: 'masters/rule', url: '/masters/rule', label: 'Rule', privilege: USER_PRIVILEGES.VIEW_RULES },
+            { id: 'masters/state', url: '/masters/state', label: 'State', privilege: USER_PRIVILEGES.VIEW_STATES },
+            { id: 'masters/city', url: '/masters/city', label: 'City', privilege: USER_PRIVILEGES.VIEW_CITIES },
+            // { id: 'masters/compliance', url: '/masters/compliance', label: 'Rule Compliance', privilege: USER_PRIVILEGES.VIEW_RULE_COMPLIANCE },
+            { id: 'masters/mapping', url: '/masters/mapping', label: 'Mappings', privilege: USER_PRIVILEGES.VIEW_MAPPINGS },
+            { id: 'setupInput/stateRegisterConfiguration', url: '/setupInput/stateRegisterConfiguration', label: 'State Register Configuration', privilege: USER_PRIVILEGES.VIEW_STATEREGISTER_CONFIGURATION }
         ]
     },
     {
-        id: 'companies', url: '/companies/list', icon: 'building', label: 'Companies', children: [
-            { id: 'companies/list', url: '/companies/list', label: 'Manage Companies' },
-            { id: 'companies/associateCompanies', url: '/companies/associateCompanies', label: 'Associate Companies' },
-            { id: 'companies/locationMapping', url: '/companies/locationMapping', label: 'Location Mapping' },
-            { id: 'companies/auditSchedule', url: '/companies/auditSchedule', label: 'Audit Schedule' },
-            { id: 'companies/audit-schedule-details', url: '/companies/audit-schedule-details', label: 'Audit Schedule Details' },
-            { id: 'companies/blockUnblock', url: '/companies/blockUnblock', label: 'Block Un-Block' }
+        id: 'companies', url: '/companies/list', icon: 'building', label: 'Companies',
+        children: [
+            {
+                id: 'companies/list', url: '/companies/list',
+                label: 'Manage Companies', privilege: USER_PRIVILEGES.VIEW_COMPANIES
+            },
+            {
+                id: 'companies/associateCompanies', url: '/companies/associateCompanies',
+                label: 'Associate Companies', privilege: USER_PRIVILEGES.VIEW_ASSOCIATE_COMPANIES
+            },
+            {
+                id: 'companies/locationMapping', url: '/companies/locationMapping',
+                label: 'Location Mapping', privilege: USER_PRIVILEGES.VIEW_LOCATION_MAPPINGS
+            },
+            {
+                id: "companies/vendor-location-mapping",
+                url: "/companies/vendor-location-mapping",
+                label: "Vendor Mapping",
+                privilege: USER_PRIVILEGES.VIEW_VENDOR_LOCATION_MAPPING,
+            },
+            {
+                id: "companies/manageVendors",
+                url: "/companies/manageVendors",
+                label: "Manage Vendors",
+                privilege: USER_PRIVILEGES.VIEW_VENDORS,
+            },
+            {
+                id: 'companies/verticals', url: '/companies/verticals',
+                label: 'Verticals', privilege: USER_PRIVILEGES.VIEW_VERTICALS
+            },
+            {
+                id: 'companies/departments', url: '/companies/departments',
+                label: 'Departments', privilege: USER_PRIVILEGES.VIEW_DEPARTMENTS
+            },
+            {
+                id: 'companies/escalationMatrix', url: '/companies/escalationMatrix',
+                label: 'Escalation Matrix', privilege: USER_PRIVILEGES.VIEW_COMPANY_ESCALTION_MATIX
+            }
         ]
     },
     {
-        id: 'userManagement', url: '/userManagement/users', icon: 'users', label: 'User Management', children: [
-            { id: 'userManagement/users', url: '/userManagement/users', label: 'Manage Users' },
-            { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Company Mapping' },
+        id: 'auditSchedule', url: '/auditSchedule/importExport', icon: 'notes', label: 'Audit Management',
+        children: [
+            {
+                id: 'auditSchedule/importExport', url: '/auditSchedule/importExport',
+                label: 'Audit Schedule', privilege: USER_PRIVILEGES.AUDIT_SCHEDULE
+            },
+            {
+                id: 'auditSchedule/details', url: '/auditSchedule/details',
+                label: 'Audit Schedule Details', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_DETAILS
+            },
+            {
+                id: 'auditSchedule/blockUnblock', url: '/auditSchedule/blockUnblock',
+                label: 'Un-Block Activities', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK
+            }
         ]
     },
     {
-        id: 'email', url: '/email/templates', icon: 'email', label: 'Email', children: [
-            { id: 'email/templates', url: '/email/templates', label: 'Manage Templates' }
+        id: "vendorauditSchedule",
+        url: "/vendor-audit-schedule/import-export",
+        icon: "notes",
+        label: "Vendor Audit Management",
+        children: [
+            {
+                id: "/vendor-audit-schedule/import-export",
+                url: "/vendor-audit-schedule/import-export",
+                label: "Audit Schedule",
+                privilege: USER_PRIVILEGES.AUDIT_VENDOR_SCHEDULE,
+            },
+            {
+                id: "/vendor-audit-schedule/details",
+                url: "/vendor-audit-schedule/details",
+                label: "Audit Schedule Details",
+                privilege: USER_PRIVILEGES.VIEW_AUDIT_VENDOR_SCHEDULE_DETAILS,
+            },
+            {
+                id: "vendor-audit-schedule/block-unblock",
+                url: "/vendor-audit-schedule/block-unblock",
+                label: "Un-Block Activities",
+                privilege: USER_PRIVILEGES.VIEW_AUDIT_VENDOR_SCHEDULE_BLOCK_UNBLOCK,
+            },
+        ],
+    },
+    {
+        id: 'complianceManagement', url: '/complianceManagement/list', icon: 'notepad', label: 'Compliance Management', children: [
+            {
+                id: 'complianceManagement/complianceSchedule', url: '/complianceManagement/complianceSchedule',
+                label: 'Compliance Schedule', privilege: USER_PRIVILEGES.COMPLIANCE_SCHEDULE
+            },
+            {
+                id: 'complianceManagement/compliance-schedule-details', url: '/complianceManagement/compliance-schedule-details',
+                label: 'Comp Schedule Details', privilege: USER_PRIVILEGES.VIEW_COMPLIANCE_SCHEDULE_DETAILS
+            }
+            // {
+            //     id: 'complianceManagement/blockUnblock', url: '/complianceManagement/blockUnblock',
+            //     label: 'Block Un-Block', privilege: USER_PRIVILEGES.VIEW_AUDIT_SCHEDULE_BLOCK_UNBLOCK
+            // }
         ]
     },
-    { id: 'activities', url: '/activities', icon: 'task', label: 'Activities' },
-    { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true }
+    {
+        id: 'setupInput', url: '/setupInput', icon: 'upload', label: 'Setup Input',
+        children: [
+            { id: 'setupInput/holidayList', url: '/setupInput/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_HOLIDAY_LIST },
+            { id: 'setupInput/leaveConfiguration', url: '/setupInput/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LEAVE_CONFIGURATION },
+            { id: 'setupInput/attendanceConfig', url: '/setupInput/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_ATTENDANCE_CONFIGURATION },
+            { id: 'setupInput/salaryComponents', url: '/setupInput/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_SALARY_COMPONENTS },
+            { id: 'setupInput/inputModuleUploads', url: '/setupInput/inputModuleUploads', label: 'Input Module Uploads', privilege: USER_PRIVILEGES.VIEW_INPUT_MODULE_UPLOAD },
+            // { id: 'setupInput/holidayList', url: '/setupInput/holidayList', label: 'Holiday List', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'setupInput/leaveConfiguration', url: '/setupInput/leaveConfiguration', label: 'Leave Configuration', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'setupInput/attendanceConfig', url: '/setupInput/attendanceConfig', label: 'Attendance Config', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'setupInput/salaryComponents', url: '/setupInput/salaryComponents', label: 'Salary Components', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'setupInput/inputModuleUploads', url: '/setupInput/inputModuleUploads', label: 'Input Module Uploads', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+        ]
+    },
+    {
+        id: 'inputUploads', url: '/inputUploads', icon: 'eye', label: 'Input Uploads',
+        children: [
+
+            { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_DASHBOARD },
+            { id: 'inputUploads/registerDownload', url: '/inputUploads/registerDownload', label: 'Register Download', privilege: USER_PRIVILEGES.VIEW_REGISTER_DOWNLOAD },
+            { id: 'inputUploads/RegistersQue', url: '/inputUploads/RegistersQue', label: 'RegistersQue ', privilege: USER_PRIVILEGES.VIEW_REGISTER_QUE },
+
+            { id: 'inputUploads/employeeMasterUpload', url: '/inputUploads/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_MASTER },
+            { id: 'inputUploads/employeeLeaveCreditUpload', url: '/inputUploads/employeeLeaveCreditUpload', label: 'Employee Leave Credit', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_LEAVE_CREDIT },
+            { id: 'inputUploads/employeeLeaveAvailedUpload', url: '/inputUploads/employeeLeaveAvailedUpload', label: 'Employee Leave Availed', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_LEAVE_AVAILED },
+            { id: 'inputUploads/employeeAttendanceUpload', url: '/inputUploads/employeeAttendanceUpload', label: 'Employee Attendance', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_ATTENDANCE },
+            { id: 'inputUploads/employeeWageUpload', url: '/inputUploads/employeeWageUpload', label: 'Employee Wage', privilege: USER_PRIVILEGES.VIEW_EMPLOYEE_WAGE }
+
+            // { id: 'inputUploads/dashboard', url: '/inputUploads/dashboard', label: 'Dashboard', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/registerDownload', url: '/inputUploads/registerDownload', label: 'Register Download', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeMasterUpload', url: '/inputUploads/employeeMasterUpload', label: 'Employee Master', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeLeaveCreditUpload', url: '/inputUploads/employeeLeaveCreditUpload', label: 'Employee Leave Credit', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeLeaveAvailedUpload', url: '/inputUploads/employeeLeaveAvailedUpload', label: 'Employee Leave Availed', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeAttendanceUpload', url: '/inputUploads/employeeAttendanceUpload', label: 'Employee Attendance', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY },
+            // { id: 'inputUploads/employeeWageUpload', url: '/inputUploads/employeeWageUpload', label: 'Employee Wage', privilege: USER_PRIVILEGES.VIEW_LAW_CATEGORY }
+
+        ]
+    },
+
+    {
+        id: 'userManagement', url: '/userManagement/roles', icon: 'users', label: 'User Management',
+        children: [
+            { id: 'userManagement/roles', url: '/userManagement/roles', label: 'Manage Roles', privilege: USER_PRIVILEGES.VIEW_ROLES },
+            { id: 'userManagement/users', url: '/userManagement/users', label: 'Manage Users', privilege: USER_PRIVILEGES.VIEW_USERS },
+            {
+                id: "userManagement/location-vendor-mapping",
+                url: "/userManagement/location-vendor-mapping",
+                label: "Location Vendor Mapping",
+                privilege: USER_PRIVILEGES.VIEW_VENDOR_MAPPINGS,
+            },
+            { id: 'userManagement/mapping', url: '/userManagement/mapping', label: 'Company Mapping', privilege: USER_PRIVILEGES.VIEW_COMPANY_MAPPINGS },
+            {
+                id: 'userManagement/userDepartment', url: '/userManagement/userDepartment',
+                label: 'User Department Mapping', privilege: USER_PRIVILEGES.VIEW_DEPARTMENT_USER_MAPPING
+            }
+        ]
+    },
+    {
+        id: 'email', url: '/templates/email', icon: 'email', label: 'Email & Notifications',
+        children: [
+            { id: 'templates/email', url: '/templates/email', label: 'Email Templates', privilege: USER_PRIVILEGES.VIEW_EMAIL_TEMPLATES },
+            { id: 'templates/notification', url: '/templates/notification', label: 'Notification Templates', privilege: USER_PRIVILEGES.VIEW_NOTIFICATION_TEMPLATES }
+        ]
+    },
+    // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.READ_ONLY_ACTIVITIES },
+    { id: 'activities2', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.REVIEWER_ACTIVITIES },
+    {
+        id: "vendor-location-activities",
+        url: "/vendor-location-activities",
+        icon: "task",
+        label: "Vendor Audits",
+        privilege: USER_PRIVILEGES.REVIEWER_VENDOR_ACTIVITIES,
+    },
+    // {
+    // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.OWNER_ACTIVITIES },
+    // { id: 'activities', url: '/activities', icon: 'task', label: 'Activities', privilege: USER_PRIVILEGES.MANAGER_ACTIVITIES },
+    {
+        id: 'activities1',
+        url: '/activities',
+        icon: 'task',
+        label: 'Activities',
+        privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES
+    },
+
+    {
+        id: "vendor-location-activities",
+        url: "/vendor-location-activities",
+        icon: "task",
+        label: "Vendor Audits",
+        privilege: USER_PRIVILEGES.SUBMITTER_VENDOR_ACTIVITIES,
+    },
+    { id: 'notices', url: '/notices', icon: 'task', label: 'Noticies', privilege: USER_PRIVILEGES.VIEW_NOTICES },
+    { id: 'reports', url: '/reports', icon: 'report', label: 'Reports', disable: true },
+    { id: 'notifications', url: '/notifications', icon: 'notification', label: 'Notifications', privilege: USER_PRIVILEGES.VIEW_USER_NOTIFICATIONS }
 ];
 
 function Sidenav({ open, toggleSidenav }: any) {
     const [user] = useState(auth.getUserDetails());
-    const [sideMenu, setSideMenu] = useState<any[]>([]);
+    const [sideMenu, setSideMenu] = useState<any[] | null>([]);
     const [toggelStatus, setToggleStatus] = useState<any>({});
+
+    const location: any = window.location;
+    useEffect(() => {
+
+        if (location.pathname === '/activities') {
+            debugger;
+            setTimeout(() => {
+                const sideNavElement: any = document.querySelector('.sideNav a[href="/activities"]');
+                const sideNavElementClass: any = sideNavElement.classList;
+                sideNavElementClass.add('active');
+            }, 200)
+        }
+    }, [location.pathname]);
 
     useEffect(() => {
         if (user) {
-            const pages = ROLE_MAPPING[user.role] || [];
-            const _menu = SideNavMenu.filter(x => pages.includes(x.id));
+            const privileges: any = auth.getUserPrivileges();
+            const _menu: any[] = [];
+            SideNavMenu.forEach((menu: any) => {
+                if (menu.children) {
+                    const children = menu.children.filter((child: any) => {
+                        return privileges.includes(child.privilege);
+                    });
+                    if (children.length) {
+                        _menu.push({
+                            ...menu,
+                            children
+                        });
+                    }
+                } else {
+                    if (privileges.includes(menu.privilege)) {
+                        _menu.push(menu);
+                    }
+                }
+            });
             const _toggleStatus = {};
             _menu.forEach(x => {
                 toggelStatus[x.id] = false
@@ -77,10 +295,12 @@ function Sidenav({ open, toggleSidenav }: any) {
         useEffect(() => {
             if (urlPath) {
                 setActive(urlPath.includes(name));
-                if ((ROLE_MAPPING[user.role] || [])[0] === 'dashboard') {
-                    if (urlPath === '/' && parentIndex === 0 && (index === undefined || index === 0)) {
-                        setActive(true);
-                    }
+                const hasDashboardAccess = auth.hasUserAccess(USER_PRIVILEGES.OWNER_DASHBOARD)
+                    || auth.hasUserAccess(USER_PRIVILEGES.MANAGER_DASHBOARD)
+                    || auth.hasUserAccess(USER_PRIVILEGES.SUBMITTER_DASHBOARD)
+                    || auth.hasUserAccess(USER_PRIVILEGES.REVIEWER_DASHBOARD)
+                if (hasDashboardAccess && urlPath === '/' && parentIndex === 0 && (index === undefined || index === 0)) {
+                    setActive(true);
                 }
             }
         }, [urlPath]);
@@ -113,7 +333,7 @@ function Sidenav({ open, toggleSidenav }: any) {
     return (
         <>
             {
-                user !== null ?
+                (user !== null && sideMenu !== null) ?
                     <ul className='sideNav m-0 p-0'>
                         <li>
                             <div className="d-flex flex-row w-100 align-items-center justify-content-end border-bottom" style={{ height: '48px' }}>

@@ -2,18 +2,21 @@ import React, { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import SubmitToAuditorModal from "./SubmitToAuditorModal";
 import * as api from "../../../../backend/request";
-import * as auth from "../../../../backend/auth";
+import { hasUserAccess, getUserDetails, getUserRole } from "../../../../backend/auth";
 import EditActivityModal from "./EditActivityModal";
 import { toast } from 'react-toastify';
 import PageLoader from "../../../shared/PageLoader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave, faUpload, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faSave, faUpload, faInfoCircle, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import BulkUploadModal from "./BulkuploadModal";
 import { Link, usePath, useHistory } from "raviger";
 import Table, { CellTmpl, DEFAULT_PAYLOAD, TitleTmpl, reactFormatter } from "../../../common/Table";
-import { ACTIVITY_STATUS, AUDIT_STATUS, FILTERS, STATUS_MAPPING, TOOLTIP_DELAY } from "../../../common/Constants";
+import {
+    ACTIONS, ACTIVITY_STATUS, AUDIT_STATUS,
+    FILTERS, STATUS_MAPPING, TOOLTIP_DELAY
+} from "../../../common/Constants";
 import Location from "../../../common/Location";
-import { useGetAllActivities } from "../../../../backend/query";
+import { useExportTodos, useGetAllActivities } from "../../../../backend/query";
 import Icon from "../../../common/Icon";
 import { download, downloadFileContent, preventDefault, reduceArraytoObj } from "../../../../utils/common";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger"
@@ -21,7 +24,12 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import AdvanceSearch from "../../../common/AdvanceSearch";
 import AlertModal from "../../../common/AlertModal";
 import { ACTIVITY_TYPE, ACTIVITY_TYPE_ICONS, API_DELIMITER, ERROR_MESSAGES } from "../../../../utils/constants";
-import { useAuditReport } from "../../../../backend/exports";
+import { getAuditReportFileName, useAuditReport } from "../../../../backend/exports";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import styles from "./TaskManagement.module.css";
+import TableActions, { ActionButton } from "../../../common/TableActions";
+import SendEmailModal from "../../Auditor/SendEmailModal";
+import VendorBulkUploadModal from "./VendorBulkModal";
 
 const STATUS_BTNS = [
     { name: ACTIVITY_STATUS.ACTIVITY_SAVED, label: STATUS_MAPPING[ACTIVITY_STATUS.ACTIVITY_SAVED], style: 'secondary' },
@@ -47,8 +55,8 @@ const AuditTypeFilter: any[] = [];
 function getAdvanceSearch(state: any) {
     const filters = [];
     if ((state || {}).fromDate) {
-        filters.push({ columnName: 'fromDate', value: state.fromDate })
-        filters.push({ columnName: 'toDate', value: state.toDate })
+        filters.push({ columnName: 'fromDate', value: dayjs(state.fromDate).startOf('D').toISOString() })
+        filters.push({ columnName: 'toDate', value: dayjs(state.toDate).endOf('D').toISOString() })
     }
 
     if ((state || {}).auditType) {
@@ -58,13 +66,14 @@ function getAdvanceSearch(state: any) {
 }
 
 function ActivitiesManagement() {
-    const [readOnly] = useState(!auth.isVendor());
     const { state }: any = useHistory();
+    const [action, setAction] = useState(ACTIONS.NONE);
     const [statusBtns] = useState(STATUS_BTNS);
     const [submitting, setSubmitting] = useState(false);
     const [checkedStatuses, setCheckedStatuses] = useState<any>((state || {}).status ? { [state.status]: true } : {});
     const [activity, setActivity] = useState<any>(null);
     const [bulkUpload, setBulkUpload] = useState(false);
+    const [vendorUpload, setVendorUpload] = useState<boolean>(false);
     const [submitToAuditor, setSubmitToAuditor] = useState(false);
     const path: any = usePath();
     const [fromDashboard] = useState(path.includes('/dashboard/activities'));
@@ -86,14 +95,51 @@ function ActivitiesManagement() {
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const [alertMessage, setAlertMessage] = useState<any>(null);
     const { auditReport, exporting } = useAuditReport((response: any) => {
+        if (response) {
+            downloadFileContent({
+                name: getAuditReportFileName(data.data[0], response.headers['content-type']),
+                type: response.headers['content-type'],
+                content: response.data
+            });
+        }
+    }, () => {
+        toast.error(ERROR_MESSAGES.DEFAULT)
+    });
+    const { exportTodos, exporting: exportingTodos } = useExportTodos((response: any) => {
         downloadFileContent({
-            name: 'AuditReport.pdf',
+            name: 'Audit Activities.xlsx',
             type: response.headers['content-type'],
             content: response.data
         });
     }, () => {
-        toast.error(ERROR_MESSAGES.DEFAULT)
+        toast.error(ERROR_MESSAGES.DEFAULT);
     });
+
+    const buttons: ActionButton[] = [
+        // {
+        //     label: 'Bulk Upload',
+        //     name: 'bulkUpload',
+        //     privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD,
+        //     action: () => {
+        //         setBulkUpload(true)
+        //     }
+        // },
+        {
+            label: 'Submit to Auditor',
+            name: 'submitToAuditor',
+            privilege: USER_PRIVILEGES.SUBMITTER_ACTIVITIES_SUBMIT,
+            action: () => {
+                onSubmitToAuditor();
+            }
+        },
+        // {
+        //     label: 'Send Report',
+        //     name: 'sendReport',
+        //     action: () => {
+        //         setAction(ACTIONS.SEND_REPORT);
+        //     }
+        // }
+    ]
 
     function onLocationChange(event: any) {
         const { company, associateCompany, location } = event;
@@ -107,8 +153,6 @@ function ActivitiesManagement() {
     function editActivity(activity: any) {
         setActivity(activity);
     }
-
-
 
     function downloadForm(activity: any) {
         setSubmitting(true);
@@ -139,7 +183,7 @@ function ActivitiesManagement() {
                 const list = response.data || [];
                 const _report = list.filter((x: any) => x.published);
                 if (_report.length > 0) {
-                    const user = auth.getUserDetails();
+                    const user = getUserDetails();
                     _payload['auditorId'] = user.userid;
                     auditReport(_payload);
                 } else {
@@ -149,8 +193,7 @@ function ActivitiesManagement() {
         }).finally(() => setSubmitting(false));
     }
 
-    function onSubmitToAuditor(e: any) {
-        preventDefault(e);
+    function onSubmitToAuditor() {
         const _filter = hasFilters(afRef, 'month');
         if (!Boolean(_filter)) {
             setAlertMessage(`
@@ -227,7 +270,24 @@ function ActivitiesManagement() {
     function DueDateTmpl({ cell }: any) {
         const value = cell.getValue();
         return (
-            <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+            <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
+        )
+    }
+
+    function ActionHeaderTmpl() {
+        return (
+            <div className={`nav-item dropdown ${styles.tableActions}`}>
+                <div className="nav-link text-white" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <FontAwesomeIcon icon={faEllipsisV} />
+                </div>
+                <div className="dropdown-menu">
+                    <a className="dropdown-item" href="/" onClick={handleExport}>Export</a>
+                    {
+                    selectedRows.length !== 0 && 
+                    <a className="dropdown-item" onClick={(e) => {e.preventDefault();setVendorUpload(true)}}>Bulk Upload</a>
+                    }
+                </div>
+            </div>
         )
     }
 
@@ -278,8 +338,8 @@ function ActivitiesManagement() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                <Icon className="mx-2" type="button" name={readOnly ? 'eye' : 'pencil'}
-                    text={readOnly ? 'View' : 'Edit'} data={row} action={editActivity} />
+                <Icon className="mx-2" type="button" name={hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD) ? 'pencil' : 'eye'}
+                    text={hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD) ? 'Edit' : 'View'} data={row} action={editActivity} />
                 <Icon className="ms-1" type="button" name="download" text="Download" data={row} action={downloadForm} />
             </div>
         )
@@ -347,12 +407,12 @@ function ActivitiesManagement() {
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Audit Status", field: "auditStatus", maxWidth: 160,
+            title: "Compliance Status", field: "auditStatus", maxWidth: 160,
             formatter: reactFormatter(<AuditStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
         {
-            title: "Forms Status", field: "status", maxWidth: 160,
+            title: "Evidence Status", field: "status", maxWidth: 160,
             formatter: reactFormatter(<FormStatusTmpl />),
             titleFormatter: reactFormatter(<TitleTmpl />)
         },
@@ -369,7 +429,7 @@ function ActivitiesManagement() {
         ajaxRequestFunc,
         columns,
         rowHeight: 'auto',
-        selectable: false,
+        selectable: getUserRole() === 'Vendor User' ? true : false,
         paginate: true,
         initialSort: [{ column: 'month', dir: 'desc' }],
         rowFormatter
@@ -444,11 +504,41 @@ function ActivitiesManagement() {
         return _payload;
     }
 
+    function handleVendorBulkUploadClose(refresh = false) {
+        if (refresh) {
+            refetch();
+        }
+        setVendorUpload(false);
+    }
     function handleBulkUploadClose(refresh = false) {
         if (refresh) {
             refetch();
         }
         setBulkUpload(false);
+    }
+
+    function handleExport(event: any) {
+        event.preventDefault();
+        if (total < 1) {
+            toast.warn('There are no records available for this filter criteria.');
+            return;
+        }
+        const _payload = {
+            ...DEFAULT_PAYLOAD,
+            sort: {
+                columnName: 'month',
+                order: 'desc'
+            },
+            ...params,
+            filters: [
+                ...locationFilters,
+                ...(afRef.current || []),
+                ...(sfRef.current || []),
+                ...AuditTypeFilter
+            ],
+            pagination: null
+        };
+        exportTodos(_payload);
     }
 
     useEffect(() => {
@@ -555,7 +645,7 @@ function ActivitiesManagement() {
                             <Location onChange={onLocationChange} />
                             <div className="col-5">
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.DUE_DATE]} payload={getAdvanceSearchPayload()} onSubmit={search}
-                                    downloadReport={downloadReport} />
+                                    downloadReport={hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_DOWNLOAD_REPORT) ? downloadReport : undefined} />
                             </div>
                         </div>
                     </div>
@@ -570,44 +660,31 @@ function ActivitiesManagement() {
                                                 <input name={btn.name} type="checkbox" className="btn-check" id={btn.name} autoComplete="off"
                                                     onChange={onFormStatusChangeHandler}
                                                     checked={checkedStatuses[btn.name]} />
-                                                <label className={`btn btn-outline-${btn.style}`} htmlFor={btn.name}>{btn.label}</label>
+                                                <label className={`btn bg-status-${btn.name}`} htmlFor={btn.name}>{btn.label}</label>
                                             </div>
                                         )
                                     })
                                 }
                             </div>
-                            {
-                                !readOnly &&
-                                <div className="d-flex">
-                                    <div className="mx-2">
-                                        <button className="btn btn-primary" onClick={(e) => {
-                                            e.preventDefault();
-                                            setBulkUpload(true)
-                                        }}>
-                                            <div className="d-flex align-items-center">
-                                                <FontAwesomeIcon icon={faUpload} />
-                                                <span className="ms-2">Bulk Upload</span>
-                                            </div>
-                                        </button>
-                                    </div>
 
-                                    <div>
-                                        <button className="btn btn-primary" onClick={onSubmitToAuditor}
-                                            disabled={activities.length === 0}>
-                                            <div className="d-flex align-items-center">
-                                                <FontAwesomeIcon icon={faSave} />
-                                                <span className="ms-2">Submit To Auditor</span>
-                                            </div>
-                                        </button>
-                                    </div>
-                                </div>
-                            }
+                            <div className="d-flex">
+                                <TableActions buttons={buttons} />
+
+                            </div>
                         </div>
                     </div>
                 </form>
-                <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                <div className="position-relative">
+                    <ActionHeaderTmpl />
+                    <Table data={data} options={tableConfig} isLoading={isFetching}
+                        onSelectionChange={setSelectedRows} onPageNav={handlePageNav} />
+                </div>
             </div>
 
+            {
+                vendorUpload &&
+                <VendorBulkUploadModal onClose={handleVendorBulkUploadClose} selectedItems={selectedRows} />
+            }
             {
                 bulkUpload &&
                 <BulkUploadModal onClose={handleBulkUploadClose} onSubmit={refetch} />
@@ -620,8 +697,8 @@ function ActivitiesManagement() {
                     selectedRows={selectedRows} />
             }
             {
-                !!activity &&
-                <EditActivityModal activity={activity} onClose={() => setActivity(null)} onSubmit={refetch} />
+                !!activity && selectedRows.length >= 0 &&
+                <EditActivityModal activity={activity} onClose={() => setActivity(null)} onSubmit={refetch} selectedItems={selectedRows} />
             }
             {
                 !!alertMessage &&
@@ -630,9 +707,13 @@ function ActivitiesManagement() {
                     setAlertMessage(null);
                 }} />
             }
-            {(submitting || exporting) && <PageLoader />}
+            {
+                action === ACTIONS.SEND_REPORT &&
+                <SendEmailModal onCancel={() => setAction(ACTIONS.NONE)} />
+            }
+            {(submitting || exporting || exportingTodos) && <PageLoader />}
         </>
-    );
+    ); 
 }
 
 export default ActivitiesManagement;

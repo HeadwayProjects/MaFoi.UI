@@ -15,6 +15,8 @@ import { navigate } from "raviger";
 import TableFilters from "../../../common/TableFilter";
 import { useRef } from "react";
 import { useExportCompanies } from "../../../../backend/exports";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
 
 function CompaniesList({ changeView }: any) {
     const [t] = useState(new Date().getTime());
@@ -45,13 +47,19 @@ function CompaniesList({ changeView }: any) {
         const row = cell.getData();
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
-                    changeView(VIEWS.EDIT, { company: row });
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
-                    setCompany(row);
-                    setAction(ACTIONS.DELETE);
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_COMPANY) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={(event: any) => {
+                        changeView(VIEWS.EDIT, { company: row });
+                    }} />
+                }
+                {
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_COMPANY) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={(event: any) => {
+                    //     setCompany(row);
+                    //     setAction(ACTIONS.DELETE);
+                    // }} />
+                }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={(event: any) => {
                     setCompany(row);
                     setAction(ACTIONS.VIEW);
@@ -89,10 +97,14 @@ function CompaniesList({ changeView }: any) {
         const row = cell.getData();
         return (
             <div className="d-flex align-items-center h-100">
-                <a href="/" onClick={(e: any) => {
-                    preventDefault(e);
-                    navigate('/companies/associateCompanies', { query: { company: row.id } });
-                }}>{value || 0}</a>
+                {
+                    hasUserAccess(USER_PRIVILEGES.VIEW_ASSOCIATE_COMPANIES) ?
+                        <a href="/" onClick={(e: any) => {
+                            preventDefault(e);
+                            navigate('/companies/associateCompanies', { query: { company: row.id } });
+                        }}>{value || 0}</a> :
+                        <span>{value || 0}</span>
+                }
             </div>
         )
     }
@@ -217,12 +229,18 @@ function CompaniesList({ changeView }: any) {
                             <TableFilters search={true} onFilterChange={onFilterChange}
                                 placeholder={"Search for Company Code/Name/Contact No./Email"} />
                             <div className="d-flex">
-                                <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
-                                    <Icon name={'download'} className="me-2"></Icon>Export
-                                </Button>
-                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>
-                                    <Icon name={'plus'} className="me-2"></Icon>Add New
-                                </Button>
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.EXPORT_COMPANIES) &&
+                                    <Button variant="primary" className="px-3 text-nowrap me-3" onClick={handleExport} disabled={!total}>
+                                        <Icon name={'download'} className="me-2"></Icon>Export
+                                    </Button>
+                                }
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.ADD_COMPANY) &&
+                                    <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>
+                                        <Icon name={'plus'} className="me-2"></Icon>Add New
+                                    </Button>
+                                }
                             </div>
                         </div>
                     </div>

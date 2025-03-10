@@ -114,12 +114,14 @@ function CompanyTDS({ onNext, onPrevious, onSubmit, company }: any) {
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'pF_Base_Limit',
-                label: 'PF Base Limit'
+                label: 'PF Base Limit',
+                fieldType: 'number'
             },
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'pF_Deduction_Percent',
-                label: 'PF % Deduction'
+                label: 'PF % Deduction',
+                fieldType: 'number'
             },
             {
                 component: componentTypes.TEXT_FIELD,
@@ -139,7 +141,8 @@ function CompanyTDS({ onNext, onPrevious, onSubmit, company }: any) {
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'pF_Admin_Percentage',
-                label: 'PF Admin %'
+                label: 'PF Admin %',
+                fieldType: 'number'
             },
             {
                 component: componentTypes.TEXT_FIELD,
@@ -149,12 +152,14 @@ function CompanyTDS({ onNext, onPrevious, onSubmit, company }: any) {
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'edli_Admin_Percentage',
-                label: 'EDLI Admin %'
+                label: 'EDLI Admin %',
+                fieldType: 'number'
             },
             {
                 component: componentTypes.TEXT_FIELD,
                 name: 'edli_Percentage',
-                label: '% of EDLI'
+                label: '% of EDLI',
+                fieldType: 'number'
             },
             {
                 component: componentTypes.CHECKBOX,

@@ -14,6 +14,8 @@ import { toast } from "react-toastify";
 import PageLoader from "../../shared/PageLoader";
 import { useGetCompanies } from "../../../backend/masters";
 import { sortBy } from "underscore";
+import { hasUserAccess } from "../../../backend/auth";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
 
 const SortFields: any = {
     'templateType.description': 'templateType'
@@ -115,13 +117,20 @@ function ManageEmailTemplates({ changeView }: any) {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
-                    changeView(VIEWS.EDIT, { emailTemplate: row })
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                    setTemplate(row);
-                    setAction(ACTIONS.DELETE)
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_EMAIL_TEMPLATE) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
+                        changeView(VIEWS.EDIT, { emailTemplate: row })
+                    }} />
+                }
+                {
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_EMAIL_TEMPLATE) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     if (!row.companyId) return;
+                    //     setTemplate(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} disabled={!row.companyId}/>
+                }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     changeView(VIEWS.VIEW, { emailTemplate: row })
                 }} />
@@ -163,9 +172,12 @@ function ManageEmailTemplates({ changeView }: any) {
                     <div className="col-12">
                         <div className="d-flex justify-content-between align-items-end">
                             <TableFilters filterConfig={filterConfig} search={false} onFilterChange={onFilterChange} />
-                            <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>
-                                <Icon name={'plus'} className="me-2"></Icon>Add New
-                            </Button>
+                            {
+                                hasUserAccess(USER_PRIVILEGES.ADD_EMAIL_TEMPLATE) &&
+                                <Button variant="primary" className="px-3 ms-auto text-nowrap" onClick={() => changeView(VIEWS.ADD)}>
+                                    <Icon name={'plus'} className="me-2"></Icon>Add New
+                                </Button>
+                            }
                         </div>
                     </div>
                 </div>

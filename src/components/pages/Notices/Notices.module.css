@@ -1,0 +1,12 @@
+.tableWrapper {
+    width: 100%;
+    overflow: auto;
+    height: 100% !important;
+}
+
+.flexibleContainer {
+    min-width: fit-content;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+}

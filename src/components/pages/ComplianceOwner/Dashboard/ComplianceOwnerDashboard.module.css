@@ -1,0 +1,204 @@
+.dashboardContainer {
+    min-height: calc(100vh - 136px);
+}
+
+.activityItem {
+    display: grid;
+    min-height: 80px;
+    grid-template-columns: 80px 1fr;
+    border-bottom: 2px solid var(--page-bg);
+    gap: 8px;
+}
+
+.activityItemLeft {
+    max-height: 120px;
+    color: var(--white);
+}
+
+.dashboardGrid {
+    display: grid;
+    grid-template-columns: 436px 1fr;
+    grid-gap: 1rem;
+    min-height: 660px;
+    position: relative;
+    animation: expand 0.2s ease;
+}
+
+.dashboardGrid:global(.hideCalendar) {
+    grid-template-columns: 0px 1fr;
+    grid-gap: 0px;
+    animation: shrink 0.2s ease;
+}
+
+
+.dashboardGrid:global(.hideCalendar) .expandCollapseIcon {
+    left: -20px;
+    border: 1px solid var(--gray);
+    border-radius: 0 5px 5px 0;
+    border-left: none;
+    animation: shrink-icon 0.2s ease;
+}
+
+.dashboardGridCol1 {
+    display: grid;
+    grid-template-rows: auto 0px auto minmax(200px, 1fr);
+    min-height: 100%;
+    height: calc(100vh - 234px);
+    position: relative;
+    overflow: hidden;
+    transition: width 1s;
+}
+
+.dashboardGridCol2 {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-gap: 1rem;
+    min-height: 100%;
+}
+
+.statusCharts {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+}
+
+.overallChartGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 226px;
+}
+
+.noticesChartGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 226px;
+}
+
+.qButtons {
+    border: 1px solid var(--gray);
+    border-radius: 1rem;
+    box-sizing: border-box;
+    width: 44px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qButtons:hover {
+    background-color: var(--gray-800);
+}
+
+.qButtonSelected {
+    border: 2px solid var(--royal-blue);
+    font-weight: bold;
+    color: var(--royal-blue);
+}
+
+.expandCollapseIcon {
+    position: absolute;
+    top: 30%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    width: 22px;
+    justify-content: center;
+    border: 1px solid var(--gray);
+    border-radius: 5px 0 0 5px;
+    border-right: none;
+    left: 412px;
+    box-shadow: -4px 8px 8px rgba(0, 0, 0, 0.2) !important;
+    cursor: pointer;
+    background-color: var(--white);
+    animation: expand-icon 0.2s ease;
+}
+
+@keyframes expand {
+    0% {
+        grid-template-columns: 0px 1fr;
+    }
+
+    100% {
+        grid-template-columns: 436px 1fr;
+    }
+}
+
+@keyframes shrink {
+    0% {
+        grid-template-columns: 436px 1fr;
+    }
+
+    100% {
+        grid-template-columns: 0px 1fr;
+    }
+}
+
+@keyframes expand-icon {
+    0% {
+        left: -20px;
+    }
+
+    100% {
+        left: 412px
+    }
+}
+
+@keyframes shrink-icon {
+    0% {
+        left: 412px;
+    }
+
+    100% {
+        left: -20px;
+    }
+}
+
+.downloadReportIcon {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.5rem;
+    border-radius: 50%;
+    z-index: 11;
+    padding: 10px;
+    background: var(--bs-green);
+    color: #fff;
+    opacity: 0.4;
+}
+
+.downloadReportIcon:hover {
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.activityTypeTags {
+    height: 2.5rem;
+    background: var(--tag-color);
+    position: relative;
+    color: var(--tag-text);
+    padding: 0 0.25rem 0 1.25rem;
+    font-weight: bold;
+}
+
+.activityTypeTags:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 0.75rem solid #fff;
+    border-top: 1.25rem solid transparent;
+    border-bottom: 1.25rem solid transparent;
+}
+
+.activityTypeTags:before {
+    content: '';
+    position: absolute;
+    right: -0.75rem;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 0.75rem solid var(--tag-color);
+    border-top: 1.25rem solid transparent;
+    border-bottom: 1.25rem solid transparent;
+}

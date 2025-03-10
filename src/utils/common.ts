@@ -1,4 +1,7 @@
+import dayjs from "dayjs";
+import { hasUserAccess } from "../backend/auth";
 import { ACTIVITY_STATUS } from "../components/common/Constants";
+import { USER_PRIVILEGES } from "../components/pages/UserManagement/Roles/RoleConfiguration";
 import { ACTIVITY_TYPE } from "./constants";
 
 export function preventDefault(event: any) {
@@ -8,7 +11,7 @@ export function preventDefault(event: any) {
   }
 }
 
-export function getValue(obj: any, key: string) {
+export function getValue(obj: any, key: string, type?: any) {
   if (!obj || !key) {
     return null
   }
@@ -17,6 +20,9 @@ export function getValue(obj: any, key: string) {
   keys.forEach(_key => {
     value = (value || {})[_key];
   });
+  if (type === 'BOOLEAN') {
+    return value === true ? 'Yes' : (value === false ? 'No' : '')
+  }
   return value;
 }
 
@@ -87,18 +93,28 @@ export function getMinMonthYear() {
   return date;
 }
 
+// export function getMaxMonthYear() {
+//   const date = new Date();
+//   const month = date.getMonth();
+//   if (month > 2) {
+//     date.setFullYear(date.getFullYear() + 10);
+//   }
+//   date.setMonth(11);
+//   date.setDate(31);
+//   return date;
+// }
 export function getMaxMonthYear() {
   const date = new Date();
-  const month = date.getMonth();
-  if (month > 2) {
-    date.setFullYear(date.getFullYear() + 1);
-  }
-  date.setMonth(2);
+  date.setFullYear(date.getFullYear() + 5); // Allows selection up to 5 years in the future
+  date.setMonth(11); // December
   date.setDate(31);
   return date;
 }
 
 export function checkVendorActivityStatus(activity: any) {
+  if (!hasUserAccess(USER_PRIVILEGES.SUBMITTER_ACTIVITIES_UPLOAD)) {
+    return { editable: false }
+  }
   const dueDate = new Date(activity.dueDate);
   dueDate.setHours(23);
   dueDate.setMinutes(59);
@@ -183,6 +199,9 @@ export function checkVendorActivityStatus(activity: any) {
 }
 
 export function checkAuditorActivityStatus(activity: any) {
+  if (!hasUserAccess(USER_PRIVILEGES.REVIEWER_ACTIVITIES_AUDIT)) {
+    return { editable: false };
+  }
   const { auditted: auditType, status, published } = activity || {};
   if (published) {
     return {
@@ -240,4 +259,24 @@ export function checkAuditorActivityStatus(activity: any) {
   return {
     editable: false
   }
+}
+
+export function copyArray(arr: any[]) {
+  if ((arr || []).length === 0) {
+    return [];
+  }
+  return JSON.parse(JSON.stringify(arr));
+}
+
+export function copyObject(obj: any) {
+  if (!obj) {
+    return {};
+  }
+  return JSON.parse(JSON.stringify(obj));
+}
+
+export function toBackendDateFormat(date: Date) {
+  if (!date) return null;
+  // return dayjs(date).format('YYYY-MM-DDTHH:mm:ss');
+  return dayjs(date).local().toISOString();
 }

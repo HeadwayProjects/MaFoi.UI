@@ -22,7 +22,7 @@ function RulesImportModal({ onSubmit, onClose }: any) {
         }
         const data = response.data;
         if (data && data.size === 0) {
-            toast.success('Activities uploaded successfully.');
+            toast.success('Rules uploaded successfully.');
             onClose();
             onSubmit();
         } else {
@@ -56,7 +56,7 @@ function RulesImportModal({ onSubmit, onClose }: any) {
                     { type: 'file-type', regex: EXCEL_FILE_REGEX },
                     { type: 'file-size', maxSize: 25 * FILE_SIZE.MB }
                 ],
-                description: <a href="/" onClick={downloadSample}>Dowload Sample Activities</a>
+                description: <a href="/" onClick={downloadSample}>Dowload Sample Rules</a>
             },
         ],
     };

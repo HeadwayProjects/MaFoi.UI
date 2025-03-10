@@ -15,6 +15,10 @@ import AdminLocations from "./AdminLocations";
 import ConfirmModal from "../../../common/ConfirmModal";
 import { useDeleteAuditSchedule } from "../../../../backend/masters";
 import { toast } from "react-toastify";
+import { hasUserAccess } from "../../../../backend/auth";
+import { USER_PRIVILEGES } from "../../UserManagement/Roles/RoleConfiguration";
+import { GetAuditScheduleBreadcrumb } from "./Companies.constants";
+import MastersLayout from "../MastersLayout";
 
 const SortFields: any = {
     'act.name': 'actname',
@@ -26,6 +30,7 @@ const SortFields: any = {
 };
 
 function AuditScheduleDetails(this: any) {
+    const [breadcrumb] = useState(GetAuditScheduleBreadcrumb('Audit Schedule Details'));
     const [activity, setActivity] = useState<any>();
     const [action, setAction] = useState(ACTIONS.NONE);
     const [data, setData] = useState<any>();
@@ -109,7 +114,7 @@ function AuditScheduleDetails(this: any) {
     function DueDateTmpl({ cell }: any) {
         const value = cell.getValue();
         return (
-            <span className="text-warning" >{dayjs(value).format('DD-MM-YYYY')}</span>
+            <span className="text-warn" >{dayjs(value).format('DD-MM-YYYY')}</span>
         )
     }
 
@@ -127,7 +132,10 @@ function AuditScheduleDetails(this: any) {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative">
-                <Icon className="mx-1" type="button" name="trash" text="Delete" data={row} action={handleDelete} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.DELETE_AUDIT_SCHEDULE_DETAILS) &&
+                    <Icon className="mx-1" type="button" name="trash" text="Delete" data={row} action={handleDelete} />
+                }
             </div>
         )
     }
@@ -198,7 +206,8 @@ function AuditScheduleDetails(this: any) {
             title: "Actions", hozAlign: "center", width: 120,
             headerSort: false,
             formatter: reactFormatter(<ActionColumnElements />),
-            titleFormatter: reactFormatter(<TitleTmpl />)
+            titleFormatter: reactFormatter(<TitleTmpl />),
+            visible: hasUserAccess(USER_PRIVILEGES.DELETE_AUDIT_SCHEDULE_DETAILS)
         }
     ]
 
@@ -334,19 +343,7 @@ function AuditScheduleDetails(this: any) {
 
     return (
         <>
-            <div className="d-flex flex-column">
-                <div className="d-flex p-2 align-items-center pageHeading shadow">
-                    <h4 className="mb-0">Audit Schedule Details</h4>
-                    <div className="d-flex align-items-end h-100">
-                        <nav aria-label="breadcrumb">
-                            <ol className="breadcrumb mb-0 d-flex justify-content-end">
-                                <li className="breadcrumb-item">Home</li>
-                                <li className="breadcrumb-item fw-bold active">Audit Schedule Details</li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-
+            <MastersLayout title="Audit Schedule Details" breadcrumbs={breadcrumb}>
                 <form className="p-0 mx-3 my-2">
                     <div className="card shadow border-0 p-2 mt-2 mb-3 filters">
                         <div className="d-flex flex-row m-0 align-items-end">
@@ -355,18 +352,21 @@ function AuditScheduleDetails(this: any) {
                                 <AdvanceSearch fields={[FILTERS.MONTH, FILTERS.SUBMITTED_DATE, FILTERS.ACTIVITY_TYPE]} payload={getAdvanceSearchPayload()} onSubmit={search} />
                             </div>
                             <div className="ms-auto">
-                                <button className="btn btn-danger" onClick={handleBulkDelete} disabled={!(selectedRows || []).length}>
-                                    <div className="d-flex align-items-center">
-                                        <FontAwesomeIcon icon={faTrash} />
-                                        <span className="ms-2 text-nowrap">Bulk Delete</span>
-                                    </div>
-                                </button>
+                                {
+                                    hasUserAccess(USER_PRIVILEGES.DELETE_AUDIT_SCHEDULE_DETAILS) &&
+                                    <button className="btn btn-danger" onClick={handleBulkDelete} disabled={!(selectedRows || []).length}>
+                                        <div className="d-flex align-items-center">
+                                            <FontAwesomeIcon icon={faTrash} />
+                                            <span className="ms-2 text-nowrap">Bulk Delete</span>
+                                        </div>
+                                    </button>
+                                }
                             </div>
                         </div>
                     </div>
                 </form>
                 <Table data={data} options={tableConfig} isLoading={isFetching} onSelectionChange={onSelectionChange.bind(this)} onPageNav={handlePageNav} />
-            </div>
+            </MastersLayout>
             {
                 !!alertMessage &&
                 <AlertModal message={alertMessage} onClose={(e: any) => {

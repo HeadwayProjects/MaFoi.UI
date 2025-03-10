@@ -89,7 +89,8 @@ function CompanyLocationsImportModal({ company, associateCompany, onSubmit, onCl
 
     function downloadSample(e: any) {
         preventDefault(e);
-        download('Sample Locations.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/LocationBulkUploadTemplate.xlsx ')
+        //download('Sample Locations.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/LocationBulkUploadTemplate.xlsx ')
+        download('Sample Locations.xlsx', 'https://mafoi.s3.ap-south-1.amazonaws.com/bulkuploadtemplates/LocationBulkUploadTemplateNEw.xlsx ')
     }
 
     return (

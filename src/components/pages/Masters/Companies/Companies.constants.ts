@@ -6,6 +6,21 @@ export function GetCompaniesBreadcrumb(page: string) {
     ]
 }
 
+export function GetAuditScheduleBreadcrumb(page: string) {
+    return [
+        { id: 'home', label: 'Home', path: '/' },
+        { id: 'auditSchedule', label: 'Audit Schedule', path: '/auditSchedule/importExport' },
+        { id: page, label: page }
+    ]
+}
+
+export function GetVendorAuditScheduleBreadcrumb(page: string) {
+    return [
+        { id: 'home', label: 'Home', path: '/' },
+        { id: 'vendorAuditSchedule', label: 'Vendor Audit Schedule', path: '/auditSchedule/importExport' },
+        { id: page, label: page }
+    ]
+}
 
 export const COMPANY_REQUEST = {
     code: '',

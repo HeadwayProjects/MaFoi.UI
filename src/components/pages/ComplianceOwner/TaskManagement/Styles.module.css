@@ -1,0 +1,47 @@
+.tableWrapper {
+    width: 100%;
+    overflow: auto;
+    height: 100% !important;
+}
+
+.flexibleContainer {
+    min-width: fit-content;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--gray-800);
+    padding-top: 84px;
+    z-index: 11;
+}
+
+.activitydetailsContainer {
+    height: calc(100vh - 134px) !important;
+    overflow: auto;
+}
+
+.btnGroup {
+    justify-content: start !important;
+    width: 33% !important;
+}
+
+.downloadIcon:hover {
+    cursor: pointer;
+}
+
+.tableActions {
+    position: absolute !important;
+    z-index: 1;
+}
+
+.tableActions  :global(.nav-link){
+    padding: 0.85rem 1.25rem;
+}

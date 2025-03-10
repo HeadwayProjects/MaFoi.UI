@@ -19,7 +19,7 @@ function StateDetails({ action, data, onClose, onSubmit }: any) {
     const { states } = useGetStates({ ...DEFAULT_OPTIONS_PAYLOAD, t: defaultTime });
 
     const { updateState } = useUpdateState(() => {
-        toast.success(`${form.values.name} updated successsfully.`);
+        toast.success(`${form.values.name} updated successfully.`);
         onSubmit();
     }, errorCallback);
 
@@ -27,7 +27,7 @@ function StateDetails({ action, data, onClose, onSubmit }: any) {
         if (response instanceof AxiosError) {
             errorCallback();
         } else {
-            toast.success(`${form.values.name} created successsfully.`);
+            toast.success(`${form.values.name} created successfully.`);
             onSubmit();
         }
     }, errorCallback);

@@ -2,14 +2,48 @@ import axios from "axios";
 import { getAuthToken } from "./auth";
 
 function getBaseURL() {
-    const {protocol, hostname} = window.location;
-    const api_url = `apipro.ezycomp.com/`
-    // const api_url = 'ezycompapi.azurewebsites.net/'
+    const { protocol, hostname } = window.location;
+
+    //for apiprod
+const api_url = hostname.includes('uat') ? `apiprod.ezycomp.com`: 'apiprod.ezycomp.com';
+
+     //for apiproduat
+     //const api_url = hostname.includes('uat') ? `apiproduat.ezycomp.com`: 'apiproduat.ezycomp.com';
+
+  //for api
+    //const api_url = hostname.includes('uat') ? `apiprouat.ezycomp.com`: 'apiprouat.ezycomp.com';
+
+    //for apiuat
+    
+    //const api_url = hostname.includes('uat') ? `apiprouat.ezycomp.com`: 'apiprouat.ezycomp.com';
+
+    //const api_url = "https://localhost:7221/";
+    // const api_url = 'apiprouat.ezycomp.com'
+    return `${hostname === 'localhost' ? 'https:' : protocol}//${api_url}`;
+}
+
+export function getChartsBaseUrl() {
+    const { protocol, hostname } = window.location;
+
+    //for apiproduat
+    //const api_url = hostname.includes('uat') ? `apichartproduat.ezycomp.com`: 'apichartproduat.ezycomp.com';
+
+    //for apiprod
+     const api_url = hostname.includes('uat') ? `apichartprod.ezycomp.com`: 'apichartprod.ezycomp.com';
+
+     //forapi
+     //const api_url = hostname.includes('uat') ? `apichart.ezycomp.com`: 'apichart.ezycomp.com';
+
+     //for apiuat
+     //const api_url = hostname.includes('uat') ? `apichartuat.ezycomp.com`: 'apichartuat.ezycomp.com';
+
+    // const api_url = 'apichartuat.ezycomp.com'
+    //const api_url = "https://localhost:7221/";
     return `${hostname === 'localhost' ? 'https:' : protocol}//${api_url}`;
 }
 
 const apiInstance = axios.create({
-    baseURL: getBaseURL()
+    baseURL: ''
 });
 
 apiInstance.interceptors.response.use(
@@ -45,17 +79,21 @@ export function get(url: string, payload?: any, config?: any, others?: any) {
     if (Object.keys(payload || {}).length > 0) {
         url = `${url}?${getQueryString(payload)}`
     }
-    return apiInstance.get(url, { headers: getHeaders(config), ...others });
+    const _url = url.indexOf('http') === 0 ? url : `${getBaseURL()}${url}`;
+    return apiInstance.get(_url, { headers: getHeaders(config), ...others });
 }
 
 export function post(url: string, payload: any, config?: any, sendHeaders = true, others?: any) {
-    return apiInstance.post(url, payload, sendHeaders ? { headers: getHeaders(config), ...others } : null);
+    const _url = url.indexOf('http') === 0 ? url : `${getBaseURL()}${url}`;
+    return apiInstance.post(_url, payload, sendHeaders ? { headers: getHeaders(config), ...others } : null);
 }
 
 export function put(url: string, payload?: any, config?: any, sendHeaders = true) {
-    return apiInstance.put(url, payload, sendHeaders ? { headers: getHeaders(config) } : undefined);
+    const _url = url.indexOf('http') === 0 ? url : `${getBaseURL()}${url}`;
+    return apiInstance.put(_url, payload, sendHeaders ? { headers: getHeaders(config) } : undefined);
 }
 
 export function del(url: string, payload?: any, config?: any, sendHeaders = true) {
-    return apiInstance.delete(url, { headers: getHeaders(config) });
+    const _url = url.indexOf('http') === 0 ? url : `${getBaseURL()}${url}`;
+    return apiInstance.delete(_url, { headers: getHeaders(config) });
 }

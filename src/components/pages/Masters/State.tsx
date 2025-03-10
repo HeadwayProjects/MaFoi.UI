@@ -13,6 +13,9 @@ import { useRef } from "react";
 import { downloadFileContent } from "../../../utils/common";
 import { ERROR_MESSAGES } from "../../../utils/constants";
 import { useExportStates } from "../../../backend/exports";
+import { hasUserAccess } from "../../../backend/auth";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
+import { CentralId } from "./Master.constants";
 
 function State() {
     const [breadcrumb] = useState([
@@ -31,7 +34,7 @@ function State() {
     const { states, total, isFetching, refetch } = useGetStates(payload);
 
     const { deleteState } = useDeleteState(() => {
-        toast.success(`${state.name} deleted successsfully.`);
+        toast.success(`${state.name} deleted successfully.`);
         setAction(ACTIONS.NONE);
         setState(null);
         refetch();
@@ -53,14 +56,26 @@ function State() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
-                    setState(row);
-                    setAction(ACTIONS.EDIT)
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                    setState(row);
-                    setAction(ACTIONS.DELETE)
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_STATE) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
+                        if (row.id === CentralId) {
+                            return;
+                        }
+                        setState(row);
+                        setAction(ACTIONS.EDIT)
+                    }} disabled={row.id === CentralId} />
+                }
+                {
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_STATE) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     if (row.id === CentralId) {
+                    //         return;
+                    //     }
+                    //     setState(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} disabled={row.id === CentralId} />
+                }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setState(row);
                     setAction(ACTIONS.VIEW)
@@ -159,12 +174,18 @@ function State() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters search={true} onFilterChange={onFilterChange} placeholder={"Search for State Code/Name"} />
                                 <div className="d-flex">
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.EXPORT_STATES) &&
+                                        <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                            <Icon name={'download'} className="me-2"></Icon>Export
+                                        </Button>
+                                    }
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.ADD_STATE) &&
+                                        <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                            <Icon name={'plus'} className="me-2"></Icon>Add New
+                                        </Button>
+                                    }
 
                                 </div>
                             </div>

@@ -7,6 +7,7 @@ import { useGetAuditorPerformance } from "../../../backend/auditor";
 const PerformanceTabs = [
     { value: 'Today', label: 'Today' },
     { value: 'ThisWeek', label: 'This Week' },
+    { value: 'ThisMonth', label: 'This Month' },
     { value: 'LastMonth', label: ['Last Month'] },
     { value: 'Last3Months', label: ['3 Months'] },
     { value: 'Last6Months', label: ['6 Months'] },
@@ -20,14 +21,17 @@ function Performance() {
     const { auditorPerformance, isFetching } = useGetAuditorPerformance(user.userid, frequency);
 
     function onFrequencyChange(e: any) {
+        console.log(e.target.value)
         setFrequency(e.target.value)
     }
 
     useEffect(() => {
         if (!isFetching && auditorPerformance) {
+            console.log(auditorPerformance)
             const label = frequency !== 'Today' ?
                 `${dayjs(auditorPerformance.startDate).format('DD-MMM-YYYY')} - ${dayjs(auditorPerformance.endDate).format('DD-MMM-YYYY')}` :
                 `${dayjs(auditorPerformance.startDate).format('DD-MMM-YYYY')}`;
+                console.log(label)
             setLabel(label);
         }
     }, [isFetching])

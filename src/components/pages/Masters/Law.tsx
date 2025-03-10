@@ -15,6 +15,8 @@ import TableFilters from "../../common/TableFilter";
 import { useRef } from "react";
 import { useExportLaws } from "../../../backend/exports";
 import { downloadFileContent } from "../../../utils/common";
+import { hasUserAccess } from "../../../backend/auth";
+import { USER_PRIVILEGES } from "../UserManagement/Roles/RoleConfiguration";
 
 function Law() {
     const [breadcrumb] = useState(GetMastersBreadcrumb('Law'));
@@ -28,6 +30,7 @@ function Law() {
     const [payload, setPayload] = useState({ ...DEFAULT_PAYLOAD, sort: { columnName: 'name', order: 'asc' } });
     const { laws, total, isFetching, refetch } = useGetLaws(payload);
     const { deleteLaw, deleting } = useDeleteLaw(() => {
+        toast.success(`Law category "${law.name}" deleted successfully.`);
         submitCallback();
     }, () => {
         toast.error(ERROR_MESSAGES.DEFAULT);
@@ -47,14 +50,20 @@ function Law() {
 
         return (
             <div className="d-flex flex-row align-items-center position-relative h-100">
-                <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
-                    setLaw(row);
-                    setAction(ACTIONS.EDIT)
-                }} />
-                <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
-                    setLaw(row);
-                    setAction(ACTIONS.DELETE)
-                }} />
+                {
+                    hasUserAccess(USER_PRIVILEGES.EDIT_LAW_CATEGORY) &&
+                    <Icon className="mx-2" type="button" name={'pencil'} text={'Edit'} data={row} action={() => {
+                        setLaw(row);
+                        setAction(ACTIONS.EDIT)
+                    }} />
+                }
+                {
+                    // hasUserAccess(USER_PRIVILEGES.DELETE_LAW_CATEGORY) &&
+                    // <Icon className="mx-2" type="button" name={'trash'} text={'Delete'} data={row} action={() => {
+                    //     setLaw(row);
+                    //     setAction(ACTIONS.DELETE)
+                    // }} />
+                }
                 <Icon className="mx-2" type="button" name={'eye'} text={'View'} data={row} action={() => {
                     setLaw(row);
                     setAction(ACTIONS.VIEW)
@@ -158,13 +167,18 @@ function Law() {
                             <div className="d-flex justify-content-between align-items-end">
                                 <TableFilters search={true} onFilterChange={onFilterChange} placeholder="Search for Law/Description" />
                                 <div className="d-flex">
-
-                                    <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
-                                        <Icon name={'download'} className="me-2"></Icon>Export
-                                    </Button>
-                                    <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
-                                        <Icon name={'plus'} className="me-2"></Icon>Add New
-                                    </Button>
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.EXPORT_LAW_CATEGORIES) &&
+                                        <Button variant="primary" className="px-3 text-nowrap" onClick={handleExport}>
+                                            <Icon name={'download'} className="me-2"></Icon>Export
+                                        </Button>
+                                    }
+                                    {
+                                        hasUserAccess(USER_PRIVILEGES.ADD_LAW_CATEGORY) &&
+                                        <Button variant="primary" className="px-3 ms-3 text-nowrap" onClick={() => setAction(ACTIONS.ADD)}>
+                                            <Icon name={'plus'} className="me-2"></Icon>Add New
+                                        </Button>
+                                    }
                                 </div>
                             </div>
                         </div>

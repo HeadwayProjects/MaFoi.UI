@@ -15,7 +15,7 @@ function VerifyOTP({ request, editUser, onCancel, onSubmit }: any) {
     const [user] = useState(getUserDetails(request.token));
     const { loginWithOtp, isLoading: logging } = useLoginWithOtp(({ key, value }: any) => {
         if (key === 'SUCCESS') {
-            onSubmit(value);
+            onSubmit({token: value});
         } else {
             toast.error(value || 'Error!!!');
         }
