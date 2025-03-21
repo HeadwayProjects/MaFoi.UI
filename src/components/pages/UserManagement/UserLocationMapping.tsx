@@ -70,13 +70,13 @@ function UserLocationMapping({ user, data, onClose, onSubmit }: any) {
 
     function handleSubmit(e: any) {
         preventDefault(e);
-        if (selectedLocations.length > 0) {
+        //if (selectedLocations.length > 0) {
             createUserLocationMapping({
                 userId: user.value,
                 associateCompanyId: associateCompany.value,
                 companyLocationMappingIds: [...selectedLocations]
             } as any);
-        }
+       // }
     }
 
     useEffect(() => {
@@ -156,8 +156,11 @@ function UserLocationMapping({ user, data, onClose, onSubmit }: any) {
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-between">
                     <Button variant="outline-secondary" className="btn btn-outline-secondary px-4" onClick={onClose}>{'Cancel'}</Button>
-                    <Button variant="primary" onClick={handleSubmit} className="px-4" disabled={(selectedLocations || []).length === 0}>{'Submit'}</Button>
-                </Modal.Footer>
+                    {/* //<Button variant="primary" onClick={handleSubmit} className="px-4" disabled={(selectedLocations || []).length === 0}>{'Submit'}</Button>
+                */}
+                    <Button variant="primary" onClick={handleSubmit} className="px-4" >{'Submit'}</Button>
+              
+                    </Modal.Footer>
             </Modal>
             {
                 creating && <PageLoader />
