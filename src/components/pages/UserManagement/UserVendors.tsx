@@ -125,7 +125,7 @@ function UserVendors() {
             }}
           />
         )}
-        {hasUserAccess(USER_PRIVILEGES.DELETE_LOCATION_MAPPING) && (
+        {/* {hasUserAccess(USER_PRIVILEGES.DELETE_LOCATION_MAPPING) && (
           <Icon
             className="mx-2"
             type="button"
@@ -137,7 +137,7 @@ function UserVendors() {
               setAction(ACTIONS.DELETE);
             }}
           />
-        )}
+        )} */}
       </div>
     );
   }
